@@ -34,6 +34,12 @@ export default function RootLayout() {
         >
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="onboarding/welcome" />
+          <Stack.Screen name="onboarding/goal" />
+          <Stack.Screen name="onboarding/family-size" />
+          <Stack.Screen name="onboarding/preferences" />
+          <Stack.Screen name="onboarding/waste" />
+          <Stack.Screen name="onboarding/plan" />
+          <Stack.Screen name="onboarding/demo" />
           <Stack.Screen name="scan/camera" options={{ animation: 'slide_from_bottom' }} />
           <Stack.Screen name="scan/result" options={{ animation: 'fade' }} />
           <Stack.Screen name="recipe/[id]" options={{ animation: 'slide_from_right' }} />

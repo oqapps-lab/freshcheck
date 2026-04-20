@@ -79,7 +79,7 @@ export default function WelcomeScreen() {
             label="get started"
             fullWidth
             iconRight={<Chevron size={16} color={colors.white} />}
-            onPress={() => router.replace('/(tabs)')}
+            onPress={() => router.push('/onboarding/goal')}
           />
         </Animated.View>
       </View>

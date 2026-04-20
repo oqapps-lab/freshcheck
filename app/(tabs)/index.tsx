@@ -137,39 +137,11 @@ export default function HomeScreen() {
           </Animated.View>
         )}
 
-        {/* 3. TODAY'S COUNT (small, quiet) */}
-        <Animated.View entering={FadeIn.duration(motion.moderate).delay(160)} style={styles.section}>
-          <Eyebrow uppercase style={{ marginBottom: 12 }}>
-            today
-          </Eyebrow>
-          <GlassCard variant="glass" radius="xl" padding={20}>
-            <View style={styles.todayRow}>
-              <View style={styles.todayBlock}>
-                <Text style={[typeScale.displayM, { color: colors.primary }]}>2</Text>
-                <Text style={[typeScale.bodySmall, { color: colors.secondary, marginTop: 2 }]}>
-                  of 5 scans
-                </Text>
-              </View>
-              <View style={styles.todayDivider} />
-              <View style={styles.todayBlock}>
-                <Text style={[typeScale.displayM, { color: colors.primary }]}>
-                  {fridgeSummary.total}
-                </Text>
-                <Text style={[typeScale.bodySmall, { color: colors.secondary, marginTop: 2 }]}>
-                  items tracked
-                </Text>
-              </View>
-              <View style={styles.todayDivider} />
-              <View style={styles.todayBlock}>
-                <Text style={[typeScale.displayM, { color: colors.primary }]}>
-                  {fridgeSummary.expiring}
-                </Text>
-                <Text style={[typeScale.bodySmall, { color: colors.secondary, marginTop: 2 }]}>
-                  need soon
-                </Text>
-              </View>
-            </View>
-          </GlassCard>
+        {/* 3. TODAY — quiet inline stats (merged to avoid tab-bar anchor overlap) */}
+        <Animated.View entering={FadeIn.duration(motion.moderate).delay(160)} style={styles.todayInline}>
+          <Text style={[typeScale.caption, { color: colors.secondary }]}>
+            2 of 5 scans today · {fridgeSummary.total} items tracked · {fridgeSummary.expiring} need soon
+          </Text>
         </Animated.View>
       </ScrollView>
     </AtmosphericBackground>
@@ -264,18 +236,8 @@ const styles = StyleSheet.create({
     gap: 10,
     flexWrap: 'wrap',
   },
-  todayRow: {
-    flexDirection: 'row',
+  todayInline: {
     alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  todayBlock: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  todayDivider: {
-    width: 1,
-    height: 36,
-    backgroundColor: 'rgba(65,103,67,0.10)',
+    marginTop: 4,
   },
 });

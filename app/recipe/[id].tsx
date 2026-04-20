@@ -162,16 +162,17 @@ export default function RecipeDetailScreen() {
 
       <View style={[styles.floatingRow, { bottom: insets.bottom + 24 }]}>
         <PillCTA
-          label="save for later"
+          label="save"
           variant="glass"
           icon={<Heart size={16} color={colors.primary} />}
+          compact
           style={{ flex: 1 }}
         />
         <PillCTA
           label="start cooking"
           variant="primary"
           icon={<ChefHat size={18} color={colors.white} />}
-          style={{ flex: 1.4 }}
+          style={{ flex: 2 }}
         />
       </View>
     </AtmosphericBackground>
