@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import Animated, { FadeInDown, FadeIn, ZoomIn } from 'react-native-reanimated';
 import { AtmosphericBackground } from '@/components/ui/AtmosphericBackground';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { PillCTA } from '@/components/ui/PillCTA';
@@ -9,12 +10,13 @@ import { HeroNumber } from '@/components/ui/HeroNumber';
 import { VerdictPill } from '@/components/ui/VerdictPill';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { CountdownBar } from '@/components/ui/CountdownBar';
+import { MonogramTile } from '@/components/ui/MonogramTile';
 import { Back, Share, Scan } from '@/components/ui/Glyphs';
-import { colors, spacing, typeScale, radii, layout, toneColor } from '@/constants/tokens';
+import { colors, spacing, typeScale, radii, layout, motion } from '@/constants/tokens';
 import { scanDetail } from '@/mock/scans';
 
 /**
- * Scan Result — /scan/result
+ * Scan Result — /scan/result  (v2 — animated reveal + gradient monogram + rich Safe pill)
  * Ref: docs/06-design/DESIGN-GUIDE.md §7.2
  */
 export default function ScanResultScreen() {
@@ -41,66 +43,96 @@ export default function ScanResultScreen() {
       <ScrollView
         contentContainerStyle={{
           paddingTop: insets.top + 88,
-          paddingBottom: insets.bottom + layout.floatingBottomClearance + 40,
+          paddingBottom: insets.bottom + layout.floatingBottomClearance + 120,
           paddingHorizontal: layout.screenPadding,
         }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Product hero thumbnail */}
-        <View style={styles.heroThumbWrap}>
-          <View style={styles.heroThumb}>
-            <Text style={[typeScale.displayXL, { color: colors.sageInk, fontSize: 120, lineHeight: 130 }]}>
-              {scanDetail.product.charAt(0).toUpperCase()}
+        {/* Hero monogram with pulse glow behind */}
+        <Animated.View
+          entering={ZoomIn.duration(motion.moderate).delay(60)}
+          style={styles.heroThumbWrap}
+        >
+          <MonogramTile
+            letter={scanDetail.product.charAt(0).toUpperCase()}
+            tone={scanDetail.tone}
+            size={220}
+            showGlow
+            showDots
+          />
+        </Animated.View>
+
+        {/* Animated count-up number */}
+        <Animated.View entering={FadeInDown.duration(motion.moderate).delay(260)} style={{ alignItems: 'center' }}>
+          <HeroNumber value={scanDetail.confidence} suffix="%" size="xl" center animate />
+        </Animated.View>
+
+        {/* Serif "Safe" verdict */}
+        <Animated.View
+          entering={FadeInDown.duration(motion.moderate).delay(520)}
+          style={{ alignItems: 'center', marginTop: 14 }}
+        >
+          <VerdictPill verdict={scanDetail.tone} serif glow />
+        </Animated.View>
+
+        <Animated.View entering={FadeIn.duration(motion.moderate).delay(700)} style={{ alignItems: 'center' }}>
+          <Eyebrow center style={{ marginTop: 12 }}>{scanDetail.subheader}</Eyebrow>
+        </Animated.View>
+
+        {/* Detailed analysis card */}
+        <Animated.View entering={FadeInDown.duration(motion.moderate).delay(820)}>
+          <GlassCard variant="leafHighlight" showTopLight showInnerGlow style={styles.analysisCard}>
+            <Text style={[typeScale.titleM, { color: colors.ink, marginBottom: 14 }]}>
+              Detailed analysis
             </Text>
-          </View>
-        </View>
-
-        {/* Hero verdict: number + serif pill */}
-        <HeroNumber value={scanDetail.confidence} suffix="%" size="xl" center />
-        <View style={{ alignItems: 'center', marginTop: 12 }}>
-          <VerdictPill verdict={scanDetail.tone} serif />
-        </View>
-        <Eyebrow center style={{ marginTop: 10 }}>
-          {scanDetail.subheader}
-        </Eyebrow>
-
-        {/* Detailed analysis */}
-        <GlassCard variant="elevated" showTopLight style={styles.analysisCard}>
-          <Text style={[typeScale.titleM, { color: colors.ink, marginBottom: 14 }]}>
-            Detailed analysis
-          </Text>
-          {scanDetail.analysis.map((row) => (
-            <View key={row.label} style={styles.analysisRow}>
-              <Text style={[typeScale.body, { color: colors.ink }]}>{row.label}</Text>
-              <CountdownBar daysLeft={100 - row.value} totalDays={100} style={styles.analysisBar} />
-              <Text style={[typeScale.label, { color: colors.inkMuted, minWidth: 48, textAlign: 'right' }]}>
-                {row.value}/100
-              </Text>
-            </View>
-          ))}
-        </GlassCard>
+            {scanDetail.analysis.map((row, index) => (
+              <Animated.View
+                key={row.label}
+                entering={FadeInDown.duration(motion.moderate).delay(900 + index * 120)}
+                style={styles.analysisRow}
+              >
+                <Text style={[typeScale.body, { color: colors.ink, width: 80 }]}>{row.label}</Text>
+                <CountdownBar daysLeft={100 - row.value} totalDays={100} style={styles.analysisBar} />
+                <Text
+                  style={[
+                    typeScale.label,
+                    { color: colors.inkMuted, minWidth: 48, textAlign: 'right' },
+                  ]}
+                >
+                  {row.value}/100
+                </Text>
+              </Animated.View>
+            ))}
+          </GlassCard>
+        </Animated.View>
 
         {/* Storage advice */}
-        <View style={styles.section}>
+        <Animated.View
+          entering={FadeIn.duration(motion.moderate).delay(1300)}
+          style={styles.section}
+        >
           <Eyebrow style={{ marginBottom: 10 }}>Storage</Eyebrow>
           <Text style={[typeScale.body, { color: colors.inkMuted }]}>{scanDetail.storage}</Text>
-        </View>
+        </Animated.View>
 
-        <View style={styles.section}>
+        <Animated.View entering={FadeIn.duration(motion.moderate).delay(1500)} style={styles.section}>
           <Text style={[typeScale.caption, { color: colors.inkDim, fontStyle: 'italic' }]}>
             {scanDetail.disclaimer}
           </Text>
-        </View>
+        </Animated.View>
       </ScrollView>
 
-      <View style={[styles.floatingCta, { bottom: insets.bottom + 16 }]}>
+      <Animated.View
+        entering={FadeInDown.duration(motion.slow).delay(1100)}
+        style={[styles.floatingCta, { bottom: insets.bottom + 16 }]}
+      >
         <PillCTA
           label="Scan another"
           icon={<Scan size={22} color={colors.white} />}
           fullWidth
           onPress={() => router.replace('/scan/camera')}
         />
-      </View>
+      </Animated.View>
     </AtmosphericBackground>
   );
 }
@@ -129,17 +161,6 @@ const styles = StyleSheet.create({
   heroThumbWrap: {
     alignItems: 'center',
     marginBottom: spacing.xl,
-  },
-  heroThumb: {
-    width: 220,
-    height: 220,
-    borderRadius: radii.xxl,
-    backgroundColor: colors.sageMist,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  heroEmoji: {
-    fontSize: 120,
   },
   analysisCard: {
     marginTop: spacing.xl,

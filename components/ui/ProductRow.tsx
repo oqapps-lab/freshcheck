@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, ViewStyle } from 'react-native';
 import { Image } from 'expo-image';
-import { colors, radii, spacing, typeScale, shadows, Tone, toneColor } from '@/constants/tokens';
+import { LinearGradient } from 'expo-linear-gradient';
+import { colors, radii, spacing, typeScale, shadows, Tone, toneColor, gradients } from '@/constants/tokens';
 import { AccentBar } from './AccentBar';
 import { TokenDot } from './TokenDot';
 import { WarningSoft } from './Glyphs';
@@ -21,11 +22,37 @@ type Props = {
   style?: ViewStyle;
 };
 
+const haloGradient = (tone: Tone) => {
+  switch (tone) {
+    case 'past':
+      return gradients.rowHaloPast;
+    case 'soon':
+      return gradients.rowHaloSoon;
+    case 'fresh':
+      return gradients.rowHaloFresh;
+    default:
+      return null;
+  }
+};
+
+const thumbGradient = (tone: Tone) => {
+  switch (tone) {
+    case 'past':
+      return gradients.monogramPast;
+    case 'soon':
+      return gradients.monogramSoon;
+    default:
+      return gradients.monogramSafe;
+  }
+};
+
 /**
  * Product row — used in Fridge list, Recent activity, Recipe ingredients-from-fridge.
- * Composition: [AccentBar | Thumbnail | name + expiry + optional countdown | TokenDot or trailing]
+ * v2 — subtle tone-halo gradient backdrop behind each row + gradient monogram thumbnail.
  *
- * Shadow is tone-aware: coralWarm for past, amberWarm for soon, default card for fresh.
+ * Composition:
+ *   [halo gradient ................................................]
+ *     [AccentBar | gradient Thumb + Letter | body | TokenDot|trailing]
  *
  * Ref: docs/06-design/DESIGN-GUIDE.md §5.10
  */
@@ -47,6 +74,7 @@ export const ProductRow: React.FC<Props> = ({
 
   const ShadowContainer = onPress ? Pressable : View;
   const containerProps = onPress ? { onPress } : {};
+  const halo = haloGradient(tone);
 
   return (
     <ShadowContainer
@@ -55,6 +83,16 @@ export const ProductRow: React.FC<Props> = ({
       accessibilityRole={onPress ? 'button' : undefined}
       accessibilityLabel={`${name}, ${expiryText}`}
     >
+      {halo && (
+        <LinearGradient
+          colors={halo}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0.5 }}
+          style={StyleSheet.absoluteFill}
+          pointerEvents="none"
+        />
+      )}
+
       <AccentBar tone={tone} height={56} />
 
       <View style={styles.thumb}>
@@ -66,11 +104,17 @@ export const ProductRow: React.FC<Props> = ({
             transition={160}
           />
         ) : (
-          <View style={[StyleSheet.absoluteFill, { backgroundColor: toneColor[tone].fill, alignItems: 'center', justifyContent: 'center' }]}>
+          <>
+            <LinearGradient
+              colors={thumbGradient(tone)}
+              start={{ x: 0.2, y: 0.2 }}
+              end={{ x: 0.9, y: 0.9 }}
+              style={StyleSheet.absoluteFill}
+            />
             <Text style={[typeScale.titleL, { color: toneColor[tone].text }]}>
               {name.charAt(0).toUpperCase()}
             </Text>
-          </View>
+          </>
         )}
       </View>
 
@@ -111,6 +155,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.sm,
     marginBottom: spacing.sm,
+    overflow: 'hidden',
   },
   thumb: {
     width: 56,
@@ -118,6 +163,8 @@ const styles = StyleSheet.create({
     borderRadius: radii.md,
     overflow: 'hidden',
     backgroundColor: colors.cardMuted,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   body: {
     flex: 1,

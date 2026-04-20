@@ -2,17 +2,20 @@ import React from 'react';
 import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import Animated, { FadeInDown, FadeIn } from 'react-native-reanimated';
+import { LinearGradient } from 'expo-linear-gradient';
 import { AtmosphericBackground } from '@/components/ui/AtmosphericBackground';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { HeroNumber } from '@/components/ui/HeroNumber';
 import { VerdictPill } from '@/components/ui/VerdictPill';
+import { PulseGlow } from '@/components/ui/PulseGlow';
 import { Chevron, User as UserGlyph } from '@/components/ui/Glyphs';
-import { colors, spacing, typeScale, layout, radii } from '@/constants/tokens';
+import { colors, spacing, typeScale, layout, radii, gradients, motion, shadows } from '@/constants/tokens';
 import { user } from '@/mock/user';
 
 /**
- * Profile — /(tabs)/profile
+ * Profile — /(tabs)/profile  (v2 — gradient avatar glow + tinted stats + staggered entrance)
  */
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
@@ -46,67 +49,99 @@ export default function ProfileScreen() {
         }}
         showsVerticalScrollIndicator={false}
       >
-        {/* User header */}
-        <View style={styles.userRow}>
-          <View style={styles.avatar}>
-            <UserGlyph size={28} color={colors.sageInk} />
+        {/* User header with gradient avatar + glow */}
+        <Animated.View entering={FadeInDown.duration(motion.moderate)} style={styles.userRow}>
+          <View style={styles.avatarWrap}>
+            <PulseGlow size={92} tone="sage" />
+            <View style={styles.avatar}>
+              <LinearGradient
+                colors={gradients.verdictFresh}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+              <UserGlyph size={30} color={colors.sageInk} />
+            </View>
           </View>
-          <View style={{ flex: 1 }}>
+          <View style={{ flex: 1, marginLeft: spacing.md }}>
             <View style={styles.nameRow}>
               <Text style={[typeScale.titleL, { color: colors.ink }]}>{user.name}</Text>
-              <VerdictPill verdict="fresh" label={user.plan} small style={{ marginLeft: 10 }} />
+              <VerdictPill verdict="fresh" label={user.plan} small glow style={{ marginLeft: 10 }} />
             </View>
             <Text style={[typeScale.bodySmall, { color: colors.inkDim }]}>{user.email}</Text>
           </View>
-        </View>
+        </Animated.View>
 
-        {/* Stats card */}
-        <GlassCard variant="leafHighlight" showTopLight style={styles.statsCard}>
-          <Eyebrow style={{ marginBottom: 14 }}>Your progress</Eyebrow>
-          <View style={styles.statsRow}>
-            <View style={styles.statBlock}>
-              <HeroNumber value={user.stats.scans} size="m" />
-              <Text style={[typeScale.caption, { color: colors.inkDim }]}>Scans</Text>
+        {/* Stats card — rich gradient tint */}
+        <Animated.View entering={FadeInDown.duration(motion.moderate).delay(120)}>
+          <GlassCard
+            variant="tinted"
+            tintGradient={gradients.statSaved}
+            showTopLight
+            style={styles.statsCard}
+          >
+            <Eyebrow style={{ marginBottom: 14 }}>Your progress</Eyebrow>
+            <View style={styles.statsRow}>
+              <View style={styles.statBlock}>
+                <HeroNumber value={user.stats.scans} size="m" />
+                <Text style={[typeScale.caption, { color: colors.inkDim, marginTop: 2 }]}>
+                  Scans
+                </Text>
+              </View>
+              <View style={styles.statDivider} />
+              <View style={styles.statBlock}>
+                <HeroNumber value={user.stats.productsSaved} size="m" />
+                <Text style={[typeScale.caption, { color: colors.inkDim, marginTop: 2 }]}>
+                  Saved
+                </Text>
+              </View>
+              <View style={styles.statDivider} />
+              <View style={styles.statBlock}>
+                <HeroNumber value={`$${user.stats.savedDollars}`} size="m" />
+                <Text style={[typeScale.caption, { color: colors.inkDim, marginTop: 2 }]}>
+                  Earned back
+                </Text>
+              </View>
             </View>
-            <View style={styles.statDivider} />
-            <View style={styles.statBlock}>
-              <HeroNumber value={user.stats.productsSaved} size="m" />
-              <Text style={[typeScale.caption, { color: colors.inkDim }]}>Products saved</Text>
-            </View>
-            <View style={styles.statDivider} />
-            <View style={styles.statBlock}>
-              <HeroNumber value={`$${user.stats.savedDollars}`} size="m" />
-              <Text style={[typeScale.caption, { color: colors.inkDim }]}>Saved</Text>
-            </View>
-          </View>
-        </GlassCard>
+          </GlassCard>
+        </Animated.View>
 
         {/* Menu sections */}
-        {menu.map((block) => (
-          <View key={block.section} style={styles.section}>
+        {menu.map((block, blockIdx) => (
+          <Animated.View
+            key={block.section}
+            entering={FadeInDown.duration(motion.moderate).delay(220 + blockIdx * 80)}
+            style={styles.section}
+          >
             <Eyebrow style={{ marginBottom: 10 }}>{block.section}</Eyebrow>
-            {block.items.map((item) => (
-              <Pressable
-                key={item.label}
-                onPress={item.onPress}
-                style={({ pressed }) => [styles.menuRow, pressed && { opacity: 0.6 }]}
-                accessibilityRole="button"
-              >
-                <Text style={[typeScale.body, { color: colors.ink }]}>{item.label}</Text>
-                <Chevron size={18} direction="right" />
-              </Pressable>
-            ))}
-          </View>
+            <GlassCard variant="default" padding={0}>
+              {block.items.map((item, i) => (
+                <Pressable
+                  key={item.label}
+                  onPress={item.onPress}
+                  style={({ pressed }) => [
+                    styles.menuRow,
+                    i < block.items.length - 1 && styles.menuRowBorder,
+                    pressed && { opacity: 0.55 },
+                  ]}
+                  accessibilityRole="button"
+                >
+                  <Text style={[typeScale.body, { color: colors.ink }]}>{item.label}</Text>
+                  <Chevron size={18} direction="right" />
+                </Pressable>
+              ))}
+            </GlassCard>
+          </Animated.View>
         ))}
 
-        <View style={styles.footer}>
-          <Text style={[typeScale.body, { color: colors.inkDim, textAlign: 'center' }]}>
-            Sign out
-          </Text>
-          <Text style={[typeScale.caption, { color: colors.inkDim, textAlign: 'center', marginTop: 8 }]}>
+        <Animated.View entering={FadeIn.duration(motion.moderate).delay(620)} style={styles.footer}>
+          <Text style={[typeScale.body, { color: colors.inkDim, textAlign: 'center' }]}>Sign out</Text>
+          <Text
+            style={[typeScale.caption, { color: colors.inkDim, textAlign: 'center', marginTop: 8 }]}
+          >
             v0.1.0
           </Text>
-        </View>
+        </Animated.View>
       </ScrollView>
     </AtmosphericBackground>
   );
@@ -118,14 +153,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: spacing.xl,
   },
-  avatar: {
-    width: 56,
-    height: 56,
-    borderRadius: radii.full,
-    backgroundColor: colors.sageMist,
+  avatarWrap: {
+    width: 64,
+    height: 64,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: spacing.md,
+  },
+  avatar: {
+    width: 60,
+    height: 60,
+    borderRadius: radii.full,
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: colors.glassBorder,
+    ...shadows.card,
   },
   nameRow: {
     flexDirection: 'row',
@@ -142,11 +185,11 @@ const styles = StyleSheet.create({
   statBlock: {
     alignItems: 'center',
     flex: 1,
-    gap: 4,
+    gap: 2,
   },
   statDivider: {
     width: 1,
-    height: 32,
+    height: 40,
     backgroundColor: colors.hairline,
   },
   section: {
@@ -156,7 +199,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    paddingHorizontal: spacing.md,
     paddingVertical: 14,
+  },
+  menuRowBorder: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.hairline,
   },
   footer: {
     marginTop: spacing.xl,

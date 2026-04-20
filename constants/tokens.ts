@@ -1,4 +1,4 @@
-// FreshCheck — Design Tokens
+// FreshCheck — Design Tokens (v2 — richer gradients + animations)
 // Single source of truth. NO inline hex anywhere else in the project.
 // Spec: docs/06-design/DESIGN-GUIDE.md §2–§4
 // Mood: warm Sanctuary / The Culinary Alchemist (not Noir)
@@ -7,6 +7,7 @@ export const colors = {
   // Canvas
   canvas: '#FDF9F0',
   canvasTint: '#F7F3EA',
+  canvasWarm: '#FFF4E4', // warmer variant — used by 4th orb
   card: '#FFFFFF',
   cardMuted: '#F1EEE5',
 
@@ -15,10 +16,20 @@ export const colors = {
   sage: '#8DAA91',
   sageMist: '#CCEACF',
   sageDim: '#B0CEB4',
+  sageDeep: '#334D38',
 
   // Mint (secondary)
   mint: '#D7E6DF',
   mintDeep: '#596762',
+  mintGlow: '#E8F5EE',
+
+  // Lavender accent (new — for 4th orb + subtle depth)
+  lavender: '#D9C9E5',
+  lavenderSoft: '#EDE5F2',
+
+  // Peach (warm hearth accent)
+  peach: '#FFD3B8',
+  peachSoft: '#FFE9D9',
 
   // Verdicts
   amber: '#FFBF00',
@@ -28,6 +39,7 @@ export const colors = {
   coral: '#F08080',
   coralSoft: '#FFDAD8',
   coralInk: '#9D4042',
+  coralGlow: '#FFB3B1',
 
   // Text
   ink: '#1C1C17',
@@ -37,10 +49,12 @@ export const colors = {
   // System
   white: '#FFFFFF',
   hairline: 'rgba(74,101,79,0.10)',
-  glassBorder: 'rgba(255,255,255,0.65)',
-  glassTopLight: 'rgba(255,255,255,0.80)',
-  glassFill: 'rgba(255,251,242,0.78)',
-  glassFillAndroid: 'rgba(255,251,242,0.92)',
+  glassBorder: 'rgba(255,255,255,0.75)',
+  glassBorderSage: 'rgba(141,170,145,0.35)',
+  glassTopLight: 'rgba(255,255,255,0.92)',
+  glassFill: 'rgba(255,251,242,0.62)', // more transparent → blur shows through
+  glassFillAndroid: 'rgba(255,251,242,0.88)',
+  shimmerHighlight: 'rgba(255,255,255,0.45)',
   overlay: 'rgba(28,28,23,0.45)',
 } as const;
 
@@ -48,16 +62,80 @@ export const colors = {
 type GradStops = readonly [string, string, ...string[]];
 
 export const gradients = {
+  // Primary CTA — richer 3-stop dewy with highlight
   dewyCTA: ['#4A654F', '#6B8A70', '#8DAA91'] as unknown as GradStops,
   dewyCTASoft: ['#8DAA91', '#CCEACF'] as unknown as GradStops,
-  kitchenLight: ['#FDF9F0', '#F5FAF7', '#FDF9F0'] as unknown as GradStops,
+
+  // Shimmer sweep over CTA (diagonal white highlight)
+  ctaShimmer: [
+    'rgba(255,255,255,0)',
+    'rgba(255,255,255,0.28)',
+    'rgba(255,255,255,0)',
+  ] as unknown as GradStops,
+
+  // Canvas atmospheric wash (barely visible)
+  kitchenLight: ['#FDF9F0', '#F5FAF7', '#FFF4E4', '#FDF9F0'] as unknown as GradStops,
+
+  // Rich multi-stop ambient for hero areas — SATURATED v2.1 (was too pale)
+  heroAmbient: [
+    '#8DAA91', // sage (top-left anchor)
+    '#CCEACF', // sage mist
+    '#D7E6DF', // mint
+    '#FFE9D9', // peach soft
+    '#F08080', // coral (bottom-right urgency hint)
+  ] as unknown as GradStops,
+
+  // Lighter variant for non-urgency hero areas
+  heroAmbientSoft: [
+    '#B0CEB4',
+    '#CCEACF',
+    '#E8F5EE',
+    '#FFE9D9',
+  ] as unknown as GradStops,
+
+  // Inside glass cards — subtle sage→cream wash
+  glassTint: [
+    'rgba(204,234,207,0.18)',
+    'rgba(255,251,242,0.04)',
+    'rgba(255,211,184,0.10)',
+  ] as unknown as GradStops,
+
+  // Stat card tints (subtle, per-metric)
+  statSaved: ['rgba(176,206,180,0.25)', 'rgba(255,251,242,0.0)'] as unknown as GradStops,
+  statScans: ['rgba(255,211,184,0.18)', 'rgba(255,251,242,0.0)'] as unknown as GradStops,
+  statWasted: ['rgba(217,201,229,0.20)', 'rgba(255,251,242,0.0)'] as unknown as GradStops,
+
+  // Verdict pill rich fills
+  verdictFresh: ['#B0CEB4', '#CCEACF'] as unknown as GradStops,
+  verdictSafe: ['#6B8A70', '#4A654F'] as unknown as GradStops,
+  verdictSoon: ['#FFE9A8', '#FFA95C'] as unknown as GradStops,
+  verdictPast: ['#FFB3B1', '#F08080'] as unknown as GradStops,
+
+  // Row tint halos (very subtle — under product rows)
+  rowHaloPast: ['rgba(240,128,128,0.10)', 'rgba(240,128,128,0.0)'] as unknown as GradStops,
+  rowHaloSoon: ['rgba(255,191,0,0.10)', 'rgba(255,191,0,0.0)'] as unknown as GradStops,
+  rowHaloFresh: ['rgba(141,170,145,0.10)', 'rgba(141,170,145,0.0)'] as unknown as GradStops,
+
+  // Warning / Soon / Past (legacy)
   coralWarn: ['#F08080', '#FFB3B1'] as unknown as GradStops,
   amberSoon: ['#FFBF00', '#FFE9A8'] as unknown as GradStops,
+
+  // Countdown bars (traffic-light)
   countdownFresh: ['#B0CEB4', '#8DAA91'] as unknown as GradStops,
   countdownSoon: ['#CCEACF', '#FFBF00', '#FFA95C'] as unknown as GradStops,
   countdownPast: ['#FFBF00', '#F08080'] as unknown as GradStops,
-  topLight: ['rgba(204,234,207,0.55)', 'rgba(204,234,207,0)'] as unknown as GradStops,
+
+  // Top-edge highlights (inner glow)
+  topLight: ['rgba(204,234,207,0.75)', 'rgba(204,234,207,0)'] as unknown as GradStops,
+  topLightWhite: ['rgba(255,255,255,0.85)', 'rgba(255,255,255,0)'] as unknown as GradStops,
+
+  // Photo vignettes
   photoVignette: ['rgba(28,28,23,0)', 'rgba(28,28,23,0.25)'] as unknown as GradStops,
+
+  // Hero monogram tile — richer fill for Scan Result hero
+  monogramSafe: ['#CCEACF', '#E8F5EE', '#FFF4E4'] as unknown as GradStops,
+  monogramPast: ['#FFDAD8', '#FFE9D9', '#FFF4E4'] as unknown as GradStops,
+  monogramSoon: ['#FFE9A8', '#FFE9D9', '#FFF4E4'] as unknown as GradStops,
 } as const;
 
 // Gradient angles (degrees) — applied via start/end points in LinearGradient
@@ -69,16 +147,32 @@ export const gradientAngles = {
 } as const;
 
 // Radial orb gradient definitions (used with react-native-svg RadialGradient)
+// v2 — bumped opacities for richer atmosphere + added lavender + peach variants
 export const orbs = {
   sage: {
     color: '#8DAA91',
-    stops: [0.0, 0.6, 1.0],
-    opacities: [0.45, 0.18, 0.0],
+    stops: [0.0, 0.55, 1.0],
+    opacities: [0.62, 0.24, 0.0],
   },
   cream: {
     color: '#FFE9A8',
-    stops: [0.0, 0.7, 1.0],
-    opacities: [0.55, 0.2, 0.0],
+    stops: [0.0, 0.65, 1.0],
+    opacities: [0.75, 0.28, 0.0],
+  },
+  lavender: {
+    color: '#D9C9E5',
+    stops: [0.0, 0.6, 1.0],
+    opacities: [0.40, 0.18, 0.0],
+  },
+  peach: {
+    color: '#FFD3B8',
+    stops: [0.0, 0.6, 1.0],
+    opacities: [0.52, 0.22, 0.0],
+  },
+  coralPulse: {
+    color: '#F08080',
+    stops: [0.0, 0.5, 1.0],
+    opacities: [0.45, 0.18, 0.0],
   },
 } as const;
 
@@ -132,54 +226,63 @@ export const typeScale = {
 } as const;
 
 // Warm-tinted shadows — never neutral grey
+// v2 — richer glows, more premium float
 export const shadows = {
-  // Subtle sage-tinted card shadow
   card: {
     shadowColor: '#4A654F',
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.06,
+    shadowOpacity: 0.08,
     shadowRadius: 24,
     elevation: 4,
   },
-  // Deeper glass card
   glass: {
     shadowColor: '#4A654F',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.08,
-    shadowRadius: 32,
-    elevation: 6,
-  },
-  // Floating tab bar
-  floating: {
-    shadowColor: '#4A654F',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.10,
-    shadowRadius: 32,
-    elevation: 10,
-  },
-  // Primary CTA glow
-  ctaGlow: {
-    shadowColor: '#4A654F',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.30,
-    shadowRadius: 28,
+    shadowOffset: { width: 0, height: 16 },
+    shadowOpacity: 0.12,
+    shadowRadius: 40,
     elevation: 8,
   },
-  // Coral emphasis (expiring cards)
+  floating: {
+    shadowColor: '#4A654F',
+    shadowOffset: { width: 0, height: 14 },
+    shadowOpacity: 0.14,
+    shadowRadius: 36,
+    elevation: 12,
+  },
+  ctaGlow: {
+    shadowColor: '#4A654F',
+    shadowOffset: { width: 0, height: 14 },
+    shadowOpacity: 0.42,
+    shadowRadius: 32,
+    elevation: 12,
+  },
+  ctaGlowWarm: {
+    shadowColor: '#FFA95C',
+    shadowOffset: { width: 0, height: 14 },
+    shadowOpacity: 0.30,
+    shadowRadius: 36,
+    elevation: 12,
+  },
   coralWarm: {
     shadowColor: '#F08080',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.10,
-    shadowRadius: 24,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.16,
+    shadowRadius: 28,
+    elevation: 5,
   },
-  // Amber (use-soon cards)
   amberWarm: {
     shadowColor: '#FFA95C',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.08,
-    shadowRadius: 24,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.14,
+    shadowRadius: 28,
+    elevation: 5,
+  },
+  heroDeep: {
+    shadowColor: '#4A654F',
+    shadowOffset: { width: 0, height: 24 },
+    shadowOpacity: 0.18,
+    shadowRadius: 48,
+    elevation: 14,
   },
 } as const;
 
@@ -188,10 +291,19 @@ export type Tone = 'fresh' | 'safe' | 'soon' | 'past' | 'neutral';
 
 export const toneColor = {
   fresh: { fill: colors.sageMist, text: colors.sageInk, accent: colors.sage, dot: colors.sageDim },
-  safe: { fill: colors.sageDim, text: colors.sageInk, accent: colors.sageInk, dot: colors.sageInk },
+  safe: { fill: colors.sageDim, text: colors.sageDeep, accent: colors.sageInk, dot: colors.sageInk },
   soon: { fill: colors.amberSoft, text: colors.coralInk, accent: colors.amberDeep, dot: colors.amber },
   past: { fill: colors.coralSoft, text: colors.coralInk, accent: colors.coral, dot: colors.coral },
   neutral: { fill: colors.cardMuted, text: colors.inkDim, accent: colors.inkDim, dot: colors.inkDim },
+} as const;
+
+// Animation timing
+export const motion = {
+  quick: 160,
+  moderate: 320,
+  slow: 520,
+  hero: 900, // count-up duration
+  pulse: 1800, // pulse-glow cycle
 } as const;
 
 export const layout = {
