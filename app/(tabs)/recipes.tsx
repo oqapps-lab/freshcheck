@@ -49,7 +49,9 @@ export default function RecipesScreen() {
                   padding={0}
                 >
                   <View style={[styles.recipePhoto, { backgroundColor: toneColor[r.tone].fill }]}>
-                    <Text style={styles.emoji}>{r.placeholder}</Text>
+                    <Text style={[typeScale.displayL, { color: toneColor[r.tone].text, fontSize: 72, lineHeight: 80 }]}>
+                      {r.title.charAt(0).toUpperCase()}
+                    </Text>
                   </View>
                   <View style={styles.recipeBody}>
                     <Text style={[typeScale.titleM, { color: colors.ink }]}>{r.title}</Text>
@@ -87,7 +89,9 @@ export default function RecipesScreen() {
               >
                 <GlassCard variant="default" style={styles.recipeCard} padding={0}>
                   <View style={[styles.recipePhoto, { backgroundColor: toneColor[r.tone].fill }]}>
-                    <Text style={styles.emoji}>{r.placeholder}</Text>
+                    <Text style={[typeScale.displayL, { color: toneColor[r.tone].text, fontSize: 72, lineHeight: 80 }]}>
+                      {r.title.charAt(0).toUpperCase()}
+                    </Text>
                   </View>
                   <View style={styles.recipeBody}>
                     <Text style={[typeScale.titleM, { color: colors.ink }]}>{r.title}</Text>

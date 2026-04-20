@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, ViewStyle } from 'react-native';
 import { Image } from 'expo-image';
-import { colors, radii, spacing, typeScale, shadows, Tone } from '@/constants/tokens';
+import { colors, radii, spacing, typeScale, shadows, Tone, toneColor } from '@/constants/tokens';
 import { AccentBar } from './AccentBar';
 import { TokenDot } from './TokenDot';
 import { WarningSoft } from './Glyphs';
@@ -66,9 +66,9 @@ export const ProductRow: React.FC<Props> = ({
             transition={160}
           />
         ) : (
-          <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.cardMuted, alignItems: 'center', justifyContent: 'center' }]}>
-            <Text style={[typeScale.titleM, { color: colors.inkDim }]}>
-              {thumbnailPlaceholder ?? name.charAt(0)}
+          <View style={[StyleSheet.absoluteFill, { backgroundColor: toneColor[tone].fill, alignItems: 'center', justifyContent: 'center' }]}>
+            <Text style={[typeScale.titleL, { color: toneColor[tone].text }]}>
+              {name.charAt(0).toUpperCase()}
             </Text>
           </View>
         )}

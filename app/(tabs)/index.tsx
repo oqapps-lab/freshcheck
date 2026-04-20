@@ -9,7 +9,7 @@ import { HeroNumber } from '@/components/ui/HeroNumber';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { TokenDot } from '@/components/ui/TokenDot';
 import { ProductRow } from '@/components/ui/ProductRow';
-import { Sprig, Scan } from '@/components/ui/Glyphs';
+import { Sprig, Scan, Fridge as FridgeGlyph, Droplet } from '@/components/ui/Glyphs';
 import { colors, spacing, typeScale, radii, layout } from '@/constants/tokens';
 import { user, dayOfWeek } from '@/mock/user';
 import { fridgeSummary } from '@/mock/fridge';
@@ -36,7 +36,7 @@ export default function HomeScreen() {
       <ScrollView
         contentContainerStyle={{
           paddingTop: insets.top + 72,
-          paddingBottom: insets.bottom + layout.floatingBottomClearance + 80,
+          paddingBottom: insets.bottom + layout.floatingBottomClearance + 180,
           paddingHorizontal: layout.screenPadding,
         }}
         showsVerticalScrollIndicator={false}
@@ -49,7 +49,13 @@ export default function HomeScreen() {
         {/* Hero card */}
         <GlassCard variant="leafHighlight" showTopLight style={styles.heroCard} padding={0}>
           <View style={styles.heroPhoto}>
-            <Text style={styles.heroPhotoEmoji}>🧊</Text>
+            <View style={styles.heroGlyphWrap}>
+              <FridgeGlyph size={72} color={colors.sageInk} strokeWidth={1.5} />
+              <View style={styles.heroDroplet}>
+                <Droplet size={18} color={colors.sageInk} />
+              </View>
+            </View>
+            <Eyebrow style={{ marginTop: 12 }}>Inside your fridge</Eyebrow>
           </View>
           <View style={styles.heroMeta}>
             <Text style={[typeScale.titleM, { color: colors.ink }]}>
@@ -67,15 +73,15 @@ export default function HomeScreen() {
         <View style={styles.statsRow}>
           <GlassCard variant="default" style={styles.statCard} padding={16}>
             <Eyebrow>Saved</Eyebrow>
-            <HeroNumber value={`$${homeStats.saved}`} size="m" />
+            <HeroNumber value={`$${homeStats.saved}`} size="s" />
           </GlassCard>
           <GlassCard variant="default" style={styles.statCard} padding={16}>
             <Eyebrow>Scans</Eyebrow>
-            <HeroNumber value={homeStats.scans} size="m" />
+            <HeroNumber value={homeStats.scans} size="s" />
           </GlassCard>
           <GlassCard variant="default" style={styles.statCard} padding={16}>
             <Eyebrow>Wasted</Eyebrow>
-            <HeroNumber value={homeStats.wasted} size="m" />
+            <HeroNumber value={homeStats.wasted} size="s" />
           </GlassCard>
         </View>
 
@@ -143,8 +149,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  heroPhotoEmoji: {
-    fontSize: 84,
+  heroGlyphWrap: {
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  heroDroplet: {
+    position: 'absolute',
+    top: -6,
+    right: -18,
   },
   heroMeta: {
     flexDirection: 'row',

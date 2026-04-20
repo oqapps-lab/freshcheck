@@ -49,7 +49,9 @@ export default function ScanResultScreen() {
         {/* Product hero thumbnail */}
         <View style={styles.heroThumbWrap}>
           <View style={styles.heroThumb}>
-            <Text style={styles.heroEmoji}>{scanDetail.placeholder}</Text>
+            <Text style={[typeScale.displayXL, { color: colors.sageInk, fontSize: 120, lineHeight: 130 }]}>
+              {scanDetail.product.charAt(0).toUpperCase()}
+            </Text>
           </View>
         </View>
 
@@ -137,7 +139,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   heroEmoji: {
-    fontSize: 140,
+    fontSize: 120,
   },
   analysisCard: {
     marginTop: spacing.xl,

@@ -47,7 +47,9 @@ export default function RecipeDetailScreen() {
       >
         {/* Hero photo */}
         <View style={[styles.heroPhoto, { backgroundColor: toneColor[recipe.tone].fill }]}>
-          <Text style={styles.emoji}>{recipe.placeholder}</Text>
+          <Text style={[typeScale.displayXL, { color: toneColor[recipe.tone].text, fontSize: 96, lineHeight: 104 }]}>
+            {recipe.title.charAt(0).toUpperCase()}
+          </Text>
         </View>
 
         <View style={{ paddingHorizontal: layout.screenPadding }}>
@@ -110,7 +112,9 @@ export default function RecipeDetailScreen() {
                           { backgroundColor: toneColor[ingredient.tone].fill },
                         ]}
                       >
-                        <Text style={{ fontSize: 34 }}>{ingredient.placeholder}</Text>
+                        <Text style={[typeScale.titleXL, { color: toneColor[ingredient.tone].text }]}>
+                          {ingredient.name.charAt(0).toUpperCase()}
+                        </Text>
                       </View>
                       <Text style={[typeScale.titleS, { color: colors.ink, marginTop: 10 }]}>
                         {ingredient.name}

@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, View, StyleSheet, TextStyle } from 'react-native';
 import { colors, typeScale, fonts } from '@/constants/tokens';
 
-type Size = 'xl' | 'l' | 'm';
+type Size = 'xl' | 'l' | 'm' | 's';
 
 type Props = {
   value: string | number;
@@ -27,14 +27,29 @@ export const HeroNumber: React.FC<Props> = ({
   center,
   style,
 }) => {
-  const scaleStyle = size === 'xl' ? typeScale.displayXL : size === 'l' ? typeScale.displayL : typeScale.displayM;
+  const scaleStyle =
+    size === 'xl'
+      ? typeScale.displayXL
+      : size === 'l'
+      ? typeScale.displayL
+      : size === 'm'
+      ? typeScale.displayM
+      : typeScale.titleXL; // 's' → 32pt — fits narrow stat cards
   const suffixSize = (scaleStyle.fontSize ?? 48) * 0.5;
 
   return (
     <View style={[styles.row, center && styles.center]}>
-      <Text style={[scaleStyle, { color: colors[color] }, style]}>{value}</Text>
+      <Text
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.5}
+        style={[scaleStyle, { color: colors[color] }, style]}
+      >
+        {value}
+      </Text>
       {suffix && (
         <Text
+          numberOfLines={1}
           style={[
             scaleStyle,
             {
