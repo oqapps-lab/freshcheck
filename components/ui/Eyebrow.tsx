@@ -5,36 +5,43 @@ import { colors, typeScale } from '@/constants/tokens';
 type Props = {
   children: string;
   color?: keyof typeof colors;
-  dotBefore?: boolean;
   style?: TextStyle;
   center?: boolean;
+  uppercase?: boolean; // opt-in UPPERCASE only for section-title eyebrows (Stitch uses it there)
 };
 
 /**
- * Small tracked label — "Your kitchen · Tuesday", "Recent activity".
- * Sentence-case tracked (NOT uppercase — per design rule).
+ * v3 — small tracked label. Sentence-case by default (lowercase copy rule).
+ * Opt into uppercase only for section titles like "1. MORNING GREETING".
  *
- * Ref: docs/06-design/DESIGN-GUIDE.md §3.2 (eyebrow) + §5.7
+ * Ref: code.html section-title h2 (uppercase) + section body (sentence)
  */
-export const Eyebrow: React.FC<Props> = ({ children, color = 'inkDim', dotBefore, style, center }) => (
-  <View style={[styles.row, center && styles.center]}>
-    {dotBefore && <View style={[styles.dot, { backgroundColor: colors.sageInk }]} />}
-    <Text style={[typeScale.eyebrow, { color: colors[color] }, style]}>{children}</Text>
+export const Eyebrow: React.FC<Props> = ({
+  children,
+  color = 'outline',
+  style,
+  center,
+  uppercase,
+}) => (
+  <View style={[center && styles.center]}>
+    <Text
+      style={[
+        typeScale.labelSmall,
+        {
+          color: colors[color],
+          textTransform: uppercase ? 'uppercase' : 'none',
+          letterSpacing: uppercase ? 2 : 0.8,
+        },
+        style,
+      ]}
+    >
+      {children}
+    </Text>
   </View>
 );
 
 const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
   center: {
-    justifyContent: 'center',
-  },
-  dot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    marginRight: 6,
+    alignItems: 'center',
   },
 });

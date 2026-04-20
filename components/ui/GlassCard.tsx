@@ -1,61 +1,47 @@
 import React from 'react';
 import { View, StyleSheet, ViewStyle, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';
-import { LinearGradient } from 'expo-linear-gradient';
-import { colors, radii, shadows, gradients } from '@/constants/tokens';
+import { colors, radii, shadows } from '@/constants/tokens';
 
-type Variant = 'default' | 'elevated' | 'leafHighlight' | 'muted' | 'tinted';
+type Variant = 'glass' | 'solid' | 'muted';
 
 type Props = {
   children: React.ReactNode;
   variant?: Variant;
-  showTopLight?: boolean;
-  showInnerGlow?: boolean;
   style?: ViewStyle;
   radius?: keyof typeof radii;
   padding?: number;
-  tintGradient?: readonly [string, string, ...string[]]; // optional custom internal tint
 };
 
 /**
- * Glass / editorial cream surface.
- * v2 — richer with internal gradient overlay, shimmer top-light, premium soft border.
+ * v3 — the Stitch `.glass-panel` spec exactly:
+ *   background: rgba(255,255,255,0.65)
+ *   backdrop-filter: blur(16px)
+ *   border: 1px rgba(255,255,255,0.8)
+ *   shadow: 0 8px 32px rgba(65,103,67,0.08)
+ *   inset 0 1px 1px rgba(255,255,255,0.9)  ← edge highlight
  *
- * Variants:
- *  default       — glass (BlurView iOS, opaque fallback Android) + subtle sage→peach tint inside
- *  elevated      — white-card with sage inner-glow
- *  leafHighlight — white-card + mint top-edge glow (hero cards)
- *  muted         — cardMuted fill, no gradient
- *  tinted        — accepts custom tintGradient for per-card color identity (stats row)
+ * No internal gradient tint. No innerGlow. No showTopLight.
+ * Clean, quiet, premium.
  *
- * Android: BlurView swapped for near-opaque cream fallback.
- *
- * Ref: docs/06-design/DESIGN-GUIDE.md §4.1 + §5.3
+ * Ref: code.html .glass-panel
  */
 export const GlassCard: React.FC<Props> = ({
   children,
-  variant = 'default',
-  showTopLight = false,
-  showInnerGlow = false,
+  variant = 'glass',
   style,
-  radius = 'xl',
-  padding = 20,
-  tintGradient,
+  radius = 'xxl',
+  padding = 24,
 }) => {
   const borderRadius = radii[radius];
-  const useGlass = (variant === 'default' || variant === 'tinted') && Platform.OS === 'ios';
+  const useBlur = variant === 'glass' && Platform.OS === 'ios';
 
-  const cardBg =
-    variant === 'muted'
-      ? colors.cardMuted
-      : variant === 'elevated' || variant === 'leafHighlight'
-      ? colors.card
+  const bgColor =
+    variant === 'solid'
+      ? colors.surfaceLowest
+      : variant === 'muted'
+      ? colors.surfaceLow
       : 'transparent';
-
-  const shadow =
-    variant === 'leafHighlight' || variant === 'elevated' ? shadows.glass : shadows.card;
-
-  const internalTint = tintGradient ?? gradients.glassTint;
 
   return (
     <View
@@ -63,51 +49,32 @@ export const GlassCard: React.FC<Props> = ({
         {
           borderRadius,
           overflow: 'hidden',
-          backgroundColor: cardBg,
-          borderWidth:
-            variant === 'default' || variant === 'tinted' ? StyleSheet.hairlineWidth * 2 : 0,
+          backgroundColor: bgColor,
+          borderWidth: variant === 'glass' ? 1 : 0,
           borderColor: colors.glassBorder,
         },
-        shadow,
+        variant === 'glass' ? shadows.panel : shadows.soft,
         style,
       ]}
     >
-      {useGlass ? (
+      {variant === 'glass' && useBlur && (
         <>
-          <BlurView intensity={28} tint="light" style={StyleSheet.absoluteFill} />
+          <BlurView intensity={22} tint="light" style={StyleSheet.absoluteFill} />
           <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.glassFill }]} />
         </>
-      ) : variant === 'default' || variant === 'tinted' ? (
-        <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.glassFillAndroid }]} />
-      ) : null}
-
-      {/* Internal tint gradient overlay — adds color depth without being loud */}
-      {(variant === 'default' || variant === 'tinted') && (
-        <LinearGradient
-          colors={internalTint}
-          start={{ x: 0.2, y: 0 }}
-          end={{ x: 0.8, y: 1 }}
-          style={StyleSheet.absoluteFill}
-          pointerEvents="none"
+      )}
+      {variant === 'glass' && !useBlur && (
+        <View
+          style={[
+            StyleSheet.absoluteFill,
+            { backgroundColor: 'rgba(255,255,255,0.92)' },
+          ]}
         />
       )}
 
-      {/* Top-edge light — mimics light catching on a fresh leaf */}
-      {(showTopLight || variant === 'leafHighlight') && (
-        <LinearGradient
-          colors={gradients.topLight}
-          style={styles.topLight}
-          pointerEvents="none"
-        />
-      )}
-
-      {/* Inner glow — soft white sheen at top 30%, for leafHighlight cards */}
-      {(showInnerGlow || variant === 'leafHighlight') && (
-        <LinearGradient
-          colors={gradients.topLightWhite}
-          style={styles.innerGlow}
-          pointerEvents="none"
-        />
+      {/* Inset edge highlight — inset 0 1px 1px rgba(255,255,255,0.9) */}
+      {variant === 'glass' && (
+        <View pointerEvents="none" style={styles.innerTopHighlight} />
       )}
 
       <View style={{ padding }}>{children}</View>
@@ -116,19 +83,12 @@ export const GlassCard: React.FC<Props> = ({
 };
 
 const styles = StyleSheet.create({
-  topLight: {
+  innerTopHighlight: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    height: 3,
-  },
-  innerGlow: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 40,
-    opacity: 0.30,
+    height: 1,
+    backgroundColor: colors.glassInnerHighlight,
   },
 });

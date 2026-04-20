@@ -1,191 +1,148 @@
-// FreshCheck — Design Tokens (v2 — richer gradients + animations)
-// Single source of truth. NO inline hex anywhere else in the project.
-// Spec: docs/06-design/DESIGN-GUIDE.md §2–§4
-// Mood: warm Sanctuary / The Culinary Alchemist (not Noir)
+// FreshCheck — Design Tokens v3 (The Dew-Drenched Conservatory)
+//
+// FUNDAMENTAL REWRITE — distilled from the Stitch reference sheet
+// (code.html + DESIGN.md, 2026-04-20). Previous v1 + v2 were rejected
+// for being gigantic, rainbow-palette, and cheap-animation.
+//
+// v3 rules (from DESIGN.md §2-§4):
+//  - Monochromatic sage palette ONLY (coral/amber reserved for verdict chips)
+//  - Manrope ONLY (drop Plus Jakarta + Fraunces)
+//  - Medium weight (500) as primary — NOT 800 ExtraBold
+//  - Lowercase copy everywhere ("hi, Sara", "fresh", "milk")
+//  - No hard borders — tonal shifts + negative space only
+//  - Pill CTAs with gentle dewy gradient (primary → primary_container)
+//  - No shimmer, no pulse, no rainbow — subtle dew-drops and leaf veins only
+//  - Breathe: generous padding, let content float
+//
+// Spec: docs/06-design/DESIGN-GUIDE.md (to be updated post-v3)
 
 export const colors = {
-  // Canvas
-  canvas: '#FDF9F0',
-  canvasTint: '#F7F3EA',
-  canvasWarm: '#FFF4E4', // warmer variant — used by 4th orb
-  card: '#FFFFFF',
-  cardMuted: '#F1EEE5',
+  // Canvas — mint-white gradient, not warm cream
+  canvas: '#F8FAF6',
+  canvasTint: '#F2F4F0',
+  canvasMist: '#dce8dd', // bottom of morning-gradient
 
-  // Sage (primary)
-  sageInk: '#4A654F',
-  sage: '#8DAA91',
-  sageMist: '#CCEACF',
-  sageDim: '#B0CEB4',
-  sageDeep: '#334D38',
+  // Surface hierarchy — tonal nesting (no borders)
+  surface: '#F8FAF6',
+  surfaceLow: '#F2F4F0',
+  surfaceContainer: '#eceeeb',
+  surfaceHigh: '#e7e9e5',
+  surfaceHighest: '#e1e3df',
+  surfaceLowest: '#ffffff',
+  surfaceDim: '#d8dbd7',
+  surfaceBright: '#F8FAF6',
 
-  // Mint (secondary)
-  mint: '#D7E6DF',
-  mintDeep: '#596762',
-  mintGlow: '#E8F5EE',
+  // Sage primary — confident, living
+  primary: '#416743',
+  onPrimary: '#ffffff',
+  primaryContainer: '#7DA67D',
+  onPrimaryContainer: '#153b1c',
+  primaryFixed: '#c2eec0',
+  primaryFixedDim: '#a7d1a5',
+  onPrimaryFixed: '#002107',
+  onPrimaryFixedVariant: '#294f2d',
 
-  // Lavender accent (new — for 4th orb + subtle depth)
-  lavender: '#D9C9E5',
-  lavenderSoft: '#EDE5F2',
+  // Sage secondary — supporting tone
+  secondary: '#4f6351',
+  onSecondary: '#ffffff',
+  secondaryContainer: '#cfe6cf',
+  onSecondaryContainer: '#536855',
+  secondaryFixed: '#d2e9d2',
+  secondaryFixedDim: '#b6ccb6',
 
-  // Peach (warm hearth accent)
-  peach: '#FFD3B8',
-  peachSoft: '#FFE9D9',
+  // Sage tertiary — for ambient accents
+  tertiary: '#546256',
+  tertiaryContainer: '#92a093',
+  tertiaryFixed: '#d8e6d8',
+  tertiaryFixedDim: '#bccabc',
+  onTertiary: '#ffffff',
+  onTertiaryContainer: '#2a372d',
 
-  // Verdicts
-  amber: '#FFBF00',
-  amberSoft: '#FFE9A8',
-  amberDeep: '#FFA95C',
+  // Ink — warm green-grey, never pure black
+  ink: '#191c1a',
+  onSurface: '#191c1a',
+  onSurfaceVariant: '#424941',
+  outline: '#727970',
+  outlineVariant: '#c2c8be',
 
-  coral: '#F08080',
-  coralSoft: '#FFDAD8',
-  coralInk: '#9D4042',
-  coralGlow: '#FFB3B1',
-
-  // Text
-  ink: '#1C1C17',
-  inkMuted: '#424842',
-  inkDim: '#737972',
+  // Verdict accents — SPARINGLY (only on verdict chips when urgency needs escalation)
+  coral: '#d98a8a', // muted, not #F08080 loud
+  coralContainer: '#fde3e0',
+  onCoralContainer: '#6c2420',
+  amber: '#d9a84e', // muted honey
+  amberContainer: '#fbecc7',
+  onAmberContainer: '#5c3f0b',
 
   // System
-  white: '#FFFFFF',
-  hairline: 'rgba(74,101,79,0.10)',
-  glassBorder: 'rgba(255,255,255,0.75)',
-  glassBorderSage: 'rgba(141,170,145,0.35)',
-  glassTopLight: 'rgba(255,255,255,0.92)',
-  glassFill: 'rgba(255,251,242,0.62)', // more transparent → blur shows through
-  glassFillAndroid: 'rgba(255,251,242,0.88)',
-  shimmerHighlight: 'rgba(255,255,255,0.45)',
-  overlay: 'rgba(28,28,23,0.45)',
+  white: '#ffffff',
+  black: '#000000',
+  glassFill: 'rgba(255,255,255,0.65)',
+  glassBorder: 'rgba(255,255,255,0.8)',
+  glassInnerHighlight: 'rgba(255,255,255,0.9)',
+  leafVein: 'rgba(65,103,67,0.05)',
+  hairline: 'rgba(65,103,67,0.08)',
+  overlay: 'rgba(25,28,26,0.35)',
 } as const;
 
-// Gradient tuples — cast required by RN types for readonly [string, string, ...string[]]
 type GradStops = readonly [string, string, ...string[]];
 
 export const gradients = {
-  // Primary CTA — richer 3-stop dewy with highlight
-  dewyCTA: ['#4A654F', '#6B8A70', '#8DAA91'] as unknown as GradStops,
-  dewyCTASoft: ['#8DAA91', '#CCEACF'] as unknown as GradStops,
+  // Morning canvas — 135deg, very gentle
+  morning: ['#f0f4f0', '#dce8dd'] as unknown as GradStops,
 
-  // Shimmer sweep over CTA (diagonal white highlight)
-  ctaShimmer: [
-    'rgba(255,255,255,0)',
-    'rgba(255,255,255,0.28)',
-    'rgba(255,255,255,0)',
+  // Primary CTA — dewy sage gradient (from DESIGN.md §5 Buttons)
+  dewyCTA: ['#416743', '#4f6351'] as unknown as GradStops, // primary → secondary
+  dewyCTASoft: ['#7DA67D', '#c2eec0'] as unknown as GradStops,
+
+  // Verdict pill "fresh" — primary-container → primary-fixed
+  verdictFresh: ['#7DA67D', '#c2eec0'] as unknown as GradStops,
+
+  // Verdict pill "soon" — muted amber
+  verdictSoon: ['#e9c77a', '#fbecc7'] as unknown as GradStops,
+
+  // Verdict pill "past" — muted coral
+  verdictPast: ['#d98a8a', '#fde3e0'] as unknown as GradStops,
+
+  // Bloom background (Verdict Bloom hero) — white core → primary-fixed edge
+  verdictBloom: [
+    'rgba(255,255,255,0.9)',
+    'rgba(194,238,192,0.4)',
   ] as unknown as GradStops,
 
-  // Canvas atmospheric wash (barely visible)
-  kitchenLight: ['#FDF9F0', '#F5FAF7', '#FFF4E4', '#FDF9F0'] as unknown as GradStops,
+  // Shutter — large scan circle
+  shutter: ['#7DA67D', '#416743', '#4f6351'] as unknown as GradStops,
 
-  // Rich multi-stop ambient for hero areas — SATURATED v2.1 (was too pale)
-  heroAmbient: [
-    '#8DAA91', // sage (top-left anchor)
-    '#CCEACF', // sage mist
-    '#D7E6DF', // mint
-    '#FFE9D9', // peach soft
-    '#F08080', // coral (bottom-right urgency hint)
-  ] as unknown as GradStops,
-
-  // Lighter variant for non-urgency hero areas
-  heroAmbientSoft: [
-    '#B0CEB4',
-    '#CCEACF',
-    '#E8F5EE',
-    '#FFE9D9',
-  ] as unknown as GradStops,
-
-  // Inside glass cards — subtle sage→cream wash
-  glassTint: [
-    'rgba(204,234,207,0.18)',
-    'rgba(255,251,242,0.04)',
-    'rgba(255,211,184,0.10)',
-  ] as unknown as GradStops,
-
-  // Stat card tints (subtle, per-metric)
-  statSaved: ['rgba(176,206,180,0.25)', 'rgba(255,251,242,0.0)'] as unknown as GradStops,
-  statScans: ['rgba(255,211,184,0.18)', 'rgba(255,251,242,0.0)'] as unknown as GradStops,
-  statWasted: ['rgba(217,201,229,0.20)', 'rgba(255,251,242,0.0)'] as unknown as GradStops,
-
-  // Verdict pill rich fills
-  verdictFresh: ['#B0CEB4', '#CCEACF'] as unknown as GradStops,
-  verdictSafe: ['#6B8A70', '#4A654F'] as unknown as GradStops,
-  verdictSoon: ['#FFE9A8', '#FFA95C'] as unknown as GradStops,
-  verdictPast: ['#FFB3B1', '#F08080'] as unknown as GradStops,
-
-  // Row tint halos (very subtle — under product rows)
-  rowHaloPast: ['rgba(240,128,128,0.10)', 'rgba(240,128,128,0.0)'] as unknown as GradStops,
-  rowHaloSoon: ['rgba(255,191,0,0.10)', 'rgba(255,191,0,0.0)'] as unknown as GradStops,
-  rowHaloFresh: ['rgba(141,170,145,0.10)', 'rgba(141,170,145,0.0)'] as unknown as GradStops,
-
-  // Warning / Soon / Past (legacy)
-  coralWarn: ['#F08080', '#FFB3B1'] as unknown as GradStops,
-  amberSoon: ['#FFBF00', '#FFE9A8'] as unknown as GradStops,
-
-  // Countdown bars (traffic-light)
-  countdownFresh: ['#B0CEB4', '#8DAA91'] as unknown as GradStops,
-  countdownSoon: ['#CCEACF', '#FFBF00', '#FFA95C'] as unknown as GradStops,
-  countdownPast: ['#FFBF00', '#F08080'] as unknown as GradStops,
-
-  // Top-edge highlights (inner glow)
-  topLight: ['rgba(204,234,207,0.75)', 'rgba(204,234,207,0)'] as unknown as GradStops,
-  topLightWhite: ['rgba(255,255,255,0.85)', 'rgba(255,255,255,0)'] as unknown as GradStops,
-
-  // Photo vignettes
-  photoVignette: ['rgba(28,28,23,0)', 'rgba(28,28,23,0.25)'] as unknown as GradStops,
-
-  // Hero monogram tile — richer fill for Scan Result hero
-  monogramSafe: ['#CCEACF', '#E8F5EE', '#FFF4E4'] as unknown as GradStops,
-  monogramPast: ['#FFDAD8', '#FFE9D9', '#FFF4E4'] as unknown as GradStops,
-  monogramSoon: ['#FFE9A8', '#FFE9D9', '#FFF4E4'] as unknown as GradStops,
+  // Countdown — subtle mint→sage (no coral)
+  countdownFresh: ['#a7d1a5', '#7DA67D'] as unknown as GradStops,
+  countdownSoon: ['#c2eec0', '#e9c77a'] as unknown as GradStops,
+  countdownPast: ['#e9c77a', '#d98a8a'] as unknown as GradStops,
 } as const;
 
-// Gradient angles (degrees) — applied via start/end points in LinearGradient
-export const gradientAngles = {
-  dewyCTA: 135,
-  kitchenLight: 180,
-  horizontal: 90,
-  topDown: 180,
-} as const;
-
-// Radial orb gradient definitions (used with react-native-svg RadialGradient)
-// v2 — bumped opacities for richer atmosphere + added lavender + peach variants
+// Orb / ambient — sage ONLY, very gentle
 export const orbs = {
   sage: {
-    color: '#8DAA91',
-    stops: [0.0, 0.55, 1.0],
-    opacities: [0.62, 0.24, 0.0],
+    color: '#7DA67D',
+    stops: [0.0, 0.6, 1.0],
+    opacities: [0.18, 0.08, 0.0],
   },
-  cream: {
-    color: '#FFE9A8',
+  mint: {
+    color: '#c2eec0',
     stops: [0.0, 0.65, 1.0],
-    opacities: [0.75, 0.28, 0.0],
-  },
-  lavender: {
-    color: '#D9C9E5',
-    stops: [0.0, 0.6, 1.0],
-    opacities: [0.40, 0.18, 0.0],
-  },
-  peach: {
-    color: '#FFD3B8',
-    stops: [0.0, 0.6, 1.0],
-    opacities: [0.52, 0.22, 0.0],
-  },
-  coralPulse: {
-    color: '#F08080',
-    stops: [0.0, 0.5, 1.0],
-    opacities: [0.45, 0.18, 0.0],
+    opacities: [0.22, 0.10, 0.0],
   },
 } as const;
 
 export const radii = {
   xs: 6,
-  sm: 10,
+  sm: 12,
   md: 16,
-  lg: 20,
-  xl: 28,
-  xxl: 36,
+  lg: 24,
+  xl: 32,
+  xxl: 40, // rounded-[2.5rem] from Stitch
   full: 999,
 } as const;
 
+// Generous spacing — breathe
 export const spacing = {
   xxs: 4,
   xs: 8,
@@ -195,122 +152,133 @@ export const spacing = {
   xl: 24,
   xxl: 32,
   huge: 48,
+  massive: 64,
 } as const;
 
+// Manrope ONLY — no Plus Jakarta, no Fraunces
 export const fonts = {
-  display: 'PlusJakartaSans_800ExtraBold',
-  displayBold: 'PlusJakartaSans_700Bold',
-  titleBold: 'PlusJakartaSans_700Bold',
-  titleSemi: 'PlusJakartaSans_600SemiBold',
-  titleMedium: 'PlusJakartaSans_500Medium',
-  serifHero: 'Fraunces_400Regular_Italic',
-  body: 'Manrope_500Medium',
-  bodySemi: 'Manrope_600SemiBold',
-  bodyRegular: 'Manrope_400Regular',
+  regular: 'Manrope_400Regular',
+  medium: 'Manrope_500Medium',
+  semibold: 'Manrope_600SemiBold',
+  bold: 'Manrope_700Bold',
+  extrabold: 'Manrope_800ExtraBold',
 } as const;
 
+// Type scale — editorial magazine feel
+// Use medium (500) as default body. Semibold (600) for headers.
+// Display sizes are LARGER but with lower weight (medium/semibold, NOT extrabold).
 export const typeScale = {
-  displayXL: { fontFamily: fonts.display, fontSize: 96, lineHeight: 100, letterSpacing: -3 },
-  displayL: { fontFamily: fonts.display, fontSize: 64, lineHeight: 68, letterSpacing: -2 },
-  displayM: { fontFamily: fonts.display, fontSize: 48, lineHeight: 52, letterSpacing: -1.5 },
-  heroSerif: { fontFamily: fonts.serifHero, fontSize: 40, lineHeight: 44, letterSpacing: -1 },
-  titleXL: { fontFamily: fonts.titleBold, fontSize: 32, lineHeight: 38, letterSpacing: -0.5 },
-  titleL: { fontFamily: fonts.titleBold, fontSize: 24, lineHeight: 30, letterSpacing: -0.3 },
-  titleM: { fontFamily: fonts.titleSemi, fontSize: 20, lineHeight: 26, letterSpacing: -0.2 },
-  titleS: { fontFamily: fonts.titleSemi, fontSize: 18, lineHeight: 24, letterSpacing: 0 },
-  body: { fontFamily: fonts.body, fontSize: 16, lineHeight: 22, letterSpacing: 0 },
-  bodySmall: { fontFamily: fonts.body, fontSize: 14, lineHeight: 20, letterSpacing: 0 },
-  label: { fontFamily: fonts.bodySemi, fontSize: 13, lineHeight: 18, letterSpacing: 0.4 },
-  eyebrow: { fontFamily: fonts.bodySemi, fontSize: 11, lineHeight: 16, letterSpacing: 1.6 },
-  caption: { fontFamily: fonts.body, fontSize: 12, lineHeight: 16, letterSpacing: 0.2 },
+  // Hero verdict bloom — "fresh" at 72pt semibold, lowercase
+  verdictBloom: { fontFamily: fonts.bold, fontSize: 72, lineHeight: 80, letterSpacing: -1.8 },
+
+  // Display sizes for greeting headlines — "hi, Sara"
+  displayL: { fontFamily: fonts.semibold, fontSize: 40, lineHeight: 46, letterSpacing: -1.2 },
+  displayM: { fontFamily: fonts.semibold, fontSize: 32, lineHeight: 38, letterSpacing: -0.8 },
+
+  // Titles
+  titleL: { fontFamily: fonts.semibold, fontSize: 24, lineHeight: 30, letterSpacing: -0.4 },
+  titleM: { fontFamily: fonts.semibold, fontSize: 20, lineHeight: 26, letterSpacing: -0.2 },
+  titleS: { fontFamily: fonts.medium, fontSize: 18, lineHeight: 24, letterSpacing: 0 },
+
+  // Body
+  bodyL: { fontFamily: fonts.medium, fontSize: 17, lineHeight: 24, letterSpacing: 0 },
+  body: { fontFamily: fonts.medium, fontSize: 15, lineHeight: 22, letterSpacing: 0 },
+  bodySmall: { fontFamily: fonts.medium, fontSize: 13, lineHeight: 20, letterSpacing: 0.1 },
+
+  // Labels
+  label: { fontFamily: fonts.semibold, fontSize: 13, lineHeight: 18, letterSpacing: 0.3 },
+  labelSmall: { fontFamily: fonts.semibold, fontSize: 11, lineHeight: 16, letterSpacing: 0.8 },
+  caption: { fontFamily: fonts.medium, fontSize: 12, lineHeight: 16, letterSpacing: 0.2 },
 } as const;
 
-// Warm-tinted shadows — never neutral grey
-// v2 — richer glows, more premium float
+// Shadows — extra-diffused, tinted with on-surface green-grey, NOT black
+// From DESIGN.md §4: Blur 24-40px, Opacity 4-6%, Color tinted
 export const shadows = {
-  card: {
-    shadowColor: '#4A654F',
+  panel: {
+    shadowColor: '#416743',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.08,
-    shadowRadius: 24,
+    shadowRadius: 32,
     elevation: 4,
   },
-  glass: {
-    shadowColor: '#4A654F',
-    shadowOffset: { width: 0, height: 16 },
-    shadowOpacity: 0.12,
+  soft: {
+    shadowColor: '#416743',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 16,
+    elevation: 2,
+  },
+  cta: {
+    shadowColor: '#416743',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.28,
+    shadowRadius: 20,
+    elevation: 6,
+  },
+  shutter: {
+    shadowColor: '#416743',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.40,
     shadowRadius: 40,
-    elevation: 8,
-  },
-  floating: {
-    shadowColor: '#4A654F',
-    shadowOffset: { width: 0, height: 14 },
-    shadowOpacity: 0.14,
-    shadowRadius: 36,
     elevation: 12,
   },
-  ctaGlow: {
-    shadowColor: '#4A654F',
-    shadowOffset: { width: 0, height: 14 },
-    shadowOpacity: 0.42,
-    shadowRadius: 32,
-    elevation: 12,
-  },
-  ctaGlowWarm: {
-    shadowColor: '#FFA95C',
-    shadowOffset: { width: 0, height: 14 },
-    shadowOpacity: 0.30,
-    shadowRadius: 36,
-    elevation: 12,
-  },
-  coralWarm: {
-    shadowColor: '#F08080',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.16,
-    shadowRadius: 28,
-    elevation: 5,
-  },
-  amberWarm: {
-    shadowColor: '#FFA95C',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.14,
-    shadowRadius: 28,
-    elevation: 5,
-  },
-  heroDeep: {
-    shadowColor: '#4A654F',
-    shadowOffset: { width: 0, height: 24 },
-    shadowOpacity: 0.18,
-    shadowRadius: 48,
-    elevation: 14,
+  none: {
+    shadowColor: 'transparent',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    elevation: 0,
   },
 } as const;
 
-// Verdict tone → color mapping (used by VerdictPill, TokenDot, AccentBar, CountdownBar)
 export type Tone = 'fresh' | 'safe' | 'soon' | 'past' | 'neutral';
 
+// Tone colors — sage-dominant; coral/amber ONLY on verdict chips
 export const toneColor = {
-  fresh: { fill: colors.sageMist, text: colors.sageInk, accent: colors.sage, dot: colors.sageDim },
-  safe: { fill: colors.sageDim, text: colors.sageDeep, accent: colors.sageInk, dot: colors.sageInk },
-  soon: { fill: colors.amberSoft, text: colors.coralInk, accent: colors.amberDeep, dot: colors.amber },
-  past: { fill: colors.coralSoft, text: colors.coralInk, accent: colors.coral, dot: colors.coral },
-  neutral: { fill: colors.cardMuted, text: colors.inkDim, accent: colors.inkDim, dot: colors.inkDim },
+  fresh: {
+    fill: colors.primaryFixed,
+    text: colors.onPrimaryFixed,
+    accent: colors.primary,
+    dot: colors.primaryContainer,
+  },
+  safe: {
+    fill: colors.primaryFixed,
+    text: colors.onPrimaryFixedVariant,
+    accent: colors.primary,
+    dot: colors.primary,
+  },
+  soon: {
+    fill: colors.amberContainer,
+    text: colors.onAmberContainer,
+    accent: colors.amber,
+    dot: colors.amber,
+  },
+  past: {
+    fill: colors.coralContainer,
+    text: colors.onCoralContainer,
+    accent: colors.coral,
+    dot: colors.coral,
+  },
+  neutral: {
+    fill: colors.surfaceContainer,
+    text: colors.onSurfaceVariant,
+    accent: colors.outline,
+    dot: colors.outline,
+  },
 } as const;
 
-// Animation timing
 export const motion = {
   quick: 160,
-  moderate: 320,
-  slow: 520,
-  hero: 900, // count-up duration
-  pulse: 1800, // pulse-glow cycle
+  moderate: 240,
+  slow: 360,
 } as const;
 
 export const layout = {
   screenPadding: 20,
+  screenPaddingLg: 24,
   headerHeight: 56,
   tabBarHeight: 72,
   tabBarMargin: 16,
-  tabBarBottomGap: 8,
-  floatingBottomClearance: 112,
+  tabBarBottomGap: 12,
+  floatingBottomClearance: 140,
 } as const;

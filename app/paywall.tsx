@@ -1,39 +1,41 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import Animated, { FadeIn } from 'react-native-reanimated';
+import { LinearGradient } from 'expo-linear-gradient';
 import { AtmosphericBackground } from '@/components/ui/AtmosphericBackground';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { PillCTA } from '@/components/ui/PillCTA';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Check, Close } from '@/components/ui/Glyphs';
-import { colors, spacing, typeScale, layout, radii, fonts } from '@/constants/tokens';
+import { colors, gradients, spacing, typeScale, layout, motion, radii } from '@/constants/tokens';
 
-/**
- * Paywall — /paywall (presented as modal)
- * Ref: docs/06-design/DESIGN-GUIDE.md §7.7
- */
 export default function PaywallScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const [selected, setSelected] = React.useState<'monthly' | 'annual'>('annual');
+  const [selected, setSelected] = useState<'monthly' | 'annual'>('annual');
 
-  const dismiss = () => {
-    if (router.canGoBack()) router.back();
-    else router.replace('/(tabs)');
-  };
+  const dismiss = () => (router.canGoBack() ? router.back() : router.replace('/(tabs)'));
+
+  const benefits = [
+    'unlimited freshness checks',
+    'gentle reminders before anything expires',
+    'recipes suggested from what you already have',
+    'a fridge that tends itself',
+  ];
 
   return (
     <AtmosphericBackground>
-      {/* Close button */}
-      <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
+      <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
+        <View style={{ width: 40 }} />
         <Pressable
           onPress={dismiss}
-          style={styles.circleBtn}
+          style={styles.closeBtn}
           accessibilityRole="button"
-          accessibilityLabel="Close"
+          accessibilityLabel="close"
         >
-          <Close size={22} color={colors.ink} />
+          <Close size={18} color={colors.secondary} />
         </Pressable>
       </View>
 
@@ -45,49 +47,53 @@ export default function PaywallScreen() {
         }}
         showsVerticalScrollIndicator={false}
       >
-        <Text
-          style={[
-            typeScale.displayM,
-            { color: colors.sageInk, textAlign: 'center', marginBottom: 10 },
-          ]}
-        >
-          Protect your family
-        </Text>
-        <Text
-          style={[
-            typeScale.heroSerif,
-            { fontFamily: fonts.serifHero, color: colors.ink, textAlign: 'center', marginBottom: spacing.xl },
-          ]}
-        >
-          from expired food
-        </Text>
+        <Animated.View entering={FadeIn.duration(motion.moderate)} style={styles.hero}>
+          <Text
+            style={[
+              typeScale.displayM,
+              { color: colors.onSurface, textAlign: 'center' },
+            ]}
+          >
+            a calmer kitchen
+          </Text>
+          <Text
+            style={[
+              typeScale.body,
+              { color: colors.secondary, textAlign: 'center', marginTop: 10 },
+            ]}
+          >
+            unlimited checks, gentle reminders, recipes that use what's already here
+          </Text>
+        </Animated.View>
 
-        {/* Benefits */}
-        <GlassCard variant="leafHighlight" showTopLight style={styles.benefitCard}>
-          {[
-            'Unlimited freshness scans',
-            "Push alerts — 'Chicken, last day'",
-            'Recipes from what expires first',
-            'Fridge tracking without limits',
-          ].map((benefit) => (
-            <View key={benefit} style={styles.benefitRow}>
-              <View style={styles.benefitCheck}>
-                <Check size={16} color={colors.white} />
+        <Animated.View entering={FadeIn.duration(motion.moderate).delay(100)}>
+          <GlassCard variant="glass" radius="xl" padding={24} style={styles.benefits}>
+            {benefits.map((b) => (
+              <View key={b} style={styles.benefitRow}>
+                <View style={styles.checkCircle}>
+                  <Check size={14} color={colors.white} />
+                </View>
+                <Text style={[typeScale.body, { color: colors.onSurface, flex: 1 }]}>{b}</Text>
               </View>
-              <Text style={[typeScale.body, { color: colors.ink, flex: 1 }]}>{benefit}</Text>
-            </View>
-          ))}
-        </GlassCard>
+            ))}
+          </GlassCard>
+        </Animated.View>
 
-        {/* Plans */}
-        <View style={styles.plansRow}>
+        <Animated.View entering={FadeIn.duration(motion.moderate).delay(180)} style={styles.plans}>
           <Pressable
             onPress={() => setSelected('monthly')}
-            style={[styles.planCard, selected === 'monthly' && styles.planCardSelected]}
+            style={[
+              styles.planCard,
+              selected === 'monthly' && styles.planCardSelected,
+            ]}
           >
-            <Eyebrow>Monthly</Eyebrow>
-            <Text style={[typeScale.titleL, { color: colors.ink, marginTop: 4 }]}>$4.99</Text>
-            <Text style={[typeScale.caption, { color: colors.inkDim }]}>per month</Text>
+            <Eyebrow uppercase>monthly</Eyebrow>
+            <Text style={[typeScale.displayM, { color: colors.onSurface, marginTop: 4 }]}>
+              $4.99
+            </Text>
+            <Text style={[typeScale.bodySmall, { color: colors.secondary, marginTop: 2 }]}>
+              per month
+            </Text>
           </Pressable>
 
           <Pressable
@@ -98,32 +104,48 @@ export default function PaywallScreen() {
               selected === 'annual' && styles.planCardSelected,
             ]}
           >
-            <View style={styles.saveBadge}>
-              <Text style={[typeScale.caption, { color: colors.white }]}>Save 33%</Text>
+            <LinearGradient
+              colors={gradients.verdictFresh}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={StyleSheet.absoluteFill}
+            />
+            <View style={styles.saveChip}>
+              <Text style={[typeScale.caption, { color: colors.onPrimary }]}>save 33%</Text>
             </View>
-            <Eyebrow>Annual</Eyebrow>
-            <Text style={[typeScale.titleL, { color: colors.sageInk, marginTop: 4 }]}>$3.33</Text>
-            <Text style={[typeScale.caption, { color: colors.inkDim }]}>per month · billed yearly</Text>
+            <Eyebrow uppercase color="primary">annual</Eyebrow>
+            <Text style={[typeScale.displayM, { color: colors.primary, marginTop: 4 }]}>
+              $3.33
+            </Text>
+            <Text style={[typeScale.bodySmall, { color: colors.secondary, marginTop: 2 }]}>
+              per month · billed yearly
+            </Text>
           </Pressable>
-        </View>
+        </Animated.View>
 
-        <Eyebrow center style={{ marginTop: spacing.lg }}>
-          {'★ 4.5 · 12,400 families'}
-        </Eyebrow>
+        <Animated.View
+          entering={FadeIn.duration(motion.moderate).delay(280)}
+          style={{ alignItems: 'center', marginTop: spacing.xl }}
+        >
+          <Eyebrow uppercase>★ 4.5 · 12,400 families tend here</Eyebrow>
+        </Animated.View>
 
-        <View style={styles.linksRow}>
-          <Text style={[typeScale.caption, styles.link]}>Restore</Text>
-          <Text style={[typeScale.caption, { color: colors.inkDim }]}>·</Text>
-          <Text style={[typeScale.caption, styles.link]}>Terms</Text>
-          <Text style={[typeScale.caption, { color: colors.inkDim }]}>·</Text>
-          <Text style={[typeScale.caption, styles.link]}>Privacy</Text>
-        </View>
+        <Animated.View
+          entering={FadeIn.duration(motion.moderate).delay(340)}
+          style={styles.links}
+        >
+          <Text style={[typeScale.caption, { color: colors.secondary }]}>restore</Text>
+          <Text style={[typeScale.caption, { color: colors.outline }]}>·</Text>
+          <Text style={[typeScale.caption, { color: colors.secondary }]}>terms</Text>
+          <Text style={[typeScale.caption, { color: colors.outline }]}>·</Text>
+          <Text style={[typeScale.caption, { color: colors.secondary }]}>privacy</Text>
+        </Animated.View>
       </ScrollView>
 
-      <View style={[styles.floatingCta, { bottom: insets.bottom + 16 }]}>
-        <PillCTA label="Try 7 days free" fullWidth />
-        <Pressable onPress={dismiss} style={{ alignItems: 'center', marginTop: 12 }}>
-          <Text style={[typeScale.caption, { color: colors.inkDim }]}>Not now</Text>
+      <View style={[styles.floatingCta, { bottom: insets.bottom + 24 }]}>
+        <PillCTA label="try 7 days free" fullWidth />
+        <Pressable onPress={dismiss} style={{ alignItems: 'center', marginTop: 14 }}>
+          <Text style={[typeScale.caption, { color: colors.secondary }]}>not now</Text>
         </Pressable>
       </View>
     </AtmosphericBackground>
@@ -134,71 +156,78 @@ const styles = StyleSheet.create({
   header: {
     position: 'absolute',
     top: 0,
+    left: 0,
     right: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: layout.screenPadding,
     zIndex: 10,
   },
-  circleBtn: {
+  closeBtn: {
     width: 40,
     height: 40,
     borderRadius: radii.full,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.card,
+    backgroundColor: 'rgba(255,255,255,0.55)',
+    borderWidth: 1,
+    borderColor: colors.glassBorder,
   },
-  benefitCard: {
+  hero: {
+    marginBottom: spacing.xl,
+  },
+  benefits: {
     marginBottom: spacing.xl,
   },
   benefitRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
-    paddingVertical: 8,
+    paddingVertical: 10,
   },
-  benefitCheck: {
-    width: 24,
-    height: 24,
-    borderRadius: radii.full,
-    backgroundColor: colors.sageInk,
+  checkCircle: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
+    marginRight: spacing.md,
   },
-  plansRow: {
+  plans: {
     flexDirection: 'row',
-    gap: spacing.sm,
+    gap: spacing.md,
   },
   planCard: {
     flex: 1,
-    backgroundColor: colors.card,
+    backgroundColor: 'rgba(255,255,255,0.55)',
     borderRadius: radii.xl,
-    padding: spacing.md,
-    borderWidth: 2,
-    borderColor: colors.hairline,
+    padding: spacing.lg,
+    borderWidth: 1,
+    borderColor: colors.outlineVariant,
+    overflow: 'hidden',
   },
   planCardAnnual: {
-    backgroundColor: colors.sageMist,
-    borderColor: colors.sageDim,
+    borderColor: colors.primaryContainer,
   },
   planCardSelected: {
-    borderColor: colors.sageInk,
+    borderWidth: 2,
+    borderColor: colors.primary,
   },
-  saveBadge: {
+  saveChip: {
     position: 'absolute',
     top: -10,
-    right: 10,
-    backgroundColor: colors.coral,
+    right: 14,
+    backgroundColor: colors.primary,
     paddingHorizontal: 10,
     paddingVertical: 3,
     borderRadius: radii.full,
   },
-  linksRow: {
+  links: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 10,
+    gap: 12,
     marginTop: spacing.md,
-  },
-  link: {
-    color: colors.sageInk,
   },
   floatingCta: {
     position: 'absolute',

@@ -2,232 +2,145 @@ import React from 'react';
 import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import Animated, { FadeInDown } from 'react-native-reanimated';
-import { LinearGradient } from 'expo-linear-gradient';
+import Animated, { FadeIn } from 'react-native-reanimated';
 import { AtmosphericBackground } from '@/components/ui/AtmosphericBackground';
 import { GlassCard } from '@/components/ui/GlassCard';
-import { VerdictPill } from '@/components/ui/VerdictPill';
 import { Eyebrow } from '@/components/ui/Eyebrow';
-import { DecorDots } from '@/components/ui/DecorDots';
-import { Clock } from '@/components/ui/Glyphs';
-import {
-  colors,
-  spacing,
-  typeScale,
-  layout,
-  toneColor,
-  gradients,
-  motion,
-  Tone,
-} from '@/constants/tokens';
+import { VerdictPill } from '@/components/ui/VerdictPill';
+import { Clock, ChefHat } from '@/components/ui/Glyphs';
+import { colors, spacing, typeScale, layout, motion, radii } from '@/constants/tokens';
 import { recipes } from '@/mock/recipes';
 
-const heroGradient = (tone: Tone) => {
-  switch (tone) {
-    case 'past':
-      return gradients.monogramPast;
-    case 'soon':
-      return gradients.monogramSoon;
-    default:
-      return gradients.monogramSafe;
-  }
-};
-
-/**
- * Recipes list — /(tabs)/recipes  (v2 — gradient hero tiles + staggered entrance + decor)
- */
 export default function RecipesScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
 
-  const tonight = recipes.filter((r) => r.tone === 'past');
-  const week = recipes.filter((r) => r.tone !== 'past');
-
   return (
     <AtmosphericBackground>
-      <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
-        <Text style={[typeScale.titleL, { color: colors.ink }]}>What to cook</Text>
-        <Eyebrow>Picked from what's in your fridge</Eyebrow>
-      </View>
-
       <ScrollView
         contentContainerStyle={{
-          paddingTop: insets.top + 90,
-          paddingBottom: insets.bottom + layout.floatingBottomClearance + 40,
+          paddingTop: insets.top + 24,
+          paddingBottom: insets.bottom + layout.floatingBottomClearance + 24,
           paddingHorizontal: layout.screenPadding,
         }}
         showsVerticalScrollIndicator={false}
       >
-        {tonight.length > 0 && (
-          <View style={styles.section}>
-            <Animated.View entering={FadeInDown.duration(motion.moderate)}>
-              <Eyebrow style={{ marginBottom: 12, color: colors.coralInk } as never}>
-                Tonight · cook from what's expiring
-              </Eyebrow>
-            </Animated.View>
-            {tonight.map((r, i) => (
-              <Animated.View
-                key={r.id}
-                entering={FadeInDown.duration(motion.moderate).delay(80 + i * 80)}
-              >
-                <Pressable
-                  onPress={() => router.push(`/recipe/${r.id}`)}
-                  style={({ pressed }) => [pressed && { opacity: 0.88 }]}
-                >
-                  <GlassCard
-                    variant="default"
-                    style={[styles.recipeCard, { shadowColor: toneColor[r.tone].accent }]}
-                    padding={0}
-                  >
-                    <View style={styles.recipePhoto}>
-                      <LinearGradient
-                        colors={heroGradient(r.tone)}
-                        start={{ x: 0.1, y: 0 }}
-                        end={{ x: 0.9, y: 1 }}
-                        style={StyleSheet.absoluteFill}
-                      />
-                      <DecorDots />
-                      <Text
-                        style={[
-                          typeScale.displayL,
-                          {
-                            color: toneColor[r.tone].text,
-                            fontSize: 80,
-                            lineHeight: 88,
-                          },
-                        ]}
-                      >
-                        {r.title.charAt(0).toUpperCase()}
-                      </Text>
-                    </View>
-                    <View style={styles.recipeBody}>
-                      <Text style={[typeScale.titleM, { color: colors.ink }]}>{r.title}</Text>
-                      <View style={styles.recipeMeta}>
-                        <Clock size={14} color={colors.inkMuted} />
-                        <Text
-                          style={[typeScale.bodySmall, { color: colors.inkMuted, marginLeft: 4 }]}
-                        >
-                          {r.timeMinutes} min
-                        </Text>
-                        <View style={styles.metaDot} />
-                        <Text style={[typeScale.bodySmall, { color: colors.inkMuted }]}>
-                          Serves {r.servings}
-                        </Text>
-                      </View>
-                      <VerdictPill
-                        verdict={r.tone}
-                        label={`Uses ${r.expiringCount} expiring`}
-                        small
-                        glow
-                        style={{ marginTop: 10 }}
-                      />
-                    </View>
-                  </GlassCard>
-                </Pressable>
-              </Animated.View>
-            ))}
-          </View>
-        )}
+        <Animated.View entering={FadeIn.duration(motion.moderate)} style={styles.heading}>
+          <Text style={[typeScale.displayM, { color: colors.onSurface }]}>what to cook</Text>
+          <Text style={[typeScale.body, { color: colors.secondary, marginTop: 4 }]}>
+            picked from what's in your fridge today
+          </Text>
+        </Animated.View>
 
-        {week.length > 0 && (
-          <View style={styles.section}>
-            <Animated.View entering={FadeInDown.duration(motion.moderate).delay(200)}>
-              <Eyebrow style={{ marginBottom: 12 }}>This week · still plenty of time</Eyebrow>
-            </Animated.View>
-            {week.map((r, i) => (
-              <Animated.View
+        <Animated.View entering={FadeIn.duration(motion.moderate).delay(80)} style={styles.section}>
+          <Eyebrow uppercase style={{ marginBottom: 12 }}>
+            tonight
+          </Eyebrow>
+          {recipes
+            .filter((r) => r.tone === 'past')
+            .map((r) => (
+              <Pressable
                 key={r.id}
-                entering={FadeInDown.duration(motion.moderate).delay(260 + i * 80)}
+                onPress={() => router.push(`/recipe/${r.id}`)}
+                style={({ pressed }) => [pressed && { opacity: 0.88 }]}
               >
-                <Pressable
-                  onPress={() => router.push(`/recipe/${r.id}`)}
-                  style={({ pressed }) => [pressed && { opacity: 0.88 }]}
-                >
-                  <GlassCard variant="default" style={styles.recipeCard} padding={0}>
-                    <View style={styles.recipePhoto}>
-                      <LinearGradient
-                        colors={heroGradient(r.tone)}
-                        start={{ x: 0.1, y: 0 }}
-                        end={{ x: 0.9, y: 1 }}
-                        style={StyleSheet.absoluteFill}
-                      />
-                      <DecorDots />
+                <GlassCard variant="glass" radius="xl" padding={0} style={styles.card}>
+                  <View style={styles.cardThumb}>
+                    <ChefHat size={40} color={colors.primary} strokeWidth={1.3} />
+                  </View>
+                  <View style={styles.cardBody}>
+                    <Text style={[typeScale.titleL, { color: colors.onSurface }]}>
+                      {r.title.toLowerCase()}
+                    </Text>
+                    <View style={styles.metaRow}>
+                      <Clock size={14} color={colors.secondary} />
                       <Text
-                        style={[
-                          typeScale.displayL,
-                          {
-                            color: toneColor[r.tone].text,
-                            fontSize: 80,
-                            lineHeight: 88,
-                          },
-                        ]}
+                        style={[typeScale.bodySmall, { color: colors.secondary, marginLeft: 6 }]}
                       >
-                        {r.title.charAt(0).toUpperCase()}
+                        {r.timeMinutes} min · serves {r.servings}
                       </Text>
                     </View>
-                    <View style={styles.recipeBody}>
-                      <Text style={[typeScale.titleM, { color: colors.ink }]}>{r.title}</Text>
-                      <View style={styles.recipeMeta}>
-                        <Clock size={14} color={colors.inkMuted} />
-                        <Text
-                          style={[typeScale.bodySmall, { color: colors.inkMuted, marginLeft: 4 }]}
-                        >
-                          {r.timeMinutes} min
-                        </Text>
-                        <View style={styles.metaDot} />
-                        <Text style={[typeScale.bodySmall, { color: colors.inkMuted }]}>
-                          Serves {r.servings}
-                        </Text>
-                      </View>
-                    </View>
-                  </GlassCard>
-                </Pressable>
-              </Animated.View>
+                    <VerdictPill
+                      verdict={r.tone}
+                      label={`uses ${r.expiringCount} expiring`}
+                      small
+                      style={{ marginTop: 12 }}
+                    />
+                  </View>
+                </GlassCard>
+              </Pressable>
             ))}
-          </View>
-        )}
+        </Animated.View>
+
+        <Animated.View entering={FadeIn.duration(motion.moderate).delay(160)} style={styles.section}>
+          <Eyebrow uppercase style={{ marginBottom: 12 }}>
+            this week
+          </Eyebrow>
+          {recipes
+            .filter((r) => r.tone !== 'past')
+            .map((r) => (
+              <Pressable
+                key={r.id}
+                onPress={() => router.push(`/recipe/${r.id}`)}
+                style={({ pressed }) => [pressed && { opacity: 0.88 }]}
+              >
+                <GlassCard variant="glass" radius="xl" padding={0} style={styles.card}>
+                  <View style={styles.cardThumb}>
+                    <ChefHat size={36} color={colors.primary} strokeWidth={1.3} />
+                  </View>
+                  <View style={styles.cardBody}>
+                    <Text style={[typeScale.titleL, { color: colors.onSurface }]}>
+                      {r.title.toLowerCase()}
+                    </Text>
+                    <View style={styles.metaRow}>
+                      <Clock size={14} color={colors.secondary} />
+                      <Text
+                        style={[typeScale.bodySmall, { color: colors.secondary, marginLeft: 6 }]}
+                      >
+                        {r.timeMinutes} min · serves {r.servings}
+                      </Text>
+                    </View>
+                  </View>
+                </GlassCard>
+              </Pressable>
+            ))}
+        </Animated.View>
       </ScrollView>
     </AtmosphericBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    paddingHorizontal: layout.screenPadding,
-    paddingBottom: 12,
-    gap: 4,
-    zIndex: 10,
+  heading: {
+    marginBottom: spacing.xl,
   },
   section: {
     marginBottom: spacing.xl,
   },
-  recipeCard: {
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: spacing.md,
-    overflow: 'hidden',
   },
-  recipePhoto: {
-    height: 170,
+  cardThumb: {
+    width: 96,
+    height: 96,
+    borderRadius: radii.lg,
+    backgroundColor: colors.primaryFixed,
     alignItems: 'center',
     justifyContent: 'center',
-    overflow: 'hidden',
+    margin: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.8)',
   },
-  recipeBody: {
-    padding: spacing.md,
+  cardBody: {
+    flex: 1,
+    paddingVertical: 16,
+    paddingRight: 20,
   },
-  recipeMeta: {
+  metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 6,
-  },
-  metaDot: {
-    width: 3,
-    height: 3,
-    borderRadius: 2,
-    backgroundColor: colors.inkDim,
-    marginHorizontal: 8,
   },
 });

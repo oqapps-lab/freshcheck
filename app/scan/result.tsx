@@ -2,137 +2,141 @@ import React from 'react';
 import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import Animated, { FadeInDown, FadeIn, ZoomIn } from 'react-native-reanimated';
+import { LinearGradient } from 'expo-linear-gradient';
+import Animated, { FadeIn, ZoomIn } from 'react-native-reanimated';
 import { AtmosphericBackground } from '@/components/ui/AtmosphericBackground';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { PillCTA } from '@/components/ui/PillCTA';
-import { HeroNumber } from '@/components/ui/HeroNumber';
-import { VerdictPill } from '@/components/ui/VerdictPill';
 import { Eyebrow } from '@/components/ui/Eyebrow';
-import { CountdownBar } from '@/components/ui/CountdownBar';
-import { MonogramTile } from '@/components/ui/MonogramTile';
-import { Back, Share, Scan } from '@/components/ui/Glyphs';
-import { colors, spacing, typeScale, radii, layout, motion } from '@/constants/tokens';
+import { Back, Share } from '@/components/ui/Glyphs';
+import { colors, gradients, spacing, typeScale, radii, layout, motion } from '@/constants/tokens';
 import { scanDetail } from '@/mock/scans';
 
 /**
- * Scan Result — /scan/result  (v2 — animated reveal + gradient monogram + rich Safe pill)
- * Ref: docs/06-design/DESIGN-GUIDE.md §7.2
+ * Scan Result v3 — Verdict Bloom
+ * Hero is the verdict WORD ("fresh") in a soft-bloom circle, not a percent number.
+ * Ref: Stitch §5 Verdict Bloom.
  */
 export default function ScanResultScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const verdictWord = 'fresh'; // from scanDetail.verdict, lowercased
 
   return (
     <AtmosphericBackground>
-      <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
+      <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
         <Pressable
           onPress={() => router.back()}
           style={styles.circleBtn}
           accessibilityRole="button"
-          accessibilityLabel="Back"
+          accessibilityLabel="back"
         >
-          <Back size={22} color={colors.ink} />
+          <Back size={20} color={colors.primary} />
         </Pressable>
-        <Text style={[typeScale.titleM, { color: colors.ink }]}>Scan result</Text>
-        <Pressable style={styles.circleBtn} accessibilityRole="button" accessibilityLabel="Share">
-          <Share size={18} color={colors.ink} />
+        <Text style={[typeScale.label, { color: colors.secondary }]}>scan result</Text>
+        <Pressable style={styles.circleBtn} accessibilityRole="button" accessibilityLabel="share">
+          <Share size={18} color={colors.primary} />
         </Pressable>
       </View>
 
       <ScrollView
         contentContainerStyle={{
-          paddingTop: insets.top + 88,
-          paddingBottom: insets.bottom + layout.floatingBottomClearance + 120,
+          paddingTop: insets.top + 72,
+          paddingBottom: insets.bottom + layout.floatingBottomClearance + 40,
           paddingHorizontal: layout.screenPadding,
         }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Hero monogram with pulse glow behind */}
+        {/* Verdict Bloom — the hero */}
+        <Animated.View entering={FadeIn.duration(motion.slow)} style={styles.bloomWrap}>
+          {/* Ambient glow elements */}
+          <View style={[styles.bloomGlow, styles.bloomGlow1]} />
+          <View style={[styles.bloomGlow, styles.bloomGlow2]} />
+
+          <Animated.View entering={ZoomIn.duration(motion.slow).delay(120)}>
+            <View style={styles.bloomCircle}>
+              <LinearGradient
+                colors={gradients.verdictBloom}
+                start={{ x: 0.2, y: 0.1 }}
+                end={{ x: 0.9, y: 0.9 }}
+                style={StyleSheet.absoluteFill}
+              />
+              <Text style={[typeScale.verdictBloom, { color: colors.primary }]}>
+                {verdictWord}
+              </Text>
+            </View>
+          </Animated.View>
+        </Animated.View>
+
+        {/* Description lines */}
         <Animated.View
-          entering={ZoomIn.duration(motion.moderate).delay(60)}
-          style={styles.heroThumbWrap}
+          entering={FadeIn.duration(motion.moderate).delay(300)}
+          style={styles.descriptionBlock}
         >
-          <MonogramTile
-            letter={scanDetail.product.charAt(0).toUpperCase()}
-            tone={scanDetail.tone}
-            size={220}
-            showGlow
-            showDots
-          />
+          <Text style={[typeScale.titleM, { color: colors.onSurface, textAlign: 'center' }]}>
+            {scanDetail.confidence}% sure · {scanDetail.product.toLowerCase()}
+          </Text>
+          <Text
+            style={[
+              typeScale.body,
+              { color: colors.secondary, textAlign: 'center', marginTop: 8 },
+            ]}
+          >
+            looks evenly fresh, no dulling on the surface
+          </Text>
+          <Text
+            style={[
+              typeScale.body,
+              { color: colors.secondary, textAlign: 'center', marginTop: 20 },
+            ]}
+          >
+            use within {scanDetail.daysLeft} days, or freeze
+          </Text>
         </Animated.View>
 
-        {/* Animated count-up number */}
-        <Animated.View entering={FadeInDown.duration(motion.moderate).delay(260)} style={{ alignItems: 'center' }}>
-          <HeroNumber value={scanDetail.confidence} suffix="%" size="xl" center animate />
-        </Animated.View>
-
-        {/* Serif "Safe" verdict */}
-        <Animated.View
-          entering={FadeInDown.duration(motion.moderate).delay(520)}
-          style={{ alignItems: 'center', marginTop: 14 }}
-        >
-          <VerdictPill verdict={scanDetail.tone} serif glow />
-        </Animated.View>
-
-        <Animated.View entering={FadeIn.duration(motion.moderate).delay(700)} style={{ alignItems: 'center' }}>
-          <Eyebrow center style={{ marginTop: 12 }}>{scanDetail.subheader}</Eyebrow>
-        </Animated.View>
-
-        {/* Detailed analysis card */}
-        <Animated.View entering={FadeInDown.duration(motion.moderate).delay(820)}>
-          <GlassCard variant="leafHighlight" showTopLight showInnerGlow style={styles.analysisCard}>
-            <Text style={[typeScale.titleM, { color: colors.ink, marginBottom: 14 }]}>
-              Detailed analysis
+        {/* Storage note */}
+        <Animated.View entering={FadeIn.duration(motion.moderate).delay(420)}>
+          <GlassCard variant="glass" radius="xl" padding={20} style={styles.storageCard}>
+            <Eyebrow uppercase style={{ marginBottom: 10 }}>
+              keep in mind
+            </Eyebrow>
+            <Text style={[typeScale.body, { color: colors.onSurfaceVariant }]}>
+              {scanDetail.storage.toLowerCase()}
             </Text>
-            {scanDetail.analysis.map((row, index) => (
-              <Animated.View
-                key={row.label}
-                entering={FadeInDown.duration(motion.moderate).delay(900 + index * 120)}
-                style={styles.analysisRow}
-              >
-                <Text style={[typeScale.body, { color: colors.ink, width: 80 }]}>{row.label}</Text>
-                <CountdownBar daysLeft={100 - row.value} totalDays={100} style={styles.analysisBar} />
-                <Text
-                  style={[
-                    typeScale.label,
-                    { color: colors.inkMuted, minWidth: 48, textAlign: 'right' },
-                  ]}
-                >
-                  {row.value}/100
-                </Text>
-              </Animated.View>
-            ))}
           </GlassCard>
         </Animated.View>
 
-        {/* Storage advice */}
+        {/* Action row */}
         <Animated.View
-          entering={FadeIn.duration(motion.moderate).delay(1300)}
-          style={styles.section}
+          entering={FadeIn.duration(motion.moderate).delay(540)}
+          style={styles.actionRow}
         >
-          <Eyebrow style={{ marginBottom: 10 }}>Storage</Eyebrow>
-          <Text style={[typeScale.body, { color: colors.inkMuted }]}>{scanDetail.storage}</Text>
+          <PillCTA
+            variant="primary"
+            label="save to my fridge"
+            onPress={() => router.back()}
+            style={{ flex: 1.4 }}
+          />
+          <PillCTA
+            variant="glass"
+            label="scan another"
+            onPress={() => router.replace('/scan/camera')}
+            style={{ flex: 1 }}
+          />
         </Animated.View>
 
-        <Animated.View entering={FadeIn.duration(motion.moderate).delay(1500)} style={styles.section}>
-          <Text style={[typeScale.caption, { color: colors.inkDim, fontStyle: 'italic' }]}>
-            {scanDetail.disclaimer}
-          </Text>
+        {/* Disclaimer chip */}
+        <Animated.View
+          entering={FadeIn.duration(motion.moderate).delay(660)}
+          style={styles.disclaimerWrap}
+        >
+          <View style={styles.disclaimerChip}>
+            <Text style={[typeScale.caption, { color: colors.secondary }]}>
+              visual check only — won't catch bacteria
+            </Text>
+          </View>
         </Animated.View>
       </ScrollView>
-
-      <Animated.View
-        entering={FadeInDown.duration(motion.slow).delay(1100)}
-        style={[styles.floatingCta, { bottom: insets.bottom + 16 }]}
-      >
-        <PillCTA
-          label="Scan another"
-          icon={<Scan size={22} color={colors.white} />}
-          fullWidth
-          onPress={() => router.replace('/scan/camera')}
-        />
-      </Animated.View>
     </AtmosphericBackground>
   );
 }
@@ -147,7 +151,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: layout.screenPadding,
-    paddingBottom: 12,
     zIndex: 10,
   },
   circleBtn: {
@@ -156,32 +159,71 @@ const styles = StyleSheet.create({
     borderRadius: radii.full,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.card,
+    backgroundColor: 'rgba(255,255,255,0.55)',
+    borderWidth: 1,
+    borderColor: colors.glassBorder,
   },
-  heroThumbWrap: {
+  bloomWrap: {
     alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: spacing.md,
+    height: 300,
+  },
+  bloomGlow: {
+    position: 'absolute',
+    borderRadius: 9999,
+    opacity: 0.6,
+  },
+  bloomGlow1: {
+    width: 220,
+    height: 220,
+    backgroundColor: 'rgba(194,238,192,0.35)',
+    top: 30,
+    left: 40,
+  },
+  bloomGlow2: {
+    width: 260,
+    height: 260,
+    backgroundColor: 'rgba(125,166,125,0.18)',
+    bottom: 10,
+    right: 30,
+  },
+  bloomCircle: {
+    width: 240,
+    height: 240,
+    borderRadius: 120,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.95)',
+    shadowColor: '#416743',
+    shadowOffset: { width: 0, height: 20 },
+    shadowOpacity: 0.10,
+    shadowRadius: 60,
+    elevation: 12,
+  },
+  descriptionBlock: {
+    marginTop: spacing.lg,
     marginBottom: spacing.xl,
   },
-  analysisCard: {
-    marginTop: spacing.xl,
+  storageCard: {
     marginBottom: spacing.lg,
   },
-  analysisRow: {
+  actionRow: {
     flexDirection: 'row',
-    alignItems: 'center',
     gap: spacing.sm,
-    paddingVertical: 10,
+    marginBottom: spacing.xl,
   },
-  analysisBar: {
-    flex: 1,
-    height: 6,
+  disclaimerWrap: {
+    alignItems: 'center',
   },
-  section: {
-    marginBottom: spacing.lg,
-  },
-  floatingCta: {
-    position: 'absolute',
-    left: layout.screenPadding,
-    right: layout.screenPadding,
+  disclaimerChip: {
+    backgroundColor: 'rgba(255,255,255,0.5)',
+    borderRadius: radii.full,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.7)',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
   },
 });

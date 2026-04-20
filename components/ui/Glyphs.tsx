@@ -141,7 +141,7 @@ export const WarningSoft: React.FC<GlyphProps> = ({ size = 16, color = colors.co
   </Svg>
 );
 
-export const Droplet: React.FC<GlyphProps> = ({ size = 16, color = colors.sageInk, strokeWidth = defaultStroke }) => (
+export const Droplet: React.FC<GlyphProps> = ({ size = 16, color = colors.primary, strokeWidth = defaultStroke }) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
     <Path
       d="M12 3C12 3 5 11 5 15.5A7 7 0 0 0 19 15.5C19 11 12 3 12 3Z"
@@ -161,7 +161,7 @@ export const Clock: React.FC<GlyphProps> = ({ size = 16, color = defaultColor, s
 
 export const Chevron: React.FC<GlyphProps & { direction?: 'right' | 'left' | 'up' | 'down' }> = ({
   size = 16,
-  color = colors.inkDim,
+  color = colors.outline,
   strokeWidth = defaultStroke,
   direction = 'right',
 }) => {

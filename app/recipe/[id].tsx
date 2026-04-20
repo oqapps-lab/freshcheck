@@ -2,19 +2,16 @@ import React from 'react';
 import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import Animated, { FadeIn } from 'react-native-reanimated';
 import { AtmosphericBackground } from '@/components/ui/AtmosphericBackground';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { PillCTA } from '@/components/ui/PillCTA';
 import { VerdictPill } from '@/components/ui/VerdictPill';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Back, Heart, ChefHat, Clock } from '@/components/ui/Glyphs';
-import { colors, spacing, typeScale, radii, layout, toneColor } from '@/constants/tokens';
+import { colors, spacing, typeScale, radii, layout, motion } from '@/constants/tokens';
 import { recipes, garlicHerbChicken } from '@/mock/recipes';
 
-/**
- * Recipe Detail — /recipe/[id]
- * Ref: docs/06-design/DESIGN-GUIDE.md §7.4
- */
 export default function RecipeDetailScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
@@ -24,153 +21,157 @@ export default function RecipeDetailScreen() {
 
   return (
     <AtmosphericBackground>
-      <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
+      <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
         <Pressable
           onPress={() => router.back()}
           style={styles.circleBtn}
           accessibilityRole="button"
-          accessibilityLabel="Back"
+          accessibilityLabel="back"
         >
-          <Back size={22} color={colors.ink} />
+          <Back size={20} color={colors.primary} />
         </Pressable>
-        <Pressable style={styles.circleBtn} accessibilityRole="button" accessibilityLabel="Save">
-          <Heart size={22} color={colors.ink} />
+        <Pressable style={styles.circleBtn} accessibilityRole="button" accessibilityLabel="save">
+          <Heart size={18} color={colors.primary} />
         </Pressable>
       </View>
 
       <ScrollView
         contentContainerStyle={{
-          paddingTop: insets.top + 12,
+          paddingTop: insets.top + 72,
           paddingBottom: insets.bottom + 140,
+          paddingHorizontal: layout.screenPadding,
         }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Hero photo */}
-        <View style={[styles.heroPhoto, { backgroundColor: toneColor[recipe.tone].fill }]}>
-          <Text style={[typeScale.displayXL, { color: toneColor[recipe.tone].text, fontSize: 96, lineHeight: 104 }]}>
-            {recipe.title.charAt(0).toUpperCase()}
-          </Text>
-        </View>
+        {/* Hero disc */}
+        <Animated.View entering={FadeIn.duration(motion.slow)} style={styles.heroWrap}>
+          <View style={styles.heroDisc}>
+            <ChefHat size={80} color={colors.primary} strokeWidth={1.1} />
+          </View>
+        </Animated.View>
 
-        <View style={{ paddingHorizontal: layout.screenPadding }}>
-          <Text style={[typeScale.titleXL, { color: colors.ink, marginTop: spacing.lg }]}>
-            {recipe.title}
+        <Animated.View entering={FadeIn.duration(motion.moderate).delay(120)}>
+          <Text
+            style={[
+              typeScale.displayM,
+              { color: colors.onSurface, textAlign: 'center', marginTop: spacing.lg },
+            ]}
+          >
+            {recipe.title.toLowerCase()}
           </Text>
-
-          {/* Meta row */}
           <View style={styles.metaRow}>
-            <View style={styles.metaChip}>
-              <Clock size={14} color={colors.sageInk} />
-              <Text style={[typeScale.bodySmall, { color: colors.sageInk, marginLeft: 5 }]}>
-                {recipe.timeMinutes} min
-              </Text>
+            <Clock size={14} color={colors.secondary} />
+            <Text style={[typeScale.bodySmall, { color: colors.secondary, marginLeft: 6 }]}>
+              {recipe.timeMinutes} min · serves {recipe.servings}
+            </Text>
+          </View>
+          {recipe.expiringCount > 0 && (
+            <View style={styles.verdictCenter}>
+              <VerdictPill
+                verdict={recipe.tone}
+                label={`uses ${recipe.expiringCount} expiring`}
+                small
+              />
             </View>
-            <View style={styles.metaDot} />
-            <Text style={[typeScale.bodySmall, { color: colors.inkMuted }]}>
-              Serves {recipe.servings}
-            </Text>
-            <View style={styles.metaDot} />
-            <Text style={[typeScale.bodySmall, { color: colors.coralInk }]}>
-              Uses {recipe.expiringCount} expiring
-            </Text>
-          </View>
+          )}
+        </Animated.View>
 
-          {/* Tags */}
-          <View style={styles.tagRow}>
-            {recipe.tags.map((tag) => (
-              <View key={tag} style={styles.tag}>
-                <Text style={[typeScale.caption, { color: colors.sageInk }]}>{tag}</Text>
-              </View>
-            ))}
-          </View>
-
-          {/* Ingredients from fridge */}
-          {recipe.ingredients.length > 0 && (
-            <>
-              <View style={styles.sectionHead}>
-                <Text style={[typeScale.titleM, { color: colors.ink }]}>Ingredients</Text>
-                <Eyebrow>From your fridge</Eyebrow>
-              </View>
-
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.ingredientScroll}
-              >
-                {recipe.ingredients
-                  .filter((i) => i.fromFridge)
-                  .map((ingredient) => (
-                    <GlassCard
-                      key={ingredient.id}
-                      variant="default"
-                      style={styles.ingredientCard}
-                      padding={14}
-                    >
-                      <View
+        {/* Ingredients */}
+        {recipe.ingredients.length > 0 && (
+          <Animated.View
+            entering={FadeIn.duration(motion.moderate).delay(220)}
+            style={styles.section}
+          >
+            <Eyebrow uppercase style={{ marginBottom: 12 }}>
+              from your fridge
+            </Eyebrow>
+            <GlassCard variant="glass" radius="xl" padding={0}>
+              {recipe.ingredients
+                .filter((i) => i.fromFridge)
+                .map((ing, i, arr) => (
+                  <View
+                    key={ing.id}
+                    style={[
+                      styles.ingredientRow,
+                      i < arr.length - 1 && styles.ingredientDivider,
+                    ]}
+                  >
+                    <View style={styles.ingredientThumb}>
+                      <Text style={[typeScale.titleM, { color: colors.primary }]}>
+                        {ing.name.charAt(0).toLowerCase()}
+                      </Text>
+                    </View>
+                    <View style={{ flex: 1, marginLeft: spacing.md }}>
+                      <Text style={[typeScale.titleS, { color: colors.onSurface }]}>
+                        {ing.name.toLowerCase()}
+                      </Text>
+                      <Text
                         style={[
-                          styles.ingredientThumb,
-                          { backgroundColor: toneColor[ingredient.tone].fill },
+                          typeScale.bodySmall,
+                          { color: colors.secondary, marginTop: 2 },
                         ]}
                       >
-                        <Text style={[typeScale.titleXL, { color: toneColor[ingredient.tone].text }]}>
-                          {ingredient.name.charAt(0).toUpperCase()}
-                        </Text>
-                      </View>
-                      <Text style={[typeScale.titleS, { color: colors.ink, marginTop: 10 }]}>
-                        {ingredient.name}
+                        {ing.quantity ?? ''}
                       </Text>
-                      <VerdictPill
-                        verdict={ingredient.tone}
-                        label={ingredient.status}
-                        small
-                        style={{ marginTop: 6 }}
-                      />
-                    </GlassCard>
-                  ))}
-              </ScrollView>
+                    </View>
+                    <VerdictPill verdict={ing.tone} label={ing.status.toLowerCase()} small />
+                  </View>
+                ))}
+            </GlassCard>
 
-              {/* You need this — list */}
-              <View style={styles.needRow}>
-                <Eyebrow style={{ marginBottom: 8 }}>You'll also need</Eyebrow>
+            {recipe.ingredients.some((i) => !i.fromFridge) && (
+              <View style={styles.needList}>
+                <Eyebrow uppercase style={{ marginBottom: 8 }}>
+                  you'll also need
+                </Eyebrow>
                 {recipe.ingredients
                   .filter((i) => !i.fromFridge)
                   .map((i) => (
-                    <Text key={i.id} style={[typeScale.body, { color: colors.inkMuted, marginBottom: 4 }]}>
-                      · {i.name} {i.quantity ? `— ${i.quantity}` : ''}
+                    <Text
+                      key={i.id}
+                      style={[typeScale.body, { color: colors.onSurfaceVariant, marginBottom: 4 }]}
+                    >
+                      · {i.name.toLowerCase()} {i.quantity ? `— ${i.quantity}` : ''}
                     </Text>
                   ))}
               </View>
+            )}
+          </Animated.View>
+        )}
 
-              {/* Steps */}
-              <Text style={[typeScale.titleM, { color: colors.ink, marginTop: spacing.xl, marginBottom: spacing.md }]}>
-                Steps
-              </Text>
-              {recipe.steps.map((step) => (
-                <View key={step.number} style={styles.stepRow}>
-                  <View style={styles.stepNumber}>
-                    <Text style={[typeScale.titleS, { color: colors.white }]}>{step.number}</Text>
-                  </View>
-                  <Text style={[typeScale.body, styles.stepBody]}>{step.body}</Text>
+        {/* Steps */}
+        {recipe.steps.length > 0 && (
+          <Animated.View
+            entering={FadeIn.duration(motion.moderate).delay(340)}
+            style={styles.section}
+          >
+            <Eyebrow uppercase style={{ marginBottom: 12 }}>
+              the method
+            </Eyebrow>
+            {recipe.steps.map((step, i) => (
+              <View key={step.number} style={[styles.step, i === recipe.steps.length - 1 && { marginBottom: 0 }]}>
+                <View style={styles.stepNumber}>
+                  <Text style={[typeScale.label, { color: colors.white }]}>{step.number}</Text>
                 </View>
-              ))}
-            </>
-          )}
-        </View>
+                <Text style={[typeScale.body, styles.stepBody]}>{step.body.toLowerCase()}</Text>
+              </View>
+            ))}
+          </Animated.View>
+        )}
       </ScrollView>
 
-      {/* Bottom CTAs */}
-      <View style={[styles.floatingRow, { bottom: insets.bottom + 16 }]}>
+      <View style={[styles.floatingRow, { bottom: insets.bottom + 24 }]}>
         <PillCTA
-          label="Save"
-          icon={<Heart size={20} color={colors.sageInk} />}
+          label="save for later"
           variant="glass"
+          icon={<Heart size={16} color={colors.primary} />}
           style={{ flex: 1 }}
         />
         <PillCTA
-          label="Start cooking"
-          icon={<ChefHat size={20} color={colors.white} />}
+          label="start cooking"
           variant="primary"
-          style={{ flex: 1.6 }}
+          icon={<ChefHat size={18} color={colors.white} />}
+          style={{ flex: 1.4 }}
         />
       </View>
     </AtmosphericBackground>
@@ -187,7 +188,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: layout.screenPadding,
-    paddingBottom: 12,
     zIndex: 10,
   },
   circleBtn: {
@@ -196,87 +196,85 @@ const styles = StyleSheet.create({
     borderRadius: radii.full,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.card,
+    backgroundColor: 'rgba(255,255,255,0.55)',
+    borderWidth: 1,
+    borderColor: colors.glassBorder,
   },
-  heroPhoto: {
-    height: 280,
+  heroWrap: {
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: spacing.md,
   },
-  emoji: {
-    fontSize: 120,
+  heroDisc: {
+    width: 220,
+    height: 220,
+    borderRadius: 110,
+    backgroundColor: 'rgba(255,255,255,0.55)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.85)',
+    shadowColor: '#416743',
+    shadowOffset: { width: 0, height: 20 },
+    shadowOpacity: 0.10,
+    shadowRadius: 48,
+    elevation: 10,
   },
   metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     marginTop: 10,
   },
-  metaChip: {
-    flexDirection: 'row',
+  verdictCenter: {
     alignItems: 'center',
-    backgroundColor: colors.sageMist,
-    borderRadius: radii.full,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-  },
-  metaDot: {
-    width: 3,
-    height: 3,
-    borderRadius: 2,
-    backgroundColor: colors.inkDim,
-    marginHorizontal: 10,
-  },
-  tagRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
     marginTop: spacing.md,
   },
-  tag: {
-    backgroundColor: colors.mint,
-    borderRadius: radii.full,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-  },
-  sectionHead: {
+  section: {
     marginTop: spacing.xl,
-    marginBottom: spacing.sm,
-    gap: 4,
   },
-  ingredientScroll: {
-    gap: spacing.sm,
-    paddingRight: layout.screenPadding,
+  ingredientRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: spacing.lg,
+    paddingVertical: 14,
   },
-  ingredientCard: {
-    width: 140,
+  ingredientDivider: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: 'rgba(65,103,67,0.08)',
   },
   ingredientThumb: {
-    height: 72,
+    width: 44,
+    height: 44,
     borderRadius: radii.md,
+    backgroundColor: colors.primaryFixed,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.8)',
   },
-  needRow: {
+  needList: {
     marginTop: spacing.lg,
+    paddingHorizontal: 6,
   },
-  stepRow: {
+  step: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: spacing.md,
-    marginBottom: spacing.md,
+    marginBottom: spacing.lg,
   },
   stepNumber: {
     width: 28,
     height: 28,
-    borderRadius: radii.full,
-    backgroundColor: colors.sageInk,
+    borderRadius: 14,
+    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 2,
   },
   stepBody: {
     flex: 1,
-    color: colors.inkMuted,
+    color: colors.onSurfaceVariant,
   },
   floatingRow: {
     position: 'absolute',

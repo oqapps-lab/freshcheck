@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { colors, gradients, radii } from '@/constants/tokens';
+import { colors, gradients, Tone } from '@/constants/tokens';
 
 type Props = {
   daysLeft: number;
@@ -11,15 +11,12 @@ type Props = {
 };
 
 /**
- * Traffic-light fill bar. Green → amber → coral.
- * Fill % chosen by elapsed portion:
- *   < 50%  → countdownFresh (green)
- *   50-85% → countdownSoon  (green→amber)
- *   > 85%  → countdownPast  (amber→coral)
+ * v3 — thin 4pt progress bar. Gradient fill tone-based, no jarring colors.
+ * Green-mint by default, soft amber if past halfway, muted coral at the end.
  *
- * Ref: docs/06-design/DESIGN-GUIDE.md §5.9
+ * Track is near-invisible hairline (on-surface @ 8% opacity).
  */
-export const CountdownBar: React.FC<Props> = ({ daysLeft, totalDays, height = 6, style }) => {
+export const CountdownBar: React.FC<Props> = ({ daysLeft, totalDays, height = 4, style }) => {
   const elapsed = Math.max(0, Math.min(1, (totalDays - daysLeft) / totalDays));
   const fillGradient =
     elapsed >= 0.85
@@ -27,7 +24,6 @@ export const CountdownBar: React.FC<Props> = ({ daysLeft, totalDays, height = 6,
       : elapsed >= 0.5
       ? gradients.countdownSoon
       : gradients.countdownFresh;
-
   const fillPct = `${Math.round(elapsed * 100)}%` as const;
 
   return (

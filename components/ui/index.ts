@@ -1,4 +1,4 @@
-// Barrel export — import from '@/components/ui'
+// v3 barrel export
 export { AtmosphericBackground } from './AtmosphericBackground';
 export { OrbField } from './OrbField';
 export { GlassCard } from './GlassCard';
@@ -8,10 +8,7 @@ export { VerdictPill } from './VerdictPill';
 export { Eyebrow } from './Eyebrow';
 export { TokenDot } from './TokenDot';
 export { CountdownBar } from './CountdownBar';
-export { AccentBar } from './AccentBar';
 export { ProductRow } from './ProductRow';
 export { FloatingTabBar } from './FloatingTabBar';
-export { PulseGlow } from './PulseGlow';
-export { DecorDots } from './DecorDots';
-export { MonogramTile } from './MonogramTile';
+export { DewDrop } from './DewDrop';
 export * as Glyphs from './Glyphs';

@@ -1,78 +1,87 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import Animated, { FadeIn } from 'react-native-reanimated';
 import { AtmosphericBackground } from '@/components/ui/AtmosphericBackground';
 import { PillCTA } from '@/components/ui/PillCTA';
 import { Eyebrow } from '@/components/ui/Eyebrow';
-import { TokenDot } from '@/components/ui/TokenDot';
-import { Sprig } from '@/components/ui/Glyphs';
-import { colors, spacing, typeScale, layout, fonts } from '@/constants/tokens';
+import { Sprig, Chevron } from '@/components/ui/Glyphs';
+import { colors, spacing, typeScale, layout, motion, radii } from '@/constants/tokens';
 
-/**
- * Onboarding Welcome — /onboarding/welcome
- * Ref: docs/06-design/DESIGN-GUIDE.md §7.6
- */
 export default function WelcomeScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
 
   return (
     <AtmosphericBackground>
-      <View style={[styles.root, { paddingTop: insets.top + 40, paddingBottom: insets.bottom + 24 }]}>
-        {/* Wordmark at top */}
+      <View
+        style={[
+          styles.root,
+          { paddingTop: insets.top + 56, paddingBottom: insets.bottom + 40 },
+        ]}
+      >
         <View style={styles.brand}>
-          <Sprig size={24} color={colors.sageInk} />
-          <Text style={[typeScale.label, { color: colors.sageInk, marginLeft: 8 }]}>FreshCheck</Text>
+          <Sprig size={22} color={colors.primary} strokeWidth={1.4} />
+          <Text style={[typeScale.label, { color: colors.primary, marginLeft: 8 }]}>
+            freshcheck
+          </Text>
         </View>
 
-        {/* Illustration placeholder */}
-        <View style={styles.illustration}>
-          <Text style={{ fontSize: 160 }}>🍃</Text>
-        </View>
+        <Animated.View entering={FadeIn.duration(motion.slow)} style={styles.illustration}>
+          <View style={styles.illustrationDisc}>
+            <Sprig size={72} color={colors.primary} strokeWidth={1.1} />
+          </View>
+        </Animated.View>
 
-        <View style={styles.textBlock}>
-          <Text style={[typeScale.displayL, { color: colors.sageInk, textAlign: 'center' }]}>
-            Fresh or not?
+        <Animated.View entering={FadeIn.duration(motion.slow).delay(120)} style={styles.text}>
+          <Text
+            style={[
+              typeScale.displayL,
+              { color: colors.onSurface, textAlign: 'center' },
+            ]}
+          >
+            fresh or not?
           </Text>
           <Text
             style={[
-              typeScale.heroSerif,
-              { color: colors.ink, textAlign: 'center', fontFamily: fonts.serifHero, marginTop: 6 },
+              typeScale.titleM,
+              { color: colors.secondary, textAlign: 'center', marginTop: 10 },
             ]}
           >
-            Find out in 3 seconds
+            a quiet check before the fridge bites back
           </Text>
           <Text
-            style={[typeScale.body, { color: colors.inkMuted, textAlign: 'center', marginTop: spacing.md }]}
+            style={[
+              typeScale.body,
+              {
+                color: colors.onSurfaceVariant,
+                textAlign: 'center',
+                marginTop: spacing.lg,
+                maxWidth: 300,
+                alignSelf: 'center',
+              },
+            ]}
           >
-            Photograph any food in your fridge — AI reads freshness in an instant.
+            photograph anything in your kitchen — we'll tell you if it still
+            wants to be used.
           </Text>
-        </View>
+        </Animated.View>
 
-        {/* Social proof */}
-        <View style={styles.socialProof}>
-          <Eyebrow dotBefore>{'★ 4.5 · 12,400 families'}</Eyebrow>
-        </View>
-
-        {/* CTA + progress dots */}
-        <View style={styles.ctaBlock}>
+        <Animated.View
+          entering={FadeIn.duration(motion.slow).delay(260)}
+          style={styles.cta}
+        >
+          <Eyebrow center uppercase style={{ marginBottom: 14 }}>
+            ★ 4.5 · 12,400 families tend here
+          </Eyebrow>
           <PillCTA
-            label="Get started"
+            label="get started"
             fullWidth
+            iconRight={<Chevron size={16} color={colors.white} />}
             onPress={() => router.replace('/(tabs)')}
           />
-          <View style={styles.dots}>
-            <TokenDot tone="safe" size={8} />
-            <View style={{ width: 8, height: 8, borderRadius: 4, borderWidth: 1, borderColor: colors.sageDim }} />
-            <View style={{ width: 8, height: 8, borderRadius: 4, borderWidth: 1, borderColor: colors.sageDim }} />
-            <View style={{ width: 8, height: 8, borderRadius: 4, borderWidth: 1, borderColor: colors.sageDim }} />
-            <View style={{ width: 8, height: 8, borderRadius: 4, borderWidth: 1, borderColor: colors.sageDim }} />
-            <View style={{ width: 8, height: 8, borderRadius: 4, borderWidth: 1, borderColor: colors.sageDim }} />
-            <View style={{ width: 8, height: 8, borderRadius: 4, borderWidth: 1, borderColor: colors.sageDim }} />
-          </View>
-          <Eyebrow center style={{ marginTop: 10 }}>Step 1 of 7</Eyebrow>
-        </View>
+        </Animated.View>
       </View>
     </AtmosphericBackground>
   );
@@ -93,21 +102,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  textBlock: {
+  illustrationDisc: {
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    backgroundColor: 'rgba(255,255,255,0.55)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.85)',
+    shadowColor: '#416743',
+    shadowOffset: { width: 0, height: 16 },
+    shadowOpacity: 0.08,
+    shadowRadius: 40,
+    elevation: 6,
+  },
+  text: {
     width: '100%',
-    alignItems: 'center',
   },
-  socialProof: {
-    alignItems: 'center',
-  },
-  ctaBlock: {
+  cta: {
     width: '100%',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  dots: {
-    flexDirection: 'row',
-    gap: 8,
-    marginTop: spacing.sm,
   },
 });
