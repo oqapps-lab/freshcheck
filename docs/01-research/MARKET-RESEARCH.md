@@ -39,23 +39,31 @@
 | Hospitalizations | ~53,300 | CDC |
 | Deaths | 900+ | CDC |
 | Class 1 food recalls (2024) | 1,071 (up from 592 in 2023) | FDA |
+| Food recalls in 2025 | 320 (FDA + USDA) | PIRG Food for Thought 2026 |
+| FDA-investigated outbreaks 2025 | 30+ outbreaks | FDA / Food Safety News 2025 |
+| Severe foodborne illness cases | Doubled in 2024 vs prior year | CIDRAP / CDC 2025 |
+| Most common recall cause 2025 | Undeclared allergens (39%) | PIRG 2026 |
+| Recalls without brand recall issued | 17 of 28 outbreaks in 2025 | PIRG Food for Thought 2026 |
 
-**Takeaway:** Foodborne illness costs are massive and recalls nearly doubled YoY -- consumer anxiety about food safety is justified and growing.
+**Takeaway:** The food safety crisis is worsening. Severe cases doubled in 2024. In 2025, the FDA investigated 30+ outbreaks and 17 of them never triggered a brand recall — leaving consumers with zero official warning. This is exactly the gap FreshCheck addresses: real-time, personal-level food safety assessment when institutional systems fail.
 
 ### Relevant Market Segments
 
-| Market | 2025 Size | Projected Size | CAGR |
-|--------|-----------|----------------|------|
-| Food Technology (Global) | $222-229 billion | $515-538B by 2034 | ~9.8% |
-| Food Safety Testing | $25-26 billion | $48-53B by 2033 | ~7.8-8.3% |
-| Meal Planning Apps | $2.45 billion | $6.77B by 2034 | 10.5% |
-| AI-Driven Meal Planning Apps | Emerging | $1.98B by 2029 | ~28% |
-| Food Expiration Tracker Market | $1.2 billion (2023) | $3.5B by 2032 | ~12.6% |
-| US Recipe Apps | $440 million | $943M by 2033 | 10.0% |
-| Rapid Food Safety Testing | $7.85 billion | $17.6B by 2034 | 9.45% |
-| Diet & Nutrition Apps | Growing | -- | 16.64% |
+| Market | 2025 Size | Projected Size | CAGR | Source |
+|--------|-----------|----------------|------|--------|
+| Food Technology (Global) | $222-229 billion | $515-538B by 2034 | ~9.8% | Precedence Research |
+| Food Safety Testing | $25-26 billion | $48-53B by 2033 | ~7.8-8.3% | Grand View Research |
+| **Freshness Prediction AI** | **$4.63 billion** | **$25.07B by 2035** | **18.4%** | **market.us 2026** |
+| Food Waste App Market | $1.47 billion | $5.0B by 2035 | 13.1% | WiseGuy Reports 2026 |
+| Food Safety Software | $3.52 billion | $9.24B by 2033 | 11.2% | Cognitive Market Research |
+| Meal Planning Apps | $2.45 billion | $6.77B by 2034 | 10.5% | Business Research Insights |
+| AI-Driven Meal Planning Apps | Emerging | $1.98B by 2029 | ~28% | market.us |
+| Food Expiration Tracker Market | $1.2 billion (2023) | $3.5B by 2032 | ~12.6% | Dataintelo |
+| US Recipe Apps | $440 million | $943M by 2033 | 10.0% | Mark Spark Solutions |
+| Rapid Food Safety Testing | $7.85 billion | $17.6B by 2034 | 9.45% | Industry Arc |
+| Diet & Nutrition Apps | Growing | -- | 16.64% | Various |
 
-**Critical insight:** The AI-driven meal planning segment is growing at 28% CAGR -- the fastest of all related segments. FreshCheck sits at the intersection of multiple growing markets.
+**Critical insight:** The most directly relevant segment — Freshness Prediction AI — is growing at **18.4% CAGR** and will reach $25B by 2035. The Food Waste App Market ($1.47B → $5B) is the most precise proxy for FreshCheck's category. FreshCheck sits at the intersection of both.
 
 ---
 
@@ -605,13 +613,13 @@ Alternative calculation:
 
 | Фактор | Оценка | Комментарий |
 |--------|--------|-------------|
-| Размер рынка | Огромный | TAM $4.2B, SAM $1.44B, SOM Year 3: $3-15M ARR |
+| Размер рынка | Огромный | TAM $4.2B, SAM $1.44B, SOM Year 3: $3-15M ARR. Freshness Prediction AI: $4.63B → $25B (CAGR 18.4%) |
 | Проблема | Универсальная | Каждая семья теряет $2,913/год, 84% выбрасывают еду из-за путаницы с датами |
 | Конкуренция | Слабая | Фрагментированный рынок, нет приложения с комбинированным AI-функционалом |
 | Технология | Готова | 95-98% точность, мобильный инференс реален |
 | Монетизация | Доказана | Yuka = $7.3M ARR на подписках; FreshCheck может стартовать с $4.99/мес |
 | Viral потенциал | Высокий | "Is this still good?" — уже виральный формат на TikTok и Reddit |
-| Timing | Оптимальный | EPA-отчёт, CozZo уходит, регуляторные изменения, AI-хайп |
+| Timing | Оптимальный | EPA report, CozZo exits, AB 660 effective July 2026, NielsenIQ behavior shift, AI adoption peak |
 
 ### Условия для GO
 
@@ -619,6 +627,204 @@ Alternative calculation:
 2. **My Fridge — в v1**, не как "future feature" — это ключевой retention-механизм
 3. **Юридическая защита до запуска:** disclaimers, страховка product liability ($5-15K/год), консультация food safety attorney
 4. **Не использовать слово "safe" в абсолютном смысле** — только "appears fresh based on visual indicators"
+
+---
+
+## 14. Monetization Deep Dive — RevenueCat State of Subscription Apps 2026
+
+> Data basis: 115,000+ apps, $16B+ in tracked revenue, 1B+ transactions (RevenueCat 2026)
+
+### Market Concentration — Critical Finding
+
+| Segment | MRR Growth YoY |
+|---------|----------------|
+| Top 10% of apps | capture 94.5% of all subscription revenue |
+| Top 25% | 80%+ MRR growth |
+| Median app | 5.3% MRR growth |
+| Bottom 25% | −33% MRR decline |
+| Median monthly revenue | $492/month (−22% YoY) |
+
+**Implication for FreshCheck:** The market is winner-take-most. Quality, retention, and viral loop are decisive. Average apps die — strong apps grow exponentially. There is no "middle ground" in the 2026 subscription market.
+
+### Trial Strategy Benchmarks 2026
+
+| Trial Length | Median Conversion Rate |
+|--------------|----------------------|
+| < 4 days | 25.5% |
+| 4–16 days | ~32% |
+| **17–32 days** | **42.5%** ← optimal |
+| > 32 days | Declining |
+
+**Recommendation:** A 21-day trial (within the optimal 17–32 day window) maximizes conversion. As of 2026, 46.5% of apps use trials under 4 days — this is a mistake. FreshCheck should differentiate with 21 days.
+
+### LTV Benchmarks by Geography (12-Month LTV, USD)
+
+| Country | LTV |
+|---------|-----|
+| Switzerland | $28.5 |
+| Qatar | $27.5 |
+| Israel | $27.0 |
+| **USA** | **$19.9** |
+| Latin America | ~$8–12 |
+
+**Recommendation:** US-first strategy (highest food-app LTV + largest market). DACH as second expansion wave (Switzerland leads globally).
+
+### Hybrid Monetization — The 2026 Default Model
+
+RevenueCat identifies hybrid monetization as the default model for 2026:
+- **Layer 1:** Subscription (monthly / annual)
+- **Layer 2:** Usage-based (e.g., extra AI scans beyond free limit)
+- **Layer 3:** Consumables (e.g., premium recipe packs)
+
+**FreshCheck recommendation:** $4.99/month base subscription + $0.99 per 10 extra scans above the free limit → lowers entry barrier, monetizes power users.
+
+### Yuka Benchmark — Corrected 2026 Numbers
+
+| Metric | Value | Source |
+|--------|-------|--------|
+| Total revenue 2023 | $20.3M | GetLatka |
+| Subscription revenue 2024 | $7.17M (98.1% of total) | Yuka / CBInsights |
+| New US users per day | 25,000 | US Chamber of Commerce |
+| Growth strategy | Zero marketing (100% organic word-of-mouth) | Yuka |
+| Team size at $20M revenue | 79 people | GetLatka 2023 |
+
+**Correction:** The $7.3M figure cited earlier refers to subscription revenue in 2024 only. Total revenue in 2023 was $20.3M. FreshCheck's long-term realistic benchmark is $15–25M ARR at Yuka-comparable scale.
+
+---
+
+## 15. User Acquisition & Retention — Industry Benchmarks
+
+### App Retention Benchmarks 2026
+
+| Timepoint | Average Retention Rate |
+|-----------|----------------------|
+| Day 1 | 25–30% |
+| Day 7 | ~10–15% |
+| Day 30 | <10% (90%+ abandon before day 30) |
+| Day 90 | 2–5% |
+
+**Key risk:** Food apps face high churn — initial enthusiasm fades if users don't build a habit. The habit loop must be engineered into the product from day one.
+
+### Retention Strategies for FreshCheck
+
+| Strategy | Mechanism | Expected Impact |
+|----------|-----------|----------------|
+| **My Fridge (expiration tracking)** | Push alerts 3 days before expiration | Forces daily check-in behavior |
+| **Streak system** | "7 days zero food waste" badge | Gamification retention loop |
+| **Money saved counter** | "You saved $47 this month" | Tangible value = retention |
+| **Weekly recap push** | "This week: 3 items rescued" | Re-engagement for dormant users |
+| **Family sharing** | Household shares one Fridge | Social lock-in |
+
+### Demand Signal: NielsenIQ/ReFED Survey (November 2025)
+
+Survey of US households on behavior changes due to elevated food prices:
+- **45%** use leftovers more frequently → direct FreshCheck use case
+- **40%** more conscious about using fresh foods before they go bad → core My Fridge use case
+- **Conclusion:** Rising food prices are organically driving demand for food-waste tools — no marketing needed to create awareness of the problem.
+
+### User Personas — Purchase Behavior 2025/2026
+
+| Persona | Behavior | FreshCheck Relevance |
+|---------|----------|---------------------|
+| **Gen Z / Millennial Parents** | 73% actively look for recipe inspiration; 15% use AI to research products | Primary target: AI-native, household-oriented |
+| **Health-Conscious Millennials** | Interest in certifications (31%), allergen info (27%), functional foods | Premium tier candidates, high LTV |
+| **Meal Preppers** | Plan weekly, buy in bulk, fear spoilage | High My Fridge usage, long retention |
+
+---
+
+## 16. Competitive Threat Analysis — Big Tech
+
+### Apple Visual Intelligence (iPhone 16+)
+
+| Attribute | Detail |
+|-----------|--------|
+| **Launched** | September 2024, iPhone 16 / 16 Pro |
+| **Function** | General-purpose visual search assistant (Google Lens equivalent) |
+| **Food-specific** | No dedicated freshness assessment, no expiration tracking |
+| **Availability** | iPhone 16+ only — <20% of active iPhone installed base |
+| **Privacy** | On-device processing, no cloud history retained |
+| **Weakness** | Generalist tool — no food-specific training, no USDA knowledge, no workflow |
+
+**Assessment:** Apple Visual Intelligence is *not a direct competitor* in 2026. It can identify what an apple is — it cannot tell you whether it is still safe to eat. FreshCheck trains specifically on freshness classification, integrates USDA storage guidelines, and provides a complete workflow (scan → assess → track → cook).
+
+**Risk horizon:** 2027–2028, if Apple or Google launch a dedicated food safety feature. FreshCheck's moat: domain-specific training data + My Fridge habit lock-in + brand trust as "the food safety app."
+
+### Google Lens
+
+| Attribute | Detail |
+|-----------|--------|
+| **Function** | Barcode, text, and object recognition |
+| **Food-specific** | Can name food items, cannot assess their safety or freshness |
+| **Integration** | Built into Android camera, Google app |
+| **Weakness** | No freshness assessment, no expiration tracking, no fridge-to-recipe feature |
+
+**Assessment:** Google Lens is a discovery tool, not a food safety tool. Complementary to FreshCheck, not substitutable.
+
+### Big Tech Threat Timeline
+
+```
+2026: No direct threat — niche too specific for Big Tech focus
+2027: Possible Google Lens food safety feature addition
+2028+: Apple Intelligence could expand into food-specific domain
+```
+
+**Action recommendation:** Build maximum user retention and brand in 2026. Protect the data moat through proprietary freshness training data. Establish "FreshCheck = food safety" brand before Big Tech reacts.
+
+---
+
+## 17. Regulatory Deep Dive — AB 660 & Downstream Effects
+
+### California AB 660 — Key Details
+
+| Aspect | Detail |
+|--------|--------|
+| **Signed** | September 28, 2024 |
+| **Effective** | July 1, 2026 |
+| **Scope** | All packaged foods in California (except eggs and infant formula) |
+| **Banned from July 2026** | Consumer-facing "Sell By" date labels |
+| **Permitted** | "Best If Used By", "Best If Frozen By" (quality); "Use By", "Use Or Freeze By" (safety) |
+| **Expected impact** | 70,000 tons less food waste per year in California |
+| **Financial savings** | Billions $/year by preventing premature disposal |
+
+**Background:** Over 50 differently phrased date labels existed in the US. 91% of consumers reported at least occasionally discarding food past its "Sell By" date out of safety concern — even though "Sell By" is a retail stock rotation label, not a safety indicator.
+
+### Market Opportunity from AB 660
+
+1. **Confusion window (July 2026+):** Even with AB 660, many consumers will not understand the difference between "Best If Used By" (quality) and "Use By" (safety). FreshCheck explains both.
+2. **49 other states** have no comparable law → nationwide consumer confusion persists outside California.
+3. **FDA/USDA Joint RFI** (December 2024) signals federal standardization as the next step → transition period creates demand for "label translator" tools — this is FreshCheck's positioning.
+4. **PR opportunity:** AB 660 generates major media attention on date label confusion. FreshCheck can be positioned as the solution for the transition period, with media hooks around each milestone.
+
+### Regulatory Safety for FreshCheck
+
+- **FDA General Wellness Policy 2026:** Confirmed that consumer wellness apps do NOT require FDA approval.
+- **Liability minimization:** Position app as a "guidance tool," never as a guarantee. Disclaimer: "visual assessment only — not a guarantee of food safety." Never use the word "safe" in absolute terms.
+
+---
+
+## 18. Updated Demand Signals 2026
+
+### Consumer Behavior — New Data
+
+| Signal | Value | Source |
+|--------|-------|--------|
+| Use leftovers more frequently due to food prices | 45% of US households | NielsenIQ/ReFED, Nov 2025 |
+| More conscious about using fresh foods before they go bad | 40% of US households | NielsenIQ/ReFED, Nov 2025 |
+| Discard food due to "Sell By" date confusion | 91% of consumers | NRDC / AB 660 research |
+| Gen Z/Millennial parents seek recipe inspiration | 73% of this cohort | Foodnavigator 2026 |
+| Use AI to research products | 15% of Gen Z/Millennials | SPINS 2026 Food Trends |
+
+### App Store Opportunity Update
+
+- **OneThird** (January 2026): Rolled out AI Visual Inspection for soft fruits in retail stores — proves the technology is B2C-ready and commercially viable.
+- **MeatScan 2025** (Google Play): New app with AI meat recognition — market is beginning to fill, but no dominant app has emerged yet.
+- **Window is open but narrowing** — first-mover advantage is still achievable in 2026.
+
+### Competitive Landscape Update
+
+- **CozZo:** Confirmed shutdown December 2025 — users are actively seeking an alternative. Orphaned user base is a direct acquisition opportunity.
+- **Too Good To Go / Olio:** Focus on B2B/community surplus redistribution, not AI freshness detection → no direct overlap with FreshCheck's core value proposition.
+- **Winnow** (May 2025: major contract with Marriott International): Demonstrates strong B2B demand, but B2C remains underserved — FreshCheck's lane is clear.
 
 ---
 
@@ -661,3 +867,20 @@ Alternative calculation:
 - [California AB 660 - Food Labeling](https://www.armstrongteasdale.com/thought-leadership/food-beverage-and-consumer-products-issues-to-watch-for-2026/)
 - [Data Insights Market - Food Safety Apps](https://www.datainsightsmarket.com/reports/food-tracking-apps-528487)
 - [Bosch - US Food Waste Survey](https://www.bosch-home.com/us/experience/fresh-food-waste-study)
+- [market.us - Freshness Prediction AI Market (CAGR 18.4%)](https://market.us/report/freshness-prediction-ai-market/)
+- [WiseGuy Reports - Food Waste App Market 2035](https://www.wiseguyreports.com/reports/food-waste-app-market)
+- [Cognitive Market Research - Food Safety Software Market](https://www.cognitivemarketresearch.com/food-safety-software-market-report)
+- [RevenueCat - State of Subscription Apps 2026](https://www.revenuecat.com/state-of-subscription-apps/)
+- [RevenueCat - Hybrid Monetization 2026](https://www.revenuecat.com/blog/growth/ai-hybrid-monetization/)
+- [GetLatka - Yuka Revenue 2023 ($20.3M)](https://getlatka.com/companies/yuka.io)
+- [US Chamber of Commerce - Yuka Organic Growth](https://www.uschamber.com/co/good-company/the-leap/yuka-app-organic-growth)
+- [PIRG - Food for Thought 2026 (Recalls, Outbreaks)](https://pirg.org/edfund/resources/food-for-thought-2026/)
+- [CIDRAP - Severe Foodborne Illness Cases Doubled 2024](https://www.cidrap.umn.edu/foodborne-disease/report-illnesses-contaminated-food-increased-2024-severe-cases-doubled)
+- [NRDC - California AB 660 Sell By Ban](https://www.nrdc.org/press-releases/california-becomes-first-state-ban-sell-dates-packaged-foods)
+- [Videojet - California AB 660 Details](https://www.videojet.com/us/homepage/resources/learn/california-food-labeling-law-ab660.html)
+- [Android Authority - Apple Visual Intelligence vs Google Lens](https://www.androidauthority.com/apple-visual-intelligence-vs-google-lens-3499371/)
+- [NielsenIQ/ReFED - Consumer Behavior Survey Nov 2025](https://refed.org/articles/what-s-ahead-our-2026-food-waste-forecast/)
+- [SPINS / Foodnavigator - 2026 Food Trends Gen Z Millennials](https://www.foodnavigator-usa.com/Article/2026/01/21/spins-2026-food-trends-tech-personalization-and-functional-eating/)
+- [Global Insight Services - Food Waste Management Apps Market](https://www.globalinsightservices.com/reports/food-waste-management-apps-market/)
+- [BCC Research - AI in Food Safety 2026](https://blog.bccresearch.com/how-ai-is-transforming-food-safety-quality-control-in-2026)
+- [SaaStr - RevenueCat Top 10 Learnings ($16B Revenue)](https://www.saastr.com/the-top-10-learnings-from-revenuecats-state-of-subscription-apps-how-115000-mobile-apps-deliver-16b-in-revenue-whats-working-whats-quietly-killing-growth/)
