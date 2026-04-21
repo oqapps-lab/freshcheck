@@ -106,10 +106,10 @@ export const FloatingTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors
       <View pointerEvents="none" style={styles.innerTopHighlight} />
 
       <View style={styles.row}>
-        <TabButton onPress={() => navTo(indexRoute)} label="home">
+        <TabButton onPress={() => navTo(indexRoute)} label="home" active={activeName === 'index'}>
           <HomeIcon size={24} color={iconColor('index')} />
         </TabButton>
-        <TabButton onPress={() => navTo(fridgeRoute)} label="fridge">
+        <TabButton onPress={() => navTo(fridgeRoute)} label="fridge" active={activeName === 'fridge'}>
           <Fridge size={24} color={iconColor('fridge')} strokeWidth={1.5} />
         </TabButton>
 
@@ -137,10 +137,10 @@ export const FloatingTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors
           </Pressable>
         </View>
 
-        <TabButton onPress={() => navTo(recipesRoute)} label="recipes">
+        <TabButton onPress={() => navTo(recipesRoute)} label="recipes" active={activeName === 'recipes'}>
           <ChefHat size={24} color={iconColor('recipes')} strokeWidth={1.5} />
         </TabButton>
-        <TabButton onPress={() => navTo(profileRoute)} label="profile">
+        <TabButton onPress={() => navTo(profileRoute)} label="profile" active={activeName === 'profile'}>
           <User size={24} color={iconColor('profile')} strokeWidth={1.5} />
         </TabButton>
       </View>
@@ -151,12 +151,14 @@ export const FloatingTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors
 const TabButton: React.FC<{
   onPress: () => void;
   label: string;
+  active?: boolean;
   children: React.ReactNode;
-}> = ({ onPress, label, children }) => (
+}> = ({ onPress, label, active, children }) => (
   <Pressable
     onPress={onPress}
-    accessibilityRole="tab"
-    accessibilityLabel={label}
+    accessibilityRole="button"
+    accessibilityLabel={`${label} tab`}
+    accessibilityState={{ selected: !!active }}
     style={({ pressed }) => [styles.tab, pressed && { opacity: 0.55 }]}
   >
     {children}

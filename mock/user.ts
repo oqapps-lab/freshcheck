@@ -19,3 +19,10 @@ export const user = {
 };
 
 export const dayOfWeek = 'Tuesday'; // mock greeting metadata
+
+// Daily scan quota — shown identically on Home and Camera screens.
+// TODO Stage 4: derive usedToday from server-side scan counter.
+export const scanQuota = {
+  usedToday: 2,
+  perDay: 5,
+};

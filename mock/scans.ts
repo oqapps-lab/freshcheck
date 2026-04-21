@@ -62,8 +62,3 @@ export const scanDetail = {
   disclaimer: 'Visual check only — does not detect bacteria. When in doubt, throw it out.',
 };
 
-export const homeStats = {
-  saved: 127,
-  scans: 14,
-  wasted: 0,
-};

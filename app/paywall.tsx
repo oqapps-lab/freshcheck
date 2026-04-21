@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Pressable, Linking, Alert } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Animated, { FadeIn } from 'react-native-reanimated';
@@ -17,6 +18,22 @@ export default function PaywallScreen() {
   const [selected, setSelected] = useState<'monthly' | 'annual'>('annual');
 
   const dismiss = () => (router.canGoBack() ? router.back() : router.replace('/(tabs)'));
+
+  const startTrial = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    Alert.alert(
+      'coming soon',
+      'subscriptions wire up with Adapty in Stage 4. selected plan: ' + selected,
+    );
+  };
+
+  const restore = () => {
+    Haptics.selectionAsync().catch(() => {});
+    Alert.alert('no active subscription', 'once Adapty is wired, this will restore your purchases.');
+  };
+
+  const openTerms = () => Linking.openURL('https://example.com/terms').catch(() => {});
+  const openPrivacy = () => Linking.openURL('https://example.com/privacy').catch(() => {});
 
   const benefits = [
     'unlimited freshness checks',
@@ -41,8 +58,8 @@ export default function PaywallScreen() {
 
       <ScrollView
         contentContainerStyle={{
-          paddingTop: insets.top + 72,
-          paddingBottom: insets.bottom + 140,
+          paddingTop: insets.top + 48,
+          paddingBottom: insets.bottom + 150,
           paddingHorizontal: layout.screenPadding,
         }}
         showsVerticalScrollIndicator={false}
@@ -79,74 +96,100 @@ export default function PaywallScreen() {
           </GlassCard>
         </Animated.View>
 
-        <Animated.View entering={FadeIn.duration(motion.moderate).delay(180)} style={styles.plans}>
-          <Pressable
-            onPress={() => setSelected('monthly')}
-            style={[
-              styles.planCard,
-              selected === 'monthly' && styles.planCardSelected,
-            ]}
-          >
-            <Eyebrow uppercase>monthly</Eyebrow>
-            <Text style={[typeScale.displayM, { color: colors.onSurface, marginTop: 4 }]}>
-              $4.99
-            </Text>
-            <Text style={[typeScale.bodySmall, { color: colors.secondary, marginTop: 2 }]}>
-              per month
-            </Text>
-          </Pressable>
+        <Animated.View entering={FadeIn.duration(motion.moderate).delay(200)} style={styles.plans}>
+          <View style={styles.planWrap}>
+            <Pressable
+              onPress={() => setSelected('monthly')}
+              accessibilityRole="button"
+              accessibilityLabel="monthly plan $4.99"
+              accessibilityState={{ selected: selected === 'monthly' }}
+              style={[
+                styles.planCardInner,
+                selected === 'monthly' && styles.planCardSelected,
+              ]}
+            >
+              <Eyebrow uppercase>monthly</Eyebrow>
+              <Text style={[typeScale.displayM, { color: colors.onSurface, marginTop: 4 }]}>
+                $4.99
+              </Text>
+              <Text style={[typeScale.bodySmall, { color: colors.secondary, marginTop: 2 }]}>
+                per month
+              </Text>
+            </Pressable>
+          </View>
 
-          <Pressable
-            onPress={() => setSelected('annual')}
-            style={[
-              styles.planCard,
-              styles.planCardAnnual,
-              selected === 'annual' && styles.planCardSelected,
-            ]}
-          >
-            <LinearGradient
-              colors={gradients.verdictFresh}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={StyleSheet.absoluteFill}
-            />
-            <View style={styles.saveChip}>
+          <View style={styles.planWrap}>
+            <View style={styles.saveChip} pointerEvents="none">
               <Text style={[typeScale.caption, { color: colors.onPrimary }]}>save 33%</Text>
             </View>
-            <Eyebrow uppercase color="primary">annual</Eyebrow>
-            <Text style={[typeScale.displayM, { color: colors.primary, marginTop: 4 }]}>
-              $3.33
-            </Text>
-            <Text style={[typeScale.bodySmall, { color: colors.secondary, marginTop: 2 }]}>
-              per month · billed yearly
-            </Text>
-          </Pressable>
+            <Pressable
+              onPress={() => setSelected('annual')}
+              accessibilityRole="button"
+              accessibilityLabel="annual plan $3.33 per month, save 33%"
+              accessibilityState={{ selected: selected === 'annual' }}
+              style={[
+                styles.planCardInner,
+                styles.planCardAnnual,
+                selected === 'annual' && styles.planCardSelected,
+              ]}
+            >
+              <LinearGradient
+                colors={gradients.verdictFresh}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+              <Eyebrow uppercase color="primary">annual</Eyebrow>
+              <Text style={[typeScale.displayM, { color: colors.primary, marginTop: 4 }]}>
+                $3.33
+              </Text>
+              <Text style={[typeScale.bodySmall, { color: colors.secondary, marginTop: 2 }]}>
+                per month · billed yearly
+              </Text>
+            </Pressable>
+          </View>
         </Animated.View>
 
-        <Animated.View
-          entering={FadeIn.duration(motion.moderate).delay(280)}
-          style={{ alignItems: 'center', marginTop: spacing.xl }}
-        >
-          <Eyebrow uppercase>★ 4.5 · 12,400 families tend here</Eyebrow>
-        </Animated.View>
-
-        <Animated.View
-          entering={FadeIn.duration(motion.moderate).delay(340)}
-          style={styles.links}
-        >
-          <Text style={[typeScale.caption, { color: colors.secondary }]}>restore</Text>
-          <Text style={[typeScale.caption, { color: colors.outline }]}>·</Text>
-          <Text style={[typeScale.caption, { color: colors.secondary }]}>terms</Text>
-          <Text style={[typeScale.caption, { color: colors.outline }]}>·</Text>
-          <Text style={[typeScale.caption, { color: colors.secondary }]}>privacy</Text>
-        </Animated.View>
       </ScrollView>
 
-      <View style={[styles.floatingCta, { bottom: insets.bottom + 24 }]}>
-        <PillCTA label="try 7 days free" fullWidth />
-        <Pressable onPress={dismiss} style={{ alignItems: 'center', marginTop: 14 }}>
-          <Text style={[typeScale.caption, { color: colors.secondary }]}>not now</Text>
-        </Pressable>
+      <LinearGradient
+        colors={['rgba(253,249,240,0)', colors.canvas]}
+        locations={[0, 1]}
+        pointerEvents="none"
+        style={[styles.floatingFade, { bottom: insets.bottom + 128 }]}
+      />
+
+      <View
+        style={[
+          styles.floatingCta,
+          {
+            bottom: 0,
+            paddingBottom: insets.bottom + 14,
+            paddingTop: 14,
+          },
+        ]}
+      >
+        <View style={styles.socialProofFooter}>
+          <Eyebrow uppercase>★ 4.5 · 12,400 families tend here</Eyebrow>
+        </View>
+        <PillCTA label="try 7 days free" onPress={startTrial} fullWidth />
+        <View style={styles.links}>
+          <Pressable onPress={dismiss} accessibilityRole="button" accessibilityLabel="not now, dismiss paywall" hitSlop={8}>
+            <Text style={[typeScale.caption, { color: colors.secondary }]}>not now</Text>
+          </Pressable>
+          <Text style={[typeScale.caption, { color: colors.outline }]}>·</Text>
+          <Pressable onPress={restore} accessibilityRole="button" accessibilityLabel="restore purchases" hitSlop={8}>
+            <Text style={[typeScale.caption, { color: colors.secondary }]}>restore</Text>
+          </Pressable>
+          <Text style={[typeScale.caption, { color: colors.outline }]}>·</Text>
+          <Pressable onPress={openTerms} accessibilityRole="link" accessibilityLabel="terms of service" hitSlop={8}>
+            <Text style={[typeScale.caption, { color: colors.secondary }]}>terms</Text>
+          </Pressable>
+          <Text style={[typeScale.caption, { color: colors.outline }]}>·</Text>
+          <Pressable onPress={openPrivacy} accessibilityRole="link" accessibilityLabel="privacy policy" hitSlop={8}>
+            <Text style={[typeScale.caption, { color: colors.secondary }]}>privacy</Text>
+          </Pressable>
+        </View>
       </View>
     </AtmosphericBackground>
   );
@@ -175,10 +218,10 @@ const styles = StyleSheet.create({
     borderColor: colors.glassBorder,
   },
   hero: {
-    marginBottom: spacing.xl,
+    marginBottom: spacing.lg,
   },
   benefits: {
-    marginBottom: spacing.xl,
+    marginBottom: spacing.lg,
   },
   benefitRow: {
     flexDirection: 'row',
@@ -197,9 +240,13 @@ const styles = StyleSheet.create({
   plans: {
     flexDirection: 'row',
     gap: spacing.md,
+    marginTop: 14,
   },
-  planCard: {
+  planWrap: {
     flex: 1,
+  },
+  planCardInner: {
+    width: '100%',
     backgroundColor: 'rgba(255,255,255,0.55)',
     borderRadius: radii.xl,
     padding: spacing.lg,
@@ -222,16 +269,33 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 3,
     borderRadius: radii.full,
+    zIndex: 2,
   },
   links: {
     flexDirection: 'row',
     justifyContent: 'center',
     gap: 12,
-    marginTop: spacing.md,
+    marginTop: 10,
   },
   floatingCta: {
     position: 'absolute',
-    left: layout.screenPadding,
-    right: layout.screenPadding,
+    left: 0,
+    right: 0,
+    paddingHorizontal: layout.screenPadding,
+    backgroundColor: colors.canvas,
+  },
+  floatingFade: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    height: 48,
+  },
+  socialProofFooter: {
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  notNow: {
+    alignItems: 'center',
+    marginTop: 14,
   },
 });

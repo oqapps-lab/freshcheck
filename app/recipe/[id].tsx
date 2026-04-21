@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import Animated, { FadeIn } from 'react-native-reanimated';
@@ -18,6 +19,17 @@ export default function RecipeDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
 
   const recipe = recipes.find((r) => r.id === id) ?? garlicHerbChicken;
+  const [saved, setSaved] = useState(false);
+
+  const toggleSave = () => {
+    Haptics.selectionAsync().catch(() => {});
+    setSaved((s) => !s);
+  };
+
+  const startCooking = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    // TODO wire step-by-step mode when cooking UI lands
+  };
 
   return (
     <AtmosphericBackground>
@@ -30,8 +42,14 @@ export default function RecipeDetailScreen() {
         >
           <Back size={20} color={colors.primary} />
         </Pressable>
-        <Pressable style={styles.circleBtn} accessibilityRole="button" accessibilityLabel="save">
-          <Heart size={18} color={colors.primary} />
+        <Pressable
+          onPress={toggleSave}
+          style={styles.circleBtn}
+          accessibilityRole="button"
+          accessibilityLabel={saved ? 'unsave recipe' : 'save recipe'}
+          accessibilityState={{ selected: saved }}
+        >
+          <Heart size={18} color={saved ? colors.primary : colors.secondary} />
         </Pressable>
       </View>
 
@@ -75,6 +93,32 @@ export default function RecipeDetailScreen() {
             </View>
           )}
         </Animated.View>
+
+        {/* Empty-state for recipes without data yet */}
+        {recipe.ingredients.length === 0 && recipe.steps.length === 0 && (
+          <Animated.View
+            entering={FadeIn.duration(motion.moderate).delay(220)}
+            style={styles.emptySection}
+          >
+            <GlassCard variant="glass" radius="xl" padding={24} style={styles.emptyCard}>
+              <Text style={[typeScale.titleS, { color: colors.onSurface, textAlign: 'center' }]}>
+                full recipe coming soon
+              </Text>
+              <Text
+                style={[
+                  typeScale.body,
+                  {
+                    color: colors.secondary,
+                    textAlign: 'center',
+                    marginTop: spacing.sm,
+                  },
+                ]}
+              >
+                we're still writing up the ingredients and steps — check back shortly.
+              </Text>
+            </GlassCard>
+          </Animated.View>
+        )}
 
         {/* Ingredients */}
         {recipe.ingredients.length > 0 && (
@@ -162,16 +206,18 @@ export default function RecipeDetailScreen() {
 
       <View style={[styles.floatingRow, { bottom: insets.bottom + 24 }]}>
         <PillCTA
-          label="save"
+          label={saved ? 'saved' : 'save'}
           variant="glass"
           icon={<Heart size={16} color={colors.primary} />}
           compact
+          onPress={toggleSave}
           style={{ flex: 1 }}
         />
         <PillCTA
           label="start cooking"
           variant="primary"
           icon={<ChefHat size={18} color={colors.white} />}
+          onPress={startCooking}
           style={{ flex: 2 }}
         />
       </View>
@@ -283,5 +329,11 @@ const styles = StyleSheet.create({
     right: layout.screenPadding,
     flexDirection: 'row',
     gap: spacing.sm,
+  },
+  emptySection: {
+    marginTop: spacing.xl,
+  },
+  emptyCard: {
+    alignItems: 'center',
   },
 });

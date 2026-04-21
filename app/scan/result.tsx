@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Pressable, Share as RNShare } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -20,7 +21,24 @@ import { scanDetail } from '@/mock/scans';
 export default function ScanResultScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const verdictWord = 'fresh'; // from scanDetail.verdict, lowercased
+  const verdictWord = scanDetail.verdictLabel.toLowerCase();
+
+  const shareResult = async () => {
+    Haptics.selectionAsync().catch(() => {});
+    try {
+      await RNShare.share({
+        message: `FreshCheck says my ${scanDetail.product.toLowerCase()} is ${verdictWord} (${scanDetail.confidence}% sure).`,
+      });
+    } catch {
+      // user cancelled share — no-op
+    }
+  };
+
+  const saveToFridge = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    // TODO Stage 4: push scan into Supabase fridge table.
+    router.replace('/(tabs)/fridge');
+  };
 
   return (
     <AtmosphericBackground>
@@ -34,7 +52,12 @@ export default function ScanResultScreen() {
           <Back size={20} color={colors.primary} />
         </Pressable>
         <Text style={[typeScale.label, { color: colors.secondary }]}>scan result</Text>
-        <Pressable style={styles.circleBtn} accessibilityRole="button" accessibilityLabel="share">
+        <Pressable
+          onPress={shareResult}
+          style={styles.circleBtn}
+          accessibilityRole="button"
+          accessibilityLabel="share result"
+        >
           <Share size={18} color={colors.primary} />
         </Pressable>
       </View>
@@ -114,7 +137,7 @@ export default function ScanResultScreen() {
           <PillCTA
             variant="primary"
             label="save to my fridge"
-            onPress={() => router.back()}
+            onPress={saveToFridge}
             style={{ flex: 1.4 }}
           />
           <PillCTA

@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Pressable, Linking, Alert } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Animated, { FadeIn } from 'react-native-reanimated';
@@ -15,31 +16,58 @@ export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
 
+  const comingSoon = (area: string) => {
+    Haptics.selectionAsync().catch(() => {});
+    Alert.alert('coming soon', `${area} lands in the next build.`);
+  };
+
   const menu = [
     {
       section: 'account',
       items: [
         { label: 'subscription', onPress: () => router.push('/paywall') },
-        { label: 'scan history' },
+        { label: 'scan history', onPress: () => comingSoon('scan history') },
       ],
     },
     {
       section: 'settings',
       items: [
-        { label: 'notifications' },
-        { label: 'diet preferences' },
-        { label: 'units · °f or °c' },
+        { label: 'notifications', onPress: () => comingSoon('notification settings') },
+        { label: 'diet preferences', onPress: () => comingSoon('diet preferences') },
+        { label: 'units · °f or °c', onPress: () => comingSoon('unit settings') },
       ],
     },
     {
       section: 'help',
       items: [
-        { label: 'send feedback' },
-        { label: 'about freshcheck' },
-        { label: 'privacy & terms' },
+        {
+          label: 'send feedback',
+          onPress: () => {
+            Linking.openURL('mailto:hello@freshcheck.app?subject=FreshCheck feedback').catch(() =>
+              Alert.alert('no mail app', 'write us at hello@freshcheck.app'),
+            );
+          },
+        },
+        {
+          label: 'about freshcheck',
+          onPress: () =>
+            Alert.alert(
+              'about freshcheck',
+              'v0.1.0 — AI food safety companion. Photograph anything, know if it\u2019s still good to eat.',
+            ),
+        },
+        {
+          label: 'privacy & terms',
+          onPress: () => Linking.openURL('https://example.com/privacy').catch(() => {}),
+        },
       ],
     },
   ];
+
+  const signOut = () => {
+    Haptics.selectionAsync().catch(() => {});
+    Alert.alert('sign out', 'auth wires up in Stage 4 with Supabase.');
+  };
 
   return (
     <AtmosphericBackground>
@@ -126,6 +154,7 @@ export default function ProfileScreen() {
                     pressed && { opacity: 0.55 },
                   ]}
                   accessibilityRole="button"
+                  accessibilityLabel={item.label}
                 >
                   <Text style={[typeScale.body, { color: colors.onSurface }]}>{item.label}</Text>
                   <Chevron size={16} direction="right" color={colors.outline} />
@@ -136,9 +165,17 @@ export default function ProfileScreen() {
         ))}
 
         <View style={styles.footer}>
-          <Text style={[typeScale.body, { color: colors.secondary, textAlign: 'center' }]}>
-            sign out
-          </Text>
+          <Pressable
+            onPress={signOut}
+            accessibilityRole="button"
+            accessibilityLabel="sign out"
+            hitSlop={12}
+            style={({ pressed }) => pressed && { opacity: 0.55 }}
+          >
+            <Text style={[typeScale.body, { color: colors.secondary, textAlign: 'center' }]}>
+              sign out
+            </Text>
+          </Pressable>
           <Text
             style={[
               typeScale.caption,

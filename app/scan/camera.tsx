@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -7,6 +7,7 @@ import * as Haptics from 'expo-haptics';
 import Svg, { Circle } from 'react-native-svg';
 import { Close, Flash } from '@/components/ui/Glyphs';
 import { colors, gradients, spacing, radii, typeScale, layout } from '@/constants/tokens';
+import { scanQuota } from '@/mock/user';
 
 /**
  * Camera — /scan/camera (v3 — "The Viewfinder Frame" + "The Shutter" from Stitch)
@@ -16,10 +17,16 @@ import { colors, gradients, spacing, radii, typeScale, layout } from '@/constant
 export default function CameraScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const [flashOn, setFlashOn] = useState(false);
 
   const handleShutter = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
     router.replace('/scan/result');
+  };
+
+  const toggleFlash = () => {
+    Haptics.selectionAsync().catch(() => {});
+    setFlashOn((v) => !v);
   };
 
   return (
@@ -58,18 +65,22 @@ export default function CameraScreen() {
           <Close size={18} color={colors.primary} />
         </Pressable>
         <Pressable
-          style={styles.circleBtn}
+          onPress={toggleFlash}
+          style={[styles.circleBtn, flashOn && styles.circleBtnOn]}
           accessibilityRole="button"
-          accessibilityLabel="toggle flash"
+          accessibilityLabel={flashOn ? 'turn flash off' : 'turn flash on'}
+          accessibilityState={{ selected: flashOn }}
         >
-          <Flash size={18} color={colors.primary} />
+          <Flash size={18} color={flashOn ? colors.white : colors.primary} />
         </Pressable>
       </View>
 
       {/* Shutter with quota chip + progress ring */}
       <View style={[styles.shutterArea, { bottom: insets.bottom + 48 }]}>
         <View style={styles.quotaChip}>
-          <Text style={[typeScale.labelSmall, { color: colors.secondary }]}>2 of 5 today</Text>
+          <Text style={[typeScale.labelSmall, { color: colors.secondary }]}>
+            {scanQuota.usedToday} of {scanQuota.perDay} today
+          </Text>
         </View>
         <View style={styles.shutterStack}>
           {/* Progress ring */}
@@ -194,6 +205,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.55)',
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.85)',
+  },
+  circleBtnOn: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   shutterArea: {
     position: 'absolute',

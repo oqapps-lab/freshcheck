@@ -6,6 +6,7 @@ type Props = {
   size?: number;
   children?: React.ReactNode;
   style?: ViewStyle;
+  accessibilityLabel?: string;
 };
 
 /**
@@ -18,8 +19,10 @@ type Props = {
  *
  * Ref: code.html .dew-drop
  */
-export const DewDrop: React.FC<Props> = ({ size = 48, children, style }) => (
+export const DewDrop: React.FC<Props> = ({ size = 48, children, style, accessibilityLabel }) => (
   <View
+    accessibilityLabel={accessibilityLabel}
+    accessible={!!accessibilityLabel}
     style={[
       styles.drop,
       {

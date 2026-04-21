@@ -17,7 +17,7 @@ import {
   Chevron,
 } from '@/components/ui/Glyphs';
 import { colors, spacing, typeScale, layout, motion, radii } from '@/constants/tokens';
-import { user, dayOfWeek } from '@/mock/user';
+import { user, scanQuota } from '@/mock/user';
 import { fridgeSummary, fridgeItems } from '@/mock/fridge';
 import { recentScans } from '@/mock/scans';
 
@@ -81,7 +81,11 @@ export default function HomeScreen() {
               </Text>
               <View style={styles.dewRow}>
                 {attentionItems.map((item) => (
-                  <DewDrop key={item.id} size={48}>
+                  <DewDrop
+                    key={item.id}
+                    size={48}
+                    accessibilityLabel={item.name.toLowerCase()}
+                  >
                     <Text style={[typeScale.titleM, { color: colors.primary }]}>
                       {item.name.charAt(0).toLowerCase()}
                     </Text>
@@ -140,7 +144,7 @@ export default function HomeScreen() {
         {/* 3. TODAY — quiet inline stats (merged to avoid tab-bar anchor overlap) */}
         <Animated.View entering={FadeIn.duration(motion.moderate).delay(160)} style={styles.todayInline}>
           <Text style={[typeScale.caption, { color: colors.secondary }]}>
-            2 of 5 scans today · {fridgeSummary.total} items tracked · {fridgeSummary.expiring} need soon
+            {scanQuota.usedToday} of {scanQuota.perDay} scans today · {fridgeSummary.total} items tracked · {fridgeSummary.expiring} need soon
           </Text>
         </Animated.View>
       </ScrollView>

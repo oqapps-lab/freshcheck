@@ -87,5 +87,5 @@ export const fridgeItems: FridgeItem[] = [
 
 export const fridgeSummary = {
   total: fridgeItems.length,
-  expiring: fridgeItems.filter((i) => i.tone === 'past').length,
+  expiring: fridgeItems.filter((i) => i.tone === 'past' || i.tone === 'soon').length,
 };

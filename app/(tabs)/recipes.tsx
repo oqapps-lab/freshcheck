@@ -42,6 +42,9 @@ export default function RecipesScreen() {
               <Pressable
                 key={r.id}
                 onPress={() => router.push(`/recipe/${r.id}`)}
+                accessibilityRole="button"
+                accessibilityLabel={`open recipe ${r.title.toLowerCase()}`}
+                accessibilityHint={`${r.timeMinutes} minutes, serves ${r.servings}`}
                 style={({ pressed }) => [pressed && { opacity: 0.88 }]}
               >
                 <GlassCard variant="glass" radius="xl" padding={0} style={styles.card}>
@@ -82,6 +85,9 @@ export default function RecipesScreen() {
               <Pressable
                 key={r.id}
                 onPress={() => router.push(`/recipe/${r.id}`)}
+                accessibilityRole="button"
+                accessibilityLabel={`open recipe ${r.title.toLowerCase()}`}
+                accessibilityHint={`${r.timeMinutes} minutes, serves ${r.servings}`}
                 style={({ pressed }) => [pressed && { opacity: 0.88 }]}
               >
                 <GlassCard variant="glass" radius="xl" padding={0} style={styles.card}>

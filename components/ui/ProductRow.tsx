@@ -55,14 +55,14 @@ export const ProductRow: React.FC<Props> = ({
             transition={160}
           />
         ) : (
-          <Text style={[typeScale.titleM, { color: t.accent }]}>
+          <Text style={[typeScale.titleL, { color: t.accent }]}>
             {name.charAt(0).toLowerCase()}
           </Text>
         )}
       </View>
 
       <View style={styles.body}>
-        <Text style={[typeScale.titleS, { color: colors.onSurface }]} numberOfLines={1}>
+        <Text style={[typeScale.titleS, { color: colors.onSurface }]} numberOfLines={2}>
           {name.toLowerCase()}
         </Text>
         <Text style={[typeScale.bodySmall, { color: colors.onSurfaceVariant, marginTop: 2 }]}>
