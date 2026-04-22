@@ -21,6 +21,7 @@ import { colors, spacing, typeScale, layout, motion, radii } from '@/constants/t
 import { user, scanQuota } from '@/mock/user';
 import { useFridge } from '@/src/hooks/useFridge';
 import { useScans } from '@/src/hooks/useScans';
+import { formatRelative } from '@/src/lib/formatDate';
 
 /**
  * Home Dashboard v3 — The Dew-Drenched Conservatory
@@ -151,7 +152,7 @@ export default function HomeScreen() {
                       { color: colors.secondary, marginTop: 2 },
                     ]}
                   >
-                    {lastScan.scannedAt.toLowerCase()} · {lastScan.confidence}% sure
+                    {formatRelative(lastScan.scannedAt)} · {lastScan.confidence}% sure
                   </Text>
                 </View>
               </Pressable>
