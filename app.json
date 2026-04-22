@@ -4,10 +4,9 @@
     "slug": "freshcheck",
     "version": "0.1.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
     "scheme": "freshcheck",
-    "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#FDF9F0",
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.gazetastreet.freshcheck"
@@ -15,14 +14,17 @@
     "android": {
       "package": "com.gazetastreet.freshcheck",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#FDF9F0"
       }
     },
     "plugins": [
       "expo-router",
-      "expo-haptics"
+      "expo-image"
     ],
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    },
     "experiments": {
       "typedRoutes": true
     }

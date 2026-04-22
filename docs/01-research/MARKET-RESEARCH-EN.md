@@ -69,57 +69,57 @@
 
 ## 1.5. Problem in Numbers
 
-| Показатель | Значение | Источник |
-|-----------|----------|----------|
-| Ежегодные потери на еду (семья из 4) | $2,913/год (~$56/неделю) | EPA 2025 |
-| Еженедельные потери (средний американец) | $53.81/неделю | Bosch 2025 Survey |
-| % еды, выбрасываемой преждевременно из-за дат | 84% американцев | NRDC |
-| % потребителей, выбрасывающих еду из-за порчи | 52% (главная причина) | USDA/ReFed |
-| Стоимость пищевых отравлений (US/год) | $74.7 млрд | USDA ERS 2025 |
-| Рост отзывов продуктов (YoY) | +81% (592 → 1,071 в 2024) | FDA |
-| Мировые пищевые отходы | 1.05 млрд тонн/год | UNEP 2024 |
-| Доля домохозяйств в отходах | 61% всех пищевых отходов | UNEP |
-| Путаница с маркировкой дат | 88% потребителей выбрасывают еду по датам без необходимости | NPR/USDA 2025 |
-| Влияние пищевых сканеров (Yuka) | 94% пользователей изменили покупательское поведение | Yuka |
+| Metric | Value | Source |
+|--------|-------|--------|
+| Annual food loss per household of 4 | $2,913/year (~$56/week) | EPA 2025 |
+| Weekly food waste per average American | $53.81/week | Bosch 2025 Survey |
+| % of food discarded prematurely due to date labels | 84% of Americans | NRDC |
+| % of consumers discarding food due to spoilage | 52% (primary reason) | USDA/ReFed |
+| Cost of foodborne illness (US/year) | $74.7 billion | USDA ERS 2025 |
+| Growth in product recalls (YoY) | +81% (592 → 1,071 in 2024) | FDA |
+| Global food waste | 1.05 billion tons/year | UNEP 2024 |
+| Household share of all food waste | 61% | UNEP |
+| Date label confusion | 88% of consumers discard food based on labels unnecessarily | NPR/USDA 2025 |
+| Impact of food scanners (Yuka) | 94% of users changed purchasing behavior | Yuka |
 
-**Ключевой вывод:** Проблема ухудшается: стоимость пищевых потерь по данным EPA 2025 почти удвоилась по сравнению с предыдущими оценками USDA. Отзывы продуктов выросли на 81% за год. Потребительская тревога обоснована и растёт.
+**Key takeaway:** The problem is getting worse: the EPA 2025 report nearly doubled its estimated food loss cost per consumer compared to prior USDA estimates. Product recalls grew 81% year-over-year. Consumer anxiety is justified and rising.
 
 ---
 
 ## 2. Google Trends & Search Interest Analysis
 
-### Объёмы поиска (оценки, US, ежемесячно)
+### Estimated Monthly Search Volumes (US)
 
-| Запрос | Оценка объёма/мес | Тренд |
-|--------|-------------------|-------|
-| "how long does chicken last in the fridge" | 50,000–110,000+ | Стабильно высокий, вечнозелёный |
-| "how to tell if meat is bad" | 30,000–60,000 | Стабильный |
-| "food poisoning" | 300,000–450,000 (глобально) | Стабильный с летними пиками |
-| "is this food still good" | 5,000–15,000 | Растёт (голосовой поиск) |
-| "food expiration tracker app" | 1,000–5,000 | Нишевый, растущий |
-| "food freshness checker" | 1,000–3,000 | Ранняя стадия |
-| "AI food scanner" | 1,000–5,000 | Формирующийся, быстро растёт |
+| Query | Est. Volume/Month | Trend |
+|-------|-------------------|-------|
+| "how long does chicken last in the fridge" | 50,000–110,000+ | Consistently high, evergreen |
+| "how to tell if meat is bad" | 30,000–60,000 | Stable |
+| "food poisoning" | 300,000–450,000 (global) | Stable with summer peaks |
+| "is this food still good" | 5,000–15,000 | Growing (voice search) |
+| "food expiration tracker app" | 1,000–5,000 | Niche, growing |
+| "food freshness checker" | 1,000–3,000 | Early stage |
+| "AI food scanner" | 1,000–5,000 | Emerging, fast-growing |
 
-### Сезонность
+### Seasonality
 
-- **Лето (июнь–август):** пик +30–40% по запросам о безопасности еды (гриль, барбекю, быстрое размножение бактерий в жару). CDC подтверждает пик пищевых отравлений летом
-- **Праздники (ноябрь–декабрь):** вторичный пик (хранение индейки, безопасность остатков)
-- **Январь:** рост по "reduce food waste" (новогодние резолюции)
-- **Апрель:** пик экологической повестки (Earth Day)
+- **Summer (June–August):** +30–40% peak in food safety queries (grilling, BBQ, rapid bacterial growth in heat). CDC confirms summer peak for foodborne illness.
+- **Holidays (November–December):** Secondary peak (turkey storage, leftover safety).
+- **January:** Rise in "reduce food waste" queries (New Year's resolutions).
+- **April:** Peak for sustainability/environmental topics (Earth Day).
 
-### Динамика роста
+### Growth Dynamics
 
-- Глобальные запросы "how to reduce food waste" **удвоились за 5 лет**, рекорд в 2023 (Google Sustainability)
-- UK: объём поиска "food waste management" **утроился** между сентябрём 2024–2025 (Numan)
-- US: индекс food waste запросов вырос с 438 до 807 (+84%) за 2024–2025, прогноз 983 к 2030
-- TikTok: **#foodwaste — 1+ млрд просмотров**; нет доминирующего #foodsafety тренда — это whitespace
+- Global searches for "how to reduce food waste" **doubled over 5 years**, hitting a record in 2023 (Google Sustainability).
+- UK: search volume for "food waste management" **tripled** between September 2024–2025 (Numan).
+- US: food waste search index grew from 438 to 807 (+84%) during 2024–2025; forecast: 983 by 2030.
+- TikTok: **#foodwaste — 1+ billion views**; no dominant #foodsafety trend yet — this is whitespace.
 
-### Сигналы спроса
+### Demand Signals
 
-- Ежедневно в r/foodsafety публикуются фото еды с вопросом "is this still good?" — это буквально core use case FreshCheck
-- 94% пользователей Yuka изменили покупательское поведение после сканирования
-- Отзывы продуктов удвоились (592 → 1,071 в 2024), что усиливает тревогу потребителей
-- "Clean label" и "preservative-free" стабильно растут как запросы
+- Daily posts in r/foodsafety with photos asking "is this still good?" — this is literally FreshCheck's core use case.
+- 94% of Yuka users changed purchasing behavior after scanning.
+- Product recalls doubled (592 → 1,071 in 2024), amplifying consumer anxiety.
+- "Clean label" and "preservative-free" continue to grow as search queries.
 
 ---
 
@@ -571,37 +571,37 @@ Alternative calculation:
 
 ---
 
-## 12. Temporal Window — Почему именно сейчас?
+## 12. Temporal Window — Why Now?
 
-### Технологическая готовность
+### Technological Readiness
 
-- **AI-модели пересекли порог потребительской точности.** VGG16 достигает 97% на фруктах/овощах, VGG19 — 98.5% на мясе. Ещё 2-3 года назад мобильные модели не давали таких результатов
-- **Лёгкие модели для мобильных устройств.** MobileNetV2 и EfficientNet-Lite обеспечивают 94%+ при инференсе на устройстве за <500ms
-- **On-device ML стал стандартом.** CoreML (iOS) и TensorFlow Lite (Android) делают офлайн-сканирование реальностью
+- **AI models have crossed the consumer accuracy threshold.** VGG16 achieves 97% on fruits/vegetables; VGG19 achieves 98.5% on meat. Two to three years ago, mobile models couldn't deliver these results.
+- **Lightweight mobile models.** MobileNetV2 and EfficientNet-Lite deliver 94%+ accuracy with on-device inference in under 500ms.
+- **On-device ML has become the standard.** CoreML (iOS) and TensorFlow Lite (Android) make offline scanning a reality.
 
-### Рыночные триггеры
+### Market Triggers
 
-- **EPA 2025 удвоила оценку потерь.** $728/чел/год (раньше ~$370) — массовое медийное покрытие, рост осведомлённости
-- **Отзывы продуктов +81% YoY.** 592 → 1,071 в 2024 — потребительская тревога на пике
-- **CozZo уходит с рынка** (декабрь 2025) — пользователи ищут замену
-- **Yuka доказала модель.** $7.3M ARR на подписках, 80M пользователей, zero marketing — потребитель готов платить за "scan & judge" инструменты
+- **EPA 2025 nearly doubled its cost estimate.** $728/person/year (up from ~$370) — mass media coverage, rising consumer awareness.
+- **Product recalls +81% YoY.** 592 → 1,071 in 2024 — consumer anxiety at a peak.
+- **CozZo is exiting the market** (December 2025) — users are actively looking for a replacement.
+- **Yuka proved the model.** $7.3M ARR on subscriptions, 80M users, zero marketing — consumers are willing to pay for "scan & judge" tools.
 
-### Регуляторное окно
+### Regulatory Window
 
-- **California AB 660** (дедлайн: июль 2026) запрещает "sell by", оставляет только "best if used by" и "use by" — массовая путаница = шанс для FreshCheck как "переводчика"
-- **FDA/USDA Joint RFI** (декабрь 2024) сигнализирует о будущей стандартизации маркировки — переходный период создаёт спрос на инструменты-помощники
-- **FDA General Wellness Policy 2026** подтверждает: потребительские wellness-приложения НЕ требуют одобрения FDA
+- **California AB 660** (effective July 2026) bans "Sell By" labels, keeping only "Best If Used By" and "Use By" — mass confusion = opportunity for FreshCheck as a "translator."
+- **FDA/USDA Joint RFI** (December 2024) signals upcoming label standardization — the transition period creates demand for guidance tools.
+- **FDA General Wellness Policy 2026** confirms: consumer wellness apps do NOT require FDA approval.
 
-### Культурные тренды
+### Cultural Trends
 
-- **TikTok #foodwaste = 1+ млрд просмотров** — поколение Z активно интересуется
-- **Zero-waste движение на подъёме.** "How to reduce food waste" запросы удвоились за 5 лет
-- **Post-COVID.** Привычка к домашней готовке осталась, тревога по безопасности еды — тоже
-- **AI-хайп.** Потребители открыты к AI-инструментам как никогда — окно принятия технологии
+- **TikTok #foodwaste = 1+ billion views** — Gen Z is actively engaged.
+- **Zero-waste movement on the rise.** "How to reduce food waste" searches doubled over 5 years.
+- **Post-COVID.** Home cooking habits persisted; food safety anxiety with them.
+- **AI hype.** Consumers are more open to AI-powered tools than ever — the technology adoption window is wide open.
 
-### Вывод
+### Conclusion
 
-**Окно оптимально в 2026.** Сходятся 4 вектора: технология (AI точность), рынок (рост потерь + уход конкурентов), регуляторика (путаница с датами) и культура (TikTok + zero-waste). Через 1-2 года крупные игроки (Google Lens, Apple Intelligence) могут занять нишу.
+**The window is optimal in 2026.** Four vectors converge: technology (AI accuracy), market (rising losses + competitor exits), regulation (date label confusion), and culture (TikTok + zero-waste). Within 1-2 years, major players (Google Lens, Apple Intelligence) may move into this space.
 
 ---
 
@@ -609,24 +609,24 @@ Alternative calculation:
 
 ### Verdict: **GO**
 
-### Обоснование
+### Rationale
 
-| Фактор | Оценка | Комментарий |
-|--------|--------|-------------|
-| Размер рынка | Огромный | TAM $4.2B, SAM $1.44B, SOM Year 3: $3-15M ARR. Freshness Prediction AI: $4.63B → $25B (CAGR 18.4%) |
-| Проблема | Универсальная | Каждая семья теряет $2,913/год, 84% выбрасывают еду из-за путаницы с датами |
-| Конкуренция | Слабая | Фрагментированный рынок, нет приложения с комбинированным AI-функционалом |
-| Технология | Готова | 95-98% точность, мобильный инференс реален |
-| Монетизация | Доказана | Yuka = $7.3M ARR на подписках; FreshCheck может стартовать с $4.99/мес |
-| Viral потенциал | Высокий | "Is this still good?" — уже виральный формат на TikTok и Reddit |
-| Timing | Оптимальный | EPA report, CozZo exits, AB 660 effective July 2026, NielsenIQ behavior shift, AI adoption peak |
+| Factor | Assessment | Comment |
+|--------|------------|---------|
+| Market size | Enormous | TAM $4.2B, SAM $1.44B, SOM Year 3: $3-15M ARR. Freshness Prediction AI: $4.63B → $25B (CAGR 18.4%) |
+| Problem | Universal | Every family loses $2,913/year; 84% discard food due to date label confusion |
+| Competition | Weak | Fragmented market; no app with combined AI functionality |
+| Technology | Ready | 95-98% accuracy; mobile inference is feasible |
+| Monetization | Proven | Yuka = $7.3M ARR on subscriptions; FreshCheck can start at $4.99/month |
+| Viral potential | High | "Is this still good?" is already a viral format on TikTok and Reddit |
+| Timing | Optimal | EPA report, CozZo exits, AB 660 effective July 2026, NielsenIQ behavior shift, AI adoption peak |
 
-### Условия для GO
+### Conditions for GO
 
-1. **MVP с 15-20 категориями продуктов** на точности 95%+ — лучше меньше и точнее
-2. **My Fridge — в v1**, не как "future feature" — это ключевой retention-механизм
-3. **Юридическая защита до запуска:** disclaimers, страховка product liability ($5-15K/год), консультация food safety attorney
-4. **Не использовать слово "safe" в абсолютном смысле** — только "appears fresh based on visual indicators"
+1. **MVP covering 15-20 food categories** at 95%+ accuracy — fewer categories done right is better than many done poorly.
+2. **My Fridge in v1**, not as a "future feature" — it is the key retention mechanism.
+3. **Legal protection before launch:** disclaimers, product liability insurance ($5-15K/year), food safety attorney consultation.
+4. **Never use the word "safe" in absolute terms** — only "appears fresh based on visual indicators."
 
 ---
 
