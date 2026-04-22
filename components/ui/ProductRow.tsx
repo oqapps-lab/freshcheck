@@ -4,6 +4,7 @@ import { Image } from 'expo-image';
 import { colors, radii, spacing, typeScale, shadows, Tone, toneColor } from '@/constants/tokens';
 import { TokenDot } from './TokenDot';
 import { CountdownBar } from './CountdownBar';
+import { CategoryGlyph, categoryFor } from './CategoryGlyph';
 
 type Props = {
   name: string;
@@ -55,9 +56,7 @@ export const ProductRow: React.FC<Props> = ({
             transition={160}
           />
         ) : (
-          <Text style={[typeScale.titleL, { color: t.accent }]}>
-            {name.charAt(0).toLowerCase()}
-          </Text>
+          <CategoryGlyph category={categoryFor(name)} size={30} color={t.accent} strokeWidth={1.6} />
         )}
       </View>
 

@@ -1,0 +1,30 @@
+<svg width="1284" height="2778" viewBox="0 0 1284 2778" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="canvas" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F8FAF6"/>
+      <stop offset="1" stop-color="#dce8dd"/>
+    </linearGradient>
+    <radialGradient id="orb1" cx="0.2" cy="0.25" r="0.6">
+      <stop offset="0" stop-color="#c2eec0" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#c2eec0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="orb2" cx="0.85" cy="0.8" r="0.5">
+      <stop offset="0" stop-color="#7DA67D" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#7DA67D" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1284" height="2778" fill="url(#canvas)"/>
+  <rect width="1284" height="2778" fill="url(#orb1)"/>
+  <rect width="1284" height="2778" fill="url(#orb2)"/>
+
+  <!-- Sprig centered -->
+  <g transform="translate(642,1260) scale(24)" fill="none" stroke="#416743" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M0 9C0 9 -8 5 -8 -3C-8 -5 -7 -8 -6 -8C-5 -8 -4 -6 -2 -5C0 -4 1 -2 1 0"/>
+    <path d="M0 9C0 9 8 5 8 -3C8 -5 7 -8 6 -8C5 -8 4 -6 2 -5C0 -4 -1 -2 -1 0"/>
+    <path d="M0 0V9"/>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="642" y="1600" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, Manrope, sans-serif" font-size="80" font-weight="600" fill="#416743" letter-spacing="-1.5">freshcheck</text>
+</svg>

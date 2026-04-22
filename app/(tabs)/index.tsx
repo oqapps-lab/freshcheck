@@ -10,6 +10,7 @@ import { Eyebrow } from '@/components/ui/Eyebrow';
 import { DewDrop } from '@/components/ui/DewDrop';
 import { ProductRow } from '@/components/ui/ProductRow';
 import { VerdictPill } from '@/components/ui/VerdictPill';
+import { CategoryGlyph, categoryFor } from '@/components/ui/CategoryGlyph';
 import {
   Sprig,
   Droplet,
@@ -83,12 +84,15 @@ export default function HomeScreen() {
                 {attentionItems.map((item) => (
                   <DewDrop
                     key={item.id}
-                    size={48}
+                    size={52}
                     accessibilityLabel={item.name.toLowerCase()}
                   >
-                    <Text style={[typeScale.titleM, { color: colors.primary }]}>
-                      {item.name.charAt(0).toLowerCase()}
-                    </Text>
+                    <CategoryGlyph
+                      category={categoryFor(item.name)}
+                      size={26}
+                      color={colors.primary}
+                      strokeWidth={1.5}
+                    />
                   </DewDrop>
                 ))}
               </View>

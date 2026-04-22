@@ -10,6 +10,7 @@ import { PillCTA } from '@/components/ui/PillCTA';
 import { VerdictPill } from '@/components/ui/VerdictPill';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Back, Heart, ChefHat, Clock } from '@/components/ui/Glyphs';
+import { CategoryGlyph, categoryFor } from '@/components/ui/CategoryGlyph';
 import { colors, spacing, typeScale, radii, layout, motion } from '@/constants/tokens';
 import { recipes, garlicHerbChicken } from '@/mock/recipes';
 
@@ -141,9 +142,7 @@ export default function RecipeDetailScreen() {
                     ]}
                   >
                     <View style={styles.ingredientThumb}>
-                      <Text style={[typeScale.titleM, { color: colors.primary }]}>
-                        {ing.name.charAt(0).toLowerCase()}
-                      </Text>
+                      <CategoryGlyph category={categoryFor(ing.name)} size={24} color={colors.primary} strokeWidth={1.5} />
                     </View>
                     <View style={{ flex: 1, marginLeft: spacing.md }}>
                       <Text style={[typeScale.titleS, { color: colors.onSurface }]}>
