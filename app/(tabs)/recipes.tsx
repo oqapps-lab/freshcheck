@@ -7,13 +7,54 @@ import { AtmosphericBackground } from '@/components/ui/AtmosphericBackground';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { VerdictPill } from '@/components/ui/VerdictPill';
+import { PillCTA } from '@/components/ui/PillCTA';
 import { Clock, ChefHat } from '@/components/ui/Glyphs';
 import { colors, spacing, typeScale, layout, motion, radii } from '@/constants/tokens';
 import { recipes } from '@/mock/recipes';
+import { useFridge } from '@/src/hooks/useFridge';
 
 export default function RecipesScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { items: fridge } = useFridge();
+
+  const tonight = recipes.filter((r) => r.tone === 'past');
+  const thisWeek = recipes.filter((r) => r.tone !== 'past');
+
+  // Empty fridge → suggest scanning first.
+  if (fridge.length === 0) {
+    return (
+      <AtmosphericBackground>
+        <ScrollView
+          contentContainerStyle={{
+            paddingTop: insets.top + 24,
+            paddingBottom: insets.bottom + layout.floatingBottomClearance + 24,
+            paddingHorizontal: layout.screenPadding,
+            flexGrow: 1,
+          }}
+        >
+          <Animated.View entering={FadeIn.duration(motion.moderate)} style={styles.heading}>
+            <Text style={[typeScale.displayM, { color: colors.onSurface }]}>what to cook</Text>
+          </Animated.View>
+          <View style={styles.emptyWrap}>
+            <View style={styles.emptyOrb}>
+              <ChefHat size={44} color={colors.primary} strokeWidth={1.3} />
+            </View>
+            <Text style={[typeScale.titleS, styles.emptyTitle]}>nothing to cook with yet</Text>
+            <Text style={[typeScale.body, styles.emptyBody]}>
+              scan something for your fridge, and recipes will show up here — starting
+              with the ingredients closest to expiry.
+            </Text>
+            <PillCTA
+              label="scan a food"
+              onPress={() => router.push('/scan/camera')}
+              style={{ marginTop: spacing.xl }}
+            />
+          </View>
+        </ScrollView>
+      </AtmosphericBackground>
+    );
+  }
 
   return (
     <AtmosphericBackground>
@@ -32,13 +73,12 @@ export default function RecipesScreen() {
           </Text>
         </Animated.View>
 
-        <Animated.View entering={FadeIn.duration(motion.moderate).delay(80)} style={styles.section}>
-          <Eyebrow uppercase style={{ marginBottom: 12 }}>
-            tonight
-          </Eyebrow>
-          {recipes
-            .filter((r) => r.tone === 'past')
-            .map((r) => (
+        {tonight.length > 0 && (
+          <Animated.View entering={FadeIn.duration(motion.moderate).delay(80)} style={styles.section}>
+            <Eyebrow uppercase style={{ marginBottom: 12 }}>
+              tonight
+            </Eyebrow>
+            {tonight.map((r) => (
               <Pressable
                 key={r.id}
                 onPress={() => router.push(`/recipe/${r.id}`)}
@@ -57,9 +97,7 @@ export default function RecipesScreen() {
                     </Text>
                     <View style={styles.metaRow}>
                       <Clock size={14} color={colors.secondary} />
-                      <Text
-                        style={[typeScale.bodySmall, { color: colors.secondary, marginLeft: 6 }]}
-                      >
+                      <Text style={[typeScale.bodySmall, { color: colors.secondary, marginLeft: 6 }]}>
                         {r.timeMinutes} min · serves {r.servings}
                       </Text>
                     </View>
@@ -73,15 +111,15 @@ export default function RecipesScreen() {
                 </GlassCard>
               </Pressable>
             ))}
-        </Animated.View>
+          </Animated.View>
+        )}
 
-        <Animated.View entering={FadeIn.duration(motion.moderate).delay(160)} style={styles.section}>
-          <Eyebrow uppercase style={{ marginBottom: 12 }}>
-            this week
-          </Eyebrow>
-          {recipes
-            .filter((r) => r.tone !== 'past')
-            .map((r) => (
+        {thisWeek.length > 0 && (
+          <Animated.View entering={FadeIn.duration(motion.moderate).delay(160)} style={styles.section}>
+            <Eyebrow uppercase style={{ marginBottom: 12 }}>
+              this week
+            </Eyebrow>
+            {thisWeek.map((r) => (
               <Pressable
                 key={r.id}
                 onPress={() => router.push(`/recipe/${r.id}`)}
@@ -100,9 +138,7 @@ export default function RecipesScreen() {
                     </Text>
                     <View style={styles.metaRow}>
                       <Clock size={14} color={colors.secondary} />
-                      <Text
-                        style={[typeScale.bodySmall, { color: colors.secondary, marginLeft: 6 }]}
-                      >
+                      <Text style={[typeScale.bodySmall, { color: colors.secondary, marginLeft: 6 }]}>
                         {r.timeMinutes} min · serves {r.servings}
                       </Text>
                     </View>
@@ -110,7 +146,8 @@ export default function RecipesScreen() {
                 </GlassCard>
               </Pressable>
             ))}
-        </Animated.View>
+          </Animated.View>
+        )}
       </ScrollView>
     </AtmosphericBackground>
   );
@@ -148,5 +185,32 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 6,
+  },
+  emptyWrap: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing.xxl,
+  },
+  emptyOrb: {
+    width: 96,
+    height: 96,
+    borderRadius: radii.full,
+    backgroundColor: 'rgba(125,166,125,0.18)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.8)',
+    marginBottom: spacing.lg,
+  },
+  emptyTitle: {
+    color: colors.onSurface,
+    textAlign: 'center',
+  },
+  emptyBody: {
+    color: colors.secondary,
+    textAlign: 'center',
+    marginTop: 8,
+    paddingHorizontal: spacing.xl,
   },
 });

@@ -8,6 +8,8 @@ import { View } from 'react-native';
 import { useAppFonts } from '@/hooks/useAppFonts';
 import { colors } from '@/constants/tokens';
 import { activateAdaptyIfNeeded } from '@/src/lib/adapty';
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { NetworkBanner } from '@/components/ui/NetworkBanner';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -30,6 +32,7 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.canvas }}>
       <SafeAreaProvider>
         <StatusBar style="dark" />
+        <ErrorBoundary>
         <Stack
           screenOptions={{
             headerShown: false,
@@ -49,8 +52,11 @@ export default function RootLayout() {
           <Stack.Screen name="scan/result" options={{ animation: 'fade' }} />
           <Stack.Screen name="recipe/[id]" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="auth" options={{ animation: 'fade' }} />
+          <Stack.Screen name="scan-history" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="paywall" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
         </Stack>
+        <NetworkBanner />
+        </ErrorBoundary>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

@@ -37,7 +37,7 @@ export default function ProfileScreen() {
       section: 'account',
       items: [
         { label: 'subscription', onPress: () => router.push('/paywall') },
-        { label: 'scan history', onPress: () => comingSoon('scan history') },
+        { label: 'scan history', onPress: () => router.push('/scan-history') },
       ],
     },
     {

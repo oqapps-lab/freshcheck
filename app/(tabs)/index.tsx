@@ -76,33 +76,46 @@ export default function HomeScreen() {
 
             {/* Inner nested panel — "three things want attention soon" */}
             <View style={styles.attentionCard}>
-              <Text style={[typeScale.body, { color: colors.secondary, marginBottom: 18 }]}>
-                {attentionItems.length === 1
-                  ? 'one thing wants attention soon'
-                  : `${spellOut(attentionItems.length)} things want attention soon`}
-              </Text>
-              <View style={styles.dewRow}>
-                {attentionItems.map((item) => (
-                  <DewDrop
-                    key={item.id}
-                    size={52}
-                    accessibilityLabel={item.name.toLowerCase()}
-                  >
-                    <CategoryGlyph
-                      category={categoryFor(item.name)}
-                      size={26}
-                      color={colors.primary}
-                      strokeWidth={1.5}
-                    />
-                  </DewDrop>
-                ))}
-              </View>
+              {attentionItems.length === 0 ? (
+                <Text style={[typeScale.body, { color: colors.secondary }]}>
+                  nothing\u2019s on the edge today. scan anything new to start
+                  watching.
+                </Text>
+              ) : (
+                <>
+                  <Text style={[typeScale.body, { color: colors.secondary, marginBottom: 18 }]}>
+                    {attentionItems.length === 1
+                      ? 'one thing wants attention soon'
+                      : `${spellOut(attentionItems.length)} things want attention soon`}
+                  </Text>
+                  <View style={styles.dewRow}>
+                    {attentionItems.map((item) => (
+                      <DewDrop
+                        key={item.id}
+                        size={52}
+                        accessibilityLabel={item.name.toLowerCase()}
+                      >
+                        <CategoryGlyph
+                          category={categoryFor(item.name)}
+                          size={26}
+                          color={colors.primary}
+                          strokeWidth={1.5}
+                        />
+                      </DewDrop>
+                    ))}
+                  </View>
+                </>
+              )}
             </View>
 
             <PillCTA
-              label="see the fridge"
+              label={items.length === 0 ? 'scan your first food' : 'see the fridge'}
               iconRight={<Chevron size={16} color={colors.white} />}
-              onPress={() => router.navigate('/(tabs)/fridge')}
+              onPress={() =>
+                items.length === 0
+                  ? router.push('/scan/camera')
+                  : router.navigate('/(tabs)/fridge')
+              }
               style={styles.greetingCTA}
             />
           </GlassCard>

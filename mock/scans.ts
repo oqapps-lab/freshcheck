@@ -11,6 +11,14 @@ export type ScanEntry = {
   placeholder?: string;
 };
 
+// Compute relative ISO dates so the history grouping renders correctly.
+const daysAgo = (n: number): string => {
+  const d = new Date();
+  d.setDate(d.getDate() - n);
+  d.setHours(11, 0, 0, 0);
+  return d.toISOString();
+};
+
 export const recentScans: ScanEntry[] = [
   {
     id: 'scan-001',
@@ -18,7 +26,7 @@ export const recentScans: ScanEntry[] = [
     confidence: 92,
     tone: 'safe',
     verdict: 'safe',
-    scannedAt: 'Yesterday',
+    scannedAt: daysAgo(1),
     placeholder: '🐟',
   },
   {
@@ -27,7 +35,7 @@ export const recentScans: ScanEntry[] = [
     confidence: 78,
     tone: 'soon',
     verdict: 'soon',
-    scannedAt: '2 days ago',
+    scannedAt: daysAgo(2),
     placeholder: '🥛',
   },
   {
@@ -36,7 +44,7 @@ export const recentScans: ScanEntry[] = [
     confidence: 85,
     tone: 'fresh',
     verdict: 'fresh',
-    scannedAt: '3 days ago',
+    scannedAt: daysAgo(3),
     placeholder: '🥬',
   },
 ];
