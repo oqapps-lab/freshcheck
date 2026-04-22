@@ -7,6 +7,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { View } from 'react-native';
 import { useAppFonts } from '@/hooks/useAppFonts';
 import { colors } from '@/constants/tokens';
+import { activateAdaptyIfNeeded } from '@/src/lib/adapty';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -16,6 +17,10 @@ export default function RootLayout() {
   useEffect(() => {
     if (fontsLoaded) SplashScreen.hideAsync().catch(() => {});
   }, [fontsLoaded]);
+
+  useEffect(() => {
+    void activateAdaptyIfNeeded();
+  }, []);
 
   if (!fontsLoaded) {
     return <View style={{ flex: 1, backgroundColor: colors.canvas }} />;

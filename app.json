@@ -37,6 +37,13 @@
         {
           "cameraPermission": "FreshCheck uses the camera to check the freshness of your food."
         }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/adaptive-icon.png",
+          "color": "#416743"
+        }
       ]
     ],
     "experiments": {

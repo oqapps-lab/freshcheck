@@ -4,6 +4,7 @@ import { useAuth } from './useAuth';
 import type { Database } from '@/src/lib/database.types';
 import { fridgeItems as mockFridge, type FridgeItem as MockItem } from '@/mock/fridge';
 import { categoryFor } from '@/components/ui/CategoryGlyph';
+import { refreshExpiryReminders } from '@/src/lib/notifications';
 import type { Tone } from '@/constants/tokens';
 
 type Row = Database['public']['Tables']['fridge_items']['Row'];
@@ -87,6 +88,14 @@ export function useFridge() {
   useEffect(() => {
     void refresh();
   }, [refresh]);
+
+  // Keep local notifications in sync with the fridge contents.
+  useEffect(() => {
+    if (items.length === 0) return;
+    void refreshExpiryReminders(
+      items.map((i) => ({ id: i.id, name: i.name, daysLeft: i.daysLeft })),
+    );
+  }, [items]);
 
   const addItem = useCallback(
     async (draft: Omit<Insert, 'user_id' | 'category'> & { name: string }) => {

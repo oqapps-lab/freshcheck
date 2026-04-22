@@ -18,6 +18,7 @@ import {
   motion,
 } from '@/constants/tokens';
 import { ProgressDots } from '@/components/onboarding/ProgressDots';
+import { ensureNotificationPermission } from '@/src/lib/notifications';
 
 export default function DemoScreen() {
   const insets = useSafeAreaInsets();
@@ -128,7 +129,13 @@ export default function DemoScreen() {
           label="scan my own food"
           fullWidth
           iconRight={<Chevron size={16} color={colors.white} />}
-          onPress={() => router.push('/paywall')}
+          onPress={async () => {
+            // Best-effort: ask for notif permission here so the paywall
+            // stays distraction-free. Swallow errors silently — the
+            // manager retries later when fridge items appear.
+            void ensureNotificationPermission().catch(() => {});
+            router.push('/paywall');
+          }}
         />
       </View>
     </AtmosphericBackground>

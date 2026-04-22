@@ -11,6 +11,7 @@ import { PillCTA } from '@/components/ui/PillCTA';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Check, Close } from '@/components/ui/Glyphs';
 import { colors, gradients, spacing, typeScale, layout, motion, radii } from '@/constants/tokens';
+import { startTrial as adaptyStartTrial, restorePurchases } from '@/src/lib/adapty';
 
 export default function PaywallScreen() {
   const insets = useSafeAreaInsets();
@@ -19,17 +20,27 @@ export default function PaywallScreen() {
 
   const dismiss = () => (router.canGoBack() ? router.back() : router.replace('/(tabs)'));
 
-  const startTrial = () => {
+  const startTrial = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
-    Alert.alert(
-      'coming soon',
-      'subscriptions wire up with Adapty in Stage 4. selected plan: ' + selected,
-    );
+    const result = await adaptyStartTrial({ plan: selected });
+    if (result.ok) {
+      dismiss();
+      return;
+    }
+    if (result.error && result.error !== 'adapty-not-configured') {
+      Alert.alert('purchase failed', result.error);
+    }
   };
 
-  const restore = () => {
+  const restore = async () => {
     Haptics.selectionAsync().catch(() => {});
-    Alert.alert('no active subscription', 'once Adapty is wired, this will restore your purchases.');
+    const result = await restorePurchases();
+    if (result.ok) {
+      Alert.alert('restored', 'your subscription is active again.');
+      dismiss();
+    } else if (result.error && result.error !== 'adapty-not-configured') {
+      Alert.alert('restore failed', result.error);
+    }
   };
 
   const openTerms = () => Linking.openURL('https://example.com/terms').catch(() => {});
