@@ -43,6 +43,7 @@ export default function RootLayout() {
           <Stack.Screen name="scan/camera" options={{ animation: 'slide_from_bottom' }} />
           <Stack.Screen name="scan/result" options={{ animation: 'fade' }} />
           <Stack.Screen name="recipe/[id]" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="auth" options={{ animation: 'fade' }} />
           <Stack.Screen name="paywall" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
         </Stack>
       </SafeAreaProvider>

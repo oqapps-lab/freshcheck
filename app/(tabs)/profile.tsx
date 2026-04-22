@@ -10,11 +10,22 @@ import { Eyebrow } from '@/components/ui/Eyebrow';
 import { VerdictPill } from '@/components/ui/VerdictPill';
 import { Chevron, User as UserGlyph } from '@/components/ui/Glyphs';
 import { colors, spacing, typeScale, layout, motion, radii } from '@/constants/tokens';
-import { user } from '@/mock/user';
+import { user as mockUser } from '@/mock/user';
+import { useAuth } from '@/src/hooks/useAuth';
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { user: authUser, signOut: doSignOut, configured } = useAuth();
+
+  // Display name/email from auth session when signed in; else the mock fixture.
+  const display = authUser
+    ? {
+        name: (authUser.user_metadata?.name as string | undefined) ?? authUser.email?.split('@')[0] ?? 'you',
+        email: authUser.email ?? '',
+        plan: 'plus' as const,
+      }
+    : { name: mockUser.name, email: mockUser.email, plan: mockUser.plan };
 
   const comingSoon = (area: string) => {
     Haptics.selectionAsync().catch(() => {});
@@ -66,7 +77,26 @@ export default function ProfileScreen() {
 
   const signOut = () => {
     Haptics.selectionAsync().catch(() => {});
-    Alert.alert('sign out', 'auth wires up in Stage 4 with Supabase.');
+    if (!configured) {
+      Alert.alert('not signed in', 'connect Supabase via .env to enable real auth.');
+      return;
+    }
+    Alert.alert('sign out?', 'you\u2019ll need to sign in again to see your fridge.', [
+      { text: 'cancel', style: 'cancel' },
+      {
+        text: 'sign out',
+        style: 'destructive',
+        onPress: async () => {
+          await doSignOut();
+          router.replace('/auth');
+        },
+      },
+    ]);
+  };
+
+  const goSignIn = () => {
+    Haptics.selectionAsync().catch(() => {});
+    router.push('/auth');
   };
 
   return (
@@ -87,12 +117,12 @@ export default function ProfileScreen() {
           <View style={{ flex: 1, marginLeft: spacing.md }}>
             <View style={styles.nameRow}>
               <Text style={[typeScale.titleL, { color: colors.onSurface }]}>
-                {user.name.toLowerCase()}
+                {display.name.toLowerCase()}
               </Text>
-              <VerdictPill verdict="fresh" label={user.plan.toLowerCase()} small style={{ marginLeft: 10 }} />
+              <VerdictPill verdict="fresh" label={display.plan.toLowerCase()} small style={{ marginLeft: 10 }} />
             </View>
             <Text style={[typeScale.bodySmall, { color: colors.secondary, marginTop: 2 }]}>
-              {user.email}
+              {display.email || (configured ? 'tap to sign in' : 'mock preview — connect supabase to sign in')}
             </Text>
           </View>
         </Animated.View>
@@ -106,7 +136,7 @@ export default function ProfileScreen() {
             <View style={styles.statsRow}>
               <View style={styles.statBlock}>
                 <Text style={[typeScale.displayM, { color: colors.primary }]}>
-                  {user.stats.scans}
+                  {mockUser.stats.scans}
                 </Text>
                 <Text style={[typeScale.bodySmall, { color: colors.secondary, marginTop: 4 }]}>
                   scans
@@ -115,7 +145,7 @@ export default function ProfileScreen() {
               <View style={styles.statDivider} />
               <View style={styles.statBlock}>
                 <Text style={[typeScale.displayM, { color: colors.primary }]}>
-                  {user.stats.productsSaved}
+                  {mockUser.stats.productsSaved}
                 </Text>
                 <Text style={[typeScale.bodySmall, { color: colors.secondary, marginTop: 4 }]}>
                   saved
@@ -124,7 +154,7 @@ export default function ProfileScreen() {
               <View style={styles.statDivider} />
               <View style={styles.statBlock}>
                 <Text style={[typeScale.displayM, { color: colors.primary }]}>
-                  ${user.stats.savedDollars}
+                  ${mockUser.stats.savedDollars}
                 </Text>
                 <Text style={[typeScale.bodySmall, { color: colors.secondary, marginTop: 4 }]}>
                   back in pocket
@@ -166,14 +196,14 @@ export default function ProfileScreen() {
 
         <View style={styles.footer}>
           <Pressable
-            onPress={signOut}
+            onPress={authUser ? signOut : goSignIn}
             accessibilityRole="button"
-            accessibilityLabel="sign out"
+            accessibilityLabel={authUser ? 'sign out' : 'sign in'}
             hitSlop={12}
             style={({ pressed }) => pressed && { opacity: 0.55 }}
           >
             <Text style={[typeScale.body, { color: colors.secondary, textAlign: 'center' }]}>
-              sign out
+              {authUser ? 'sign out' : 'sign in'}
             </Text>
           </Pressable>
           <Text

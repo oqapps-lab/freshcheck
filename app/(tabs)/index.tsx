@@ -19,8 +19,8 @@ import {
 } from '@/components/ui/Glyphs';
 import { colors, spacing, typeScale, layout, motion, radii } from '@/constants/tokens';
 import { user, scanQuota } from '@/mock/user';
-import { fridgeSummary, fridgeItems } from '@/mock/fridge';
-import { recentScans } from '@/mock/scans';
+import { useFridge } from '@/src/hooks/useFridge';
+import { useScans } from '@/src/hooks/useScans';
 
 /**
  * Home Dashboard v3 — The Dew-Drenched Conservatory
@@ -29,13 +29,14 @@ import { recentScans } from '@/mock/scans';
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { items, summary } = useFridge();
+  const { scans, todayCount } = useScans();
 
-  // Take the 3 most-expiring items for the "three things want attention soon" row
-  const attentionItems = [...fridgeItems]
+  const attentionItems = [...items]
     .sort((a, b) => a.daysLeft - b.daysLeft)
     .slice(0, 3);
 
-  const lastScan = recentScans[0];
+  const lastScan = scans[0];
 
   return (
     <AtmosphericBackground>
@@ -148,7 +149,7 @@ export default function HomeScreen() {
         {/* 3. TODAY — quiet inline stats (merged to avoid tab-bar anchor overlap) */}
         <Animated.View entering={FadeIn.duration(motion.moderate).delay(160)} style={styles.todayInline}>
           <Text style={[typeScale.caption, { color: colors.secondary }]}>
-            {scanQuota.usedToday} of {scanQuota.perDay} scans today · {fridgeSummary.total} items tracked · {fridgeSummary.expiring} need soon
+            {todayCount} of {scanQuota.perDay} scans today · {summary.total} items tracked · {summary.expiring} need soon
           </Text>
         </Animated.View>
       </ScrollView>
