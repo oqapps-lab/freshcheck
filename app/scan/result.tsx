@@ -12,6 +12,9 @@ import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Back, Share } from '@/components/ui/Glyphs';
 import { colors, gradients, spacing, typeScale, radii, layout, motion } from '@/constants/tokens';
 import { scanDetail } from '@/mock/scans';
+import { useCurrentScan, scanStore } from '@/src/lib/scanStore';
+import { useFridge } from '@/src/hooks/useFridge';
+import { categoryFor } from '@/components/ui/CategoryGlyph';
 
 /**
  * Scan Result v3 — Verdict Bloom
@@ -21,23 +24,60 @@ import { scanDetail } from '@/mock/scans';
 export default function ScanResultScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const verdictWord = scanDetail.verdictLabel.toLowerCase();
+  const live = useCurrentScan();
+  const { addItem } = useFridge();
+
+  // Use live result if present; otherwise fall back to the mock preview.
+  const r = live ?? {
+    id: scanDetail.id,
+    product: scanDetail.product,
+    verdict: scanDetail.verdict,
+    tone: scanDetail.tone,
+    confidence: scanDetail.confidence,
+    storageNote: scanDetail.storage,
+    daysLeft: scanDetail.daysLeft,
+    totalDays: scanDetail.totalDays,
+    imagePath: null,
+    analysis: scanDetail.analysis,
+  };
+
+  const verdictWord = r.tone;
+  const productLc = r.product.toLowerCase();
 
   const shareResult = async () => {
     Haptics.selectionAsync().catch(() => {});
     try {
       await RNShare.share({
-        message: `FreshCheck says my ${scanDetail.product.toLowerCase()} is ${verdictWord} (${scanDetail.confidence}% sure).`,
+        message: `FreshCheck says my ${productLc} is ${verdictWord} (${r.confidence}% sure).`,
       });
     } catch {
       // user cancelled share — no-op
     }
   };
 
-  const saveToFridge = () => {
+  const saveToFridge = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-    // TODO Stage 4: push scan into Supabase fridge table.
+    if (live && r.daysLeft != null && r.totalDays != null) {
+      await addItem({
+        name: r.product,
+        tone: r.tone === 'neutral' ? 'fresh' : r.tone,
+        days_left: r.daysLeft,
+        total_days: r.totalDays,
+        expiry_text:
+          r.daysLeft <= 1
+            ? 'expires tomorrow'
+            : `expires in ${r.daysLeft} days`,
+        warn: r.tone === 'past' || r.tone === 'soon',
+        source_scan_id: r.id.startsWith('ephemeral') || r.id === 'mock-scan' ? null : r.id,
+      });
+    }
+    scanStore.clear();
     router.replace('/(tabs)/fridge');
+  };
+
+  const scanAnother = () => {
+    scanStore.clear();
+    router.replace('/scan/camera');
   };
 
   return (
@@ -85,7 +125,7 @@ export default function ScanResultScreen() {
                 style={StyleSheet.absoluteFill}
               />
               <Text style={[typeScale.verdictBloom, { color: colors.primary }]}>
-                {verdictWord}
+                {verdictWord === 'past' ? 'toss' : verdictWord}
               </Text>
             </View>
           </Animated.View>
@@ -97,37 +137,58 @@ export default function ScanResultScreen() {
           style={styles.descriptionBlock}
         >
           <Text style={[typeScale.titleM, { color: colors.onSurface, textAlign: 'center' }]}>
-            {scanDetail.confidence}% sure · {scanDetail.product.toLowerCase()}
+            {Math.round(r.confidence)}% sure · {productLc}
           </Text>
-          <Text
-            style={[
-              typeScale.body,
-              { color: colors.secondary, textAlign: 'center', marginTop: 8 },
-            ]}
-          >
-            looks evenly fresh, no dulling on the surface
-          </Text>
-          <Text
-            style={[
-              typeScale.body,
-              { color: colors.secondary, textAlign: 'center', marginTop: 20 },
-            ]}
-          >
-            use within {scanDetail.daysLeft} days, or freeze
-          </Text>
+          {r.daysLeft != null && (
+            <Text
+              style={[
+                typeScale.body,
+                { color: colors.secondary, textAlign: 'center', marginTop: 20 },
+              ]}
+            >
+              {r.tone === 'past'
+                ? 'don\u2019t eat this one.'
+                : r.daysLeft <= 1
+                  ? 'use within a day, or freeze.'
+                  : `use within ${r.daysLeft} days, or freeze.`}
+            </Text>
+          )}
         </Animated.View>
 
+        {/* Analysis breakdown */}
+        {r.analysis.length > 0 && (
+          <Animated.View entering={FadeIn.duration(motion.moderate).delay(380)}>
+            <GlassCard variant="glass" radius="xl" padding={20} style={styles.storageCard}>
+              <Eyebrow uppercase style={{ marginBottom: 14 }}>
+                what we looked at
+              </Eyebrow>
+              {r.analysis.map((row) => (
+                <View key={row.label} style={styles.analysisRow}>
+                  <Text style={[typeScale.body, { color: colors.onSurface }]}>
+                    {row.label.toLowerCase()}
+                  </Text>
+                  <Text style={[typeScale.titleS, { color: colors.primary }]}>
+                    {Math.round(row.value)}%
+                  </Text>
+                </View>
+              ))}
+            </GlassCard>
+          </Animated.View>
+        )}
+
         {/* Storage note */}
-        <Animated.View entering={FadeIn.duration(motion.moderate).delay(420)}>
-          <GlassCard variant="glass" radius="xl" padding={20} style={styles.storageCard}>
-            <Eyebrow uppercase style={{ marginBottom: 10 }}>
-              keep in mind
-            </Eyebrow>
-            <Text style={[typeScale.body, { color: colors.onSurfaceVariant }]}>
-              {scanDetail.storage.toLowerCase()}
-            </Text>
-          </GlassCard>
-        </Animated.View>
+        {r.storageNote && (
+          <Animated.View entering={FadeIn.duration(motion.moderate).delay(440)}>
+            <GlassCard variant="glass" radius="xl" padding={20} style={styles.storageCard}>
+              <Eyebrow uppercase style={{ marginBottom: 10 }}>
+                keep in mind
+              </Eyebrow>
+              <Text style={[typeScale.body, { color: colors.onSurfaceVariant }]}>
+                {r.storageNote.toLowerCase()}
+              </Text>
+            </GlassCard>
+          </Animated.View>
+        )}
 
         {/* Action row */}
         <Animated.View
@@ -143,7 +204,7 @@ export default function ScanResultScreen() {
           <PillCTA
             variant="glass"
             label="scan another"
-            onPress={() => router.replace('/scan/camera')}
+            onPress={scanAnother}
             style={{ flex: 1 }}
           />
         </Animated.View>
@@ -248,5 +309,11 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.7)',
     paddingVertical: 8,
     paddingHorizontal: 16,
+  },
+  analysisRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 6,
   },
 });
