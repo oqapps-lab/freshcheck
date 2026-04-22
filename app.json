@@ -4,16 +4,9 @@
     "slug": "freshcheck",
     "version": "0.1.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
     "scheme": "freshcheck",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
     "backgroundColor": "#FDF9F0",
-    "splash": {
-      "image": "./assets/images/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#FDF9F0"
-    },
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.gazetastreet.freshcheck"
@@ -21,13 +14,17 @@
     "android": {
       "package": "com.gazetastreet.freshcheck",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#FDF9F0"
       }
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-image"
     ],
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    },
     "experiments": {
       "typedRoutes": true
     }

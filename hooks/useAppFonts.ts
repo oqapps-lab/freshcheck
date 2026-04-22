@@ -1,25 +1,29 @@
 import {
-  useFonts,
+  useFonts as useManrope,
   Manrope_400Regular,
   Manrope_500Medium,
   Manrope_600SemiBold,
   Manrope_700Bold,
   Manrope_800ExtraBold,
 } from '@expo-google-fonts/manrope';
+import {
+  PlusJakartaSans_600SemiBold,
+  PlusJakartaSans_700Bold,
+} from '@expo-google-fonts/plus-jakarta-sans';
 
 /**
- * Loads the FreshCheck typeface — Manrope only (v3 Dew Conservatory).
- * Previous v1/v2 loaded Plus Jakarta Sans + Fraunces; dropped per design rewrite.
- *
- * Ref: constants/tokens.ts fonts + docs/06-design/DESIGN-GUIDE.md §3
+ * Loads FreshCheck typefaces — Plus Jakarta Sans (headlines) + Manrope (body, labels).
+ * See docs/06-design/DESIGN-GUIDE.md §3.
  */
 export function useAppFonts(): boolean {
-  const [loaded] = useFonts({
+  const [loaded] = useManrope({
     Manrope_400Regular,
     Manrope_500Medium,
     Manrope_600SemiBold,
     Manrope_700Bold,
     Manrope_800ExtraBold,
+    PlusJakartaSans_600SemiBold,
+    PlusJakartaSans_700Bold,
   });
   return loaded;
 }

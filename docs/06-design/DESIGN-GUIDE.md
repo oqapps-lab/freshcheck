@@ -1,476 +1,365 @@
 # FreshCheck — Design Guide
 
-**Status:** v3.0 — 2026-04-20 (fundamental rewrite)
-**Authority:** This file overrides `stitch-raw/` and any earlier v1/v2 drafts. Source-of-truth is `constants/tokens.ts`.
-**Scope:** All visual decisions for the shipped app. Primitives MUST match this. Screens MUST compose from primitives.
-
----
-
-## 0. Visual summary — v3 "Dew-Drenched Conservatory"
-
-> **Mint-white canvas `#F8FAF6` with a very faint 135° morning gradient drifting into `#dce8dd` and three hairline sage leaf-veins at 30% opacity. Manrope ONLY — medium 500 as default, semibold 600 for titles, bold 700 reserved for the Verdict Bloom word. All copy lowercase — "hi, sarah", "fresh", "wild salmon", "milk", "see the fridge", "save to my fridge". Monochromatic sage palette — primary `#416743`, primary container `#7DA67D`, primary fixed `#c2eec0`; coral `#d98a8a` and amber `#d9a84e` are permitted ONLY on muted verdict chips when urgency needs escalation, NEVER in background / ambient / CTA gradients. Glass panels (`rgba(255,255,255,0.65)` + 22-intensity BlurView + inset top-1px highlight) carry every hero card. Pill CTAs use a dewy sage gradient (`primary → secondary`) with no shimmer, no pulse, no white streak. The home screen orbits around three primitives — the Morning Greeting GlassCard with three DewDrops, the Last Answer row, the three-block Today counter. The tab bar is the "Five Quiet Anchors" — 4 flat outline icons + one elevated sage gradient Scan anchor at the center, lifted 40pt above the bar. Motion is FadeIn + ZoomIn entrance + press-scale 0.97. Shadows are always tinted sage `#416743`, never black, never neutral grey. Hard 1px borders are forbidden — boundaries are tonal shift + negative space + hairline sage @ 8%.**
->
-> **Brand names that Stitch invented ("Sunday Morning Sanctuary", "The Conservatory", "The Dew-Drenched Conservatory") are dropped. Canonical product name in UI copy is `freshcheck` lowercase, wordmark-style.**
->
-> **Rejected and killed in this iteration:** warm cream canvas, Plus Jakarta Sans, Fraunces Italic, rainbow/coral/amber ambient orbs, shimmer sweeps, pulse breathing, count-up number animations, uppercase "SAFE / CAUTION / DANGER" shouting, ExtraBold display weights, inner-glow + showTopLight props on GlassCard, hazard/warning iconography, traffic-light accent bars on product rows.
+**Дата:** Апрель 2026
+**Стадия:** UX Design → Visual Design (Stage 3)
+**Источники:** `docs/04-ux/` (истина по функциональности), `docs/06-design/stitch-raw/` (визуальный референс), `docs/02-product/FEATURES.md`, `docs/03-practices/PRACTICES-BRIEF.md`
 
 ---
 
 ## 1. TL;DR
 
-**Accept from Stitch reference (code.html + DESIGN.md, project 10664153590131676892):**
-- Monochromatic sage palette (single-family single-hue identity)
-- Manrope medium/semibold as primary editorial voice
-- Pill CTAs with gentle dewy gradient (`primary → secondary`)
-- Glass panels — `rgba(255,255,255,0.65)` + BlurView + inset 1px top highlight
-- Inner nested panels (`rgba(255,255,255,0.4)` + hairline white border) inside GlassCard
-- Five Quiet Anchors tab bar (4 flat icons + center elevated scan anchor)
-- Verdict Bloom — hero word "fresh" inside a 240pt soft-bloom circle
-- Lowercase copy everywhere — "hi, sarah", "milk", "fresh"
-- Tonal-layer hierarchy — no hard borders, boundaries through tonal shift
+**Берём из Stitch (визуальный язык):**
+- Тёплая кремовая палитра (`#FDF9F0` фон, `#4A654F` зелёный primary) — передаёт «уютная кухня», а не «лаборатория». Соответствует Sara (мама, ищет спокойствие) и Marcus (Whole-Foods-эстетика).
+- Полностью округлые кнопки-пилюли + карточки без видимых рамок (границы через тональные сдвиги и тени).
+- Типографика: Plus Jakarta Sans для заголовков + Manrope для подписей.
+- Трёхцветная verdict-система (зелёный/жёлтый/коралловый) проходит через все экраны.
 
-**Reject from Stitch reference:**
-- Warm cream `#FDF9F0` canvas — we shifted to mint-white `#F8FAF6`
-- Plus Jakarta + Fraunces — dropped entirely, Manrope only
-- Tertiary `#F08080` as anything other than a chip — no ambient coral
-- `customColor #8DAA91` as a chromatic identity — we use `primary #416743` darker
-- Brand names ("The Conservatory", "Sunday Morning Sanctuary", etc)
+**Выбрасываем из Stitch:**
+- **4 таба в нижней навигации** — UX-спека требует 5 (Home / My Fridge / **Guide** / Recipes / Profile). Guide-таб (F4, USDA-справочник) обязателен для MVP.
+- **Home-dashboard со статистикой `$127 Saved · 14 Scans · 0 Wasted`** — это Weekly Report (F12, v1.1) и Gamification (F15, v2.0). В MVP их нет.
+- Название «The Dew-Drenched Conservatory» и прочий брендинг-флафф из component-sheet — продукт называется **FreshCheck**.
+- Мелкий текст в Fridge-списке — Елена (персона 65+) не прочитает. Поднимаем до 16pt min для имени продукта.
 
-**Ship beyond Stitch:**
-1. Three-block Today counter (scans / items / need soon) as quiet anchor under Last Answer
-2. Morning Gradient + 3 leaf-veins replaces Stitch's flat background
-3. DewDrop primitive — inset-highlight 48pt food indicator tile
-4. Verdict Bloom with twin ambient glow layers + ZoomIn entrance
-5. "Five Quiet Anchors" FloatingTabBar — elevated center Scan anchor with outer sage glow halo
+**Апгрейдим под MVP:**
+1. Добавляем **Guide-таб** в Floating Tab Bar (5 иконок вместо 4).
+2. Home-экран: вместо v2-статистики — блок «N продуктов скоро истекают» (из F3 push-логики) + последний скан + крупная Scan-кнопка.
+3. Дублируем цвет verdict'а текстом + иконкой (WCAG: color ≠ единственный индикатор).
+4. Dynamic Type supported — SAFE/CAUTION/DANGER минимум 32pt (для Елены).
 
-**13 primitives** (order of dependency):
-1. `<AtmosphericBackground>` — root wrapper, `canvas` + `<OrbField/>`
-2. `<OrbField>` — Morning gradient + 3 leaf-veins, absolute, `pointerEvents="none"`
-3. `<GlassCard>` — BlurView 22 + `glassFill` + inset top highlight (variants: `glass` / `solid` / `muted`)
-4. `<PillCTA>` — dewy sage gradient pill (variants: `primary` / `glass` / `ghost`)
-5. `<VerdictPill>` — lowercase chip with tone gradient (`fresh` / `safe` / `soon` / `past` / `neutral`)
-6. `<HeroNumber>` — number/word display (sizes: `bloom` / `xl` / `l` / `m` / `s`)
-7. `<Eyebrow>` — small tracked label, sentence case default, uppercase opt-in
-8. `<TokenDot>` — 6/8/10/12pt status dot, opacity 0.6
-9. `<CountdownBar>` — 4pt gradient fill (fresh → soon → past), track is `hairline`
-10. `<ProductRow>` — `surfaceLowest` row with DewDrop-style thumb + optional CountdownBar
-11. `<DewDrop>` — 48pt round tile with inset white highlight + sage soft shadow
-12. `<FloatingTabBar>` — Five Quiet Anchors pattern, home / fridge / [scan] / recipes / profile
-13. `<Glyphs>` — 17 inline SVG icons at 1.75 stroke (Sprig, Scan, Fridge, ChefHat, User, Back, Heart, Menu, Plus, Check, WarningSoft, Droplet, Clock, Chevron, Flash, Close, Share)
-
-Gone since v1: `PulseGlow` · `DecorDots` · `MonogramTile` · `AccentBar` — all four deleted. Do not reintroduce.
+**Правило разрешения конфликтов:** если Stitch визуал противоречит UX-докам — побеждает UX. Stitch = вдохновение по стилю, не по структуре.
 
 ---
 
-## 2. Colors
+## 2. Цвета
 
-### 2.1 Token table
+Палитра строится на одной доминирующей хроме (шалфей-зелёный) + нейтральный тёплый фон + три verdict-акцента.
 
-Every color lives in `constants/tokens.ts > colors`. **No inline hex anywhere else.**
-
-| Token | Hex | Role |
+| Роль | Hex | Использование |
 |---|---|---|
-| `canvas` | `#F8FAF6` | Base surface — mint-white morning |
-| `canvasTint` | `#F2F4F0` | Quiet tint above canvas |
-| `canvasMist` | `#dce8dd` | Bottom stop of morning gradient |
-| `surface` | `#F8FAF6` | Alias for canvas |
-| `surfaceLow` | `#F2F4F0` | Nested surface |
-| `surfaceContainer` | `#eceeeb` | Neutral chip fill |
-| `surfaceHigh` | `#e7e9e5` | Pressed / subdued |
-| `surfaceHighest` | `#e1e3df` | Deepest neutral |
-| `surfaceLowest` | `#ffffff` | Elevated card (ProductRow) |
-| `surfaceDim` | `#d8dbd7` | Quiet tint |
-| `surfaceBright` | `#F8FAF6` | Alias |
-| `primary` | `#416743` | Sage primary — CTA fill, titles |
-| `onPrimary` | `#ffffff` | Text on primary |
-| `primaryContainer` | `#7DA67D` | Soft sage — CTA stop 2, DewDrop icon |
-| `onPrimaryContainer` | `#153b1c` | Text on container |
-| `primaryFixed` | `#c2eec0` | Mint highlight — thumb fill, Verdict Bloom |
-| `primaryFixedDim` | `#a7d1a5` | Countdown mid |
-| `onPrimaryFixed` | `#002107` | Text on primaryFixed |
-| `onPrimaryFixedVariant` | `#294f2d` | Muted text on primaryFixed |
-| `secondary` | `#4f6351` | Sage secondary — support copy |
-| `onSecondary` | `#ffffff` | Text on secondary |
-| `secondaryContainer` | `#cfe6cf` | Soft secondary |
-| `onSecondaryContainer` | `#536855` | Text on secondary container |
-| `secondaryFixed` | `#d2e9d2` | Gentle sage |
-| `secondaryFixedDim` | `#b6ccb6` | Quieter |
-| `tertiary` | `#546256` | Ambient sage-grey |
-| `tertiaryContainer` | `#92a093` | Muted neutral |
-| `tertiaryFixed` | `#d8e6d8` | Soft neutral |
-| `tertiaryFixedDim` | `#bccabc` | — |
-| `onTertiary` | `#ffffff` | — |
-| `onTertiaryContainer` | `#2a372d` | — |
-| `ink` | `#191c1a` | Primary text — warm green-black, never `#000` |
-| `onSurface` | `#191c1a` | Alias for ink |
-| `onSurfaceVariant` | `#424941` | Secondary text |
-| `outline` | `#727970` | Inactive icon |
-| `outlineVariant` | `#c2c8be` | — |
-| `coral` | `#d98a8a` | Muted coral — verdict chip ONLY |
-| `coralContainer` | `#fde3e0` | Coral chip fill |
-| `onCoralContainer` | `#6c2420` | Text on coral chip |
-| `amber` | `#d9a84e` | Muted honey — verdict chip ONLY |
-| `amberContainer` | `#fbecc7` | Amber chip fill |
-| `onAmberContainer` | `#5c3f0b` | Text on amber chip |
-| `white` | `#ffffff` | — |
-| `black` | `#000000` | **NEVER** as text or bg — tokens only |
-| `glassFill` | `rgba(255,255,255,0.65)` | Glass panel fill |
-| `glassBorder` | `rgba(255,255,255,0.8)` | Glass panel hairline |
-| `glassInnerHighlight` | `rgba(255,255,255,0.9)` | Inset top 1px |
-| `leafVein` | `rgba(65,103,67,0.05)` | OrbField decoration |
-| `hairline` | `rgba(65,103,67,0.08)` | Divider (sparing) |
-| `overlay` | `rgba(25,28,26,0.35)` | Modal dim |
+| `canvas` | `#FDF9F0` | Основной фон всех экранов (тёплый крем) |
+| `surface` | `#FFFFFF` | Карточки, модалы (чисто-белый для максимального контраста) |
+| `surfaceMuted` | `#F1EEE5` | Вторичные контейнеры, disabled-состояния |
+| `primary` | `#4A654F` | CTA-кнопки, активный таб, бренд-акценты, SAFE verdict |
+| `primaryContainer` | `#8DAA91` | Мягкие фоны под иконки, chip'ы, progress bars |
+| `accentWarn` | `#FFBF00` | CAUTION — скоро истекает (жёлтый амбер) |
+| `accentDanger` | `#F08080` | DANGER — истекает / испортилось (коралл, не пожарно-красный) |
+| `textPrimary` | `#1C1C17` | Основной текст (тёплый почти-чёрный, не `#000`) |
+| `textSecondary` | `#55584E` | Подписи, вспомогательный текст |
+| `border` | `rgba(28,28,23,0.08)` | Тонкие разделители только когда тональный сдвиг невозможен |
 
-### 2.2 Gradient library
-
-Named by mood / role, 135° diagonal unless noted. All sage-family.
-
-| Name | Stops | Angle | Use |
-|---|---|---|---|
-| `morning` | `#f0f4f0 → #dce8dd` | 135° | Canvas morning gradient (OrbField) |
-| `dewyCTA` | `#416743 → #4f6351` | 135° | Primary PillCTA fill |
-| `dewyCTASoft` | `#7DA67D → #c2eec0` | 135° | Pressed / soft variant |
-| `verdictFresh` | `#7DA67D → #c2eec0` | 0° | Fresh/safe chip + Verdict Bloom |
-| `verdictSoon` | `#e9c77a → #fbecc7` | 0° | Eat-soon chip (muted amber) |
-| `verdictPast` | `#d98a8a → #fde3e0` | 0° | Past chip (muted coral) |
-| `verdictBloom` | `rgba(255,255,255,0.9) → rgba(194,238,192,0.4)` | 135° | Verdict Bloom circle |
-| `shutter` | `#7DA67D → #416743 → #4f6351` | 135° | Scan anchor (tab bar + camera shutter) |
-| `countdownFresh` | `#a7d1a5 → #7DA67D` | 0° | CountdownBar <50% elapsed |
-| `countdownSoon` | `#c2eec0 → #e9c77a` | 0° | CountdownBar 50-85% |
-| `countdownPast` | `#e9c77a → #d98a8a` | 0° | CountdownBar >=85% |
-
-### 2.3 The "single family" rule
-
-All ambient / structural color is sage. Coral and amber appear ONLY inside VerdictPill and CountdownBar (past/soon gradients) — i.e. chip-only. There is no such thing as a coral card, a coral orb, a coral background wash, an amber CTA. The atmosphere is always mint-green.
-
-### 2.4 The "no-line" rule
-
-Never use a solid `1px #xxx` border to section content. Boundaries come from:
-1. **Tonal shift** — `surfaceLow` on `canvas`, or nested inner panel at `rgba(255,255,255,0.4)` + white hairline
-2. **Sage-tinted shadow** — always `#416743` with 0.05-0.10 opacity
-3. **Negative space** — `spacing.xl` (24) or `spacing.xxl` (32) gaps
-
-Exception: hairline white borders (`rgba(255,255,255,0.8)`) are used on GlassCard, FloatingTabBar, and nested inner panels — they read as edge highlights, not rule-lines.
+**Правила:**
+- **Цвет никогда не единственный носитель информации** (WCAG AA). SAFE/CAUTION/DANGER дублируются текстом и иконкой.
+- Контраст `textPrimary` на `canvas` = 14.2:1 ✅, на `primary` = 8.1:1 ✅.
+- Для verdict'ов используем **наполненную pill-форму** + иконку (✓ / ⚠ / ✕), чтобы color-blind пользователи различали по форме.
 
 ---
 
-## 3. Typography
+## 3. Типографика
 
-### 3.1 Family
+Два семейства через `expo-font`: **Plus Jakarta Sans** (заголовки) + **Manrope** (тело, подписи). Fallback: системный San Francisco / Roboto.
 
-Manrope ONLY — loaded via `@expo-google-fonts/manrope` in `hooks/useAppFonts.ts`. Weights used: 400, 500, 600, 700, 800. Plus Jakarta Sans and Fraunces are gone and must not be reintroduced.
-
-| Role | Weight |
-|---|---|
-| Body default | 500 Medium |
-| Titles | 600 SemiBold |
-| Verdict Bloom hero | 700 Bold |
-| 800 ExtraBold | Loaded but unused — do not add |
-
-### 3.2 Scale (`typeScale` in tokens.ts)
-
-| Role | Size / lineHeight | Weight | Tracking |
+| Стиль | Шрифт + вес | Размер / line-height | Где используется |
 |---|---|---|---|
-| `verdictBloom` | 72 / 80 | 700 | -1.8 |
-| `displayL` | 40 / 46 | 600 | -1.2 |
-| `displayM` | 32 / 38 | 600 | -0.8 |
-| `titleL` | 24 / 30 | 600 | -0.4 |
-| `titleM` | 20 / 26 | 600 | -0.2 |
-| `titleS` | 18 / 24 | 500 | 0 |
-| `bodyL` | 17 / 24 | 500 | 0 |
-| `body` | 15 / 22 | 500 | 0 |
-| `bodySmall` | 13 / 20 | 500 | 0.1 |
-| `label` | 13 / 18 | 600 | 0.3 |
-| `labelSmall` | 11 / 16 | 600 | 0.8 |
-| `caption` | 12 / 16 | 500 | 0.2 |
+| `display` | Plus Jakarta Sans 700 | 48 / 54 | Verdict-число (92%), onboarding welcome |
+| `h1` | Plus Jakarta Sans 600 | 32 / 38 | Заголовок экрана (Scan Result, Paywall headline) |
+| `h2` | Plus Jakarta Sans 600 | 24 / 30 | Секция внутри экрана («Detailed Analysis», «Recent Activity») |
+| `h3` | Manrope 600 | 18 / 24 | Название продукта в карточке Fridge |
+| `body` | Manrope 400 | 16 / 24 | Основной текст, описания |
+| `bodyStrong` | Manrope 600 | 16 / 24 | Подсветка внутри body (сроки, ключевые цифры) |
+| `label` | Manrope 500 | 14 / 20 | Кнопки, табы, мета-подписи |
+| `caption` | Manrope 400 | 12 / 16 | Disclaimer, timestamp, «по данным USDA» |
 
-### 3.3 Copy rules
-
-- **Lowercase by default.** "hi, sarah", "your fridge", "wild salmon", "milk", "fresh", "see the fridge", "save to my fridge", "scan another", "morning greeting", "the last answer", "today". This is an identity rule, not an accessibility rule.
-- **Uppercase is opt-in.** Only `<Eyebrow uppercase>` renders UPPERCASE — used for section titles like "MORNING GREETING", "THE LAST ANSWER", "WANTS ATTENTION". Tracking 2px.
-- **Numbers stay numeric.** "2 of 5 scans", "92% sure", "4 days". Spell out only for small integers in prose copy ("two things want attention soon").
-- **No shouting.** Never wrap an H1 in uppercase. The Verdict Bloom word is lowercase.
+**Правила:**
+- **Минимум body = 16pt** — ниже теряет Елена.
+- **Поддержка Dynamic Type** — все стили через `useWindowDimensions` scale + `accessibilityRole`.
+- **Без CAPS LOCK заголовков** — Stitch иногда использует, мы нет (хуже читается, особенно старше 60).
+- Числа в verdict (92%) — табулярные, `fontVariant: ['tabular-nums']`.
 
 ---
 
-## 4. Surfaces & depth
+## 4. Поверхности
 
-### 4.1 GlassCard variants
+Принцип: **границы через тональные сдвиги и мягкие тени**, почти не через 1px-линии.
 
-| Variant | Fill | Border | BlurView | Shadow |
+| Поверхность | Фон | Тень | Радиус | Назначение |
 |---|---|---|---|---|
-| `glass` (default) | `rgba(255,255,255,0.65)` (iOS) / `rgba(255,255,255,0.92)` (Android) | `glassBorder` 1px | intensity 22 tint=light (iOS only) | `shadows.panel` |
-| `solid` | `surfaceLowest` `#ffffff` | none | off | `shadows.soft` |
-| `muted` | `surfaceLow` `#F2F4F0` | none | off | `shadows.soft` |
+| `canvas` | `#FDF9F0` | — | — | Фон всего экрана |
+| `card` | `#FFFFFF` | `0 2 8 rgba(74,101,79,0.08)` | 20 | Fridge-items, Recipe-карточки, stats |
+| `cardElevated` | `#FFFFFF` | `0 4 16 rgba(74,101,79,0.12)` | 24 | Scan Result verdict-блок, Paywall |
+| `pill` | `primaryContainer` или `surfaceMuted` | — | 999 (fully rounded) | Chip, tab-фильтр, verdict-tag |
+| `ctaPrimary` | Линейный градиент `primary → primaryContainer` 135° | `0 4 12 rgba(74,101,79,0.24)` | 999 | Главный CTA (Scan, Save, Subscribe) |
+| `ctaSecondary` | `#FFFFFF` с бордером `primary` 1.5px | — | 999 | Вторичное действие |
+| `floatingTabBar` | `#FFFFFF` 92% + backdrop-blur 20 | `0 -2 12 rgba(28,28,23,0.06)` | 32 (top corners) | Bottom tab bar |
 
-Every `glass` variant renders an absolute 1px inset highlight at `top: 0` with `glassInnerHighlight` — the "light on a leaf" cue. This is the replacement for the old v1 `showTopLight` / `leafHighlight` props — it's now intrinsic to the primitive.
+**Тени — всегда тонированы в `primary`**, не чёрные. Это сохраняет «тёплую кухню» даже в тенях.
 
-### 4.2 Nested inner panels
+**Нет:**
+- Жёстких `borderWidth: 1` линий между карточками.
+- Серых `#E0E0E0` разделителей.
+- Чёрных теней (`rgba(0,0,0,...)`).
 
-Inside a GlassCard you often want a quieter nested region (e.g. the "three things want attention soon" block inside the Morning Greeting). The pattern:
+---
+
+## 5. Примитивы (компоненты)
+
+Под экраны из `docs/04-ux/SCREEN-MAP.md` нужно ~13 базовых компонентов. Всё в `components/ui/`.
+
+| # | Компонент | Роль |
+|---|---|---|
+| 1 | `<Screen>` | Корневой wrapper: SafeArea + canvas + StatusBar + KeyboardAvoiding |
+| 2 | `<Card>` | Белая карточка с тенью — для Fridge items, Recipe tiles, stats |
+| 3 | `<PillButton>` | Округлая кнопка — варианты `primary` / `secondary` / `ghost`, размеры `sm / md / lg` |
+| 4 | `<VerdictBadge>` | Pill с иконкой + текстом — SAFE / CAUTION / DANGER (цвет + форма + текст = 3 носителя) |
+| 5 | `<ScoreRing>` | Круговой прогресс для confidence (92% в Scan Result) |
+| 6 | `<ProgressBar>` | Линейная шкала «сколько дней осталось» для Fridge items — цвет меняется по порогам |
+| 7 | `<ProductTile>` | Карточка в Fridge-списке: thumbnail + имя + срок + verdict-dot |
+| 8 | `<FloatingTabBar>` | 5 табов (Home / Fridge / Guide / Recipes / Profile), pill-форма, floating снизу |
+| 9 | `<SectionHeader>` | Заголовок секции внутри экрана + опциональный action link |
+| 10 | `<EmptyState>` | Иллюстрация + текст + CTA — для пустых Fridge / Recipes |
+| 11 | `<Chip>` | Фильтр-pill: активный / неактивный (используется в Fridge filters, Recipe filters) |
+| 12 | `<Sheet>` | Bottom sheet-модал — для Paywall, Permissions, Delete Confirmation |
+| 13 | `<Toast>` | Уведомление снизу — «Курица добавлена», «+$8.50 сэкономлено» |
+
+**Принцип:** экраны **только композируют** примитивы. Если экран требует что-то, чего нет в списке — сначала добавляем в этот список, потом строим.
+
+---
+
+## 6. Layout
+
+Сетка и отступы под iPhone (min 375pt) + Android (min 360dp).
+
+| Токен | Значение | Где |
+|---|---|---|
+| `spacing.xxs` | 4 | Внутри chip, gap между иконкой и текстом |
+| `spacing.xs` | 8 | Отступы внутри маленьких компонентов |
+| `spacing.sm` | 12 | Внутри Card (вертикальный ритм) |
+| `spacing.md` | 16 | Стандартный отступ между блоками |
+| `spacing.lg` | 24 | Между секциями экрана |
+| `spacing.xl` | 32 | Верхние отступы заголовков |
+| `spacing.xxl` | 48 | Hero-блоки, пустые состояния |
+| `screen.paddingH` | 20 | Горизонтальный padding экрана |
+| `screen.paddingTop` | `insets.top + 16` | Через `useSafeAreaInsets()` |
+| `screen.paddingBottom` | `insets.bottom + 88` | 88 = место под floating tab bar |
+| `touchTarget.min` | 44 × 44 | Apple HIG минимум для кнопок |
+| `maxContentWidth` | 560 | На планшетах не растягивать вёрстку |
+
+**Колонки:**
+- **Mobile (< 560pt):** одна колонка, full-width карточки.
+- **Tablet (≥ 560pt):** контейнер центрирован на `maxContentWidth`, фон canvas вокруг.
+
+**Safe Area:**
+- Везде `useSafeAreaInsets()` для top/bottom.
+- Все primary CTA в нижних 60% экрана (one-hand operation — Sara).
+
+---
+
+## 7. Screen Recipes
+
+Четыре типовых экрана. Структура — из `docs/04-ux/WIREFRAMES.md`, визуал — из Stitch.
+
+### Recipe A: Home / Scan Hub (2.1)
 
 ```
-backgroundColor: rgba(255,255,255,0.4)
-borderRadius: radii.xl (32)
-padding: spacing.lg (20)
-borderWidth: 1
-borderColor: rgba(255,255,255,0.6)
-```
+<Screen>
+  <ScrollView>
+    Greeting: "Hi Sara!" (h1) + timestamp (caption)
 
-No blur on the nested panel — blur compounds poorly.
+    ExpiryBanner (Card, surfaceMuted фон):
+      ⚠  "3 items expire soon"
+      → tap → My Fridge
 
-### 4.3 Shadow tokens (`shadows`)
+    LastScanRow (Card):
+      Thumbnail + "Wild Salmon" + VerdictBadge(SAFE) + "yesterday"
 
-All shadows tint `#416743` sage. Never `#000`, never neutral grey.
+    ScanCounter (caption): "2/5 scans today" (free tier only)
 
-| Token | Offset y | Radius | Opacity | Elev |
-|---|---|---|---|---|
-| `panel` | 8 | 32 | 0.08 | 4 |
-| `soft` | 4 | 16 | 0.05 | 2 |
-| `cta` | 4 | 20 | 0.28 | 6 |
-| `shutter` | 10 | 40 | 0.40 | 12 |
-| `none` | 0 | 0 | 0 | 0 |
+    [SPACE — вёрстка дышит]
 
----
-
-## 5. Primitives (component contracts)
-
-Each primitive lives in `components/ui/<Name>.tsx` and is re-exported through `components/ui/index.ts`. Screens compose from primitives — they do not special-case inline what a primitive should provide. **Upgrade the primitive instead.**
-
-### 5.1 `<AtmosphericBackground>`
-**Props:** `{ children, style? }`. Root wrapper of every screen. Renders `<View flex:1 bg=canvas><OrbField/>{children}</View>`. NEVER inside ScrollView.
-
-### 5.2 `<OrbField>`
-No props. Monochromatic sage only — no radial orbs. Composition:
-- `<LinearGradient colors=gradients.morning start=(0,0) end=(1,1) absoluteFill />`
-- three 1px `leafVein` lines (rgba(65,103,67,0.05), opacity 0.3) at `top: 25%/52%/75%` rotated `-12°/+6°/-6°`.
-- all `pointerEvents="none"`.
-
-### 5.3 `<GlassCard>`
-**Props:** `{ children, variant?: 'glass'|'solid'|'muted' = 'glass', style?, radius?: keyof radii = 'xxl', padding?: number = 24 }`.
-- `variant=glass`: iOS → `<BlurView intensity=22 tint=light absoluteFill />` + `glassFill` absoluteFill. Android → `rgba(255,255,255,0.92)` absoluteFill. Border 1px `glassBorder`. Shadow `shadows.panel`. Always renders absolute 1px top `glassInnerHighlight` ("light on a leaf").
-- `variant=solid`: `surfaceLowest` (#ffffff), no border, `shadows.soft`.
-- `variant=muted`: `surfaceLow` (#F2F4F0), no border, `shadows.soft`.
-
-### 5.4 `<PillCTA>`
-**Props:** `{ label, onPress?, variant?: 'primary'|'glass'|'ghost' = 'primary', icon?, iconRight?, fullWidth?, disabled?, compact?, style?, accessibilityLabel?, accessibilityHint?, testID? }`.
-- `radii.full`, height 52 (compact 44), text `typeScale.titleS`.
-- `variant=primary`: `<LinearGradient colors=gradients.dewyCTA start=(0,0) end=(1,1) absoluteFill />`, text `onPrimary`, `shadows.cta`.
-- `variant=glass`: iOS BlurView 24 + `rgba(255,255,255,0.65)` + 1px sage border @ 0.18. Android `rgba(255,255,255,0.92)`. Text `primary`.
-- `variant=ghost`: transparent, no border, text `primary`.
-- Haptics: `impactAsync(Light)` on press. Press-scale 0.97 spring (damping 18, stiffness 260). Respects `useReducedMotion()`.
-
-### 5.5 `<VerdictPill>`
-**Props:** `{ verdict?: Tone = 'fresh', label?, small?, style? }`.
-- Default labels (lowercase): `fresh→"fresh"`, `safe→"safe"`, `soon→"eat soon"`, `past→"past"`, `neutral→"—"`.
-- Gradient: `fresh/safe → verdictFresh`, `soon → verdictSoon`, `past → verdictPast`. Neutral → no gradient, `tone.fill` bg.
-- `radii.full`, border 1px `rgba(255,255,255,0.4)`, text `typeScale.label` (or `labelSmall` when `small`) colored `toneColor[verdict].text`. No serif mode.
-
-### 5.6 `<HeroNumber>`
-**Props:** `{ value: string|number, size?: 'bloom'|'xl'|'l'|'m'|'s' = 'xl', color?: keyof colors = 'primary', center?, style? }`.
-- Size → scale: `bloom→verdictBloom(72pt 700)`, `xl→displayL(40)`, `l→displayM(32)`, `m→titleL(24)`, `s→titleM(20)`.
-- Static text — NO count-up, NO animated value.
-
-### 5.7 `<Eyebrow>`
-**Props:** `{ children: string, color?: keyof colors = 'outline', style?, center?, uppercase? }`.
-- `typeScale.labelSmall`, tracking 0.8 (default sentence-case) or 2 (when `uppercase`).
-- Use `uppercase` only for section titles ("MORNING GREETING", "THE LAST ANSWER", "TODAY", "WANTS ATTENTION").
-
-### 5.8 `<TokenDot>`
-**Props:** `{ tone?: Tone = 'fresh', size?: 6|8|10|12 = 8, style? }`.
-- Solid dot, `toneColor[tone].dot` fill at opacity 0.6. No border.
-
-### 5.9 `<CountdownBar>`
-**Props:** `{ daysLeft: number, totalDays: number, height?: number = 4, style? }`.
-- `elapsed = clamp((totalDays - daysLeft) / totalDays, 0, 1)`.
-- Fill gradient: `>= 0.85 → countdownPast`, `>= 0.50 → countdownSoon`, else `countdownFresh`.
-- Track `colors.hairline`, rounded-full. `accessibilityRole="progressbar"`.
-
-### 5.10 `<ProductRow>`
-**Props:** `{ name, expiryText, tone: Tone, thumbnail?, daysLeft?, totalDays?, trailing?, onPress?, style? }`.
-- `surfaceLowest` row, `radii.lg`, padding `md`, `marginBottom: sm`, `shadows.soft`.
-- 56pt thumb `primaryFixed` + `radii.md` → Image if `thumbnail`, else lowercase initial in `titleM` colored `tone.accent`.
-- Body: lowercase name in `titleS onSurface`, expiry in `bodySmall onSurfaceVariant`, optional `<CountdownBar>` below (mt 8) when `daysLeft` + `totalDays` both set.
-- Trailing defaults to `<TokenDot tone={tone} />`. No coral halo, no left accent bar.
-
-### 5.11 `<DewDrop>`
-**Props:** `{ size?: number = 48, children?, style? }`.
-- Circle, `rgba(255,255,255,0.88)` fill, 1px outer border `rgba(255,255,255,0.95)`, sage shadow `#416743 y:4 opacity:0.10 radius:8`.
-- Inset top-left highlight via `borderTopWidth/borderLeftWidth = 1` on an absoluteFill view (`borderTopColor: rgba(255,255,255,0.95)`, `borderLeftColor: rgba(255,255,255,0.6)`).
-- Used on the Morning Greeting card (three food indicators) and on bottom-sheet modal anchors.
-
-### 5.12 `<FloatingTabBar>` — Five Quiet Anchors
-Registered as `tabBar` prop of `<Tabs>` in `app/(tabs)/_layout.tsx`. Not rendered by screen files.
-- Layout: absolute, `bottom: insets.bottom + 12`, left/right `tabBarMargin + 4`, height 72, `radii.full`, `shadows.panel`. iOS BlurView 22 + `rgba(255,255,255,0.70)` + 1px `glassBorder`. Android `rgba(255,255,255,0.92)`. Inset top highlight 1px `glassInnerHighlight` between x=28 and x=right-28.
-- Row: `[home] [fridge] [SCAN anchor] [recipes] [profile]`.
-- Flat tabs: 24pt outline icon, strokeWidth 1.5, `primary` when active else `outline`. Haptic `selectionAsync`.
-- Center Scan anchor: 68pt circle, `marginTop: -40` (lifts above bar), `gradients.shutter` 135°, 2px white border, shadow `#416743 y:8 opacity:0.35 radius:20`. 88pt outer glow (primary @ 0.16) behind. 28pt white Plus glyph. Haptic `impactAsync(Medium)`, navigates `/scan/camera`.
-- `layout.floatingBottomClearance = 140` — screens must reserve this as `paddingBottom`.
-
-### 5.13 `<Glyphs>`
-Inline SVG icon set. 17 exports: `Sprig`, `Scan`, `Fridge`, `ChefHat`, `User`, `Back`, `Heart`, `Menu`, `Plus`, `Check`, `WarningSoft`, `Droplet`, `Clock`, `Chevron` (`direction` prop), `Flash`, `Close`, `Share`. Stroke 1.75 default, rounded caps/joins, `color` defaults to `ink`. `WarningSoft` is a ROUNDED triangle — never a hazard/biohazard mark.
-
----
-
-## 6. Layout system (3-layer rule)
-
-Every screen composes three layers:
-
-```tsx
-<AtmosphericBackground>                       {/* layer 1 — absolute */}
-  <View style={headerAbs}>…</View>            {/* layer 3 — absolute top, outside scroll */}
-  <ScrollView contentContainerStyle={{
-    paddingTop: insets.top + 24-72,
-    paddingBottom: insets.bottom + layout.floatingBottomClearance + 24,
-    paddingHorizontal: layout.screenPadding,   // 20
-  }} showsVerticalScrollIndicator={false}>
-    {/* layer 2 — content, flows */}
   </ScrollView>
-  {/* FloatingTabBar is rendered by (tabs)/_layout — NOT in the screen */}
-</AtmosphericBackground>
+
+  FloatingScanButton (крупная PillButton primary, 72pt):
+    📷 + "SCAN"
+    sits 100pt above FloatingTabBar
+
+  <FloatingTabBar active="home" />
+</Screen>
 ```
 
-**Rules**
-- Background is ALWAYS `<AtmosphericBackground>`. Never a `backgroundColor` inside ScrollView.
-- FloatingTabBar lives once in `app/(tabs)/_layout.tsx` via the `tabBar` prop of `<Tabs>`. Never render it in a screen.
-- Modal / scan / paywall screens: `<Stack.Screen options={{ presentation: "modal" }} />`. Close via `router.dismiss()`, never `router.back()`.
-- Entering animations: `Animated.View entering={FadeIn.duration(motion.moderate)}`, stagger children with `.delay(80)` / `.delay(160)` / etc.
+**Заменяет Stitch:** вместо блока `$127 · 14 · 0 Wasted` — банер истекающих продуктов (реальная MVP-функция из F3).
 
-**Layout tokens (`layout`)**
-- `screenPadding: 20` / `screenPaddingLg: 24`
-- `headerHeight: 56`
-- `tabBarHeight: 72`, `tabBarMargin: 16`, `tabBarBottomGap: 12`
-- `floatingBottomClearance: 140`
+### Recipe B: Scan Result — SAFE (2.1.3)
+
+```
+<Screen>
+  <Header backButton shareButton />
+
+  ProductPhoto (Card, aspectRatio 1:1, rounded 24)
+
+  VerdictHero (центрированный):
+    ScoreRing 92% (display size, primary color)
+    VerdictBadge "SAFE" (pill, primary bg)
+    caption "FRESH • 4 days left"
+
+  DetailsCard (Card):
+    SectionHeader "Detailed Analysis"
+    ProgressBar "Color" 99/100
+    ProgressBar "Texture" 89/100
+    ProgressBar "Smell" 91/100
+
+  StorageCard (Card):
+    SectionHeader "Storage tip"
+    body: "Use within 1–2 days or freeze"
+
+  Disclaimer (caption, textSecondary):
+    "Visual assessment. Doesn't detect bacteria."
+
+  FeedbackRow: "Helpful?" 👍 👎
+
+  [padding bottom 120]
+
+  <StickyBottom>
+    PillButton primary "+ Save to My Fridge"
+    PillButton secondary "📷 Scan another"
+  </StickyBottom>
+</Screen>
+```
+
+**Заменяет Stitch:** сохраняем ScoreRing и ProgressBars анализа, но добавляем **Disclaimer** (обязателен по F1 acceptance criteria).
+
+### Recipe C: My Fridge List (2.2)
+
+```
+<Screen>
+  <Header>
+    h1 "Your Fridge"
+    Chip "3 Expiring" (accentDanger)
+  </Header>
+
+  FilterChips row (horizontal scroll):
+    Chip "All" active
+    Chip "Fridge"  Chip "Freezer"  Chip "Pantry"
+
+  SectionHeader "Expiring soon" (только если есть)
+    ProductTile × N (отсортированы по срочности)
+
+  SectionHeader "Good"
+    ProductTile × N
+
+  Banner (если tier=free и count≥8):
+    "8/10 items on Free. Upgrade for unlimited →"
+
+  FloatingActionButton (primary pill, bottom-right above TabBar):
+    "+ Add product"
+
+  <FloatingTabBar active="fridge" />
+</Screen>
+```
+
+**ProductTile структура:**
+```
+[thumbnail 56pt] [name h3, expiry bodyStrong] [verdict-dot + chevron]
+```
+
+**Swipe actions:** вправо → «Used» (primary green), влево → «Wasted» (accentDanger).
+
+### Recipe D: Paywall (1.8 / 3.1)
+
+```
+<Sheet fullScreen>
+  CloseButton top-right (✕)
+
+  Hero:
+    h1 "Protect your family from spoiled food"  (персонализировано из quiz)
+
+  BenefitList (без Card-обёртки, чистый список):
+    ✓ Unlimited scans
+    ✓ Push: "Chicken — use today or freeze"
+    ✓ Recipes from expiring items
+    ✓ Unlimited fridge tracking
+
+  PlanCards (2 варианта):
+    Card (secondary): "$4.99 / month"
+    Card (primary, выделен бордером primary 2px + badge "SAVE 33%"):
+      "$3.33/month — $39.99/year"
+
+  PillButton primary lg "Try 7 days free"
+
+  SocialProof (caption): "★ 4.5 · 12,400 families"
+
+  Footer (caption row):
+    Restore · Terms · Privacy
+
+  TextButton (ghost, mute): "Not now"
+</Sheet>
+```
+
+**Заменяет Stitch:** Stitch-проект не содержит Paywall — берём структуру целиком из `WIREFRAMES.md §4` + наш визуальный язык.
 
 ---
 
-## 7. Screen recipes
+## 8. Motion & Haptics
 
-Composition notation — primitives in angle brackets, literal copy in braces. All copy lowercase.
+**Motion** — короткий, ненавязчивый. Следуем `prefers-reduced-motion`.
 
-### 7.1 Home Dashboard (`app/(tabs)/index.tsx`) — exemplar
-
-`<AtmosphericBackground>` wraps. Absolute header row at top-left: `<Sprig>` 20pt primary + wordmark `"freshcheck"` in `label primary`. Scroll body has three stacked sections, each wrapped in `Animated.View FadeIn.moderate` with `.delay(0/80/160)`:
-
-1. **MORNING GREETING** — `<Eyebrow uppercase>"morning greeting"</Eyebrow>` → `<GlassCard glass xxl padding=28>` containing a row with a 48pt sage-tint avatar circle (`<Sprig size=22>`) + `"hi, {user.name.toLowerCase()}"` in `displayL onSurface` → nested inner panel (rgba(255,255,255,0.4) + radii.xl + white hairline, padding `lg`) with `body secondary` copy `"three things want attention soon"` and a row of three 48pt `<DewDrop>` each holding the lowercase first initial of an expiring item in `titleM primary` → compact `<PillCTA primary>"see the fridge" iconRight={<Chevron/>}` navigating `/(tabs)/fridge`.
-2. **THE LAST ANSWER** — `<Eyebrow uppercase>"the last answer"</Eyebrow>` → `<GlassCard glass xl padding=16>` as `Pressable` navigating `/scan/result`: 72pt `primaryFixed` thumb + `<FridgeGlyph>` on the left, flex body with `titleL` product name lowercase + small `<VerdictPill>` trailing, subline `body secondary` `"{scannedAt} · {confidence}% sure"`.
-3. **TODAY** — `<Eyebrow uppercase>"today"</Eyebrow>` → `<GlassCard glass xl padding=20>` with three flex blocks separated by `1x36 hairline` dividers: each block has a big number in `displayM primary` ("2", `{fridge.total}`, `{fridge.expiring}`) with `bodySmall secondary` label below ("of 5 scans", "items tracked", "need soon").
-
-### 7.2 Scan Result — Verdict Bloom (`app/scan/result.tsx`) — hero
-
-`<AtmosphericBackground>`, absolute header row with a 40pt circle-glass Back on the left, centered `"scan result"` in `label secondary`, circle-glass Share on the right. Scroll body:
-
-1. **Verdict Bloom** — `Animated.View FadeIn.slow` wrap (height 300, center); two ambient glow blobs behind at `rgba(194,238,192,0.35)` 220x220 and `rgba(125,166,125,0.18)` 260x260; `Animated.View ZoomIn.slow.delay(120)` wraps a 240x240 circle with `gradients.verdictBloom` `<LinearGradient>` absoluteFill and the word `"fresh"` (or other verdict, lowercase) in `typeScale.verdictBloom primary` (72pt 700). White hairline border, sage shadow `#416743 y:20 opacity:0.10 radius:60`.
-2. **Description** — `FadeIn.moderate.delay(300)`: `titleM onSurface center` → `"{confidence}% sure · {product.toLowerCase()}"`, then two `body secondary center` lines describing appearance and shelf-life.
-3. **Storage note** — `FadeIn.moderate.delay(420)`: `<GlassCard glass xl padding=20>` with `<Eyebrow uppercase>"keep in mind"</Eyebrow>` + `body onSurfaceVariant`.
-4. **Action row** — `FadeIn.moderate.delay(540)`: `<PillCTA primary flex=1.4>"save to my fridge"` + `<PillCTA glass flex=1>"scan another"` (replaces `/scan/camera`).
-5. **Disclaimer** — `FadeIn.moderate.delay(660)` centered pill chip (`rgba(255,255,255,0.5)` + white hairline) with `caption secondary`: `"visual check only — won't catch bacteria"`.
-
-### 7.3 Your Fridge (`app/(tabs)/fridge.tsx`)
-
-`<AtmosphericBackground>` + scroll. Header block: `"your fridge"` in `displayM` + `body secondary` line `"{total} items · {expiring} want attention"`. Section one `<Eyebrow uppercase>"wants attention"</Eyebrow>` then `expiring.map(<ProductRow>)` with `daysLeft`/`totalDays` set and `trailing={<VerdictPill verdict={tone} small />}`. Section two `"plenty of time"` with `steady.map(<ProductRow>)` using default `<TokenDot>` trailing. Staggered FadeIn delays 0/80/160.
-
-### 7.4 Recipe Detail (`app/recipe/[id].tsx`)
-
-Compose: header with Back + Heart → hero photo `radii.xxl` aspectRatio 1.4 → title `displayM` lowercase → metadata `<Eyebrow>` row (time · servings · uses expiring) → GlassCard `glass` "ingredients from your fridge" with DewDrop-style ingredient tiles → Section "steps" with StepCard rows `titleM` + `body secondary` → floating bottom `<PillCTA glass>{"save"} </PillCTA>` + `<PillCTA primary>{"start cooking"}</PillCTA>`.
-
-### 7.5 Profile (`app/(tabs)/profile.tsx`)
-
-Compose: greeting `displayM` + avatar → three-block `<GlassCard glass>` stats (scans / items saved / dollars) identical in structure to Home §TODAY → menu list of sectioned `<Eyebrow uppercase>` + row pairs → small muted `sign out` at bottom.
-
-### 7.6 Onboarding Welcome (`app/onboarding/welcome.tsx`)
-
-Compose: centered `<Sprig>` brand mark → `<HeroNumber size="bloom">{"fresh"}</HeroNumber>` with ambient bloom glow → `<Eyebrow>{"find out in 3 seconds"}</Eyebrow>` → `<PillCTA primary fullWidth>{"get started"}</PillCTA>`.
-
-### 7.7 Paywall (`app/paywall.tsx`)
-
-Compose: modal presentation (router.dismiss to close) → `<GlassCard glass>` hero with 4 `<Check>` + `<Text body>` benefit lines → two plan `<GlassCard>` stacked (monthly `solid`, annual `glass` with VerdictPill-small "save 33%") → `<PillCTA primary>{"try 7 days free"}</PillCTA>` → tiny link row caption "restore · terms · privacy" → muted `{"not now"}`.
-
-### 7.8 Camera (`app/scan/camera.tsx`)
-
-Full-bleed viewfinder → top-left circle-glass `<Back>` → top-right circle-glass `<Flash>` → center sage corner brackets hairline → bottom `shutter` gradient circle 88pt with sage inner dot → small `<Eyebrow>{"point at the food"}</Eyebrow>` above.
-
----
-
-## 8. Motion & haptics
-
-| Event | Haptic | Motion |
+| Событие | Анимация | Длительность |
 |---|---|---|
-| Tab press | `selectionAsync` | no motion |
-| Scan anchor press | `impactAsync(Medium)` | press-scale 0.96 via `pressed` style |
-| PillCTA primary press | `impactAsync(Light)` | spring-scale 0.97 → 1.0 (damping 18, stiffness 260), respects `useReducedMotion()` |
-| Screen entrance | none | `FadeIn.duration(motion.moderate)` (240ms) on root + staggered `.delay(80 · 160 · 240)` on children |
-| Verdict Bloom reveal | none (toast-handled elsewhere) | `FadeIn.duration(motion.slow)` on wrap + `ZoomIn.duration(motion.slow).delay(120)` on circle |
-| Storage card appear | none | `FadeIn.moderate.delay(420)` |
-| Action row appear | none | `FadeIn.moderate.delay(540)` |
-| Modal close | none | Default `router.dismiss()` |
+| Scan Result появление | Scale 0.9 → 1.0 + fade | 300ms ease-out |
+| ScoreRing | Stroke-dasharray animation от 0 до value | 600ms ease-out |
+| Card добавление в список | Slide up + fade | 400ms spring |
+| Swipe product | Follow finger + release spring | native |
+| Tab switch | Cross-fade | 200ms |
+| Sheet present | Slide from bottom | 350ms spring |
+| Pressable tap | Scale 1.0 → 0.97 | 100ms |
 
-`motion` tokens: `quick: 160`, `moderate: 240`, `slow: 360`.
+**Haptics** — через `expo-haptics`, только на значимых событиях:
 
-Reduce Motion — `useReducedMotion()` from reanimated, fall back to instant state transitions.
+| Событие | Haptic |
+|---|---|
+| Scan CTA tap | `impactAsync(Medium)` |
+| Shutter tap | `impactAsync(Heavy)` |
+| SAFE result | `notificationAsync(Success)` |
+| DANGER result | `notificationAsync(Warning)` |
+| Swipe complete | `impactAsync(Light)` |
+| Tab switch | `selectionAsync()` |
 
-**Never** add: shimmer sweeps, pulse breathing loops, count-up number animations, rotating glow, looping auras, auto-shake, 4-stop white-streak gradient sweeps on CTAs.
-
----
-
-## 9. Anti-patterns
-
-- No inline hex anywhere outside `tokens.ts`.
-- No `backgroundColor: '#000'` / `color: '#000'` — use `ink`.
-- No `borderWidth: 1, borderColor: '#xxx'` as section divider — tonal shift or hairline white only.
-- No `shadowColor: '#000'` or neutral grey — always `#416743` sage.
-- **Never rainbow the atmosphere — sage palette single-family in orbs/gradients/backgrounds. Coral/amber are chip-only.** Orbs are mint. CTAs are sage. Countdown fills are chip-equivalent — coral appears only as the last stop of `countdownPast`.
-- **No count-up animations on numeric displays.** `useAnimatedProps.text` in reanimated 4 is flaky; JS `setInterval` works but visually cheap. Static is premium.
-- **No shimmer sweeps or pulse breathing on CTAs** — user will call it "cheap". A clean dewy gradient + press-scale is enough.
-- **Lowercase copy is an identity rule** — "hi, sarah" not "Hi Sarah", "fresh" not "Fresh", "wild salmon" not "Wild Salmon", "save to my fridge" not "Save to My Fridge".
-- **Don't use `replace_all: true` on bare keywords** — "animate" can eat "reanimated" inside the same file. Scope the old_string with surrounding context before replace_all.
-- No ALL-CAPS shouting outside `<Eyebrow uppercase>` section titles.
-- No Plus Jakarta Sans, no Fraunces Italic, no serif accent. Manrope only.
-- No `showTopLight` / `leafHighlight` / `innerGlow` props — GlassCard's inset highlight is intrinsic.
-- No `PulseGlow`, `DecorDots`, `MonogramTile`, `AccentBar` primitives — all deleted. Do not reintroduce.
-- No traffic-light vertical accent bar on ProductRow — the tone signal is the VerdictPill trailing or the CountdownBar fill.
-- No hazard triangle / biohazard mark — use `<WarningSoft>` (rounded triangle).
-- No `router.back()` on modal close — use `router.dismiss()`.
-- No `BlurView` with `flex: 1` children — collapses to 0 height on Android. Use `absoluteFill` or `width: '100%'`.
-- No `expo-env.d.ts` inside `app/` — must live at repo root.
-- No ring chart with math-positioned labels — use a two-column legend below instead.
-- No Stitch invented brand name ("The Conservatory", "Sunday Morning Sanctuary", "Dew-Drenched Conservatory") in UI copy. UI says `freshcheck` lowercase.
+**Нет:** pulse-анимаций на фоне, shimmer на кнопках, бесконечно вращающихся спиннеров (вместо них — skeleton screens).
 
 ---
 
-## 10. Pre-commit checklist
+## 9. Антипаттерны (что НЕ делать)
 
-Before any screen commit:
-
-- [ ] Screen wrapped in `<AtmosphericBackground>`, NOT a `View` with `backgroundColor: canvas` or a ScrollView with inline bg.
-- [ ] `paddingBottom: insets.bottom + layout.floatingBottomClearance + 24` on scroll content (tab bar clearance).
-- [ ] Primary CTAs are `<PillCTA>`, not bare `<Pressable>`. Secondary is `variant="glass"`.
-- [ ] All headings from `typeScale`. No ad-hoc `fontSize` / `fontWeight`. Manrope family only.
-- [ ] All copy lowercase, except `<Eyebrow uppercase>` section titles.
-- [ ] No inline hex. All colors via `colors.*` / `gradients.*` / `shadows.*`.
-- [ ] Tabs nav uses custom `tabBar` prop `<FloatingTabBar>`, not default. No tab bar rendered inside screen files.
-- [ ] Modal close is `router.dismiss()`, not `router.back()`.
-- [ ] Touch targets ≥ 44x44pt.
-- [ ] Tone (`fresh`/`safe`/`soon`/`past`) is duplicated in text — color is never the only signal (a11y).
-- [ ] Images via `expo-image` with `contentFit="cover"` + `aspectRatio`.
-- [ ] BlurView has Android fallback (`Platform.OS === 'android'` → opaque fill).
-- [ ] `useReducedMotion()` checked on any press-scale / entrance.
-- [ ] Entrance animations are FadeIn / ZoomIn from reanimated. No shimmer, no pulse, no count-up, no sweeps.
-- [ ] No references to `PulseGlow` / `DecorDots` / `MonogramTile` / `AccentBar` / `showTopLight` / `leafHighlight` (all removed in v3).
-- [ ] No Plus Jakarta / Fraunces font import.
+1. **Никогда не показывать stats `$X saved` в MVP.** Расчёт не определён, это обещание из v1.1/F12. Вместо — реальные данные (expiring banner, scan counter).
+2. **Не использовать 4-таб навигацию.** UX-спека требует 5 табов, Guide-таб обязателен (F4 в MVP).
+3. **Не использовать чисто-красный `#FF0000` для DANGER.** Только коралл `#F08080` — иначе ощущение «аварии», не «внимание».
+4. **Не использовать `rgba(0,0,0,...)` для теней.** Всегда тонированные `primary` — иначе тёплая атмосфера кухни исчезает.
+5. **Не передавать состояние только цветом.** SAFE/CAUTION/DANGER = цвет + иконка + текст. Иначе color-blind пользователи не различат.
+6. **Не использовать `any` типы и inline styles.** `StyleSheet.create` + TypeScript strict (CLAUDE.md).
+7. **Не запрашивать permissions на первом экране.** Push — после aha-moment, Camera — при первом tap на scan (см. PRACTICES-BRIEF §2).
+8. **Не использовать шрифты меньше 14pt для любого текста.** Caption = absolute minimum (для Елены).
 
 ---
 
-## 11. Sources
+## 10. Pre-commit Checklist
 
-- `constants/tokens.ts` — authoritative palette, gradients, shadows, type scale, layout
-- `hooks/useAppFonts.ts` — Manrope loader
-- `components/ui/*.tsx` — 13 primitives
-- `app/(tabs)/index.tsx` — exemplar Home composition
-- `app/scan/result.tsx` — Verdict Bloom exemplar
-- `docs/06-design/stitch-raw/design-theme.json` — Stitch v3 reference theme (namedColors — many map into tokens)
-- `docs/06-design/stitch-raw/code.html` + `DESIGN.md` — the v3 spec we distilled from
-- `docs/04-ux/SCREEN-MAP.md` — 40 screens, full UX spec
-- `docs/04-ux/UX-SPEC.md` — principles, accessibility, motion spec
-- `~/.claude/skills/stitch-to-native-ui/SKILL.md` — pipeline methodology
-- Precedent projects: Sugar Quit (The Exhale), FixIt (Sunday Morning Sanctuary), both referenced stylistic predecessors
+Перед PR-ом в `feature/jonnykub` проверить:
+
+- [ ] Все цвета из `constants/colors.ts` — ни одного hex-кода inline в экранах/компонентах.
+- [ ] Все отступы через `spacing.*` токены — ни одного magic number.
+- [ ] Все тексты через `Typography`-стили — ни одного inline `fontSize: 16`.
+- [ ] Все кнопки ≥ 44×44pt touch target (Apple HIG).
+- [ ] SAFE/CAUTION/DANGER дублированы иконкой + текстом (не только цвет).
+- [ ] Экран корректно отображается при `Dynamic Type` максимум (iOS Settings → Accessibility).
+- [ ] `useSafeAreaInsets()` использован для top/bottom padding (не hardcoded значения).
+- [ ] Haptic feedback добавлен на primary actions (scan, save, subscribe).
+- [ ] TypeScript strict без ошибок: `npm run typecheck`.
+- [ ] Никаких `console.log`, debug-банеров, mock-значений в UI-коде (mock только в `/mock/`).
+
+---
+
+## Источники
+
+- **Функциональная истина:** `docs/04-ux/UX-SPEC.md`, `docs/04-ux/SCREEN-MAP.md`, `docs/04-ux/WIREFRAMES.md`, `docs/04-ux/USER-FLOWS.md`, `docs/04-ux/FUNNEL.md`
+- **Продуктовая истина:** `docs/02-product/FEATURES.md` (MVP scope), `docs/02-product/TARGET-AUDIENCE.md` (Sara / Marcus / Елена), `docs/02-product/MONETIZATION.md`
+- **Best practices:** `docs/03-practices/PRACTICES-BRIEF.md` (onboarding, paywall, push)
+- **Визуальный референс:** `docs/06-design/stitch-raw/screenshots/` (5 экранов), `docs/06-design/stitch-raw/design-theme.json`
+- **Стек:** `CLAUDE.md` — Expo SDK 55, TypeScript strict, StyleSheet.create, Haptics, `useWindowDimensions`, `useSafeAreaInsets`

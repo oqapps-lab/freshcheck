@@ -44,6 +44,11 @@ export default function RootLayout() {
           <Stack.Screen name="scan/result" options={{ animation: 'fade' }} />
           <Stack.Screen name="recipe/[id]" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="paywall" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
+          <Stack.Screen name="_playground" />
+          <Stack.Screen name="pilot/welcome" />
+          <Stack.Screen name="pilot/home" />
+          <Stack.Screen name="pilot/scan-result" options={{ animation: 'slide_from_bottom' }} />
+          <Stack.Screen name="pilot/fridge" />
         </Stack>
       </SafeAreaProvider>
     </GestureHandlerRootView>

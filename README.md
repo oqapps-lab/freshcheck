@@ -64,20 +64,31 @@ docs/
   08-deployment/             store listings (pending)
 ```
 
-## What ships in v0.1
+## Screens
 
-9 screens, all composed from design primitives:
+Pilot-Batch (v0.1) — 4 Screens, alle aus `components/primitives/` komponiert, Daten aus `/mock/`:
 
-- Home Dashboard with hero fridge card, stats row, recent activity, floating Scan CTA
-- Camera viewfinder with cream shutter ring on warm-dusk canvas
-- Scan Result — hero "92%" with Fraunces Italic "Safe" pill + detailed-analysis glass card
-- Your Fridge — 6 product rows with traffic-light countdown bars, warning on expiring
-- Recipes list sorted by expiring-first urgency
-- Recipe Detail — hero photo, from-fridge ingredient carousel, numbered steps
-- Profile with stats card and menu sections
-- Onboarding Welcome with Fraunces Italic tagline + 7-dot progress
-- Paywall modal with benefit list, monthly vs annual cards (annual = hero), Save-33% ribbon
+| Route | Screen | Datei |
+|---|---|---|
+| `/pilot/welcome` | Welcome — Hero-Illustration, Social-Proof, 7-Dots-Progress | `app/pilot/welcome.tsx` |
+| `/pilot/home` | Home Dashboard — Expiring-Banner, Last-Scan-Card, Quota-Counter, floating Scan-CTA, 5-Tab-BottomNav | `app/pilot/home.tsx` |
+| `/pilot/scan-result` | Scan Result (SAFE) — HeroNumber 92 %, Detailed Analysis, Storage Tip, Disclaimer, Feedback 👍/👎 | `app/pilot/scan-result.tsx` |
+| `/pilot/fridge` | My Fridge — Chip-Filter, Expiring/Fresh-Sections, ProductTiles mit Countdown-Bar, Upsell-Card, FAB | `app/pilot/fridge.tsx` |
+
+Zusätzlich: `app/_playground.tsx` — lebende Showcase aller 14 Primitives.
+
+## Development
+
+Kurze Anleitung zum lokalen Start: **[`docs/07-development/RUN-LOCAL.md`](docs/07-development/RUN-LOCAL.md)**
+
+```bash
+npm install --legacy-peer-deps
+npx expo install --fix
+npm start
+```
+
+Dann `i` im Metro-Terminal (iOS-Sim) oder QR mit Expo Go scannen. Direktlink auf den Pilot-Flow: `exp://<LAN-IP>:8081/--/pilot/welcome`.
 
 ## Current stage
 
-UX Design (Stage 3) → Scaffolded design system (this commit). Next: functional wiring (Supabase auth, Expo Camera, OpenAI vision, Adapty).
+UX Design (Stage 3) → Design-System (`constants/tokens.ts` + 14 Primitives) + Pilot-Batch Screens. Typecheck clean, `expo-doctor` 18/18. Next: weitere Screens (Camera, Recipes, Onboarding-Quiz, Paywall), funktionale Anbindung (Supabase, Expo Camera, OpenAI Vision, Adapty).
