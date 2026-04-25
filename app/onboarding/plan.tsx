@@ -4,8 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { AtmosphericBackground } from '@/components/ui/AtmosphericBackground';
-import { GlassCard } from '@/components/ui/GlassCard';
-import { Eyebrow } from '@/components/ui/Eyebrow';
+import { NeumorphicCard } from '@/components/ui/NeumorphicCard';
 import { Check, Sprig } from '@/components/ui/Glyphs';
 import {
   colors,
@@ -13,6 +12,7 @@ import {
   typeScale,
   layout,
   motion,
+  radii,
 } from '@/constants/tokens';
 import { ProgressDots } from '@/components/onboarding/ProgressDots';
 
@@ -23,7 +23,7 @@ const steps = [
 ];
 
 const STEP_DELAY = 900;
-const TOTAL_MS = steps.length * STEP_DELAY + 800; // reveal + ~4s total
+const TOTAL_MS = steps.length * STEP_DELAY + 800;
 const ADVANCE_MS = 4600;
 
 export default function PlanScreen() {
@@ -63,29 +63,34 @@ export default function PlanScreen() {
 
         <View style={styles.center}>
           <Animated.View entering={FadeIn.duration(motion.moderate)}>
-            <View style={styles.sprigDisc}>
-              <Sprig size={36} color={colors.primary} strokeWidth={1.3} />
-            </View>
+            <NeumorphicCard
+              variant="raised"
+              radius="full"
+              padding={0}
+              style={styles.sprigDisc}
+            >
+              <View style={styles.sprigDiscInner}>
+                <Sprig size={36} color={colors.primary} strokeWidth={1.3} />
+              </View>
+            </NeumorphicCard>
           </Animated.View>
 
           <Animated.View
             entering={FadeIn.duration(motion.slow).delay(80)}
             style={{ alignItems: 'center', marginTop: spacing.xl }}
           >
-            <Eyebrow uppercase color="primary">
-              step six
-            </Eyebrow>
+            <Text style={[typeScale.labelSmall, styles.eyebrow]}>STEP 6</Text>
             <Text
               style={[
-                typeScale.displayM,
+                typeScale.displayL,
                 {
-                  color: colors.onSurface,
+                  color: colors.ink,
                   textAlign: 'center',
                   marginTop: spacing.sm,
                 },
               ]}
             >
-              tending to{'\n'}your kitchen…
+              Tending to Your Kitchen
             </Text>
           </Animated.View>
 
@@ -104,7 +109,7 @@ export default function PlanScreen() {
                       {
                         backgroundColor: isDone
                           ? colors.primaryFixed
-                          : 'rgba(255,255,255,0.6)',
+                          : colors.surfaceLow,
                       },
                     ]}
                   >
@@ -118,7 +123,7 @@ export default function PlanScreen() {
                     style={[
                       typeScale.titleS,
                       {
-                        color: isDone ? colors.onSurface : colors.secondary,
+                        color: isDone ? colors.ink : colors.outline,
                       },
                     ]}
                   >
@@ -134,17 +139,22 @@ export default function PlanScreen() {
               entering={FadeInDown.duration(motion.slow).springify().damping(16)}
               style={styles.revealWrap}
             >
-              <GlassCard variant="glass" radius="xl" padding={spacing.xl}>
-                <Eyebrow uppercase color="primary" style={{ marginBottom: 6 }}>
-                  the real cost
-                </Eyebrow>
-                <Text style={[typeScale.displayL, { color: colors.primary }]}>
+              <NeumorphicCard variant="raised" radius="lg" padding={spacing.xl}>
+                <Text style={[typeScale.labelSmall, styles.revealEyebrow]}>
+                  THE REAL COST
+                </Text>
+                <Text
+                  style={[
+                    typeScale.displayL,
+                    { color: colors.primary, marginTop: 6 },
+                  ]}
+                >
                   $2,913
                 </Text>
                 <Text
                   style={[
                     typeScale.body,
-                    { color: colors.onSurface, marginTop: 4 },
+                    { color: colors.ink, marginTop: 4 },
                   ]}
                 >
                   a year is lost by the average family
@@ -152,12 +162,12 @@ export default function PlanScreen() {
                 <Text
                   style={[
                     typeScale.bodySmall,
-                    { color: colors.secondary, marginTop: spacing.sm },
+                    { color: colors.outline, marginTop: spacing.sm },
                   ]}
                 >
                   freshcheck can help you keep most of that.
                 </Text>
-              </GlassCard>
+              </NeumorphicCard>
             </Animated.View>
           )}
         </View>
@@ -185,17 +195,16 @@ const styles = StyleSheet.create({
   sprigDisc: {
     width: 88,
     height: 88,
-    borderRadius: 44,
-    backgroundColor: 'rgba(255,255,255,0.65)',
+  },
+  sprigDiscInner: {
+    width: 88,
+    height: 88,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.8)',
-    shadowColor: '#416743',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.08,
-    shadowRadius: 28,
-    elevation: 4,
+  },
+  eyebrow: {
+    color: colors.outline,
+    textTransform: 'uppercase',
   },
   stepsWrap: {
     marginTop: spacing.huge,
@@ -210,11 +219,9 @@ const styles = StyleSheet.create({
   check: {
     width: 28,
     height: 28,
-    borderRadius: 14,
+    borderRadius: radii.full,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.8)',
   },
   pendingDot: {
     width: 6,
@@ -225,5 +232,9 @@ const styles = StyleSheet.create({
   revealWrap: {
     marginTop: spacing.xxl,
     alignSelf: 'stretch',
+  },
+  revealEyebrow: {
+    color: colors.outline,
+    textTransform: 'uppercase',
   },
 });

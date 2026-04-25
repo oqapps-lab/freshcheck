@@ -1,19 +1,56 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  Pressable,
+  Image,
+} from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { AtmosphericBackground } from '@/components/ui/AtmosphericBackground';
-import { GlassCard } from '@/components/ui/GlassCard';
+import { NeumorphicCard } from '@/components/ui/NeumorphicCard';
 import { PillCTA } from '@/components/ui/PillCTA';
 import { VerdictPill } from '@/components/ui/VerdictPill';
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Back, Heart, ChefHat, Clock } from '@/components/ui/Glyphs';
 import { CategoryGlyph, categoryFor } from '@/components/ui/CategoryGlyph';
-import { colors, spacing, typeScale, radii, layout, motion } from '@/constants/tokens';
+import {
+  colors,
+  spacing,
+  typeScale,
+  radii,
+  layout,
+  motion,
+} from '@/constants/tokens';
 import { recipes, garlicHerbChicken } from '@/mock/recipes';
 
+/** "garlic herb chicken" → "Garlic Herb Chicken" */
+const titleCase = (s: string): string =>
+  s
+    .toLowerCase()
+    .split(/\s+/)
+    .map((w) => (w.length > 0 ? w[0].toUpperCase() + w.slice(1) : w))
+    .join(' ');
+
+/**
+ * Recipe Detail v4 — Stitch "Paper & Pith".
+ *
+ * Layout:
+ *   1. Top bar     → 40-circle Back / Heart neumorphic buttons.
+ *   2. Hero disc   → 240×240 NeumorphicCard with placeholder photo or
+ *                    category glyph on primaryFixed face.
+ *   3. Title block → eyebrow RECIPE, Title-Cased headline, meta row,
+ *                    optional "uses N expiring" pill.
+ *   4. Sections    → FROM YOUR FRIDGE (card with rows + dividers),
+ *                    YOU'LL ALSO NEED (bullet list), THE METHOD
+ *                    (numbered sage step-circles).
+ *   5. Floating    → save / Start Cooking PillCTAs at the bottom.
+ *
+ * Ref: docs/06-design/DESIGN-V4.md + stitch-v2/result-1 card style.
+ */
 export default function RecipeDetailScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
@@ -32,65 +69,121 @@ export default function RecipeDetailScreen() {
     // TODO wire step-by-step mode when cooking UI lands
   };
 
+  const fridgeIngredients = recipe.ingredients.filter((i) => i.fromFridge);
+  const pantryIngredients = recipe.ingredients.filter((i) => !i.fromFridge);
+
   return (
     <AtmosphericBackground>
+      {/* Top bar */}
       <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
-        <Pressable
-          onPress={() => router.back()}
-          style={styles.circleBtn}
-          accessibilityRole="button"
-          accessibilityLabel="back"
+        <NeumorphicCard
+          variant="raised"
+          radius="full"
+          padding={0}
+          style={styles.iconBtnCard}
         >
-          <Back size={20} color={colors.primary} />
-        </Pressable>
-        <Pressable
-          onPress={toggleSave}
-          style={styles.circleBtn}
-          accessibilityRole="button"
-          accessibilityLabel={saved ? 'unsave recipe' : 'save recipe'}
-          accessibilityState={{ selected: saved }}
+          <Pressable
+            onPress={() => router.back()}
+            style={styles.iconBtnHit}
+            accessibilityRole="button"
+            accessibilityLabel="back"
+          >
+            <Back size={18} color={colors.ink} />
+          </Pressable>
+        </NeumorphicCard>
+
+        <NeumorphicCard
+          variant="raised"
+          radius="full"
+          padding={0}
+          style={
+            saved
+              ? { ...styles.iconBtnCard, backgroundColor: colors.accent }
+              : styles.iconBtnCard
+          }
         >
-          <Heart size={18} color={saved ? colors.primary : colors.secondary} />
-        </Pressable>
+          <Pressable
+            onPress={toggleSave}
+            style={
+              saved
+                ? { ...styles.iconBtnHit, backgroundColor: colors.accent }
+                : styles.iconBtnHit
+            }
+            accessibilityRole="button"
+            accessibilityLabel={saved ? 'unsave recipe' : 'save recipe'}
+            accessibilityState={{ selected: saved }}
+          >
+            <Heart
+              size={18}
+              color={saved ? colors.white : colors.primary}
+            />
+          </Pressable>
+        </NeumorphicCard>
       </View>
 
       <ScrollView
         contentContainerStyle={{
-          paddingTop: insets.top + 72,
-          paddingBottom: insets.bottom + 140,
+          paddingTop: insets.top + 76,
+          paddingBottom: insets.bottom + 200,
           paddingHorizontal: layout.screenPadding,
         }}
         showsVerticalScrollIndicator={false}
       >
         {/* Hero disc */}
-        <Animated.View entering={FadeIn.duration(motion.slow)} style={styles.heroWrap}>
-          <View style={styles.heroDisc}>
-            <ChefHat size={80} color={colors.primary} strokeWidth={1.1} />
-          </View>
+        <Animated.View
+          entering={FadeIn.duration(motion.slow)}
+          style={styles.heroWrap}
+        >
+          <NeumorphicCard
+            variant="raised"
+            radius="md"
+            padding={0}
+            style={styles.heroCard}
+          >
+            <View style={styles.heroFace}>
+              {recipe.heroPhoto ? (
+                <Image
+                  source={{ uri: recipe.heroPhoto }}
+                  style={styles.heroPhoto}
+                  resizeMode="cover"
+                  accessibilityLabel={`${recipe.title} photo`}
+                />
+              ) : (
+                <CategoryGlyph
+                  category={categoryFor(recipe.title)}
+                  size={80}
+                  color={colors.primary}
+                />
+              )}
+            </View>
+          </NeumorphicCard>
         </Animated.View>
 
-        <Animated.View entering={FadeIn.duration(motion.moderate).delay(120)}>
+        {/* Title block */}
+        <Animated.View
+          entering={FadeIn.duration(motion.moderate).delay(120)}
+          style={styles.titleBlock}
+        >
+          <Text style={[typeScale.labelSmall, styles.eyebrow]}>RECIPE</Text>
           <Text
-            style={[
-              typeScale.displayM,
-              { color: colors.onSurface, textAlign: 'center', marginTop: spacing.lg },
-            ]}
+            style={[typeScale.displayM, styles.heroTitle]}
+            accessibilityRole="header"
           >
-            {recipe.title.toLowerCase()}
+            {titleCase(recipe.title)}
           </Text>
           <View style={styles.metaRow}>
-            <Clock size={14} color={colors.secondary} />
-            <Text style={[typeScale.bodySmall, { color: colors.secondary, marginLeft: 6 }]}>
+            <Clock size={14} color={colors.outline} />
+            <Text style={[typeScale.bodySmall, styles.metaText]}>
               {recipe.timeMinutes} min · serves {recipe.servings}
             </Text>
           </View>
           {recipe.expiringCount > 0 && (
-            <View style={styles.verdictCenter}>
-              <VerdictPill
-                verdict={recipe.tone}
-                label={`uses ${recipe.expiringCount} expiring`}
-                small
-              />
+            <View style={styles.expiringWrap}>
+              <View style={styles.expiringPill}>
+                <Text style={[typeScale.label, styles.expiringText]}>
+                  uses {recipe.expiringCount} expiring
+                </Text>
+              </View>
             </View>
           )}
         </Animated.View>
@@ -99,125 +192,149 @@ export default function RecipeDetailScreen() {
         {recipe.ingredients.length === 0 && recipe.steps.length === 0 && (
           <Animated.View
             entering={FadeIn.duration(motion.moderate).delay(220)}
-            style={styles.emptySection}
+            style={styles.section}
           >
-            <GlassCard variant="glass" radius="xl" padding={24} style={styles.emptyCard}>
-              <Text style={[typeScale.titleS, { color: colors.onSurface, textAlign: 'center' }]}>
+            <NeumorphicCard variant="raised" radius="md" padding={24}>
+              <Text style={[typeScale.titleM, styles.emptyTitle]}>
                 full recipe coming soon
               </Text>
-              <Text
-                style={[
-                  typeScale.body,
-                  {
-                    color: colors.secondary,
-                    textAlign: 'center',
-                    marginTop: spacing.sm,
-                  },
-                ]}
-              >
-                we're still writing up the ingredients and steps — check back shortly.
+              <Text style={[typeScale.body, styles.emptyBody]}>
+                we're still writing up the ingredients and steps — check back
+                shortly.
               </Text>
-            </GlassCard>
+            </NeumorphicCard>
           </Animated.View>
         )}
 
-        {/* Ingredients */}
-        {recipe.ingredients.length > 0 && (
+        {/* From your fridge */}
+        {fridgeIngredients.length > 0 && (
           <Animated.View
             entering={FadeIn.duration(motion.moderate).delay(220)}
             style={styles.section}
           >
-            <Eyebrow uppercase style={{ marginBottom: 12 }}>
-              from your fridge
-            </Eyebrow>
-            <GlassCard variant="glass" radius="xl" padding={0}>
-              {recipe.ingredients
-                .filter((i) => i.fromFridge)
-                .map((ing, i, arr) => (
-                  <View
-                    key={ing.id}
-                    style={[
-                      styles.ingredientRow,
-                      i < arr.length - 1 && styles.ingredientDivider,
-                    ]}
-                  >
-                    <View style={styles.ingredientThumb}>
-                      <CategoryGlyph category={categoryFor(ing.name)} size={24} color={colors.primary} strokeWidth={1.5} />
-                    </View>
-                    <View style={{ flex: 1, marginLeft: spacing.md }}>
-                      <Text style={[typeScale.titleS, { color: colors.onSurface }]}>
-                        {ing.name.toLowerCase()}
-                      </Text>
+            <Text style={[typeScale.labelSmall, styles.sectionEyebrow]}>
+              FROM YOUR FRIDGE
+            </Text>
+            <NeumorphicCard variant="raised" radius="md" padding={0}>
+              {fridgeIngredients.map((ing, i, arr) => (
+                <View
+                  key={ing.id}
+                  style={[
+                    styles.ingredientRow,
+                    i < arr.length - 1 && styles.ingredientDivider,
+                  ]}
+                >
+                  <View style={styles.ingredientThumb}>
+                    <CategoryGlyph
+                      category={categoryFor(ing.name)}
+                      size={24}
+                      color={colors.primary}
+                      strokeWidth={1.5}
+                    />
+                  </View>
+                  <View style={styles.ingredientText}>
+                    <Text style={[typeScale.titleS, styles.ingredientName]}>
+                      {ing.name.toLowerCase()}
+                    </Text>
+                    {ing.quantity ? (
                       <Text
                         style={[
                           typeScale.bodySmall,
-                          { color: colors.secondary, marginTop: 2 },
+                          styles.ingredientQuantity,
                         ]}
                       >
-                        {ing.quantity ?? ''}
+                        {ing.quantity}
                       </Text>
-                    </View>
-                    <VerdictPill verdict={ing.tone} label={ing.status.toLowerCase()} small />
+                    ) : null}
                   </View>
-                ))}
-            </GlassCard>
-
-            {recipe.ingredients.some((i) => !i.fromFridge) && (
-              <View style={styles.needList}>
-                <Eyebrow uppercase style={{ marginBottom: 8 }}>
-                  you'll also need
-                </Eyebrow>
-                {recipe.ingredients
-                  .filter((i) => !i.fromFridge)
-                  .map((i) => (
-                    <Text
-                      key={i.id}
-                      style={[typeScale.body, { color: colors.onSurfaceVariant, marginBottom: 4 }]}
-                    >
-                      · {i.name.toLowerCase()} {i.quantity ? `— ${i.quantity}` : ''}
-                    </Text>
-                  ))}
-              </View>
-            )}
+                  <VerdictPill
+                    verdict={ing.tone}
+                    label={ing.status.toLowerCase()}
+                    small
+                  />
+                </View>
+              ))}
+            </NeumorphicCard>
           </Animated.View>
         )}
 
-        {/* Steps */}
+        {/* You'll also need */}
+        {pantryIngredients.length > 0 && (
+          <Animated.View
+            entering={FadeIn.duration(motion.moderate).delay(280)}
+            style={styles.section}
+          >
+            <Text style={[typeScale.labelSmall, styles.sectionEyebrow]}>
+              YOU'LL ALSO NEED
+            </Text>
+            <View style={styles.needList}>
+              {pantryIngredients.map((i) => (
+                <Text
+                  key={i.id}
+                  style={[typeScale.body, styles.needLine]}
+                >
+                  · {i.name.toLowerCase()}
+                  {i.quantity ? ` — ${i.quantity}` : ''}
+                </Text>
+              ))}
+            </View>
+          </Animated.View>
+        )}
+
+        {/* The method */}
         {recipe.steps.length > 0 && (
           <Animated.View
             entering={FadeIn.duration(motion.moderate).delay(340)}
             style={styles.section}
           >
-            <Eyebrow uppercase style={{ marginBottom: 12 }}>
-              the method
-            </Eyebrow>
+            <Text style={[typeScale.labelSmall, styles.sectionEyebrow]}>
+              THE METHOD
+            </Text>
             {recipe.steps.map((step, i) => (
-              <View key={step.number} style={[styles.step, i === recipe.steps.length - 1 && { marginBottom: 0 }]}>
+              <View
+                key={step.number}
+                style={[
+                  styles.step,
+                  i === recipe.steps.length - 1 && { marginBottom: 0 },
+                ]}
+              >
                 <View style={styles.stepNumber}>
-                  <Text style={[typeScale.label, { color: colors.white }]}>{step.number}</Text>
+                  <Text style={[typeScale.label, styles.stepNumberText]}>
+                    {step.number}
+                  </Text>
                 </View>
-                <Text style={[typeScale.body, styles.stepBody]}>{step.body.toLowerCase()}</Text>
+                <Text style={[typeScale.body, styles.stepBody]}>
+                  {step.body.toLowerCase()}
+                </Text>
               </View>
             ))}
           </Animated.View>
         )}
       </ScrollView>
 
+      {/* Floating CTA row */}
       <View style={[styles.floatingRow, { bottom: insets.bottom + 24 }]}>
         <PillCTA
           label={saved ? 'saved' : 'save'}
-          variant="glass"
-          icon={<Heart size={16} color={colors.primary} />}
+          variant="secondary"
+          icon={
+            <Heart
+              size={16}
+              color={saved ? colors.accent : colors.primary}
+            />
+          }
           compact
           onPress={toggleSave}
-          style={{ flex: 1 }}
+          style={styles.saveCta}
+          accessibilityLabel={saved ? 'unsave recipe' : 'save recipe'}
         />
         <PillCTA
-          label="start cooking"
+          label="Start Cooking"
           variant="primary"
-          icon={<ChefHat size={18} color={colors.white} />}
+          icon={<ChefHat size={18} color={colors.onAccent} />}
           onPress={startCooking}
-          style={{ flex: 2 }}
+          style={styles.startCta}
+          accessibilityLabel="start cooking"
         />
       </View>
     </AtmosphericBackground>
@@ -236,35 +353,49 @@ const styles = StyleSheet.create({
     paddingHorizontal: layout.screenPadding,
     zIndex: 10,
   },
-  circleBtn: {
+  iconBtnCard: {
     width: 40,
     height: 40,
-    borderRadius: radii.full,
+  },
+  iconBtnHit: {
+    width: 40,
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255,255,255,0.55)',
-    borderWidth: 1,
-    borderColor: colors.glassBorder,
+    borderRadius: radii.full,
   },
   heroWrap: {
     alignItems: 'center',
-    justifyContent: 'center',
     marginTop: spacing.md,
   },
-  heroDisc: {
-    width: 220,
-    height: 220,
-    borderRadius: 110,
-    backgroundColor: 'rgba(255,255,255,0.55)',
+  heroCard: {
+    width: 240,
+    height: 240,
+  },
+  heroFace: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.85)',
-    shadowColor: '#416743',
-    shadowOffset: { width: 0, height: 20 },
-    shadowOpacity: 0.10,
-    shadowRadius: 48,
-    elevation: 10,
+    backgroundColor: colors.primaryFixed,
+    borderRadius: radii.md,
+    overflow: 'hidden',
+  },
+  heroPhoto: {
+    width: '100%',
+    height: '100%',
+  },
+  titleBlock: {
+    alignItems: 'center',
+    marginTop: spacing.xl,
+  },
+  eyebrow: {
+    color: colors.outline,
+    textTransform: 'uppercase',
+    marginBottom: spacing.xs,
+  },
+  heroTitle: {
+    color: colors.ink,
+    textAlign: 'center',
   },
   metaRow: {
     flexDirection: 'row',
@@ -272,12 +403,41 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 10,
   },
-  verdictCenter: {
+  metaText: {
+    color: colors.outline,
+    marginLeft: 6,
+  },
+  expiringWrap: {
     alignItems: 'center',
     marginTop: spacing.md,
   },
+  expiringPill: {
+    backgroundColor: colors.amberContainer,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: radii.full,
+  },
+  expiringText: {
+    color: colors.onAmberContainer,
+    textTransform: 'none',
+    letterSpacing: 0.2,
+  },
   section: {
     marginTop: spacing.xl,
+  },
+  sectionEyebrow: {
+    color: colors.outline,
+    textTransform: 'uppercase',
+    marginBottom: spacing.sm,
+  },
+  emptyTitle: {
+    color: colors.ink,
+    textAlign: 'center',
+  },
+  emptyBody: {
+    color: colors.onSurfaceVariant,
+    textAlign: 'center',
+    marginTop: spacing.sm,
   },
   ingredientRow: {
     flexDirection: 'row',
@@ -287,7 +447,7 @@ const styles = StyleSheet.create({
   },
   ingredientDivider: {
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: 'rgba(65,103,67,0.08)',
+    borderBottomColor: colors.outlineVariant,
   },
   ingredientThumb: {
     width: 44,
@@ -296,12 +456,24 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primaryFixed,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.8)',
+  },
+  ingredientText: {
+    flex: 1,
+    marginLeft: spacing.md,
+  },
+  ingredientName: {
+    color: colors.ink,
+  },
+  ingredientQuantity: {
+    color: colors.outline,
+    marginTop: 2,
   },
   needList: {
-    marginTop: spacing.lg,
     paddingHorizontal: 6,
+  },
+  needLine: {
+    color: colors.onSurfaceVariant,
+    marginBottom: 4,
   },
   step: {
     flexDirection: 'row',
@@ -318,6 +490,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 2,
   },
+  stepNumberText: {
+    color: colors.white,
+  },
   stepBody: {
     flex: 1,
     color: colors.onSurfaceVariant,
@@ -329,10 +504,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: spacing.sm,
   },
-  emptySection: {
-    marginTop: spacing.xl,
+  saveCta: {
+    flex: 1,
   },
-  emptyCard: {
-    alignItems: 'center',
+  startCta: {
+    flex: 2,
   },
 });

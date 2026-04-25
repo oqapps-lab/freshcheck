@@ -1,22 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Animated, { FadeIn } from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 import { AtmosphericBackground } from '@/components/ui/AtmosphericBackground';
-import { Eyebrow } from '@/components/ui/Eyebrow';
-import { Back } from '@/components/ui/Glyphs';
-import { colors, spacing, typeScale, layout, motion } from '@/constants/tokens';
+import { NeumorphicCard } from '@/components/ui/NeumorphicCard';
+import { Back, Check } from '@/components/ui/Glyphs';
+import { colors, spacing, typeScale, layout, motion, radii } from '@/constants/tokens';
 import { ProgressDots } from '@/components/onboarding/ProgressDots';
-import { OptionCard } from '@/components/onboarding/OptionCard';
 
 type Frequency = 'daily' | 'weekly-few' | 'weekly-once' | 'rarely';
+type Accent = 'sage' | 'amber' | 'coral';
 
 type Option = {
   key: Frequency;
   label: string;
   sublabel: string;
-  accent?: 'sage' | 'amber' | 'coral';
+  accent?: Accent;
 };
 
 const options: Option[] = [
@@ -44,12 +45,21 @@ const options: Option[] = [
   },
 ];
 
+const accentDotColor = (accent?: Accent) => {
+  if (accent === 'amber') return colors.verdictWarn;
+  if (accent === 'coral') return colors.verdictDanger;
+  return colors.verdictSafe;
+};
+
 export default function WasteScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const [selected, setSelected] = useState<Frequency | null>(null);
 
-  const handleSelect = (_key: Frequency) => {
-    router.push('/onboarding/plan');
+  const handleSelect = (key: Frequency) => {
+    Haptics.selectionAsync().catch(() => {});
+    setSelected(key);
+    setTimeout(() => router.push('/onboarding/plan'), 120);
   };
 
   return (
@@ -69,9 +79,12 @@ export default function WasteScreen() {
               hitSlop={12}
               accessibilityRole="button"
               accessibilityLabel="back"
-              style={styles.backBtn}
             >
-              <Back size={22} color={colors.primary} strokeWidth={1.6} />
+              <NeumorphicCard variant="raised" radius="full" padding={0} style={styles.backBtn}>
+                <View style={styles.backBtnInner}>
+                  <Back size={18} color={colors.ink} strokeWidth={1.8} />
+                </View>
+              </NeumorphicCard>
             </Pressable>
             <ProgressDots filled={5} />
             <View style={styles.backBtn} />
@@ -82,16 +95,14 @@ export default function WasteScreen() {
           entering={FadeIn.duration(motion.slow).delay(80)}
           style={styles.heading}
         >
-          <Eyebrow uppercase color="primary" style={{ marginBottom: spacing.sm }}>
-            step five
-          </Eyebrow>
-          <Text style={[typeScale.displayM, { color: colors.onSurface }]}>
-            how often do you{'\n'}throw out food?
+          <Text style={[typeScale.labelSmall, styles.eyebrow]}>STEP 5</Text>
+          <Text style={[typeScale.displayL, { color: colors.ink, marginTop: spacing.sm }]}>
+            How Often Does Food Get Tossed?
           </Text>
           <Text
             style={[
               typeScale.body,
-              { color: colors.secondary, marginTop: spacing.sm },
+              { color: colors.outline, marginTop: spacing.sm },
             ]}
           >
             honest answer, not the polite one. just us.
@@ -102,20 +113,55 @@ export default function WasteScreen() {
           entering={FadeIn.duration(motion.slow).delay(160)}
           style={styles.optionsList}
         >
-          {options.map((opt, i) => (
-            <Animated.View
-              key={opt.key}
-              entering={FadeIn.duration(motion.slow).delay(220 + i * 60)}
-              style={{ marginBottom: spacing.sm }}
-            >
-              <OptionCard
-                label={opt.label}
-                sublabel={opt.sublabel}
-                accent={opt.accent}
-                onPress={() => handleSelect(opt.key)}
-              />
-            </Animated.View>
-          ))}
+          {options.map((opt, i) => {
+            const isSelected = selected === opt.key;
+            return (
+              <Animated.View
+                key={opt.key}
+                entering={FadeIn.duration(motion.slow).delay(220 + i * 60)}
+                style={{ marginBottom: spacing.sm }}
+              >
+                <Pressable
+                  onPress={() => handleSelect(opt.key)}
+                  accessibilityRole="button"
+                  accessibilityLabel={opt.label}
+                  accessibilityState={{ selected: isSelected }}
+                >
+                  <NeumorphicCard
+                    variant="raised"
+                    radius="md"
+                    padding={20}
+                    style={isSelected ? styles.optionCardSelected : styles.optionCard}
+                  >
+                    <View style={styles.optionRow}>
+                      <View
+                        style={[
+                          styles.accentDot,
+                          { backgroundColor: accentDotColor(opt.accent) },
+                        ]}
+                      />
+                      <View style={{ flex: 1 }}>
+                        <Text style={[typeScale.titleM, { color: colors.ink }]}>
+                          {opt.label}
+                        </Text>
+                        <Text
+                          style={[
+                            typeScale.bodySmall,
+                            { color: colors.outline, marginTop: 2 },
+                          ]}
+                        >
+                          {opt.sublabel}
+                        </Text>
+                      </View>
+                      {isSelected ? (
+                        <Check size={20} color={colors.primary} strokeWidth={2} />
+                      ) : null}
+                    </View>
+                  </NeumorphicCard>
+                </Pressable>
+              </Animated.View>
+            );
+          })}
         </Animated.View>
       </ScrollView>
     </AtmosphericBackground>
@@ -132,13 +178,39 @@ const styles = StyleSheet.create({
   backBtn: {
     width: 40,
     height: 40,
+  },
+  backBtnInner: {
+    width: 40,
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  eyebrow: {
+    color: colors.outline,
+    textTransform: 'uppercase',
   },
   heading: {
     marginBottom: spacing.xxl,
   },
   optionsList: {
     width: '100%',
+  },
+  optionCard: {
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  optionCardSelected: {
+    borderWidth: 2,
+    borderColor: colors.primary,
+  },
+  optionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  accentDot: {
+    width: 10,
+    height: 10,
+    borderRadius: radii.full,
+    marginRight: spacing.md,
   },
 });

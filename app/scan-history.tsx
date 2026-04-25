@@ -1,20 +1,55 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, ScrollView, StyleSheet, Pressable, ActivityIndicator } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { AtmosphericBackground } from '@/components/ui/AtmosphericBackground';
-import { GlassCard } from '@/components/ui/GlassCard';
+import { NeumorphicCard } from '@/components/ui/NeumorphicCard';
 import { VerdictPill } from '@/components/ui/VerdictPill';
 import { PillCTA } from '@/components/ui/PillCTA';
-import { Back, Scan } from '@/components/ui/Glyphs';
+import { Back, Sprig } from '@/components/ui/Glyphs';
 import { CategoryGlyph, categoryFor } from '@/components/ui/CategoryGlyph';
 import { colors, spacing, typeScale, layout, motion, radii } from '@/constants/tokens';
-import { useScans } from '@/src/hooks/useScans';
+import { useScans, type ScanRecord } from '@/src/hooks/useScans';
 
+function toTitleCase(s: string): string {
+  return s.replace(/\w\S*/g, (w) => w.charAt(0).toUpperCase() + w.substring(1).toLowerCase());
+}
+
+/** Days between two timestamps using local-midnight buckets. */
+function daysBetween(then: Date, now: Date): number {
+  const t = new Date(then.getFullYear(), then.getMonth(), then.getDate()).getTime();
+  const n = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  return Math.round((n - t) / 86400000);
+}
+
+type Bucket = 'Today' | 'Yesterday' | '2 Days Ago' | 'This Week' | 'Earlier';
+const BUCKET_ORDER: Bucket[] = ['Today', 'Yesterday', '2 Days Ago', 'This Week', 'Earlier'];
+
+function bucketFor(iso: string): Bucket {
+  const t = new Date(iso);
+  if (isNaN(t.getTime())) {
+    // mock labels ("Yesterday", "2 days ago") — best-effort string match
+    const s = iso.toLowerCase();
+    if (s.includes('today')) return 'Today';
+    if (s.includes('yesterday')) return 'Yesterday';
+    if (s.includes('2 day')) return '2 Days Ago';
+    if (s.includes('day') || s.includes('week')) return 'This Week';
+    return 'Earlier';
+  }
+  const d = daysBetween(t, new Date());
+  if (d <= 0) return 'Today';
+  if (d === 1) return 'Yesterday';
+  if (d === 2) return '2 Days Ago';
+  if (d <= 7) return 'This Week';
+  return 'Earlier';
+}
+
+/** Short relative time for the row body (e.g. "12m ago", "yesterday"). */
 function relative(iso: string): string {
   const then = new Date(iso).getTime();
-  if (isNaN(then)) return iso.toLowerCase(); // mock labels ("Yesterday", "2 days ago")
+  if (isNaN(then)) return iso.toLowerCase();
   const deltaSec = Math.max(0, (Date.now() - then) / 1000);
   if (deltaSec < 60) return 'just now';
   if (deltaSec < 3600) return `${Math.floor(deltaSec / 60)}m ago`;
@@ -30,19 +65,34 @@ export default function HistoryScreen() {
   const router = useRouter();
   const { scans, loading } = useScans();
 
+  const grouped = useMemo(() => {
+    const map = new Map<Bucket, ScanRecord[]>();
+    for (const s of scans) {
+      const b = bucketFor(s.scannedAt);
+      const arr = map.get(b) ?? [];
+      arr.push(s);
+      map.set(b, arr);
+    }
+    return BUCKET_ORDER.filter((b) => map.has(b)).map((b) => ({
+      bucket: b,
+      items: map.get(b)!,
+    }));
+  }, [scans]);
+
   return (
     <AtmosphericBackground>
       <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
         <Pressable
           onPress={() => router.back()}
-          style={styles.circleBtn}
+          style={({ pressed }) => [styles.circleBtn, pressed && { opacity: 0.7 }]}
           accessibilityRole="button"
           accessibilityLabel="back"
+          hitSlop={10}
         >
-          <Back size={20} color={colors.primary} />
+          <Back size={18} color={colors.primary} />
         </Pressable>
-        <Text style={[typeScale.label, { color: colors.secondary }]}>scan history</Text>
-        <View style={{ width: 40 }} />
+        <Text style={[typeScale.labelSmall, styles.headerTitle]}>SCAN HISTORY</Text>
+        <View style={styles.headerSpacer} />
       </View>
 
       <ScrollView
@@ -61,49 +111,79 @@ export default function HistoryScreen() {
         )}
 
         {!loading && scans.length === 0 && (
-          <View style={styles.emptyWrap}>
-            <View style={styles.emptyOrb}>
-              <Scan size={40} color={colors.primary} strokeWidth={1.3} />
-            </View>
-            <Text style={[typeScale.titleS, styles.emptyTitle]}>no scans yet</Text>
-            <Text style={[typeScale.body, styles.emptyBody]}>
-              every scan you make lands here with the verdict and a short note. try one now.
-            </Text>
-            <PillCTA
-              label="scan a food"
-              onPress={() => router.push('/scan/camera')}
-              style={{ marginTop: spacing.xl }}
-            />
-          </View>
+          <Animated.View
+            entering={FadeIn.duration(motion.moderate)}
+            style={styles.emptyWrap}
+          >
+            <NeumorphicCard variant="raised" radius="lg" padding={28} style={styles.emptyCard}>
+              <View style={styles.emptyOrb}>
+                <Sprig size={36} color={colors.primary} strokeWidth={1.4} />
+              </View>
+              <Text style={[typeScale.titleL, styles.emptyTitle]}>No Scans Yet</Text>
+              <Text style={[typeScale.body, styles.emptyBody]}>
+                your scan history will appear here.
+              </Text>
+              <PillCTA
+                label="scan a food"
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                  router.push('/scan/camera');
+                }}
+                style={{ marginTop: spacing.xl }}
+              />
+            </NeumorphicCard>
+          </Animated.View>
         )}
 
-        {scans.length > 0 &&
-          scans.map((s, i) => (
-            <Animated.View
-              key={s.id}
-              entering={FadeIn.duration(motion.moderate).delay(40 * i)}
-              style={{ marginBottom: spacing.md }}
-            >
-              <GlassCard variant="glass" radius="xl" padding={0}>
-                <View style={styles.row}>
-                  <View style={styles.thumb}>
-                    <CategoryGlyph category={categoryFor(s.product)} size={26} color={colors.primary} />
-                  </View>
-                  <View style={{ flex: 1, marginLeft: spacing.md }}>
-                    <View style={styles.titleRow}>
-                      <Text style={[typeScale.titleS, { color: colors.onSurface }]} numberOfLines={1}>
-                        {s.product.toLowerCase()}
-                      </Text>
+        {grouped.map((group, gi) => (
+          <Animated.View
+            key={group.bucket}
+            entering={FadeIn.duration(motion.moderate).delay(gi * 60)}
+            style={styles.group}
+          >
+            <Text style={[typeScale.labelSmall, styles.groupHeader]}>
+              {group.bucket.toUpperCase()}
+            </Text>
+            {group.items.map((s, i) => (
+              <Animated.View
+                key={s.id}
+                entering={FadeIn.duration(motion.moderate).delay(gi * 60 + i * 30)}
+                style={styles.cardWrap}
+              >
+                <Pressable
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                    // No detail screen for history rows yet — leave as no-op tap.
+                  }}
+                  style={({ pressed }) => [pressed && { opacity: 0.92 }]}
+                  accessibilityRole="button"
+                  accessibilityLabel={`${s.product.toLowerCase()}, ${s.verdict}, ${relative(s.scannedAt)}`}
+                >
+                  <NeumorphicCard variant="raised" radius="md" padding={16}>
+                    <View style={styles.row}>
+                      <View style={styles.thumb}>
+                        <CategoryGlyph
+                          category={categoryFor(s.product)}
+                          size={28}
+                          color={colors.primary}
+                        />
+                      </View>
+                      <View style={styles.rowBody}>
+                        <Text style={[typeScale.titleM, styles.rowTitle]} numberOfLines={1}>
+                          {toTitleCase(s.product)}
+                        </Text>
+                        <Text style={[typeScale.bodySmall, styles.rowDate]} numberOfLines={1}>
+                          {relative(s.scannedAt)}
+                        </Text>
+                      </View>
                       <VerdictPill verdict={s.tone} small />
                     </View>
-                    <Text style={[typeScale.bodySmall, { color: colors.secondary, marginTop: 2 }]}>
-                      {relative(s.scannedAt)} · {Math.round(s.confidence)}% sure
-                    </Text>
-                  </View>
-                </View>
-              </GlassCard>
-            </Animated.View>
-          ))}
+                  </NeumorphicCard>
+                </Pressable>
+              </Animated.View>
+            ))}
+          </Animated.View>
+        ))}
       </ScrollView>
     </AtmosphericBackground>
   );
@@ -121,37 +201,60 @@ const styles = StyleSheet.create({
     paddingHorizontal: layout.screenPadding,
     zIndex: 10,
   },
+  headerTitle: {
+    color: colors.outline,
+    textTransform: 'uppercase',
+  },
   circleBtn: {
     width: 40,
     height: 40,
     borderRadius: radii.full,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255,255,255,0.55)',
-    borderWidth: 1,
-    borderColor: colors.glassBorder,
+    backgroundColor: colors.surface,
+    shadowColor: '#bcb9b0',
+    shadowOffset: { width: 2, height: 3 },
+    shadowOpacity: 0.22,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  headerSpacer: {
+    width: 40,
+    height: 40,
+  },
+  group: {
+    marginBottom: spacing.lg,
+  },
+  groupHeader: {
+    color: colors.outline,
+    textTransform: 'uppercase',
+    marginBottom: 12,
+  },
+  cardWrap: {
+    marginBottom: spacing.sm,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: spacing.md,
-    paddingVertical: 14,
+    gap: spacing.md,
   },
   thumb: {
-    width: 52,
-    height: 52,
-    borderRadius: radii.md,
+    width: 56,
+    height: 56,
+    borderRadius: radii.sm,
     backgroundColor: colors.primaryFixed,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.8)',
   },
-  titleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 10,
+  rowBody: {
+    flex: 1,
+  },
+  rowTitle: {
+    color: colors.ink,
+  },
+  rowDate: {
+    color: colors.outline,
+    marginTop: 2,
   },
   centerBlock: {
     flex: 1,
@@ -161,29 +264,29 @@ const styles = StyleSheet.create({
   },
   emptyWrap: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: spacing.xxl,
+    paddingTop: spacing.xl,
+  },
+  emptyCard: {
+    alignItems: 'center',
   },
   emptyOrb: {
-    width: 96,
-    height: 96,
+    width: 88,
+    height: 88,
     borderRadius: radii.full,
-    backgroundColor: 'rgba(125,166,125,0.18)',
+    backgroundColor: colors.primaryFixed,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.8)',
-    marginBottom: spacing.lg,
+    marginBottom: spacing.md,
   },
   emptyTitle: {
-    color: colors.onSurface,
+    color: colors.ink,
     textAlign: 'center',
   },
   emptyBody: {
-    color: colors.secondary,
+    color: colors.outline,
     textAlign: 'center',
-    marginTop: 8,
-    paddingHorizontal: spacing.xl,
+    marginTop: 6,
+    paddingHorizontal: spacing.sm,
   },
 });

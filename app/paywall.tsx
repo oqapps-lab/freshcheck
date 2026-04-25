@@ -4,21 +4,43 @@ import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Animated, { FadeIn } from 'react-native-reanimated';
-import { LinearGradient } from 'expo-linear-gradient';
 import { AtmosphericBackground } from '@/components/ui/AtmosphericBackground';
-import { GlassCard } from '@/components/ui/GlassCard';
+import { NeumorphicCard } from '@/components/ui/NeumorphicCard';
 import { PillCTA } from '@/components/ui/PillCTA';
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Check, Close } from '@/components/ui/Glyphs';
-import { colors, gradients, spacing, typeScale, layout, motion, radii } from '@/constants/tokens';
+import { colors, spacing, typeScale, layout, motion, radii } from '@/constants/tokens';
 import { startTrial as adaptyStartTrial, restorePurchases } from '@/src/lib/adapty';
 
+type Plan = 'monthly' | 'annual';
+
+/**
+ * Paywall — v4 "Paper & Pith". Cream canvas, neumorphic surfaces,
+ * Inter Title-Case hero, amber primary CTA.
+ *
+ *   [             close X ]
+ *   MEMBERSHIP
+ *   A Calmer Kitchen
+ *   unlimited checks, gentle reminders…
+ *   ┌── benefits card (4 sage-check rows) ──┐
+ *   ┌─ MONTHLY $4.99 ─┐ ┌─ ANNUAL $3.33 ─┐
+ *   │                 │ │  save 33% chip │
+ *   │                 │ │  per month     │
+ *   └─────────────────┘ └────────────────┘
+ *   [ Try 7 Days Free ]                   amber primary
+ *   restore · terms · privacy             links row
+ *   not now                               ghost
+ *   ★ 4.5 · 12,400 FAMILIES TEND HERE     eyebrow
+ */
 export default function PaywallScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const [selected, setSelected] = useState<'monthly' | 'annual'>('annual');
+  const [selected, setSelected] = useState<Plan>('annual');
 
-  const dismiss = () => (router.canGoBack() ? router.back() : router.replace('/(tabs)'));
+  const dismiss = () => {
+    Haptics.selectionAsync().catch(() => {});
+    if (router.canGoBack()) router.back();
+    else router.replace('/(tabs)');
+  };
 
   const startTrial = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
@@ -46,6 +68,15 @@ export default function PaywallScreen() {
   const openTerms = () => Linking.openURL('https://example.com/terms').catch(() => {});
   const openPrivacy = () => Linking.openURL('https://example.com/privacy').catch(() => {});
 
+  const selectMonthly = () => {
+    Haptics.selectionAsync().catch(() => {});
+    setSelected('monthly');
+  };
+  const selectAnnual = () => {
+    Haptics.selectionAsync().catch(() => {});
+    setSelected('annual');
+  };
+
   const benefits = [
     'unlimited freshness checks',
     'gentle reminders before anything expires',
@@ -54,154 +85,169 @@ export default function PaywallScreen() {
   ];
 
   return (
-    <AtmosphericBackground>
+    <AtmosphericBackground tone="light">
+      {/* Top header — single close button on the right */}
       <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
         <View style={{ width: 40 }} />
         <Pressable
           onPress={dismiss}
-          style={styles.closeBtn}
           accessibilityRole="button"
           accessibilityLabel="close"
+          hitSlop={8}
         >
-          <Close size={18} color={colors.secondary} />
+          <NeumorphicCard variant="raised" radius="full" padding={0} style={styles.closeBtn}>
+            <Close size={18} color={colors.ink} />
+          </NeumorphicCard>
         </Pressable>
       </View>
 
       <ScrollView
         contentContainerStyle={{
-          paddingTop: insets.top + 48,
-          paddingBottom: insets.bottom + 150,
+          paddingTop: insets.top + 80,
+          paddingBottom: insets.bottom + spacing.xl,
           paddingHorizontal: layout.screenPadding,
         }}
         showsVerticalScrollIndicator={false}
       >
+        {/* Hero */}
         <Animated.View entering={FadeIn.duration(motion.moderate)} style={styles.hero}>
-          <Text
-            style={[
-              typeScale.displayM,
-              { color: colors.onSurface, textAlign: 'center' },
-            ]}
-          >
-            a calmer kitchen
-          </Text>
-          <Text
-            style={[
-              typeScale.body,
-              { color: colors.secondary, textAlign: 'center', marginTop: 10 },
-            ]}
-          >
+          <Text style={[typeScale.labelSmall, styles.eyebrow]}>MEMBERSHIP</Text>
+          <Text style={[typeScale.displayL, styles.heroTitle]}>A Calmer Kitchen</Text>
+          <Text style={[typeScale.body, styles.heroBody]}>
             unlimited checks, gentle reminders, recipes that use what's already here
           </Text>
         </Animated.View>
 
+        {/* Benefits */}
         <Animated.View entering={FadeIn.duration(motion.moderate).delay(100)}>
-          <GlassCard variant="glass" radius="xl" padding={24} style={styles.benefits}>
-            {benefits.map((b) => (
-              <View key={b} style={styles.benefitRow}>
+          <NeumorphicCard variant="raised" radius="md" padding={24} style={styles.benefits}>
+            {benefits.map((b, i) => (
+              <View
+                key={b}
+                style={[styles.benefitRow, i === benefits.length - 1 && styles.benefitRowLast]}
+              >
                 <View style={styles.checkCircle}>
-                  <Check size={14} color={colors.white} />
+                  <Check size={14} color={colors.white} strokeWidth={2.25} />
                 </View>
-                <Text style={[typeScale.body, { color: colors.onSurface, flex: 1 }]}>{b}</Text>
+                <Text style={[typeScale.body, styles.benefitLabel]}>{b}</Text>
               </View>
             ))}
-          </GlassCard>
+          </NeumorphicCard>
         </Animated.View>
 
-        <Animated.View entering={FadeIn.duration(motion.moderate).delay(200)} style={styles.plans}>
-          <View style={styles.planWrap}>
-            <Pressable
-              onPress={() => setSelected('monthly')}
-              accessibilityRole="button"
-              accessibilityLabel="monthly plan $4.99"
-              accessibilityState={{ selected: selected === 'monthly' }}
-              style={[
-                styles.planCardInner,
+        {/* Plan toggle row */}
+        <Animated.View
+          entering={FadeIn.duration(motion.moderate).delay(180)}
+          style={styles.plans}
+        >
+          {/* MONTHLY */}
+          <Pressable
+            onPress={selectMonthly}
+            accessibilityRole="button"
+            accessibilityLabel="monthly plan $4.99"
+            accessibilityState={{ selected: selected === 'monthly' }}
+            style={styles.planPressable}
+          >
+            <NeumorphicCard
+              variant="raised"
+              radius="md"
+              padding={20}
+              style={StyleSheet.flatten([
+                styles.planCard,
                 selected === 'monthly' && styles.planCardSelected,
-              ]}
+              ])}
             >
-              <Eyebrow uppercase>monthly</Eyebrow>
-              <Text style={[typeScale.displayM, { color: colors.onSurface, marginTop: 4 }]}>
-                $4.99
-              </Text>
-              <Text style={[typeScale.bodySmall, { color: colors.secondary, marginTop: 2 }]}>
-                per month
-              </Text>
-            </Pressable>
-          </View>
+              <Text style={[typeScale.labelSmall, styles.planEyebrow]}>MONTHLY</Text>
+              <Text style={[typeScale.displayM, styles.planPrice]}>$4.99</Text>
+              <Text style={[typeScale.bodySmall, styles.planCaption]}>per month</Text>
+            </NeumorphicCard>
+          </Pressable>
 
-          <View style={styles.planWrap}>
-            <View style={styles.saveChip} pointerEvents="none">
-              <Text style={[typeScale.caption, { color: colors.onPrimary }]}>save 33%</Text>
-            </View>
-            <Pressable
-              onPress={() => setSelected('annual')}
-              accessibilityRole="button"
-              accessibilityLabel="annual plan $3.33 per month, save 33%"
-              accessibilityState={{ selected: selected === 'annual' }}
-              style={[
-                styles.planCardInner,
-                styles.planCardAnnual,
+          {/* ANNUAL */}
+          <Pressable
+            onPress={selectAnnual}
+            accessibilityRole="button"
+            accessibilityLabel="annual plan $3.33 per month, save 33%"
+            accessibilityState={{ selected: selected === 'annual' }}
+            style={styles.planPressable}
+          >
+            <NeumorphicCard
+              variant="raised"
+              radius="md"
+              padding={20}
+              style={StyleSheet.flatten([
+                styles.planCard,
                 selected === 'annual' && styles.planCardSelected,
-              ]}
+              ])}
             >
-              <LinearGradient
-                colors={gradients.verdictFresh}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={StyleSheet.absoluteFill}
-              />
-              <Eyebrow uppercase color="primary">annual</Eyebrow>
-              <Text style={[typeScale.displayM, { color: colors.primary, marginTop: 4 }]}>
-                $3.33
-              </Text>
-              <Text style={[typeScale.bodySmall, { color: colors.secondary, marginTop: 2 }]}>
+              <Text style={[typeScale.labelSmall, styles.planEyebrow]}>ANNUAL</Text>
+              <Text style={[typeScale.displayM, styles.planPrice]}>$3.33</Text>
+              <Text style={[typeScale.bodySmall, styles.planCaption]}>
                 per month · billed yearly
               </Text>
-            </Pressable>
-          </View>
+            </NeumorphicCard>
+            <View style={styles.saveChip} pointerEvents="none">
+              <Text style={[typeScale.labelSmall, styles.saveChipText]}>save 33%</Text>
+            </View>
+          </Pressable>
         </Animated.View>
 
+        {/* Footer block (in scroll, not floating) */}
+        <Animated.View
+          entering={FadeIn.duration(motion.moderate).delay(260)}
+          style={styles.footer}
+        >
+          <PillCTA
+            label="Try 7 Days Free"
+            onPress={startTrial}
+            fullWidth
+            accessibilityLabel="try 7 days free"
+          />
+
+          <View style={styles.linksRow}>
+            <Pressable
+              onPress={restore}
+              accessibilityRole="button"
+              accessibilityLabel="restore purchases"
+              hitSlop={8}
+            >
+              <Text style={[typeScale.caption, styles.linkText]}>restore</Text>
+            </Pressable>
+            <Text style={[typeScale.caption, styles.linkSep]}>·</Text>
+            <Pressable
+              onPress={openTerms}
+              accessibilityRole="link"
+              accessibilityLabel="terms of service"
+              hitSlop={8}
+            >
+              <Text style={[typeScale.caption, styles.linkText]}>terms</Text>
+            </Pressable>
+            <Text style={[typeScale.caption, styles.linkSep]}>·</Text>
+            <Pressable
+              onPress={openPrivacy}
+              accessibilityRole="link"
+              accessibilityLabel="privacy policy"
+              hitSlop={8}
+            >
+              <Text style={[typeScale.caption, styles.linkText]}>privacy</Text>
+            </Pressable>
+          </View>
+
+          <Pressable
+            onPress={dismiss}
+            accessibilityRole="button"
+            accessibilityLabel="not now, dismiss paywall"
+            hitSlop={8}
+            style={styles.notNow}
+          >
+            <Text style={[typeScale.label, styles.notNowText]}>not now</Text>
+          </Pressable>
+
+          <Text style={[typeScale.labelSmall, styles.socialProof]}>
+            ★ 4.5 · 12,400 FAMILIES TEND HERE
+          </Text>
+        </Animated.View>
       </ScrollView>
-
-      <LinearGradient
-        colors={['rgba(253,249,240,0)', colors.canvas]}
-        locations={[0, 1]}
-        pointerEvents="none"
-        style={[styles.floatingFade, { bottom: insets.bottom + 128 }]}
-      />
-
-      <View
-        style={[
-          styles.floatingCta,
-          {
-            bottom: 0,
-            paddingBottom: insets.bottom + 14,
-            paddingTop: 14,
-          },
-        ]}
-      >
-        <View style={styles.socialProofFooter}>
-          <Eyebrow uppercase>★ 4.5 · 12,400 families tend here</Eyebrow>
-        </View>
-        <PillCTA label="try 7 days free" onPress={startTrial} fullWidth />
-        <View style={styles.links}>
-          <Pressable onPress={dismiss} accessibilityRole="button" accessibilityLabel="not now, dismiss paywall" hitSlop={8}>
-            <Text style={[typeScale.caption, { color: colors.secondary }]}>not now</Text>
-          </Pressable>
-          <Text style={[typeScale.caption, { color: colors.outline }]}>·</Text>
-          <Pressable onPress={restore} accessibilityRole="button" accessibilityLabel="restore purchases" hitSlop={8}>
-            <Text style={[typeScale.caption, { color: colors.secondary }]}>restore</Text>
-          </Pressable>
-          <Text style={[typeScale.caption, { color: colors.outline }]}>·</Text>
-          <Pressable onPress={openTerms} accessibilityRole="link" accessibilityLabel="terms of service" hitSlop={8}>
-            <Text style={[typeScale.caption, { color: colors.secondary }]}>terms</Text>
-          </Pressable>
-          <Text style={[typeScale.caption, { color: colors.outline }]}>·</Text>
-          <Pressable onPress={openPrivacy} accessibilityRole="link" accessibilityLabel="privacy policy" hitSlop={8}>
-            <Text style={[typeScale.caption, { color: colors.secondary }]}>privacy</Text>
-          </Pressable>
-        </View>
-      </View>
     </AtmosphericBackground>
   );
 }
@@ -221,15 +267,28 @@ const styles = StyleSheet.create({
   closeBtn: {
     width: 40,
     height: 40,
-    borderRadius: radii.full,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255,255,255,0.55)',
-    borderWidth: 1,
-    borderColor: colors.glassBorder,
+    backgroundColor: colors.surface,
   },
   hero: {
-    marginBottom: spacing.lg,
+    alignItems: 'center',
+    marginBottom: spacing.xl,
+    paddingHorizontal: spacing.xs,
+  },
+  eyebrow: {
+    color: colors.outline,
+    textTransform: 'uppercase',
+    marginBottom: spacing.sm,
+  },
+  heroTitle: {
+    color: colors.ink,
+    textAlign: 'center',
+  },
+  heroBody: {
+    color: colors.outline,
+    textAlign: 'center',
+    marginTop: 12,
   },
   benefits: {
     marginBottom: spacing.lg,
@@ -239,74 +298,96 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
   },
+  benefitRowLast: {
+    paddingBottom: 0,
+  },
   checkCircle: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: spacing.md,
   },
-  plans: {
-    flexDirection: 'row',
-    gap: spacing.md,
-    marginTop: 14,
-  },
-  planWrap: {
+  benefitLabel: {
+    color: colors.onSurface,
     flex: 1,
   },
-  planCardInner: {
-    width: '100%',
-    backgroundColor: 'rgba(255,255,255,0.55)',
-    borderRadius: radii.xl,
-    padding: spacing.lg,
-    borderWidth: 1,
-    borderColor: colors.outlineVariant,
-    overflow: 'hidden',
+  plans: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: spacing.xl,
   },
-  planCardAnnual: {
-    borderColor: colors.primaryContainer,
+  planPressable: {
+    flex: 1,
+    position: 'relative',
+  },
+  planCard: {
+    backgroundColor: colors.surface,
+    borderWidth: 2,
+    borderColor: 'transparent',
   },
   planCardSelected: {
-    borderWidth: 2,
     borderColor: colors.primary,
+  },
+  planEyebrow: {
+    color: colors.outline,
+    textTransform: 'uppercase',
+  },
+  planPrice: {
+    color: colors.ink,
+    marginTop: 6,
+  },
+  planCaption: {
+    color: colors.outline,
+    marginTop: 4,
   },
   saveChip: {
     position: 'absolute',
     top: -10,
-    right: 14,
-    backgroundColor: colors.primary,
+    right: 12,
+    backgroundColor: colors.accent,
     paddingHorizontal: 10,
-    paddingVertical: 3,
+    paddingVertical: 4,
     borderRadius: radii.full,
-    zIndex: 2,
+    zIndex: 5,
   },
-  links: {
+  saveChipText: {
+    color: colors.onAccent,
+    textTransform: 'uppercase',
+    letterSpacing: 1.2,
+  },
+  footer: {
+    marginTop: spacing.sm,
+  },
+  linksRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 12,
-    marginTop: 10,
-  },
-  floatingCta: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    paddingHorizontal: layout.screenPadding,
-    backgroundColor: colors.canvas,
-  },
-  floatingFade: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    height: 48,
-  },
-  socialProofFooter: {
     alignItems: 'center',
-    marginBottom: 12,
+    gap: 12,
+    marginTop: spacing.md,
+  },
+  linkText: {
+    color: colors.outline,
+  },
+  linkSep: {
+    color: colors.outlineVariant,
   },
   notNow: {
-    alignItems: 'center',
-    marginTop: 14,
+    alignSelf: 'center',
+    marginTop: spacing.md,
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.md,
+  },
+  notNowText: {
+    color: colors.outline,
+    textTransform: 'uppercase',
+  },
+  socialProof: {
+    color: colors.outline,
+    textAlign: 'center',
+    marginTop: spacing.xl,
+    textTransform: 'uppercase',
   },
 });

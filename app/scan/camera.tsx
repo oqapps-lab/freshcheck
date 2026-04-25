@@ -10,13 +10,14 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
-import Svg, { Circle } from 'react-native-svg';
+import Animated, { FadeIn } from 'react-native-reanimated';
 import { CameraView, useCameraPermissions, type CameraType, type FlashMode } from 'expo-camera';
-import { Close, Flash, Sprig } from '@/components/ui/Glyphs';
+import { AtmosphericBackground } from '@/components/ui/AtmosphericBackground';
+import { NeumorphicCard } from '@/components/ui/NeumorphicCard';
+import { Close, Flash, Plus, Sprig } from '@/components/ui/Glyphs';
 import { PillCTA } from '@/components/ui/PillCTA';
-import { colors, gradients, spacing, radii, typeScale, layout } from '@/constants/tokens';
+import { colors, spacing, radii, typeScale, layout, motion, shadows } from '@/constants/tokens';
 import { scanQuota } from '@/mock/user';
 import { analyzeImage } from '@/src/lib/scanAnalysis';
 import { scanStore } from '@/src/lib/scanStore';
@@ -24,6 +25,11 @@ import { useScans } from '@/src/hooks/useScans';
 
 type Phase = 'idle' | 'capturing' | 'analyzing';
 
+/**
+ * Camera — v4 "Paper & Pith". Stitch-aligned shutter w/ neumorphic Close +
+ * Flash chrome. Permission state shows a sage Sprig orb + amber CTA over
+ * the cream canvas (no preview).
+ */
 export default function CameraScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
@@ -67,59 +73,70 @@ export default function CameraScreen() {
   // — permission states —
   if (!permission) {
     return (
-      <View style={[styles.root, styles.center]}>
-        <ActivityIndicator color={colors.primary} />
-      </View>
+      <AtmosphericBackground>
+        <View style={[styles.root, styles.center]}>
+          <ActivityIndicator color={colors.primary} />
+        </View>
+      </AtmosphericBackground>
     );
   }
 
   if (!permission.granted) {
     return (
-      <View style={styles.root}>
-        <LinearGradient
-          colors={gradients.morning}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={StyleSheet.absoluteFill}
-        />
+      <AtmosphericBackground>
         <View style={[styles.topControls, { paddingTop: insets.top + 12 }]}>
           <Pressable
-            onPress={() => router.back()}
-            style={styles.circleBtn}
+            onPress={() => {
+              Haptics.selectionAsync().catch(() => {});
+              router.back();
+            }}
             accessibilityRole="button"
             accessibilityLabel="close"
+            hitSlop={8}
           >
-            <Close size={18} color={colors.primary} />
+            <NeumorphicCard variant="raised" radius="full" padding={0} style={styles.circleBtn}>
+              <Close size={18} color={colors.ink} />
+            </NeumorphicCard>
           </Pressable>
           <View style={{ width: 40 }} />
         </View>
-        <View style={styles.permissionCard}>
-          <View style={styles.permissionOrb}>
-            <Sprig size={32} color={colors.primary} />
-          </View>
-          <Text style={[typeScale.titleL, styles.permissionTitle]}>camera access needed</Text>
-          <Text style={[typeScale.body, styles.permissionBody]}>
-            we only use the camera while you hold the shutter. no photos leave your
-            device until you press scan.
-          </Text>
-          <PillCTA
-            label="allow camera"
-            onPress={async () => {
-              const { status } = await requestPermission();
-              if (status !== 'granted') {
-                Alert.alert(
-                  'permission still off',
-                  Platform.OS === 'ios'
-                    ? 'grant access in Settings \u2192 FreshCheck \u2192 Camera'
-                    : 'grant access in system settings.',
-                );
-              }
-            }}
-            fullWidth
-            style={{ marginTop: spacing.lg }}
-          />
+
+        <View style={[styles.permissionWrap, { paddingTop: insets.top + 80 }]}>
+          <Animated.View entering={FadeIn.duration(motion.moderate)} style={styles.permissionInner}>
+            <NeumorphicCard variant="raised" radius="full" padding={0} style={styles.permissionOrb}>
+              <Sprig size={36} color={colors.primary} />
+            </NeumorphicCard>
+
+            <Text style={[typeScale.displayM, styles.permissionTitle]}>Camera Access Needed</Text>
+            <Text style={[typeScale.body, styles.permissionBody]}>
+              we only use the camera while you hold the shutter. no photos leave your
+              device until you press scan.
+            </Text>
+          </Animated.View>
+
+          <Animated.View
+            entering={FadeIn.duration(motion.moderate).delay(120)}
+            style={styles.permissionCtaWrap}
+          >
+            <PillCTA
+              label="Allow Camera"
+              onPress={async () => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                const { status } = await requestPermission();
+                if (status !== 'granted') {
+                  Alert.alert(
+                    'permission still off',
+                    Platform.OS === 'ios'
+                      ? 'grant access in Settings → FreshCheck → Camera'
+                      : 'grant access in system settings.',
+                  );
+                }
+              }}
+              fullWidth
+            />
+          </Animated.View>
         </View>
-      </View>
+      </AtmosphericBackground>
     );
   }
 
@@ -134,89 +151,109 @@ export default function CameraScreen() {
       {/* dim overlay outside the viewfinder */}
       <View style={styles.dim} pointerEvents="none" />
 
-      {/* Viewfinder frame */}
-      <View style={[styles.viewfinder, { top: insets.top + 80, bottom: 240 }]} pointerEvents="none">
+      {/* Viewfinder frame with sage corner brackets */}
+      <View
+        style={[styles.viewfinder, { top: insets.top + 96, bottom: 280 }]}
+        pointerEvents="none"
+      >
         <View style={[styles.bracket, styles.bracketTL]} />
         <View style={[styles.bracket, styles.bracketTR]} />
         <View style={[styles.bracket, styles.bracketBL]} />
         <View style={[styles.bracket, styles.bracketBR]} />
         <View style={styles.guidanceChip}>
-          <Text style={[typeScale.label, { color: colors.primary }]}>
-            {phase === 'analyzing' ? 'analyzing…' : phase === 'capturing' ? 'hold steady' : 'point at the food, hold steady'}
+          <Text style={[typeScale.label, { color: colors.ink }]}>
+            {phase === 'analyzing'
+              ? 'analyzing…'
+              : phase === 'capturing'
+                ? 'hold steady'
+                : 'point at the food, hold steady'}
           </Text>
         </View>
       </View>
 
-      {/* Top controls */}
-      <View style={[styles.topControls, { paddingTop: insets.top + 12 }]}>
+      {/* Top controls: neumorphic close + flash */}
+      <Animated.View
+        entering={FadeIn.duration(motion.moderate)}
+        style={[styles.topControls, { paddingTop: insets.top + 12 }]}
+      >
         <Pressable
-          onPress={() => router.back()}
-          style={styles.circleBtn}
+          onPress={() => {
+            Haptics.selectionAsync().catch(() => {});
+            router.back();
+          }}
           accessibilityRole="button"
           accessibilityLabel="close camera"
+          hitSlop={8}
         >
-          <Close size={18} color={colors.primary} />
+          <NeumorphicCard variant="raised" radius="full" padding={0} style={styles.circleBtn}>
+            <Close size={18} color={colors.ink} />
+          </NeumorphicCard>
         </Pressable>
+
         <Pressable
           onPress={toggleFlash}
-          style={[styles.circleBtn, flash === 'on' && styles.circleBtnOn]}
           accessibilityRole="button"
           accessibilityLabel={flash === 'on' ? 'turn flash off' : 'turn flash on'}
           accessibilityState={{ selected: flash === 'on' }}
+          hitSlop={8}
         >
-          <Flash size={18} color={flash === 'on' ? colors.white : colors.primary} />
+          <NeumorphicCard
+            variant="raised"
+            radius="full"
+            padding={0}
+            style={StyleSheet.flatten([
+              styles.circleBtn,
+              flash === 'on' && styles.circleBtnOn,
+            ])}
+          >
+            <Flash size={18} color={flash === 'on' ? colors.white : colors.ink} />
+          </NeumorphicCard>
         </Pressable>
-      </View>
+      </Animated.View>
 
-      {/* Shutter */}
-      <View style={[styles.shutterArea, { bottom: insets.bottom + 48 }]}>
-        <View style={styles.quotaChip}>
-          <Text style={[typeScale.labelSmall, { color: colors.secondary }]}>
+      {/* Shutter stack */}
+      <Animated.View
+        entering={FadeIn.duration(motion.moderate).delay(120)}
+        style={[styles.shutterArea, { bottom: insets.bottom + 48 }]}
+      >
+        <NeumorphicCard variant="pill" radius="full" padding={0} style={styles.quotaChip}>
+          <Text style={[typeScale.labelSmall, styles.quotaText]}>
             {todayCount} of {scanQuota.perDay} today
           </Text>
-        </View>
+        </NeumorphicCard>
+
         <View style={styles.shutterStack}>
-          <Svg width={120} height={120} style={StyleSheet.absoluteFill} viewBox="0 0 100 100">
-            <Circle
-              cx="50"
-              cy="50"
-              r="46"
-              fill="none"
-              stroke={colors.primary}
-              strokeWidth={3.5}
-              strokeLinecap="round"
-              strokeDasharray={289}
-              strokeDashoffset={80}
-              transform="rotate(-90 50 50)"
-            />
-          </Svg>
-          <Pressable
-            onPress={onShutter}
-            disabled={shooting}
-            accessibilityRole="button"
-            accessibilityLabel="scan a food"
-            accessibilityState={{ disabled: shooting }}
-            style={({ pressed }) => [
-              styles.shutter,
-              pressed && !shooting && { transform: [{ scale: 0.96 }] },
-              shooting && { opacity: 0.85 },
-            ]}
+          <NeumorphicCard
+            variant="raised"
+            radius="full"
+            padding={0}
+            style={styles.shutterOuter}
           >
-            <LinearGradient
-              colors={gradients.shutter}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={StyleSheet.absoluteFill}
-            />
-            {shooting && (
-              <ActivityIndicator color={colors.white} style={StyleSheet.absoluteFill} />
-            )}
-          </Pressable>
+            <Pressable
+              onPress={onShutter}
+              disabled={shooting}
+              accessibilityRole="button"
+              accessibilityLabel="scan a food"
+              accessibilityState={{ disabled: shooting }}
+              style={({ pressed }) => [
+                styles.shutterInner,
+                pressed && !shooting && { transform: [{ scale: 0.96 }] },
+                shooting && { opacity: 0.85 },
+              ]}
+            >
+              {shooting ? (
+                <ActivityIndicator color={colors.white} />
+              ) : (
+                <Plus size={36} color={colors.white} strokeWidth={2.5} />
+              )}
+            </Pressable>
+          </NeumorphicCard>
         </View>
-        <Text style={[typeScale.titleM, { color: colors.white, marginTop: 18 }]}>
+
+        <Text style={[typeScale.titleM, styles.shutterCaption]}>
           {shooting ? 'working…' : 'scan a food'}
         </Text>
-      </View>
+      </Animated.View>
     </View>
   );
 }
@@ -227,29 +264,26 @@ const styles = StyleSheet.create({
     backgroundColor: colors.canvas,
   },
   center: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
   dim: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.28)',
+    backgroundColor: 'rgba(0,0,0,0.32)',
   },
   viewfinder: {
     position: 'absolute',
     left: 28,
     right: 28,
-    borderRadius: radii.xxl,
-    overflow: 'hidden',
-    borderWidth: 2,
-    borderColor: 'rgba(255,255,255,0.85)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   bracket: {
     position: 'absolute',
-    width: 24,
-    height: 24,
-    borderColor: colors.white,
+    width: 26,
+    height: 26,
+    borderColor: colors.primary,
   },
   bracketTL: {
     top: 16,
@@ -283,9 +317,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     paddingVertical: 10,
     borderRadius: radii.full,
-    backgroundColor: 'rgba(255,255,255,0.82)',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.95)',
+    backgroundColor: colors.surface,
+    ...shadows.soft,
   },
   topControls: {
     position: 'absolute',
@@ -300,16 +333,12 @@ const styles = StyleSheet.create({
   circleBtn: {
     width: 40,
     height: 40,
-    borderRadius: radii.full,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255,255,255,0.85)',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.95)',
+    backgroundColor: colors.surface,
   },
   circleBtnOn: {
     backgroundColor: colors.primary,
-    borderColor: colors.primary,
   },
   shutterArea: {
     position: 'absolute',
@@ -320,58 +349,70 @@ const styles = StyleSheet.create({
   quotaChip: {
     paddingHorizontal: 14,
     paddingVertical: 6,
-    borderRadius: radii.full,
-    backgroundColor: 'rgba(255,255,255,0.75)',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.9)',
     marginBottom: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  quotaText: {
+    color: colors.outline,
+    textTransform: 'uppercase',
   },
   shutterStack: {
-    width: 120,
-    height: 120,
+    width: 96,
+    height: 96,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  shutter: {
+  shutterOuter: {
     width: 88,
     height: 88,
-    borderRadius: 44,
     alignItems: 'center',
     justifyContent: 'center',
-    overflow: 'hidden',
-    borderWidth: 3,
-    borderColor: 'rgba(255,255,255,0.9)',
-    shadowColor: '#416743',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.35,
-    shadowRadius: 28,
-    elevation: 10,
+    backgroundColor: colors.surface,
   },
-  permissionCard: {
-    position: 'absolute',
-    top: '28%',
-    left: spacing.xl,
-    right: spacing.xl,
+  shutterInner: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...shadows.shutter,
+  },
+  shutterCaption: {
+    color: colors.white,
+    marginTop: 18,
+    textShadowColor: 'rgba(0,0,0,0.45)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 6,
+  },
+  permissionWrap: {
+    flex: 1,
+    paddingHorizontal: layout.screenPadding,
+    justifyContent: 'space-between',
+    paddingBottom: spacing.huge,
+  },
+  permissionInner: {
     alignItems: 'center',
   },
   permissionOrb: {
     width: 96,
     height: 96,
-    borderRadius: radii.full,
-    backgroundColor: 'rgba(255,255,255,0.6)',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.85)',
-    marginBottom: spacing.lg,
+    marginBottom: spacing.xl,
   },
   permissionTitle: {
-    color: colors.onSurface,
+    color: colors.ink,
     textAlign: 'center',
   },
   permissionBody: {
-    color: colors.secondary,
+    color: colors.outline,
     textAlign: 'center',
-    marginTop: 8,
+    marginTop: 12,
+    paddingHorizontal: spacing.sm,
+  },
+  permissionCtaWrap: {
+    width: '100%',
   },
 });

@@ -5,17 +5,15 @@ import {
   ScrollView,
   StyleSheet,
   Pressable,
-  Platform,
 } from 'react-native';
-import { BlurView } from 'expo-blur';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { AtmosphericBackground } from '@/components/ui/AtmosphericBackground';
+import { NeumorphicCard } from '@/components/ui/NeumorphicCard';
 import { PillCTA } from '@/components/ui/PillCTA';
-import { Eyebrow } from '@/components/ui/Eyebrow';
-import { Back, Chevron } from '@/components/ui/Glyphs';
+import { Back, Chevron, Check } from '@/components/ui/Glyphs';
 import {
   colors,
   spacing,
@@ -23,7 +21,6 @@ import {
   layout,
   motion,
   radii,
-  shadows,
 } from '@/constants/tokens';
 import { ProgressDots } from '@/components/onboarding/ProgressDots';
 
@@ -70,7 +67,7 @@ export default function PreferencesScreen() {
       <ScrollView
         contentContainerStyle={{
           paddingTop: insets.top + 16,
-          paddingBottom: insets.bottom + 120,
+          paddingBottom: insets.bottom + 140,
           paddingHorizontal: layout.screenPadding,
         }}
         showsVerticalScrollIndicator={false}
@@ -82,9 +79,12 @@ export default function PreferencesScreen() {
               hitSlop={12}
               accessibilityRole="button"
               accessibilityLabel="back"
-              style={styles.backBtn}
             >
-              <Back size={22} color={colors.primary} strokeWidth={1.6} />
+              <NeumorphicCard variant="raised" radius="full" padding={0} style={styles.backBtn}>
+                <View style={styles.backBtnInner}>
+                  <Back size={18} color={colors.ink} strokeWidth={1.8} />
+                </View>
+              </NeumorphicCard>
             </Pressable>
             <ProgressDots filled={4} />
             <View style={styles.backBtn} />
@@ -95,16 +95,14 @@ export default function PreferencesScreen() {
           entering={FadeIn.duration(motion.slow).delay(80)}
           style={styles.heading}
         >
-          <Eyebrow uppercase color="primary" style={{ marginBottom: spacing.sm }}>
-            step four
-          </Eyebrow>
-          <Text style={[typeScale.displayM, { color: colors.onSurface }]}>
-            what do you{'\n'}buy often?
+          <Text style={[typeScale.labelSmall, styles.eyebrow]}>STEP 4</Text>
+          <Text style={[typeScale.displayL, { color: colors.ink, marginTop: spacing.sm }]}>
+            What Do You Buy Often?
           </Text>
           <Text
             style={[
               typeScale.body,
-              { color: colors.secondary, marginTop: spacing.sm },
+              { color: colors.outline, marginTop: spacing.sm },
             ]}
           >
             pick a few — no right answers. just so we know where to look.
@@ -137,11 +135,12 @@ export default function PreferencesScreen() {
         pointerEvents="box-none"
       >
         <PillCTA
-          label="continue"
+          label="Continue"
           fullWidth
           disabled={!canContinue}
-          iconRight={<Chevron size={16} color={colors.white} />}
+          iconRight={<Chevron size={16} color={colors.onAccent} />}
           onPress={() => router.push('/onboarding/waste')}
+          accessibilityLabel="continue"
         />
       </View>
     </AtmosphericBackground>
@@ -155,43 +154,35 @@ type ChipProps = {
 };
 
 const Chip: React.FC<ChipProps> = ({ label, selected, onPress }) => {
-  const useBlur = Platform.OS === 'ios' && !selected;
   return (
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
       accessibilityState={{ selected }}
       accessibilityLabel={label}
-      style={[styles.chip, shadows.soft]}
     >
-      {!selected && useBlur && (
-        <>
-          <BlurView intensity={18} tint="light" style={StyleSheet.absoluteFill} />
-          <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.glassFill }]} />
-        </>
-      )}
-      {!selected && !useBlur && (
-        <View
-          style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(255,255,255,0.92)' }]}
-        />
-      )}
-      {selected && (
-        <View
-          style={[
-            StyleSheet.absoluteFill,
-            { backgroundColor: 'rgba(125,166,125,0.85)' },
-          ]}
-        />
-      )}
-      <View pointerEvents="none" style={styles.chipHighlight} />
-      <Text
-        style={[
-          typeScale.titleS,
-          { color: selected ? colors.white : colors.onSurface },
-        ]}
+      <NeumorphicCard
+        variant={selected ? 'flat' : 'raised'}
+        radius="full"
+        padding={0}
+        style={selected ? styles.chipSelected : styles.chip}
       >
-        {label}
-      </Text>
+        <View style={styles.chipInner}>
+          {selected ? (
+            <View style={styles.chipCheckWrap}>
+              <Check size={14} color={colors.primary} strokeWidth={2.2} />
+            </View>
+          ) : null}
+          <Text
+            style={[
+              typeScale.titleS,
+              { color: selected ? colors.primary : colors.ink },
+            ]}
+          >
+            {label}
+          </Text>
+        </View>
+      </NeumorphicCard>
     </Pressable>
   );
 };
@@ -206,8 +197,16 @@ const styles = StyleSheet.create({
   backBtn: {
     width: 40,
     height: 40,
+  },
+  backBtnInner: {
+    width: 40,
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  eyebrow: {
+    color: colors.outline,
+    textTransform: 'uppercase',
   },
   heading: {
     marginBottom: spacing.xxl,
@@ -218,22 +217,23 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   chip: {
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  chipSelected: {
+    borderWidth: 2,
+    borderColor: colors.primary,
+    backgroundColor: colors.primaryFixed,
+  },
+  chipInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: spacing.lg,
     paddingVertical: 12,
     borderRadius: radii.full,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: colors.glassBorder,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
-  chipHighlight: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 1,
-    backgroundColor: colors.glassInnerHighlight,
+  chipCheckWrap: {
+    marginRight: 8,
   },
   floatingCta: {
     position: 'absolute',

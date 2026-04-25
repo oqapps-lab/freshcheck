@@ -4,10 +4,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { AtmosphericBackground } from '@/components/ui/AtmosphericBackground';
+import { NeumorphicCard } from '@/components/ui/NeumorphicCard';
 import { PillCTA } from '@/components/ui/PillCTA';
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Sprig, Chevron } from '@/components/ui/Glyphs';
-import { colors, spacing, typeScale, layout, motion, radii } from '@/constants/tokens';
+import { colors, spacing, typeScale, layout, motion } from '@/constants/tokens';
 
 export default function WelcomeScreen() {
   const insets = useSafeAreaInsets();
@@ -18,68 +18,95 @@ export default function WelcomeScreen() {
       <View
         style={[
           styles.root,
-          { paddingTop: insets.top + 56, paddingBottom: insets.bottom + 40 },
+          { paddingTop: insets.top + 32, paddingBottom: insets.bottom + 32 },
         ]}
       >
-        <View style={styles.brand}>
-          <Sprig size={22} color={colors.primary} strokeWidth={1.4} />
-          <Text style={[typeScale.label, { color: colors.primary, marginLeft: 8 }]}>
-            freshcheck
-          </Text>
-        </View>
-
-        <Animated.View entering={FadeIn.duration(motion.slow)} style={styles.illustration}>
-          <View style={styles.illustrationDisc}>
-            <Sprig size={72} color={colors.primary} strokeWidth={1.1} />
-          </View>
+        <Animated.View entering={FadeIn.duration(motion.moderate)} style={styles.brand}>
+          <Sprig size={20} color={colors.primary} strokeWidth={1.6} />
+          <Text style={[typeScale.labelSmall, styles.brandLabel]}>FRESHCHECK</Text>
         </Animated.View>
 
-        <Animated.View entering={FadeIn.duration(motion.slow).delay(120)} style={styles.text}>
+        <Animated.View
+          entering={FadeIn.duration(motion.slow).delay(80)}
+          style={styles.heroBlock}
+        >
+          <NeumorphicCard
+            variant="raised"
+            radius="full"
+            padding={0}
+            style={styles.heroDisc}
+          >
+            <View style={styles.heroDiscInner}>
+              <Sprig size={84} color={colors.primary} strokeWidth={1.2} />
+            </View>
+          </NeumorphicCard>
+        </Animated.View>
+
+        <Animated.View
+          entering={FadeIn.duration(motion.slow).delay(160)}
+          style={styles.text}
+        >
+          <Text
+            style={[
+              typeScale.labelSmall,
+              {
+                color: colors.outline,
+                textAlign: 'center',
+                marginBottom: spacing.md,
+                textTransform: 'uppercase',
+              },
+            ]}
+          >
+            STEP 1
+          </Text>
           <Text
             style={[
               typeScale.displayL,
-              { color: colors.onSurface, textAlign: 'center' },
+              { color: colors.ink, textAlign: 'center' },
             ]}
           >
-            fresh or not?
-          </Text>
-          <Text
-            style={[
-              typeScale.titleM,
-              { color: colors.secondary, textAlign: 'center', marginTop: 10 },
-            ]}
-          >
-            a quiet check before the fridge bites back
+            Welcome to FreshCheck
           </Text>
           <Text
             style={[
               typeScale.body,
               {
-                color: colors.onSurfaceVariant,
+                color: colors.outline,
                 textAlign: 'center',
-                marginTop: spacing.lg,
-                maxWidth: 300,
+                marginTop: spacing.md,
+                maxWidth: 320,
                 alignSelf: 'center',
               },
             ]}
           >
-            photograph anything in your kitchen — we'll tell you if it still
-            wants to be used.
+            a quiet check before the fridge bites back. snap a photo — we'll
+            tell you if the food still wants to be used.
           </Text>
         </Animated.View>
 
         <Animated.View
-          entering={FadeIn.duration(motion.slow).delay(260)}
+          entering={FadeIn.duration(motion.slow).delay(240)}
           style={styles.cta}
         >
-          <Eyebrow center uppercase style={{ marginBottom: 14 }}>
-            ★ 4.5 · 12,400 families tend here
-          </Eyebrow>
+          <Text
+            style={[
+              typeScale.labelSmall,
+              {
+                color: colors.outline,
+                textAlign: 'center',
+                marginBottom: spacing.md,
+                textTransform: 'uppercase',
+              },
+            ]}
+          >
+            ★ 4.5 · 12,400 FAMILIES TEND HERE
+          </Text>
           <PillCTA
-            label="get started"
+            label="Get Started"
             fullWidth
-            iconRight={<Chevron size={16} color={colors.white} />}
+            iconRight={<Chevron size={16} color={colors.onAccent} />}
             onPress={() => router.push('/onboarding/goal')}
+            accessibilityLabel="Get started"
           />
         </Animated.View>
       </View>
@@ -98,24 +125,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  illustration: {
+  brandLabel: {
+    color: colors.primary,
+    marginLeft: 8,
+    textTransform: 'uppercase',
+  },
+  heroBlock: {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  illustrationDisc: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    backgroundColor: 'rgba(255,255,255,0.55)',
+  heroDisc: {
+    width: 220,
+    height: 220,
+  },
+  heroDiscInner: {
+    width: 220,
+    height: 220,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.85)',
-    shadowColor: '#416743',
-    shadowOffset: { width: 0, height: 16 },
-    shadowOpacity: 0.08,
-    shadowRadius: 40,
-    elevation: 6,
   },
   text: {
     width: '100%',

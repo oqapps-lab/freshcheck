@@ -1,148 +1,147 @@
-// FreshCheck — Design Tokens v3 (The Dew-Drenched Conservatory)
+// FreshCheck — Design Tokens v4 (Paper & Pith / Stitch Minimalist)
 //
-// FUNDAMENTAL REWRITE — distilled from the Stitch reference sheet
-// (code.html + DESIGN.md, 2026-04-20). Previous v1 + v2 were rejected
-// for being gigantic, rainbow-palette, and cheap-animation.
+// FUNDAMENTAL REWRITE — captured from Stitch project FreshCheck Minimalist
+// UI on 2026-04-22. v3 (Dew Conservatory) is archived in
+// docs/06-design/DESIGN-V4.md (migration plan).
 //
-// v3 rules (from DESIGN.md §2-§4):
-//  - Monochromatic sage palette ONLY (coral/amber reserved for verdict chips)
-//  - Manrope ONLY (drop Plus Jakarta + Fraunces)
-//  - Medium weight (500) as primary — NOT 800 ExtraBold
-//  - Lowercase copy everywhere ("hi, Sara", "fresh", "milk")
-//  - No hard borders — tonal shifts + negative space only
-//  - Pill CTAs with gentle dewy gradient (primary → primary_container)
-//  - No shimmer, no pulse, no rainbow — subtle dew-drops and leaf veins only
-//  - Breathe: generous padding, let content float
-//
-// Spec: docs/06-design/DESIGN-GUIDE.md (to be updated post-v3)
+// v4 rules:
+//   - Neumorphic: white pillow surfaces extruded from warm-cream canvas.
+//   - Dual shadow per raised element (top-left light, bottom-right dark).
+//   - Inter ONLY (drop Manrope). Bold weights for headlines, Title Case
+//     for hero copy, lowercase for body / nav / labels.
+//   - Sage primary #4B5D43 (icons, scan orb). Amber #feb06e for primary
+//     CTAs ("Add to Fridge"). White on amber buttons reads onAccent #784105.
+//   - No gradients on surfaces. Depth comes from shadow stacks, not tone.
+//   - Generous breathing room — padding 20+, gap 16+ between cards.
 
 export const colors = {
-  // Canvas — mint-white gradient, not warm cream
-  canvas: '#F8FAF6',
-  canvasTint: '#F2F4F0',
-  canvasMist: '#dce8dd', // bottom of morning-gradient
+  // Canvas — warm cream, app background everywhere
+  canvas: '#fbf9f4',
+  canvasTint: '#f5f3ee',
+  canvasMist: '#f0eee9', // tab bar / nested-section tint
 
-  // Surface hierarchy — tonal nesting (no borders)
-  surface: '#F8FAF6',
-  surfaceLow: '#F2F4F0',
-  surfaceContainer: '#eceeeb',
-  surfaceHigh: '#e7e9e5',
-  surfaceHighest: '#e1e3df',
+  // Surface — pure white pillow, depth via shadow not tone
+  surface: '#ffffff',
+  surfaceLow: '#f0eee9',
+  surfaceContainer: '#eae8e3',
+  surfaceHigh: '#ffffff',
+  surfaceHighest: '#ffffff',
   surfaceLowest: '#ffffff',
-  surfaceDim: '#d8dbd7',
-  surfaceBright: '#F8FAF6',
+  surfaceDim: '#dbdad5',
+  surfaceBright: '#ffffff',
 
-  // Sage primary — confident, living
-  primary: '#416743',
+  // Sage primary — slightly tinted from v3, matches Stitch theme #4B5D43
+  primary: '#4B5D43',
+  primaryDeep: '#3A4B33',
   onPrimary: '#ffffff',
-  primaryContainer: '#7DA67D',
-  onPrimaryContainer: '#153b1c',
-  primaryFixed: '#c2eec0',
-  primaryFixedDim: '#a7d1a5',
-  onPrimaryFixed: '#002107',
-  onPrimaryFixedVariant: '#294f2d',
+  primaryContainer: '#4B5D43',
+  onPrimaryContainer: '#ffffff',
+  primaryFixed: '#d4e9c7',
+  primaryFixedDim: '#b8cdac',
+  onPrimaryFixed: '#0c2407',
+  onPrimaryFixedVariant: '#3a4b33',
 
-  // Sage secondary — supporting tone
-  secondary: '#4f6351',
+  // Secondary — same sage darker, used as ink-tinted body/state
+  secondary: '#516349',
   onSecondary: '#ffffff',
-  secondaryContainer: '#cfe6cf',
-  onSecondaryContainer: '#536855',
-  secondaryFixed: '#d2e9d2',
-  secondaryFixedDim: '#b6ccb6',
+  secondaryContainer: '#feb06e', // amber accent (Stitch maps secondary→amber)
+  onSecondaryContainer: '#784105',
+  secondaryFixed: '#ffdcc2',
+  secondaryFixedDim: '#ffb077',
 
-  // Sage tertiary — for ambient accents
-  tertiary: '#546256',
-  tertiaryContainer: '#92a093',
-  tertiaryFixed: '#d8e6d8',
-  tertiaryFixedDim: '#bccabc',
+  // Tertiary — faded muted accent, rarely used
+  tertiary: '#864546',
+  tertiaryContainer: '#ffdad9',
+  tertiaryFixed: '#ffdad9',
+  tertiaryFixedDim: '#ffb3b2',
   onTertiary: '#ffffff',
-  onTertiaryContainer: '#2a372d',
+  onTertiaryContainer: '#ffbfbe',
 
-  // Ink — warm green-grey, never pure black
-  ink: '#191c1a',
-  onSurface: '#191c1a',
-  onSurfaceVariant: '#424941',
-  outline: '#727970',
-  outlineVariant: '#c2c8be',
+  // Ink — near-black, warm-tinted (Stitch on_background)
+  ink: '#1b1c19',
+  onSurface: '#1b1c19',
+  onSurfaceVariant: '#444840',
+  outline: '#747870',
+  outlineVariant: '#dbdad5',
 
-  // Verdict accents — SPARINGLY (only on verdict chips when urgency needs escalation)
-  coral: '#d98a8a', // muted, not #F08080 loud
-  coralContainer: '#fde3e0',
-  onCoralContainer: '#6c2420',
-  amber: '#d9a84e', // muted honey
-  amberContainer: '#fbecc7',
-  onAmberContainer: '#5c3f0b',
+  // Accent — amber/peach for primary CTA fills
+  accent: '#feb06e',
+  accentSoft: '#ffdcc2',
+  onAccent: '#784105',
+
+  // Verdict — sparing semantic colors used inline (chips, countdown bar)
+  verdictSafe: '#6fa86a',
+  verdictWarn: '#d99355',
+  verdictDanger: '#c4584d',
+
+  coral: '#c4584d',
+  coralContainer: '#ffdad6',
+  onCoralContainer: '#93000a',
+  amber: '#feb06e',
+  amberContainer: '#ffdcc2',
+  onAmberContainer: '#784105',
 
   // System
   white: '#ffffff',
   black: '#000000',
   glassFill: 'rgba(255,255,255,0.65)',
   glassBorder: 'rgba(255,255,255,0.8)',
-  glassInnerHighlight: 'rgba(255,255,255,0.9)',
-  leafVein: 'rgba(65,103,67,0.05)',
-  hairline: 'rgba(65,103,67,0.08)',
-  overlay: 'rgba(25,28,26,0.35)',
+  glassInnerHighlight: 'rgba(255,255,255,0.95)',
+  hairline: 'rgba(20,28,18,0.06)',
+  overlay: 'rgba(27,28,25,0.45)',
+
+  // Neumorphic shadow tints
+  neuLight: '#ffffff',
+  neuDark: '#bcb9b0',
+
+  // ── v3 compat aliases — to be removed once every screen is migrated ──
+  leafVein: 'rgba(75,93,67,0.04)',
 } as const;
 
 type GradStops = readonly [string, string, ...string[]];
 
+// Reserved — gradients are minimal in v4 (only used on shutter / hero-ish
+// rare moments). Cards do NOT take gradients.
 export const gradients = {
-  // Morning canvas — 135deg, very gentle
-  morning: ['#f0f4f0', '#dce8dd'] as unknown as GradStops,
+  shutter: ['#7da67d', '#4b5d43', '#3a4b33'] as unknown as GradStops,
+  countdownFresh: ['#a7d1a5', '#6fa86a'] as unknown as GradStops,
+  countdownSoon: ['#ffdcc2', '#feb06e'] as unknown as GradStops,
+  countdownPast: ['#ffdad6', '#c4584d'] as unknown as GradStops,
 
-  // Primary CTA — dewy sage gradient (from DESIGN.md §5 Buttons)
-  dewyCTA: ['#416743', '#4f6351'] as unknown as GradStops, // primary → secondary
-  dewyCTASoft: ['#7DA67D', '#c2eec0'] as unknown as GradStops,
-
-  // Verdict pill "fresh" — primary-container → primary-fixed
-  verdictFresh: ['#7DA67D', '#c2eec0'] as unknown as GradStops,
-
-  // Verdict pill "soon" — muted amber
-  verdictSoon: ['#e9c77a', '#fbecc7'] as unknown as GradStops,
-
-  // Verdict pill "past" — muted coral
-  verdictPast: ['#d98a8a', '#fde3e0'] as unknown as GradStops,
-
-  // Bloom background (Verdict Bloom hero) — white core → primary-fixed edge
-  verdictBloom: [
-    'rgba(255,255,255,0.9)',
-    'rgba(194,238,192,0.4)',
-  ] as unknown as GradStops,
-
-  // Shutter — large scan circle
-  shutter: ['#7DA67D', '#416743', '#4f6351'] as unknown as GradStops,
-
-  // Countdown — subtle mint→sage (no coral)
-  countdownFresh: ['#a7d1a5', '#7DA67D'] as unknown as GradStops,
-  countdownSoon: ['#c2eec0', '#e9c77a'] as unknown as GradStops,
-  countdownPast: ['#e9c77a', '#d98a8a'] as unknown as GradStops,
+  // ── v3 compat — soon-to-go aliases. Used by screens still on v3 layout.
+  morning: ['#fbf9f4', '#f0eee9'] as unknown as GradStops,
+  dewyCTA: ['#feb06e', '#fea661'] as unknown as GradStops,
+  dewyCTASoft: ['#ffdcc2', '#feb06e'] as unknown as GradStops,
+  verdictFresh: ['#dff0d4', '#a7d1a5'] as unknown as GradStops,
+  verdictSoon: ['#ffdcc2', '#feb06e'] as unknown as GradStops,
+  verdictPast: ['#ffdad6', '#c4584d'] as unknown as GradStops,
+  verdictBloom: ['rgba(255,255,255,0.95)', 'rgba(212,233,199,0.4)'] as unknown as GradStops,
 } as const;
 
-// Orb / ambient — sage ONLY, very gentle
+// Orb / ambient — minimal in v4, kept for legacy onboarding screens
 export const orbs = {
   sage: {
-    color: '#7DA67D',
+    color: '#7da67d',
     stops: [0.0, 0.6, 1.0],
-    opacities: [0.18, 0.08, 0.0],
+    opacities: [0.10, 0.04, 0.0],
   },
-  mint: {
-    color: '#c2eec0',
+  cream: {
+    color: '#feb06e',
     stops: [0.0, 0.65, 1.0],
-    opacities: [0.22, 0.10, 0.0],
+    opacities: [0.10, 0.04, 0.0],
   },
 } as const;
 
 export const radii = {
-  xs: 6,
+  xs: 8,
   sm: 12,
   md: 16,
-  lg: 24,
-  xl: 32,
-  xxl: 40, // rounded-[2.5rem] from Stitch
+  lg: 20,
+  xl: 24,
+  xxl: 32,
   full: 999,
 } as const;
 
-// Generous spacing — breathe
 export const spacing = {
   xxs: 4,
   xs: 8,
@@ -155,72 +154,84 @@ export const spacing = {
   massive: 64,
 } as const;
 
-// Manrope ONLY — no Plus Jakarta, no Fraunces
+// Inter ONLY — drop Manrope.
 export const fonts = {
-  regular: 'Manrope_400Regular',
-  medium: 'Manrope_500Medium',
-  semibold: 'Manrope_600SemiBold',
-  bold: 'Manrope_700Bold',
-  extrabold: 'Manrope_800ExtraBold',
+  regular: 'Inter_400Regular',
+  medium: 'Inter_500Medium',
+  semibold: 'Inter_600SemiBold',
+  bold: 'Inter_700Bold',
+  extrabold: 'Inter_800ExtraBold',
 } as const;
 
-// Type scale — editorial magazine feel
-// Use medium (500) as default body. Semibold (600) for headers.
-// Display sizes are LARGER but with lower weight (medium/semibold, NOT extrabold).
+// Type scale — Inter, big bold black headlines, low-key body
 export const typeScale = {
-  // Hero verdict bloom — "fresh" at 72pt semibold, lowercase
-  verdictBloom: { fontFamily: fonts.bold, fontSize: 72, lineHeight: 80, letterSpacing: -1.8 },
+  verdictBloom: { fontFamily: fonts.extrabold, fontSize: 60, lineHeight: 64, letterSpacing: -1.6 },
 
-  // Display sizes for greeting headlines — "hi, Sara"
-  displayL: { fontFamily: fonts.semibold, fontSize: 40, lineHeight: 46, letterSpacing: -1.2 },
-  displayM: { fontFamily: fonts.semibold, fontSize: 32, lineHeight: 38, letterSpacing: -0.8 },
+  displayXL: { fontFamily: fonts.extrabold, fontSize: 44, lineHeight: 48, letterSpacing: -1.0 },
+  displayL: { fontFamily: fonts.extrabold, fontSize: 34, lineHeight: 40, letterSpacing: -0.6 },
+  displayM: { fontFamily: fonts.bold, fontSize: 28, lineHeight: 34, letterSpacing: -0.4 },
 
-  // Titles
-  titleL: { fontFamily: fonts.semibold, fontSize: 24, lineHeight: 30, letterSpacing: -0.4 },
-  titleM: { fontFamily: fonts.semibold, fontSize: 20, lineHeight: 26, letterSpacing: -0.2 },
-  titleS: { fontFamily: fonts.medium, fontSize: 18, lineHeight: 24, letterSpacing: 0 },
+  titleL: { fontFamily: fonts.semibold, fontSize: 20, lineHeight: 26, letterSpacing: -0.2 },
+  titleM: { fontFamily: fonts.semibold, fontSize: 17, lineHeight: 22, letterSpacing: 0 },
+  titleS: { fontFamily: fonts.medium, fontSize: 15, lineHeight: 20, letterSpacing: 0 },
 
-  // Body
-  bodyL: { fontFamily: fonts.medium, fontSize: 17, lineHeight: 24, letterSpacing: 0 },
-  body: { fontFamily: fonts.medium, fontSize: 15, lineHeight: 22, letterSpacing: 0 },
-  bodySmall: { fontFamily: fonts.medium, fontSize: 13, lineHeight: 20, letterSpacing: 0.1 },
+  bodyL: { fontFamily: fonts.regular, fontSize: 17, lineHeight: 24, letterSpacing: 0 },
+  body: { fontFamily: fonts.regular, fontSize: 15, lineHeight: 22, letterSpacing: 0 },
+  bodySmall: { fontFamily: fonts.regular, fontSize: 13, lineHeight: 19, letterSpacing: 0.05 },
 
-  // Labels
-  label: { fontFamily: fonts.semibold, fontSize: 13, lineHeight: 18, letterSpacing: 0.3 },
-  labelSmall: { fontFamily: fonts.semibold, fontSize: 11, lineHeight: 16, letterSpacing: 0.8 },
-  caption: { fontFamily: fonts.medium, fontSize: 12, lineHeight: 16, letterSpacing: 0.2 },
+  label: { fontFamily: fonts.semibold, fontSize: 13, lineHeight: 16, letterSpacing: 0.4 },
+  labelSmall: { fontFamily: fonts.semibold, fontSize: 11, lineHeight: 14, letterSpacing: 1.4 },
+  caption: { fontFamily: fonts.regular, fontSize: 12, lineHeight: 16, letterSpacing: 0.2 },
 } as const;
 
-// Shadows — extra-diffused, tinted with on-surface green-grey, NOT black
-// From DESIGN.md §4: Blur 24-40px, Opacity 4-6%, Color tinted
+// Shadow recipes for the neumorphic stack.
+// React Native single-View limit: one shadow per View. We emulate the
+// dual highlight + drop by stacking two layered Views in NeumorphicCard.
 export const shadows = {
-  panel: {
-    shadowColor: '#416743',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.08,
-    shadowRadius: 32,
+  // Drop shadow (bottom-right, dark)
+  neuDrop: {
+    shadowColor: '#bcb9b0',
+    shadowOffset: { width: 4, height: 5 },
+    shadowOpacity: 0.32,
+    shadowRadius: 10,
     elevation: 4,
   },
+  // Light highlight (top-left, near-white)
+  neuHighlight: {
+    shadowColor: '#ffffff',
+    shadowOffset: { width: -3, height: -3 },
+    shadowOpacity: 0.95,
+    shadowRadius: 6,
+    elevation: 0,
+  },
+  // Soft drop for tab-bar / floating elements
+  panel: {
+    shadowColor: '#a8a4a0',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.32,
+    shadowRadius: 20,
+    elevation: 8,
+  },
   soft: {
-    shadowColor: '#416743',
+    shadowColor: '#a8a4a0',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
-    shadowRadius: 16,
-    elevation: 2,
+    shadowOpacity: 0.20,
+    shadowRadius: 10,
+    elevation: 3,
   },
   cta: {
-    shadowColor: '#416743',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.28,
-    shadowRadius: 20,
+    shadowColor: '#feb06e',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.32,
+    shadowRadius: 14,
     elevation: 6,
   },
   shutter: {
-    shadowColor: '#416743',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.40,
-    shadowRadius: 40,
-    elevation: 12,
+    shadowColor: '#3a4b33',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.32,
+    shadowRadius: 18,
+    elevation: 8,
   },
   none: {
     shadowColor: 'transparent',
@@ -233,34 +244,34 @@ export const shadows = {
 
 export type Tone = 'fresh' | 'safe' | 'soon' | 'past' | 'neutral';
 
-// Tone colors — sage-dominant; coral/amber ONLY on verdict chips
+// Tone colors — semantic accent per state (countdown bar / chip dot / pill)
 export const toneColor = {
   fresh: {
-    fill: colors.primaryFixed,
-    text: colors.onPrimaryFixed,
-    accent: colors.primary,
-    dot: colors.primaryContainer,
+    fill: '#dff0d4',
+    text: '#3a4b33',
+    accent: colors.verdictSafe,
+    dot: colors.verdictSafe,
   },
   safe: {
-    fill: colors.primaryFixed,
-    text: colors.onPrimaryFixedVariant,
-    accent: colors.primary,
-    dot: colors.primary,
+    fill: '#dff0d4',
+    text: '#3a4b33',
+    accent: colors.verdictSafe,
+    dot: colors.verdictSafe,
   },
   soon: {
-    fill: colors.amberContainer,
-    text: colors.onAmberContainer,
-    accent: colors.amber,
-    dot: colors.amber,
+    fill: '#ffdcc2',
+    text: '#784105',
+    accent: colors.verdictWarn,
+    dot: colors.verdictWarn,
   },
   past: {
-    fill: colors.coralContainer,
-    text: colors.onCoralContainer,
-    accent: colors.coral,
-    dot: colors.coral,
+    fill: '#ffdad6',
+    text: '#93000a',
+    accent: colors.verdictDanger,
+    dot: colors.verdictDanger,
   },
   neutral: {
-    fill: colors.surfaceContainer,
+    fill: colors.surfaceLow,
     text: colors.onSurfaceVariant,
     accent: colors.outline,
     dot: colors.outline,
@@ -274,11 +285,11 @@ export const motion = {
 } as const;
 
 export const layout = {
-  screenPadding: 20,
-  screenPaddingLg: 24,
+  screenPadding: 24,
+  screenPaddingLg: 28,
   headerHeight: 56,
   tabBarHeight: 72,
   tabBarMargin: 16,
-  tabBarBottomGap: 12,
-  floatingBottomClearance: 140,
+  tabBarBottomGap: 16,
+  floatingBottomClearance: 132,
 } as const;

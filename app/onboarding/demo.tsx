@@ -1,21 +1,19 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { AtmosphericBackground } from '@/components/ui/AtmosphericBackground';
-import { GlassCard } from '@/components/ui/GlassCard';
+import { NeumorphicCard } from '@/components/ui/NeumorphicCard';
 import { PillCTA } from '@/components/ui/PillCTA';
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Back, Chevron, Sprig } from '@/components/ui/Glyphs';
 import {
   colors,
-  gradients,
   spacing,
   typeScale,
   layout,
   motion,
+  radii,
 } from '@/constants/tokens';
 import { ProgressDots } from '@/components/onboarding/ProgressDots';
 import { ensureNotificationPermission } from '@/src/lib/notifications';
@@ -29,7 +27,7 @@ export default function DemoScreen() {
       <ScrollView
         contentContainerStyle={{
           paddingTop: insets.top + 16,
-          paddingBottom: insets.bottom + 120,
+          paddingBottom: insets.bottom + 140,
           paddingHorizontal: layout.screenPadding,
         }}
         showsVerticalScrollIndicator={false}
@@ -41,9 +39,12 @@ export default function DemoScreen() {
               hitSlop={12}
               accessibilityRole="button"
               accessibilityLabel="back"
-              style={styles.backBtn}
             >
-              <Back size={22} color={colors.primary} strokeWidth={1.6} />
+              <NeumorphicCard variant="raised" radius="full" padding={0} style={styles.backBtn}>
+                <View style={styles.backBtnInner}>
+                  <Back size={18} color={colors.ink} strokeWidth={1.8} />
+                </View>
+              </NeumorphicCard>
             </Pressable>
             <ProgressDots filled={7} />
             <View style={styles.backBtn} />
@@ -54,47 +55,44 @@ export default function DemoScreen() {
           entering={FadeIn.duration(motion.slow).delay(80)}
           style={styles.heading}
         >
-          <Eyebrow uppercase color="primary" style={{ marginBottom: spacing.sm }}>
-            a first glance
-          </Eyebrow>
+          <Text style={[typeScale.labelSmall, styles.eyebrow]}>STEP 7</Text>
           <Text
             style={[
-              typeScale.displayM,
-              { color: colors.onSurface, textAlign: 'center' },
+              typeScale.displayL,
+              { color: colors.ink, textAlign: 'center', marginTop: spacing.sm },
             ]}
           >
-            here's what{'\n'}a check looks like
+            Here's What a Check Looks Like
           </Text>
         </Animated.View>
 
-        {/* Mini Verdict Bloom */}
+        {/* Verdict Bloom — neumorphic disc with sage face + "Fresh" */}
         <Animated.View
           entering={FadeInDown.duration(motion.slow).delay(180).springify().damping(16)}
           style={styles.bloomWrap}
         >
-          <View style={styles.bloomDisc}>
-            <LinearGradient
-              colors={gradients.verdictBloom}
-              start={{ x: 0.5, y: 0.2 }}
-              end={{ x: 0.5, y: 1 }}
-              style={StyleSheet.absoluteFill}
-            />
-            <View style={styles.bloomInner}>
+          <NeumorphicCard
+            variant="raised"
+            radius="full"
+            padding={0}
+            style={styles.bloomDisc}
+          >
+            <View style={styles.bloomFace}>
               <View style={styles.sprigBadge}>
-                <Sprig size={18} color={colors.primary} strokeWidth={1.6} />
+                <Sprig size={20} color={colors.primary} strokeWidth={1.6} />
               </View>
-              <Text style={[typeScale.verdictBloom, styles.bloomText]}>fresh</Text>
+              <Text style={[typeScale.displayL, styles.bloomText]}>Fresh</Text>
             </View>
-          </View>
+          </NeumorphicCard>
 
           <View style={styles.bloomMeta}>
-            <Text style={[typeScale.titleM, { color: colors.onSurface }]}>
+            <Text style={[typeScale.titleM, { color: colors.ink }]}>
               strawberry
             </Text>
             <Text
               style={[
                 typeScale.body,
-                { color: colors.secondary, marginTop: 2 },
+                { color: colors.outline, marginTop: 2 },
               ]}
             >
               92% sure · good for another 3 days
@@ -106,15 +104,20 @@ export default function DemoScreen() {
           entering={FadeIn.duration(motion.slow).delay(360)}
           style={{ marginTop: spacing.xl }}
         >
-          <GlassCard variant="glass" radius="xl" padding={spacing.lg}>
-            <Eyebrow uppercase color="primary" style={{ marginBottom: 6 }}>
-              the quiet note
-            </Eyebrow>
-            <Text style={[typeScale.body, { color: colors.onSurface }]}>
+          <NeumorphicCard variant="raised" radius="md" padding={20}>
+            <Text style={[typeScale.labelSmall, styles.cardEyebrow]}>
+              THE QUIET NOTE
+            </Text>
+            <Text
+              style={[
+                typeScale.body,
+                { color: colors.ink, marginTop: 6 },
+              ]}
+            >
               a photo. a verdict. nothing to throw away that didn't need to go.
               this is every scan.
             </Text>
-          </GlassCard>
+          </NeumorphicCard>
         </Animated.View>
       </ScrollView>
 
@@ -126,9 +129,9 @@ export default function DemoScreen() {
         pointerEvents="box-none"
       >
         <PillCTA
-          label="scan my own food"
+          label="Scan My Own Food"
           fullWidth
-          iconRight={<Chevron size={16} color={colors.white} />}
+          iconRight={<Chevron size={16} color={colors.onAccent} />}
           onPress={async () => {
             // Best-effort: ask for notif permission here so the paywall
             // stays distraction-free. Swallow errors silently — the
@@ -136,6 +139,7 @@ export default function DemoScreen() {
             void ensureNotificationPermission().catch(() => {});
             router.push('/paywall');
           }}
+          accessibilityLabel="scan my own food"
         />
       </View>
     </AtmosphericBackground>
@@ -152,8 +156,17 @@ const styles = StyleSheet.create({
   backBtn: {
     width: 40,
     height: 40,
+  },
+  backBtnInner: {
+    width: 40,
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  eyebrow: {
+    color: colors.outline,
+    textTransform: 'uppercase',
+    textAlign: 'center',
   },
   heading: {
     marginBottom: spacing.xxl,
@@ -165,39 +178,34 @@ const styles = StyleSheet.create({
   bloomDisc: {
     width: 240,
     height: 240,
-    borderRadius: 120,
-    overflow: 'hidden',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.85)',
-    shadowColor: '#416743',
-    shadowOffset: { width: 0, height: 16 },
-    shadowOpacity: 0.14,
-    shadowRadius: 40,
-    elevation: 8,
   },
-  bloomInner: {
+  bloomFace: {
+    width: 240,
+    height: 240,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: colors.primaryFixed,
+    borderRadius: radii.full,
   },
   sprigBadge: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: 'rgba(255,255,255,0.88)',
+    width: 40,
+    height: 40,
+    borderRadius: radii.full,
+    backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.9)',
+    marginBottom: 10,
   },
   bloomText: {
-    color: colors.primary,
+    color: colors.ink,
   },
   bloomMeta: {
     alignItems: 'center',
     marginTop: spacing.xl,
+  },
+  cardEyebrow: {
+    color: colors.outline,
+    textTransform: 'uppercase',
   },
   floatingCta: {
     position: 'absolute',

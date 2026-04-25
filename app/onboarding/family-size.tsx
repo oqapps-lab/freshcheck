@@ -1,14 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Animated, { FadeIn } from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 import { AtmosphericBackground } from '@/components/ui/AtmosphericBackground';
-import { Eyebrow } from '@/components/ui/Eyebrow';
-import { Back, User, Heart, Sprig } from '@/components/ui/Glyphs';
-import { colors, spacing, typeScale, layout, motion } from '@/constants/tokens';
+import { NeumorphicCard } from '@/components/ui/NeumorphicCard';
+import { Back, User, Heart, Sprig, Check } from '@/components/ui/Glyphs';
+import { colors, spacing, typeScale, layout, motion, radii } from '@/constants/tokens';
 import { ProgressDots } from '@/components/onboarding/ProgressDots';
-import { OptionCard } from '@/components/onboarding/OptionCard';
 
 type Family = 'solo' | 'couple' | 'family' | 'big';
 
@@ -49,9 +49,12 @@ const options: Option[] = [
 export default function FamilySizeScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const [selected, setSelected] = useState<Family | null>(null);
 
-  const handleSelect = (_key: Family) => {
-    router.push('/onboarding/preferences');
+  const handleSelect = (key: Family) => {
+    Haptics.selectionAsync().catch(() => {});
+    setSelected(key);
+    setTimeout(() => router.push('/onboarding/preferences'), 120);
   };
 
   return (
@@ -71,9 +74,12 @@ export default function FamilySizeScreen() {
               hitSlop={12}
               accessibilityRole="button"
               accessibilityLabel="back"
-              style={styles.backBtn}
             >
-              <Back size={22} color={colors.primary} strokeWidth={1.6} />
+              <NeumorphicCard variant="raised" radius="full" padding={0} style={styles.backBtn}>
+                <View style={styles.backBtnInner}>
+                  <Back size={18} color={colors.ink} strokeWidth={1.8} />
+                </View>
+              </NeumorphicCard>
             </Pressable>
             <ProgressDots filled={3} />
             <View style={styles.backBtn} />
@@ -84,16 +90,14 @@ export default function FamilySizeScreen() {
           entering={FadeIn.duration(motion.slow).delay(80)}
           style={styles.heading}
         >
-          <Eyebrow uppercase color="primary" style={{ marginBottom: spacing.sm }}>
-            step three
-          </Eyebrow>
-          <Text style={[typeScale.displayM, { color: colors.onSurface }]}>
-            who are you{'\n'}checking food for?
+          <Text style={[typeScale.labelSmall, styles.eyebrow]}>STEP 3</Text>
+          <Text style={[typeScale.displayL, { color: colors.ink, marginTop: spacing.sm }]}>
+            Who Are You Feeding?
           </Text>
           <Text
             style={[
               typeScale.body,
-              { color: colors.secondary, marginTop: spacing.sm },
+              { color: colors.outline, marginTop: spacing.sm },
             ]}
           >
             so the numbers land right when we show you what's saved.
@@ -104,20 +108,50 @@ export default function FamilySizeScreen() {
           entering={FadeIn.duration(motion.slow).delay(160)}
           style={styles.optionsList}
         >
-          {options.map((opt, i) => (
-            <Animated.View
-              key={opt.key}
-              entering={FadeIn.duration(motion.slow).delay(220 + i * 60)}
-              style={{ marginBottom: spacing.sm }}
-            >
-              <OptionCard
-                label={opt.label}
-                sublabel={opt.sublabel}
-                icon={opt.icon}
-                onPress={() => handleSelect(opt.key)}
-              />
-            </Animated.View>
-          ))}
+          {options.map((opt, i) => {
+            const isSelected = selected === opt.key;
+            return (
+              <Animated.View
+                key={opt.key}
+                entering={FadeIn.duration(motion.slow).delay(220 + i * 60)}
+                style={{ marginBottom: spacing.sm }}
+              >
+                <Pressable
+                  onPress={() => handleSelect(opt.key)}
+                  accessibilityRole="button"
+                  accessibilityLabel={opt.label}
+                  accessibilityState={{ selected: isSelected }}
+                >
+                  <NeumorphicCard
+                    variant="raised"
+                    radius="md"
+                    padding={20}
+                    style={isSelected ? styles.optionCardSelected : styles.optionCard}
+                  >
+                    <View style={styles.optionRow}>
+                      <View style={styles.iconWrap}>{opt.icon}</View>
+                      <View style={{ flex: 1 }}>
+                        <Text style={[typeScale.titleM, { color: colors.ink }]}>
+                          {opt.label}
+                        </Text>
+                        <Text
+                          style={[
+                            typeScale.bodySmall,
+                            { color: colors.outline, marginTop: 2 },
+                          ]}
+                        >
+                          {opt.sublabel}
+                        </Text>
+                      </View>
+                      {isSelected ? (
+                        <Check size={20} color={colors.primary} strokeWidth={2} />
+                      ) : null}
+                    </View>
+                  </NeumorphicCard>
+                </Pressable>
+              </Animated.View>
+            );
+          })}
         </Animated.View>
       </ScrollView>
     </AtmosphericBackground>
@@ -134,13 +168,42 @@ const styles = StyleSheet.create({
   backBtn: {
     width: 40,
     height: 40,
+  },
+  backBtnInner: {
+    width: 40,
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  eyebrow: {
+    color: colors.outline,
+    textTransform: 'uppercase',
   },
   heading: {
     marginBottom: spacing.xxl,
   },
   optionsList: {
     width: '100%',
+  },
+  optionCard: {
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  optionCardSelected: {
+    borderWidth: 2,
+    borderColor: colors.primary,
+  },
+  optionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  iconWrap: {
+    width: 40,
+    height: 40,
+    borderRadius: radii.full,
+    backgroundColor: colors.primaryFixed,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: spacing.md,
   },
 });

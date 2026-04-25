@@ -29,7 +29,7 @@ export const fridgeItems: FridgeItem[] = [
   },
   {
     id: 'chicken-breast',
-    name: 'Free-Range Chicken Breast',
+    name: 'Chicken Breast',
     placeholder: '🍗',
     tone: 'past',
     daysLeft: 2,

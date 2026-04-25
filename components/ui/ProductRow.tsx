@@ -1,14 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, ViewStyle } from 'react-native';
 import { Image } from 'expo-image';
-import { colors, radii, spacing, typeScale, shadows, Tone, toneColor } from '@/constants/tokens';
-import { TokenDot } from './TokenDot';
-import { CountdownBar } from './CountdownBar';
+import { colors, radii, spacing, typeScale, Tone, toneColor } from '@/constants/tokens';
 import { CategoryGlyph, categoryFor } from './CategoryGlyph';
+import { NeumorphicCard } from './NeumorphicCard';
 
 type Props = {
   name: string;
-  expiryText: string;
+  expiryText?: string;
+  category?: string;
   tone: Tone;
   thumbnail?: string;
   daysLeft?: number;
@@ -19,15 +19,16 @@ type Props = {
 };
 
 /**
- * v3 — clean airy row on surfaceLowest. No coral halos, no tinted thumb gradients.
- * Thumbnail is a soft primaryFixed/surfaceContainer tile with initial letter.
- * Ample padding, generous vertical space between rows.
+ * v4 — Stitch fridge card. Pillowy neumorphic surface, thumb in a small
+ * tinted square on the left, name + category eyebrow stacked, big days
+ * number on the right, tone-tinted countdown stripe along the bottom.
  *
- * Ref: Stitch reference "2. The Last Answer" row composition
+ * Ref: docs/06-design/DESIGN-V4.md §ProductRow
  */
 export const ProductRow: React.FC<Props> = ({
   name,
   expiryText,
+  category,
   tone,
   thumbnail,
   daysLeft,
@@ -36,71 +37,121 @@ export const ProductRow: React.FC<Props> = ({
   onPress,
   style,
 }) => {
-  const Container = onPress ? Pressable : View;
-  const containerProps = onPress ? { onPress } : {};
   const t = toneColor[tone];
+  const cat = category ?? categoryFor(name).toUpperCase();
+  const Wrapper: any = onPress ? Pressable : View;
 
   return (
-    <Container
-      {...containerProps}
-      style={[styles.row, shadows.soft, style]}
-      accessibilityRole={onPress ? 'button' : undefined}
-      accessibilityLabel={`${name}, ${expiryText}`}
-    >
-      <View style={styles.thumb}>
-        {thumbnail ? (
-          <Image
-            source={{ uri: thumbnail }}
-            style={StyleSheet.absoluteFill}
-            contentFit="cover"
-            transition={160}
+    <NeumorphicCard radius="md" padding={0} style={StyleSheet.flatten([styles.outer, style])}>
+      <Wrapper
+        onPress={onPress}
+        accessibilityRole={onPress ? 'button' : undefined}
+        accessibilityLabel={`${name}, ${cat}, ${typeof daysLeft === 'number' ? `${daysLeft} days left` : expiryText ?? ''}`}
+        style={styles.row}
+      >
+        <View style={[styles.thumb, { backgroundColor: t.fill }]}>
+          {thumbnail ? (
+            <Image
+              source={{ uri: thumbnail }}
+              style={StyleSheet.absoluteFill}
+              contentFit="cover"
+              transition={160}
+            />
+          ) : (
+            <CategoryGlyph
+              category={categoryFor(name)}
+              size={26}
+              color={t.accent}
+              strokeWidth={1.6}
+            />
+          )}
+        </View>
+
+        <View style={styles.body}>
+          <Text style={[typeScale.titleM, styles.name]} numberOfLines={2}>
+            {name}
+          </Text>
+          <Text style={[typeScale.labelSmall, styles.category]} numberOfLines={1}>
+            {cat}
+          </Text>
+        </View>
+
+        {trailing ??
+          (typeof daysLeft === 'number' ? (
+            <View style={styles.daysCol}>
+              <Text style={[typeScale.displayM, styles.daysNumber]}>{daysLeft}</Text>
+              <Text style={[typeScale.labelSmall, styles.daysLabel]}>
+                {daysLeft === 1 ? 'DAY' : 'DAYS'}
+              </Text>
+            </View>
+          ) : null)}
+      </Wrapper>
+
+      {/* Tone-tinted countdown stripe along the bottom edge */}
+      {typeof daysLeft === 'number' && typeof totalDays === 'number' && (
+        <View style={styles.barTrack}>
+          <View
+            style={[
+              styles.barFill,
+              {
+                backgroundColor: t.accent,
+                width: `${Math.max(8, Math.min(100, (daysLeft / Math.max(1, totalDays)) * 100))}%`,
+              },
+            ]}
           />
-        ) : (
-          <CategoryGlyph category={categoryFor(name)} size={30} color={t.accent} strokeWidth={1.6} />
-        )}
-      </View>
-
-      <View style={styles.body}>
-        <Text style={[typeScale.titleS, { color: colors.onSurface }]} numberOfLines={2}>
-          {name.toLowerCase()}
-        </Text>
-        <Text style={[typeScale.bodySmall, { color: colors.onSurfaceVariant, marginTop: 2 }]}>
-          {expiryText.toLowerCase()}
-        </Text>
-        {typeof daysLeft === 'number' && typeof totalDays === 'number' && (
-          <CountdownBar daysLeft={daysLeft} totalDays={totalDays} style={styles.countdown} />
-        )}
-      </View>
-
-      {trailing ?? <TokenDot tone={tone} />}
-    </Container>
+        </View>
+      )}
+    </NeumorphicCard>
   );
 };
 
 const styles = StyleSheet.create({
+  outer: {
+    marginBottom: spacing.md,
+  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.md,
-    backgroundColor: colors.surfaceLowest,
-    borderRadius: radii.lg,
+    gap: spacing.sm,
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.md,
-    marginBottom: spacing.sm,
   },
   thumb: {
     width: 56,
     height: 56,
-    borderRadius: radii.md,
-    overflow: 'hidden',
-    backgroundColor: colors.primaryFixed,
+    borderRadius: radii.sm,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
   },
   body: {
     flex: 1,
   },
-  countdown: {
-    marginTop: 8,
+  name: {
+    color: colors.onSurface,
+  },
+  category: {
+    color: colors.outline,
+    marginTop: 4,
+  },
+  daysCol: {
+    alignItems: 'flex-end',
+    minWidth: 56,
+  },
+  daysNumber: {
+    color: colors.onSurface,
+    lineHeight: 30,
+  },
+  daysLabel: {
+    color: colors.outline,
+    marginTop: 2,
+  },
+  barTrack: {
+    height: 3,
+    backgroundColor: colors.outlineVariant,
+    overflow: 'hidden',
+  },
+  barFill: {
+    height: '100%',
   },
 });

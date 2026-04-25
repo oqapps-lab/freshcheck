@@ -1,25 +1,25 @@
 import {
   useFonts,
-  Manrope_400Regular,
-  Manrope_500Medium,
-  Manrope_600SemiBold,
-  Manrope_700Bold,
-  Manrope_800ExtraBold,
-} from '@expo-google-fonts/manrope';
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  Inter_700Bold,
+  Inter_800ExtraBold,
+} from '@expo-google-fonts/inter';
 
 /**
- * Loads the FreshCheck typeface — Manrope only (v3 Dew Conservatory).
- * Previous v1/v2 loaded Plus Jakarta Sans + Fraunces; dropped per design rewrite.
+ * Loads the FreshCheck typeface — Inter only (v4 Paper & Pith).
+ * v3 used Manrope; dropped on 2026-04-22 with the Stitch redesign.
  *
- * Ref: constants/tokens.ts fonts + docs/06-design/DESIGN-GUIDE.md §3
+ * Ref: docs/06-design/DESIGN-V4.md §Type
  */
 export function useAppFonts(): boolean {
   const [loaded] = useFonts({
-    Manrope_400Regular,
-    Manrope_500Medium,
-    Manrope_600SemiBold,
-    Manrope_700Bold,
-    Manrope_800ExtraBold,
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold,
+    Inter_800ExtraBold,
   });
   return loaded;
 }
