@@ -41,7 +41,7 @@ export default function RecipesScreen() {
         <ScrollView
           contentContainerStyle={{
             paddingTop: insets.top + 24,
-            paddingBottom: insets.bottom + layout.floatingBottomClearance + 24,
+            paddingBottom: insets.bottom + layout.floatingBottomClearance + 48,
             paddingHorizontal: layout.screenPadding,
             flexGrow: 1,
           }}
@@ -130,7 +130,7 @@ export default function RecipesScreen() {
       <ScrollView
         contentContainerStyle={{
           paddingTop: insets.top + 24,
-          paddingBottom: insets.bottom + layout.floatingBottomClearance + 24,
+          paddingBottom: insets.bottom + layout.floatingBottomClearance + 48,
           paddingHorizontal: layout.screenPadding,
         }}
         showsVerticalScrollIndicator={false}

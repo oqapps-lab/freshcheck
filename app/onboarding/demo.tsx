@@ -27,7 +27,7 @@ export default function DemoScreen() {
       <ScrollView
         contentContainerStyle={{
           paddingTop: insets.top + 16,
-          paddingBottom: insets.bottom + 140,
+          paddingBottom: insets.bottom + 200,
           paddingHorizontal: layout.screenPadding,
         }}
         showsVerticalScrollIndicator={false}
