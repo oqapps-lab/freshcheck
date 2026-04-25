@@ -346,12 +346,12 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   iconBtnCard: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
   },
   iconBtnHit: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: radii.full,
@@ -427,8 +427,8 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   storageIconTile: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
     borderRadius: radii.sm,
     alignItems: 'center',
     justifyContent: 'center',

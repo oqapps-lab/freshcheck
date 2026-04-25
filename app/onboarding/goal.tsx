@@ -173,12 +173,12 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xxl,
   },
   backBtn: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
   },
   backBtnInner: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -205,8 +205,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   iconWrap: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
     borderRadius: radii.full,
     backgroundColor: colors.primaryFixed,
     alignItems: 'center',

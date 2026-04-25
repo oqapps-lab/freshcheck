@@ -206,8 +206,8 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   circleBtn: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
     borderRadius: radii.full,
     alignItems: 'center',
     justifyContent: 'center',
@@ -219,8 +219,8 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   headerSpacer: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
   },
   group: {
     marginBottom: spacing.lg,

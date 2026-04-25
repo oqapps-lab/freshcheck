@@ -331,8 +331,8 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   circleBtn: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.surface,

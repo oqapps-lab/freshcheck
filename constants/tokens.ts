@@ -61,7 +61,7 @@ export const colors = {
   ink: '#1b1c19',
   onSurface: '#1b1c19',
   onSurfaceVariant: '#444840',
-  outline: '#747870',
+  outline: '#5a5d57', // WCAG-AA on canvas (~6.5:1) — was #747870 (4.36:1)
   outlineVariant: '#dbdad5',
 
   // Accent — amber/peach for primary CTA fills
