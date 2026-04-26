@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import { IconButton } from '@/components/ui/IconButton';
 import { ProductRow } from '@/components/ui/ProductRow';
 import { FilterPillRow } from '@/components/ui/FilterPill';
@@ -37,6 +38,7 @@ const CATEGORY_ORDER: Exclude<FilterValue, 'all'>[] = [
  */
 export default function FridgeScreen() {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
   const { items } = useFridge();
   const [filter, setFilter] = useState<FilterValue>('all');
 
@@ -58,11 +60,11 @@ export default function FridgeScreen() {
   return (
     <View style={styles.root}>
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-        <IconButton accessibilityLabel="menu">
+        <IconButton accessibilityLabel="menu" onPress={() => router.replace('/(tabs)/profile')}>
           <Menu size={20} color={colors.ink} />
         </IconButton>
         <Text style={[typeScale.wordmark, { color: colors.inkSecondary }]}>FRESHCHECK</Text>
-        <IconButton accessibilityLabel="settings">
+        <IconButton accessibilityLabel="settings" onPress={() => router.replace('/(tabs)/profile')}>
           <Settings size={20} color={colors.ink} />
         </IconButton>
       </View>

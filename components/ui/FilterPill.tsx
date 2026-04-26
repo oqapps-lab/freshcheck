@@ -69,12 +69,15 @@ export function FilterPillRow<T extends string>({ options, value, onChange }: Pr
 const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
-    gap: spacing.md,
+    gap: spacing.sm,
   },
   pill: {
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    minWidth: 80,
+    paddingVertical: 10,
+    // Was 32 — that pushed Poultry/Bakery/Pantry off-screen on a 402-pt
+    // device with 4+ categories. 20 keeps tap-area generous while
+    // letting 4 chips fit visibly inside the 402-pt viewport.
+    paddingHorizontal: 20,
+    minWidth: 72,
     alignItems: 'center',
     justifyContent: 'center',
   },

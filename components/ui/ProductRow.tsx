@@ -54,15 +54,29 @@ export function ProductRow({
     glyphColor = colors.inkSecondary;
   }
 
+  // Render as a Pressable only when an onPress is wired up. Without it
+  // we don't want a fake "button" affordance — silent haptic on tap with
+  // no follow-through reads as a dead control.
+  const a11yLabel = `${name}, ${daysLeft} ${daysLeft === 1 ? 'day' : 'days'} left`;
+  const Container: React.ComponentType<{ children: React.ReactNode }> = onPress
+    ? ({ children }) => (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={a11yLabel}
+          onPress={() => {
+            Haptics.selectionAsync().catch(() => {});
+            onPress();
+          }}
+        >
+          {children}
+        </Pressable>
+      )
+    : ({ children }) => (
+        <View accessibilityLabel={a11yLabel}>{children}</View>
+      );
+
   return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={`${name}, ${daysLeft} ${daysLeft === 1 ? 'day' : 'days'} left`}
-      onPress={() => {
-        Haptics.selectionAsync().catch(() => {});
-        onPress?.();
-      }}
-    >
+    <Container>
       <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.card}>
         <View style={styles.row}>
           {/* Recessed glyph tile */}
@@ -97,7 +111,7 @@ export function ProductRow({
 
         <RipeningProgress progress={progress} fillColor={fillColor} style={styles.progress} />
       </SoftSurface>
-    </Pressable>
+    </Container>
   );
 }
 
