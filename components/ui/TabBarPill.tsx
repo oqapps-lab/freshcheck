@@ -72,23 +72,25 @@ export function TabBarPill({ tabs, activeKey, onChange }: Props) {
   );
 }
 
-const ICON_INACTIVE = 48;
-const ICON_ACTIVE = 56;
+const ICON_INACTIVE = 38;
+const ICON_ACTIVE = 44;
 
 const styles = StyleSheet.create({
   wrap: {
     position: 'absolute',
-    // Was 5%/5% (90% wide). User read it as "stretched and cramped" — tightening
-    // to 14%/14% gives a 72% pill that feels more deliberately floating.
-    left: '14%',
-    right: '14%',
+    // v11 tightened to 14%/14% (72% wide) — user read that as "thick and
+    // narrow, horror". v12 = wider AND shorter: 5%/5% (90% wide) lets the
+    // pill stretch like the cards above; padding/icon shrink kills the
+    // chunky feel. Net height ~56 px (was ~80).
+    left: '5%',
+    right: '5%',
     alignItems: 'center',
   },
   bar: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: 12,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: 6,
     width: '100%',
-    maxWidth: 380,
+    maxWidth: 460,
   },
   row: {
     flexDirection: 'row',
