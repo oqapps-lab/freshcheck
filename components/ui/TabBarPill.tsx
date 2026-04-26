@@ -4,7 +4,7 @@ import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SoftSurface } from './SoftSurface';
 import { SoftInset } from './SoftInset';
-import { colors, layout } from '@/constants/tokens';
+import { colors, layout, spacing } from '@/constants/tokens';
 
 type Tab = {
   key: string;
@@ -78,15 +78,17 @@ const ICON_ACTIVE = 56;
 const styles = StyleSheet.create({
   wrap: {
     position: 'absolute',
-    left: '5%',
-    right: '5%',
+    // Was 5%/5% (90% wide). User read it as "stretched and cramped" — tightening
+    // to 14%/14% gives a 72% pill that feels more deliberately floating.
+    left: '14%',
+    right: '14%',
     alignItems: 'center',
   },
   bar: {
-    paddingHorizontal: layout.tabBarSidePadding,
-    paddingVertical: 16,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 12,
     width: '100%',
-    maxWidth: 448,
+    maxWidth: 380,
   },
   row: {
     flexDirection: 'row',

@@ -49,10 +49,20 @@ type Props = ViewProps & {
 
 // Per-strength tuning. dark/light = peak alpha at the corresponding edge.
 // rimPx = absolute width of the rim (in screen px). Matches CSS blur radius.
+//
+// v10 → v11 corner-softening pass: two overlay gradients add their alpha
+// at corners (top-left gets both vertical-dark and horizontal-dark), so
+// corners run ~1.5–1.7× heavier than edges, producing the L-shape
+// "angular" feel the user flagged. We can't fully prevent this without
+// a real radial-blur primitive (SVG filter), so we counter-balance:
+//   - lower peak alphas (corners stay readable, not blob-y)
+//   - wider rim (smoother fall-off transition)
+//   - add intermediate 0.5×peak stop so the gradient curve is sigmoid-ish
+//     instead of sharp linear.
 const STRENGTH = {
-  thin: { dark: 0.40, light: 0.65, rimPx: 10 }, // pill-active inset 4/4/8
-  medium: { dark: 0.50, light: 0.80, rimPx: 16 },
-  thick: { dark: 0.62, light: 0.95, rimPx: 22 }, // recessed inset 8/8/16
+  thin: { dark: 0.32, light: 0.50, rimPx: 14 }, // pill-active inset 4/4/8
+  medium: { dark: 0.38, light: 0.60, rimPx: 22 },
+  thick: { dark: 0.45, light: 0.72, rimPx: 30 }, // recessed inset 8/8/16
 } as const;
 
 // Fallback rim fraction used before onLayout fires (first paint). Small
@@ -96,7 +106,20 @@ export function SoftInset({
   const dark = (a: number) => `rgba(148, 163, 184, ${a})`;
   const light = (a: number) => `rgba(255, 255, 255, ${a})`;
 
-  const gradColors = [dark(s.dark), dark(0), light(0), light(s.light)] as const;
+  // 6-stop sigmoid-ish falloff: peak → 0.5×peak → 0 → 0 → 0.5×peak → peak.
+  // The mid-alpha stop softens the corner where two gradients overlap,
+  // smoothing the L-shape into a curve.
+  const vColors = [
+    dark(s.dark),
+    dark(s.dark * 0.5),
+    dark(0),
+    light(0),
+    light(s.light * 0.5),
+    light(s.light),
+  ] as const;
+  const hColors = vColors;
+  const vStops = [0, vRim * 0.5, vRim, 1 - vRim, 1 - vRim * 0.5, 1] as const;
+  const hStops = [0, hRim * 0.5, hRim, 1 - hRim, 1 - hRim * 0.5, 1] as const;
 
   return (
     <View
@@ -110,8 +133,8 @@ export function SoftInset({
     >
       {/* VERTICAL — dark top edge → transparent middle → white bottom edge */}
       <LinearGradient
-        colors={gradColors as unknown as readonly [string, string, ...string[]]}
-        locations={[0, vRim, 1 - vRim, 1] as unknown as readonly [number, number, ...number[]]}
+        colors={vColors as unknown as readonly [string, string, ...string[]]}
+        locations={vStops as unknown as readonly [number, number, ...number[]]}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
         style={StyleSheet.absoluteFill}
@@ -119,8 +142,8 @@ export function SoftInset({
       />
       {/* HORIZONTAL — dark left edge → transparent middle → white right edge */}
       <LinearGradient
-        colors={gradColors as unknown as readonly [string, string, ...string[]]}
-        locations={[0, hRim, 1 - hRim, 1] as unknown as readonly [number, number, ...number[]]}
+        colors={hColors as unknown as readonly [string, string, ...string[]]}
+        locations={hStops as unknown as readonly [number, number, ...number[]]}
         start={{ x: 0, y: 0.5 }}
         end={{ x: 1, y: 0.5 }}
         style={StyleSheet.absoluteFill}
