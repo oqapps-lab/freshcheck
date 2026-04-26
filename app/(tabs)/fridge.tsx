@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { View, Text, ScrollView, ActivityIndicator, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -58,6 +58,17 @@ export default function FridgeScreen() {
     if (filter === 'all') return sorted;
     return sorted.filter((i) => i.category === filter);
   }, [items, filter]);
+
+  // If the active filter's category no longer has any items (e.g. user
+  // removed the last poultry item while standing on the Poultry chip),
+  // the chip disappears from the row but the selected state lingers —
+  // user sees zero cards with no visible chip highlighted. Reset to All.
+  useEffect(() => {
+    if (filter === 'all') return;
+    if (!filterOptions.some((o) => o.value === filter)) {
+      setFilter('all');
+    }
+  }, [filter, filterOptions]);
 
   return (
     <View style={styles.root}>
