@@ -1,14 +1,15 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { View, Text, ScrollView, RefreshControl, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, RefreshControl, ActivityIndicator, Pressable, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { IconButton } from '@/components/ui/IconButton';
 import { ProductRow } from '@/components/ui/ProductRow';
 import { FilterPillRow } from '@/components/ui/FilterPill';
 import { SoftSurface } from '@/components/ui/SoftSurface';
+import { SoftInset } from '@/components/ui/SoftInset';
 import { PrimaryPillCTA } from '@/components/ui/PrimaryPillCTA';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Menu, Settings, BarcodeScanner, ShoppingBasket } from '@/components/ui/Glyphs';
+import { Menu, Settings, BarcodeScanner, ShoppingBasket, Nutrition, Chevron } from '@/components/ui/Glyphs';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 import { useFridge } from '@/src/hooks/useFridge';
 
@@ -110,6 +111,31 @@ export default function FridgeScreen() {
           <Text style={[typeScale.displayLarge, { color: colors.ink }]}>My Fridge</Text>
           <Text style={[typeScale.label, styles.eyebrow]}>INVENTORY STATUS</Text>
         </View>
+
+        {/* Recipes shortcut — visible only when there's something to cook with */}
+        {items.length > 0 && (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="View recipe suggestions"
+            onPress={() => router.push('/recipes')}
+            style={styles.recipesCtaWrap}
+          >
+            <SoftSurface variant="pill" radius="full" innerStyle={styles.recipesCta}>
+              <SoftInset
+                radius="full"
+                strength="thin"
+                style={styles.recipesIconWrap}
+                contentStyle={styles.recipesIconInner}
+              >
+                <Nutrition size={20} color={colors.primary} />
+              </SoftInset>
+              <Text style={[typeScale.titleSmall, styles.recipesText]}>
+                Recipes from your fridge
+              </Text>
+              <Chevron size={18} color={colors.inkMuted} />
+            </SoftSurface>
+          </Pressable>
+        )}
 
         {/* Filter chips — horizontal scrolling row. Hide when there are
             no items at all so the empty state isn't preceded by a lone
@@ -216,6 +242,32 @@ const styles = StyleSheet.create({
     color: colors.inkSecondary,
     marginTop: 6,
     textTransform: 'uppercase',
+  },
+  recipesCtaWrap: {
+    marginHorizontal: 8,
+    marginBottom: spacing.lg,
+  },
+  recipesCta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    paddingRight: 16,
+    gap: spacing.md,
+  },
+  recipesIconWrap: {
+    width: 36,
+    height: 36,
+  },
+  recipesIconInner: {
+    width: 36,
+    height: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  recipesText: {
+    flex: 1,
+    color: colors.ink,
   },
   filterRow: {
     position: 'relative',

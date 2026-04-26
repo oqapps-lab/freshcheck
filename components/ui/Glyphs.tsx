@@ -199,6 +199,34 @@ export function EggAlt(p: Props) {
   );
 }
 
+export function Sparkle(p: Props) {
+  const { size, color, strokeWidth } = stroke(p);
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M12 3l1.6 4.6L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.4L12 3z"
+        stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"
+      />
+      <Path
+        d="M19 15l.7 1.8L21 17.5l-1.4.7L19 20l-.6-1.8L17 17.5l1.4-.7L19 15z"
+        stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
+export function Zap(p: Props) {
+  const { size, color, strokeWidth } = stroke(p);
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"
+        stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
 export function CategoryGlyph({
   category,
   size = 28,

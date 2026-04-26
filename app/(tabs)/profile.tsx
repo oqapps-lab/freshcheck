@@ -68,9 +68,22 @@ export default function ProfileScreen() {
         {/* ACCOUNT section */}
         <Text style={[typeScale.label, styles.sectionLabel]}>ACCOUNT</Text>
         <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cardStack}>
-          <Row label={signedIn ? 'Sign out' : 'Sign in'} onPress={() => comingSoon('Sign in')} />
+          <Row
+            label={signedIn ? 'Sign out' : 'Sign in'}
+            onPress={() =>
+              signedIn ? comingSoon('Sign out') : router.push('/auth')
+            }
+          />
           <Hairline />
           <Row label="Email" onPress={() => comingSoon('Email')} />
+        </SoftSurface>
+
+        {/* PRO section */}
+        <Text style={[typeScale.label, styles.sectionLabel]}>PRO</Text>
+        <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cardStack}>
+          <Row label="Upgrade to FreshCheck Pro" onPress={() => router.push('/paywall')} />
+          <Hairline />
+          <Row label="Restore purchase" onPress={() => comingSoon('Restore purchase')} />
         </SoftSurface>
 
         {/* PREFERENCES section */}
