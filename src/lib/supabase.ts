@@ -1,8 +1,8 @@
 import 'react-native-url-polyfill/auto';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { env, isSupabaseConfigured } from './env';
+import { safeStorage } from './safeStorage';
 import type { Database } from './database.types';
 
 /**
@@ -19,31 +19,6 @@ import type { Database } from './database.types';
  */
 
 const isExpoGo = Constants.appOwnership === 'expo';
-const memStore = new Map<string, string>();
-
-const safeStorage = {
-  getItem: async (key: string): Promise<string | null> => {
-    try {
-      return await AsyncStorage.getItem(key);
-    } catch {
-      return memStore.get(key) ?? null;
-    }
-  },
-  setItem: async (key: string, value: string): Promise<void> => {
-    try {
-      await AsyncStorage.setItem(key, value);
-    } catch {
-      memStore.set(key, value);
-    }
-  },
-  removeItem: async (key: string): Promise<void> => {
-    try {
-      await AsyncStorage.removeItem(key);
-    } catch {
-      memStore.delete(key);
-    }
-  },
-};
 
 let cached: SupabaseClient<Database> | null | undefined;
 

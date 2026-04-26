@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { safeStorage } from '@/src/lib/safeStorage';
 import { SoftSurface } from '@/components/ui/SoftSurface';
 import { SoftInset } from '@/components/ui/SoftInset';
 import { PrimaryPillCTA } from '@/components/ui/PrimaryPillCTA';
@@ -66,12 +66,9 @@ const SCREEN_W = Dimensions.get('window').width;
 const ONBOARDING_KEY = 'freshcheck_onboarding_done_v1';
 
 async function markOnboardingDone() {
-  try {
-    await AsyncStorage.setItem(ONBOARDING_KEY, '1');
-  } catch {
-    // AsyncStorage unavailable — proceed anyway, the redirect guard
-    // already treats unreadable storage as "onboarded".
-  }
+  // safeStorage tries AsyncStorage first, falls back to in-memory Map
+  // (Expo Go SDK 55 sometimes ships without the native module).
+  await safeStorage.setItem(ONBOARDING_KEY, '1');
 }
 
 export default function OnboardingScreen() {

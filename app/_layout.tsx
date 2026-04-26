@@ -5,7 +5,7 @@ import { Stack, useRouter } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { safeStorage } from '@/src/lib/safeStorage';
 import {
   useFonts,
   Quicksand_300Light,
@@ -23,14 +23,13 @@ function FirstRunRedirect() {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      try {
-        const v = await AsyncStorage.getItem(ONBOARDING_KEY);
-        if (!cancelled && !v) {
-          router.replace('/onboarding');
-        }
-      } catch {
-        // AsyncStorage native module unavailable in Expo Go SDK 55 quirks —
-        // silently skip, treat as already-onboarded so user isn't trapped.
+      // safeStorage falls back to an in-memory Map when AsyncStorage's
+      // native module is unregistered (Expo Go SDK 55 quirk), so the
+      // first-run check actually triggers in dev instead of being a
+      // silent no-op.
+      const v = await safeStorage.getItem(ONBOARDING_KEY);
+      if (!cancelled && !v) {
+        router.replace('/onboarding');
       }
     })();
     return () => {
