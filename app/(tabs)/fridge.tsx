@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { View, Text, ScrollView, ActivityIndicator, StyleSheet } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { View, Text, ScrollView, RefreshControl, ActivityIndicator, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { IconButton } from '@/components/ui/IconButton';
@@ -41,8 +41,18 @@ const CATEGORY_ORDER: Exclude<FilterValue, 'all'>[] = [
 export default function FridgeScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { items, loading } = useFridge();
+  const { items, loading, refresh } = useFridge();
   const [filter, setFilter] = useState<FilterValue>('all');
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await refresh();
+    } finally {
+      setRefreshing(false);
+    }
+  }, [refresh]);
 
   const filterOptions = useMemo<{ value: FilterValue; label: string }[]>(() => {
     const present = new Set(items.map((i) => i.category as FilterValue));
@@ -85,6 +95,14 @@ export default function FridgeScreen() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scroll}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.primary}
+            colors={[colors.primary]}
+          />
+        }
       >
         {/* Hero */}
         <View style={styles.hero}>
