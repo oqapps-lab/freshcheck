@@ -3,9 +3,8 @@ import { View, Text, ScrollView, Pressable, StyleSheet, Alert } from 'react-nati
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { IconButton } from '@/components/ui/IconButton';
 import { SoftSurface } from '@/components/ui/SoftSurface';
-import { Menu, Settings, Chevron, User } from '@/components/ui/Glyphs';
+import { Chevron, User } from '@/components/ui/Glyphs';
 import { useFridge } from '@/src/hooks/useFridge';
 import { useAuth } from '@/src/hooks/useAuth';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
@@ -24,7 +23,6 @@ export default function ProfileScreen() {
   const { user, signOut } = useAuth();
   const signedIn = !!user;
 
-  const goHome = () => router.replace('/(tabs)');
   const comingSoon = (label: string) => {
     Haptics.selectionAsync().catch(() => {});
     Alert.alert(label, 'Coming soon.');
@@ -49,14 +47,13 @@ export default function ProfileScreen() {
 
   return (
     <View style={styles.root}>
+      {/* Profile is a top-level tab — no nav drawer to open and no
+          back stack to pop. A bare centred wordmark matches the
+          scan-tab pattern instead of the home/fridge "menu+settings"
+          frame, which lived on those screens because they navigated
+          to Profile via the hamburger/cog. */}
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-        <IconButton accessibilityLabel="back to home" onPress={goHome}>
-          <Menu size={20} color={colors.ink} />
-        </IconButton>
-        <Text style={[typeScale.wordmark, { color: colors.inkSecondary }]}>FRESHCHECK</Text>
-        <IconButton accessibilityLabel="settings" onPress={() => comingSoon('Settings')}>
-          <Settings size={20} color={colors.ink} />
-        </IconButton>
+        <Text style={[typeScale.wordmark, styles.headerWordmark]}>FRESHCHECK</Text>
       </View>
 
       <ScrollView
@@ -156,11 +153,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.canvas,
   },
   header: {
-    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: layout.screenPaddingHeader,
     paddingBottom: layout.headerPaddingBottom,
+  },
+  headerWordmark: {
+    color: colors.inkSecondary,
   },
   scroll: {
     paddingHorizontal: layout.screenPadding,
