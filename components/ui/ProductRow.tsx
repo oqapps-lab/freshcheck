@@ -78,7 +78,7 @@ export function ProductRow({
 
           {/* Body */}
           <View style={styles.body}>
-            <Text style={[typeScale.titleLarge, { color: colors.ink }]} numberOfLines={1}>
+            <Text style={[typeScale.titleLarge, { color: colors.ink }]} numberOfLines={2}>
               {name}
             </Text>
             <Text style={[typeScale.labelSmall, styles.category]}>
@@ -101,17 +101,19 @@ export function ProductRow({
   );
 }
 
-const GLYPH = 64;
+// Smaller glyph + tighter gaps to leave room for full product names like
+// "Organic Whole Milk" / "Vine Cherry Tomatoes" without mid-word truncation.
+const GLYPH = 56;
 
 const styles = StyleSheet.create({
   card: {
-    paddingVertical: spacing.xxl - 4,
-    paddingHorizontal: spacing.xxl - 4,
+    paddingVertical: spacing.xl,
+    paddingHorizontal: spacing.xl,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.xl,
+    gap: spacing.lg,
     marginBottom: spacing.xl,
   },
   glyphWrap: {

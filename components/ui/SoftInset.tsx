@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, ViewProps, ViewStyle, StyleProp, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { colors, radii, insetRim } from '@/constants/tokens';
+import { colors, radii } from '@/constants/tokens';
 
 type RadiusKey = keyof typeof radii;
 type Strength = 'thin' | 'medium' | 'thick';
@@ -23,18 +23,36 @@ type Props = ViewProps & {
  *   .neomorph-recessed    inset 8/8/16 #cbd5e1, inset -8/-8/16 #fff
  *   .neomorph-pill-active inset 4/4/8  #cbd5e1, inset -4/-4/8  #fff
  *
- * React Native does NOT support `box-shadow: inset`, so we paint the rim
- * with four LinearGradient slabs along the inside edges of an
- * `overflow: hidden` container:
+ * RN doesn't support `box-shadow: inset`. v8's first attempt used four
+ * 16-px-wide LinearGradient slabs (one per edge) — the seams between
+ * adjacent slabs were visible as four straight lines along each side
+ * (clearly visible in the v8 simulator render).
  *
- *   ▓▓▓▓▓▓▓▓▓▓ top    — slate→transparent (shadow falls IN from top)
- *   ▓        ▓ left   — slate→transparent (shadow IN from left)
- *   ▓ content ▓
- *   ▓        ▓ right  — transparent→white (highlight IN from right)
- *   ▒▒▒▒▒▒▒▒▒▒ bottom — transparent→white (highlight from bottom)
+ * v9 uses TWO full-coverage gradients overlaid on the entire surface:
  *
- * The strength prop controls slab thickness (matches the CSS blur/spread).
+ *   Vertical:    dark at top edge → transparent middle → white at bottom
+ *   Horizontal:  dark at left edge → transparent middle → white at right
+ *
+ * Composited together: top-left = dark (both axes contribute dark),
+ * bottom-right = light (both contribute light), top-right and
+ * bottom-left = mid (one dark + one light cancel out roughly to mid-grey).
+ *
+ * Because each gradient extends across the WHOLE surface with a smooth
+ * 4-stop falloff, there are no visible seams — just a continuous wash
+ * that "punches into" the surface from top-left and "lifts out" toward
+ * bottom-right. Matches what `box-shadow: inset` does in CSS.
  */
+
+// Per-strength tuning. dark/light = peak alpha at the corresponding edge.
+// falloff = how far INTO the surface the rim fades, as a fraction of dimension.
+//   falloff 0.3 means: dark fades from peak at edge to 0 at 30% from edge.
+//   The middle 40% (30→70%) stays transparent → no muddiness in the centre.
+const STRENGTH = {
+  thin: { dark: 0.30, light: 0.55, falloff: 0.30 },
+  medium: { dark: 0.42, light: 0.72, falloff: 0.34 },
+  thick: { dark: 0.55, light: 0.88, falloff: 0.40 },
+} as const;
+
 export function SoftInset({
   radius = 'xxl',
   strength = 'thick',
@@ -45,7 +63,15 @@ export function SoftInset({
   ...rest
 }: Props) {
   const r = typeof radius === 'number' ? radius : radii[radius];
-  const w = insetRim[strength];
+  const s = STRENGTH[strength];
+
+  // slate-400 #94a3b8 — slightly darker than CSS slate-300 to keep readable
+  // contrast against the off-white #ECEFF4 canvas.
+  const dark = (a: number) => `rgba(148, 163, 184, ${a})`;
+  const light = (a: number) => `rgba(255, 255, 255, ${a})`;
+
+  const stops = [0, s.falloff, 1 - s.falloff, 1] as const;
+  const gradColors = [dark(s.dark), dark(0), light(0), light(s.light)] as const;
 
   return (
     <View
@@ -56,40 +82,22 @@ export function SoftInset({
         style,
       ]}
     >
-      {/* Top slate shadow — extends with soft alpha falloff */}
+      {/* VERTICAL — dark top edge → transparent → white bottom edge */}
       <LinearGradient
-        colors={[colors.shadowDark, 'rgba(203,213,225,0.3)', 'transparent']}
-        locations={[0, 0.5, 1]}
+        colors={gradColors as unknown as readonly [string, string, ...string[]]}
+        locations={stops as unknown as readonly [number, number, ...number[]]}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
-        style={[styles.edge, styles.edgeTop, { height: w * 1.5 }]}
+        style={StyleSheet.absoluteFill}
         pointerEvents="none"
       />
-      {/* Left slate shadow */}
+      {/* HORIZONTAL — dark left edge → transparent → white right edge */}
       <LinearGradient
-        colors={[colors.shadowDark, 'rgba(203,213,225,0.3)', 'transparent']}
-        locations={[0, 0.5, 1]}
+        colors={gradColors as unknown as readonly [string, string, ...string[]]}
+        locations={stops as unknown as readonly [number, number, ...number[]]}
         start={{ x: 0, y: 0.5 }}
         end={{ x: 1, y: 0.5 }}
-        style={[styles.edge, styles.edgeLeft, { width: w * 1.5 }]}
-        pointerEvents="none"
-      />
-      {/* Bottom white highlight */}
-      <LinearGradient
-        colors={['transparent', 'rgba(255,255,255,0.5)', colors.shadowLight]}
-        locations={[0, 0.5, 1]}
-        start={{ x: 0.5, y: 0 }}
-        end={{ x: 0.5, y: 1 }}
-        style={[styles.edge, styles.edgeBottom, { height: w * 1.5 }]}
-        pointerEvents="none"
-      />
-      {/* Right white highlight */}
-      <LinearGradient
-        colors={['transparent', 'rgba(255,255,255,0.5)', colors.shadowLight]}
-        locations={[0, 0.5, 1]}
-        start={{ x: 0, y: 0.5 }}
-        end={{ x: 1, y: 0.5 }}
-        style={[styles.edge, styles.edgeRight, { width: w * 1.5 }]}
+        style={StyleSheet.absoluteFill}
         pointerEvents="none"
       />
       <View style={[styles.content, contentStyle]}>{children}</View>
@@ -104,14 +112,6 @@ const styles = StyleSheet.create({
   },
   content: {
     position: 'relative',
-    zIndex: 0,
-  },
-  edge: {
-    position: 'absolute',
     zIndex: 1,
   },
-  edgeTop: { top: 0, left: 0, right: 0 },
-  edgeLeft: { top: 0, left: 0, bottom: 0 },
-  edgeBottom: { left: 0, right: 0, bottom: 0 },
-  edgeRight: { top: 0, right: 0, bottom: 0 },
 });

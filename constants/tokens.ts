@@ -1,9 +1,17 @@
-// FreshCheck — Design Tokens v8 (Pure White Neumorphic — Stitch Remix)
+// FreshCheck — Design Tokens v9 (Cool Neumorphic — Stitch Remix, RN-tuned)
 //
 // Sourced from Stitch project "Remix of FreshCheck Minimalist UI"
-// (id 13483665813566544212), code-exported HTML/CSS verbatim.
+// (id 13483665813566544212), code-exported HTML/CSS verbatim. Stitch
+// itself uses #FFFFFF for both bg and shadow-light, which makes the
+// white highlight invisible on a white canvas — fine for the Stitch
+// preview but the user wanted both light + dark sides visible (real
+// neumorphism). v9 nudges the canvas to a cool slate-tinted off-white
+// (#ECEFF4) so the white highlight contrasts properly. Cushion surfaces
+// stay pure white — they read as a brighter "raised" disc on the
+// off-white canvas.
 //
-//   --bg-color:       #FFFFFF
+//   --bg-color:       #ECEFF4   (was #FFFFFF — off-white for highlight contrast)
+//   --surface-white:  #FFFFFF   (raised cushion surface)
 //   --shadow-light:   #ffffff
 //   --shadow-dark:    #cbd5e1   (Tailwind slate-300, COOL)
 //   --accent-green:   #16a34a   (Tailwind green-600, primary)
@@ -19,8 +27,10 @@
 // Font: Quicksand (300/400/500/600/700).
 
 export const colors = {
-  // Pure white canvas
-  canvas: '#FFFFFF',
+  // Cool slate-tinted off-white — gives the white highlight contrast
+  canvas: '#ECEFF4',
+  // Pure white — used for raised cushion surfaces (brighter than canvas)
+  surfaceWhite: '#FFFFFF',
   surface: '#FFFFFF',
   surfaceTint: '#F8FAFC',
 
@@ -141,34 +151,35 @@ export const typeScale = {
 //   pillDrop       → 6/6, blur 12 (smaller buttons)
 //   pillHighlight  → -6/-6, blur 12
 //
-// React Native shadowRadius is roughly = CSS blur / 2.
+// React Native shadowRadius is roughly = CSS blur / 2. v9: stronger drop
+// + visible highlight (canvas is now off-white so white shadow contrasts).
 export const shadows = {
   cushionDrop: {
-    shadowColor: '#cbd5e1',
-    shadowOffset: { width: 10, height: 10 },
-    shadowOpacity: 0.85,
-    shadowRadius: 14,
-    elevation: 8,
+    shadowColor: '#94a3b8',     // slate-400 — slightly darker than CSS slate-300 to compensate for RN's softer rendering
+    shadowOffset: { width: 12, height: 14 },
+    shadowOpacity: 0.55,
+    shadowRadius: 18,
+    elevation: 10,
   },
   cushionHighlight: {
     shadowColor: '#ffffff',
     shadowOffset: { width: -10, height: -10 },
     shadowOpacity: 1,
-    shadowRadius: 14,
+    shadowRadius: 18,
     elevation: 0,
   },
   pillDrop: {
-    shadowColor: '#cbd5e1',
-    shadowOffset: { width: 6, height: 6 },
-    shadowOpacity: 0.85,
-    shadowRadius: 8,
-    elevation: 5,
+    shadowColor: '#94a3b8',
+    shadowOffset: { width: 6, height: 8 },
+    shadowOpacity: 0.45,
+    shadowRadius: 12,
+    elevation: 6,
   },
   pillHighlight: {
     shadowColor: '#ffffff',
     shadowOffset: { width: -6, height: -6 },
     shadowOpacity: 1,
-    shadowRadius: 8,
+    shadowRadius: 12,
     elevation: 0,
   },
   // Soft floating overlay (tab bar, modals)
