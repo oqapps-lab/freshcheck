@@ -1,5 +1,12 @@
-import React from 'react';
-import { View, ViewProps, ViewStyle, StyleProp, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  ViewProps,
+  ViewStyle,
+  StyleProp,
+  StyleSheet,
+  LayoutChangeEvent,
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, radii } from '@/constants/tokens';
 
@@ -23,35 +30,39 @@ type Props = ViewProps & {
  *   .neomorph-recessed    inset 8/8/16 #cbd5e1, inset -8/-8/16 #fff
  *   .neomorph-pill-active inset 4/4/8  #cbd5e1, inset -4/-4/8  #fff
  *
- * RN doesn't support `box-shadow: inset`. v8's first attempt used four
- * 16-px-wide LinearGradient slabs (one per edge) — the seams between
- * adjacent slabs were visible as four straight lines along each side
- * (clearly visible in the v8 simulator render).
+ * RN doesn't support `box-shadow: inset`. v8 attempted four 16-px slabs
+ * (visible seams). v9 used two full-cover gradients with a fractional
+ * falloff (0.40 of the dimension) — that broke on wide containers like
+ * the verdict card (354×200), where 40% = 142px wide rim, leaving the
+ * card looking like a soft diagonal wash instead of a punched-in cup.
  *
- * v9 uses TWO full-coverage gradients overlaid on the entire surface:
+ * v10 measures the actual on-screen size with onLayout and computes the
+ * gradient stops in PIXELS (matching the CSS blur semantics: a fixed
+ * ~20-22px rim regardless of container dimensions). Result: every
+ * recessed surface — tiny pill cup, mid-size glyph cup, large verdict
+ * card — shows the same crisp ~22px dark rim at top-left and ~22px
+ * white rim at bottom-right, with a clean canvas-coloured interior.
  *
  *   Vertical:    dark at top edge → transparent middle → white at bottom
  *   Horizontal:  dark at left edge → transparent middle → white at right
- *
- * Composited together: top-left = dark (both axes contribute dark),
- * bottom-right = light (both contribute light), top-right and
- * bottom-left = mid (one dark + one light cancel out roughly to mid-grey).
- *
- * Because each gradient extends across the WHOLE surface with a smooth
- * 4-stop falloff, there are no visible seams — just a continuous wash
- * that "punches into" the surface from top-left and "lifts out" toward
- * bottom-right. Matches what `box-shadow: inset` does in CSS.
  */
 
 // Per-strength tuning. dark/light = peak alpha at the corresponding edge.
-// falloff = how far INTO the surface the rim fades, as a fraction of dimension.
-//   falloff 0.3 means: dark fades from peak at edge to 0 at 30% from edge.
-//   The middle 40% (30→70%) stays transparent → no muddiness in the centre.
+// rimPx = absolute width of the rim (in screen px). Matches CSS blur radius.
 const STRENGTH = {
-  thin: { dark: 0.30, light: 0.55, falloff: 0.30 },
-  medium: { dark: 0.42, light: 0.72, falloff: 0.34 },
-  thick: { dark: 0.55, light: 0.88, falloff: 0.40 },
+  thin: { dark: 0.40, light: 0.65, rimPx: 10 }, // pill-active inset 4/4/8
+  medium: { dark: 0.50, light: 0.80, rimPx: 16 },
+  thick: { dark: 0.62, light: 0.95, rimPx: 22 }, // recessed inset 8/8/16
 } as const;
+
+// Fallback rim fraction used before onLayout fires (first paint). Small
+// enough that there's no muddy diagonal wash; the real pixel-based stops
+// kick in on the next frame.
+const FALLBACK_RIM = 0.08;
+
+// Cap rim fraction so very small elements (e.g. the 6×128 home indicator)
+// still show a visible rim instead of nothing.
+const MAX_RIM_FRACTION = 0.45;
 
 export function SoftInset({
   radius = 'xxl',
@@ -62,39 +73,54 @@ export function SoftInset({
   children,
   ...rest
 }: Props) {
+  const [size, setSize] = useState({ w: 0, h: 0 });
   const r = typeof radius === 'number' ? radius : radii[radius];
   const s = STRENGTH[strength];
+
+  const onLayout = (e: LayoutChangeEvent) => {
+    const { width, height } = e.nativeEvent.layout;
+    if (width !== size.w || height !== size.h) {
+      setSize({ w: width, h: height });
+    }
+  };
+
+  // Pixel-based rim → fraction of dimension. Capped + fallback so first
+  // paint (size = 0) shows a sensible-but-tight rim.
+  const vRim =
+    size.h > 0 ? Math.min(MAX_RIM_FRACTION, s.rimPx / size.h) : FALLBACK_RIM;
+  const hRim =
+    size.w > 0 ? Math.min(MAX_RIM_FRACTION, s.rimPx / size.w) : FALLBACK_RIM;
 
   // slate-400 #94a3b8 — slightly darker than CSS slate-300 to keep readable
   // contrast against the off-white #ECEFF4 canvas.
   const dark = (a: number) => `rgba(148, 163, 184, ${a})`;
   const light = (a: number) => `rgba(255, 255, 255, ${a})`;
 
-  const stops = [0, s.falloff, 1 - s.falloff, 1] as const;
   const gradColors = [dark(s.dark), dark(0), light(0), light(s.light)] as const;
 
   return (
     <View
       {...rest}
+      onLayout={onLayout}
       style={[
         styles.container,
         { borderRadius: r, backgroundColor: background },
         style,
       ]}
     >
-      {/* VERTICAL — dark top edge → transparent → white bottom edge */}
+      {/* VERTICAL — dark top edge → transparent middle → white bottom edge */}
       <LinearGradient
         colors={gradColors as unknown as readonly [string, string, ...string[]]}
-        locations={stops as unknown as readonly [number, number, ...number[]]}
+        locations={[0, vRim, 1 - vRim, 1] as unknown as readonly [number, number, ...number[]]}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
         style={StyleSheet.absoluteFill}
         pointerEvents="none"
       />
-      {/* HORIZONTAL — dark left edge → transparent → white right edge */}
+      {/* HORIZONTAL — dark left edge → transparent middle → white right edge */}
       <LinearGradient
         colors={gradColors as unknown as readonly [string, string, ...string[]]}
-        locations={stops as unknown as readonly [number, number, ...number[]]}
+        locations={[0, hRim, 1 - hRim, 1] as unknown as readonly [number, number, ...number[]]}
         start={{ x: 0, y: 0.5 }}
         end={{ x: 1, y: 0.5 }}
         style={StyleSheet.absoluteFill}
