@@ -1,456 +1,227 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  Share as RNShare,
-  Image,
-} from 'react-native';
-import * as Haptics from 'expo-haptics';
+import { View, Text, ScrollView, StyleSheet, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import Animated, { FadeIn } from 'react-native-reanimated';
-import Svg, { Path } from 'react-native-svg';
-import { AtmosphericBackground } from '@/components/ui/AtmosphericBackground';
-import { NeumorphicCard } from '@/components/ui/NeumorphicCard';
-import { PillCTA } from '@/components/ui/PillCTA';
-import { Back, Share, Droplet, Plus } from '@/components/ui/Glyphs';
-import { CategoryGlyph, categoryFor } from '@/components/ui/CategoryGlyph';
-import {
-  colors,
-  spacing,
-  typeScale,
-  layout,
-  motion,
-  radii,
-  shadows,
-} from '@/constants/tokens';
-import { scanDetail } from '@/mock/scans';
-import { useCurrentScan, scanStore } from '@/src/lib/scanStore';
-import { useFridge } from '@/src/hooks/useFridge';
-import type { Tone } from '@/constants/tokens';
-
-type ResultData = {
-  id: string;
-  product: string;
-  verdictLabel: string;
-  confidence: number;
-  daysLeft: number | null;
-  totalDays: number | null;
-  storageNote: string | null;
-  imagePath: string | null;
-  tone: Tone;
-};
+import { IconButton } from '@/components/ui/IconButton';
+import { SoftSurface } from '@/components/ui/SoftSurface';
+import { SoftInset } from '@/components/ui/SoftInset';
+import { PrimaryPillCTA } from '@/components/ui/PrimaryPillCTA';
+import { GhostText } from '@/components/ui/GhostText';
+import { SoftnessChip } from '@/components/ui/SoftnessChip';
+import { Back, Cloud, ShoppingBasket } from '@/components/ui/Glyphs';
+import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
 /**
- * v4 Cloud glyph — the small storage-card icon (per Stitch result-1).
- * Drawn inline because Glyphs.tsx doesn't export Cloud yet.
- */
-const Cloud: React.FC<{ size?: number; color?: string }> = ({
-  size = 20,
-  color = colors.primary,
-}) => (
-  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-    <Path
-      d="M7 18h10a4 4 0 0 0 0.4-7.98A6 6 0 0 0 5.5 11.2 3.5 3.5 0 0 0 7 18Z"
-      stroke={color}
-      strokeWidth={1.75}
-      strokeLinejoin="round"
-    />
-  </Svg>
-);
-
-/** "safe" → "Safe", "perfectly ripe" → "Perfectly Ripe". */
-const titleCase = (s: string): string =>
-  s
-    .toLowerCase()
-    .split(/\s+/)
-    .map((w) => (w.length > 0 ? w[0].toUpperCase() + w.slice(1) : w))
-    .join(' ');
-
-/**
- * Scan Result v4 — Stitch "Paper & Pith".
+ * Scan Result: SAFE — re-implementation of /tmp/stitch_v2/scan_result.html.
  *
- * Layout:
- *   1. Top bar      → back / ANALYSIS / share, all neumorphic 40-circle.
- *   2. Image card   → 240×240 NeumorphicCard with photo or category glyph.
- *   3. Verdict card → eyebrow VERDICT, big Title-Cased headline, amber chip.
- *   4. Storage card → cloud tile + short keep-cool blurb.
- *   5. CTA stack    → amber "Add to Fridge" + ghost "SCAN ANOTHER".
- *   6. Disclaimer   → small caption at the bottom.
- *
- * Ref: docs/06-design/stitch-v2/result-1_*.png + DESIGN-V4.md §Scan Result.
+ *   <header   chevron / "Analysis" / spacer  >
+ *   <Image disc with -inset-4 recessed halo>
+ *   <neomorph-recessed verdict card: VERDICT / Perfectly Ripe / 87% chip>
+ *   <neomorph-cushion note row: cloud / "Rest in cool shade…">
+ *   <neomorph-pill CTA "Add to Fridge">
+ *   <GhostText "Scan Another">
+ *   <home indicator h-1.5 w-32 recessed>
  */
 export default function ScanResultScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const live = useCurrentScan();
-  const { addItem } = useFridge();
-
-  // Normalize live result and mock into the same shape.
-  const r: ResultData = live
-    ? {
-        id: live.id,
-        product: live.product,
-        verdictLabel: titleCase(live.tone === 'past' ? 'Toss It' : live.tone),
-        confidence: live.confidence,
-        daysLeft: live.daysLeft,
-        totalDays: live.totalDays,
-        storageNote: live.storageNote,
-        imagePath: live.imagePath,
-        tone: live.tone,
-      }
-    : {
-        id: scanDetail.id,
-        product: scanDetail.product,
-        verdictLabel: titleCase(scanDetail.verdictLabel),
-        confidence: scanDetail.confidence,
-        daysLeft: scanDetail.daysLeft,
-        totalDays: scanDetail.totalDays,
-        storageNote: scanDetail.storage,
-        imagePath: null,
-        tone: scanDetail.tone,
-      };
-
-  const productLc = r.product.toLowerCase();
-
-  const storageBlurb =
-    r.daysLeft != null && r.daysLeft > 0
-      ? `Rest in a cool shade. Best enjoyed in ${r.daysLeft} day${r.daysLeft === 1 ? '' : 's'}.`
-      : (r.storageNote ?? 'Rest in a cool shade.');
-
-  const shareResult = async () => {
-    Haptics.selectionAsync().catch(() => {});
-    try {
-      await RNShare.share({
-        message: `FreshCheck says my ${productLc} is ${r.verdictLabel} (${Math.round(r.confidence)}% sure).`,
-      });
-    } catch {
-      // user cancelled — no-op
-    }
-  };
-
-  const saveToFridge = async () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
-    if (live && r.daysLeft != null && r.totalDays != null) {
-      await addItem({
-        name: r.product,
-        tone: r.tone === 'neutral' ? 'fresh' : r.tone,
-        days_left: r.daysLeft,
-        total_days: r.totalDays,
-        expiry_text:
-          r.daysLeft <= 1 ? 'expires tomorrow' : `expires in ${r.daysLeft} days`,
-        warn: r.tone === 'past' || r.tone === 'soon',
-        source_scan_id:
-          r.id.startsWith('ephemeral') || r.id === 'mock-scan' ? null : r.id,
-      });
-    }
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(
-      () => {},
-    );
-    scanStore.clear();
-    router.replace('/(tabs)/fridge');
-  };
-
-  const scanAnother = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-    scanStore.clear();
-    router.replace('/scan/camera');
-  };
+  const onBack = () => (router.canGoBack() ? router.back() : router.replace('/(tabs)'));
+  const onAddToFridge = () => router.replace('/(tabs)/fridge');
+  const onScanAnother = () => router.replace('/(tabs)');
 
   return (
-    <AtmosphericBackground>
-      {/* Top bar */}
-      <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
-        <NeumorphicCard
-          variant="raised"
-          radius="full"
-          padding={0}
-          style={styles.iconBtnCard}
-        >
-          <Pressable
-            onPress={() => router.back()}
-            style={styles.iconBtnHit}
-            accessibilityRole="button"
-            accessibilityLabel="back"
-          >
-            <Back size={18} color={colors.ink} />
-          </Pressable>
-        </NeumorphicCard>
-
-        <Text
-          style={[styles.eyebrow, typeScale.labelSmall]}
-          accessibilityRole="header"
-        >
-          ANALYSIS
-        </Text>
-
-        <NeumorphicCard
-          variant="raised"
-          radius="full"
-          padding={0}
-          style={styles.iconBtnCard}
-        >
-          <Pressable
-            onPress={shareResult}
-            style={styles.iconBtnHit}
-            accessibilityRole="button"
-            accessibilityLabel="share result"
-          >
-            <Share size={18} color={colors.ink} />
-          </Pressable>
-        </NeumorphicCard>
+    <View style={styles.root}>
+      {/* Header */}
+      <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
+        <IconButton accessibilityLabel="back" onPress={onBack}>
+          <Back size={20} color={colors.ink} />
+        </IconButton>
+        <Text style={[typeScale.label, styles.headerLabel]}>ANALYSIS</Text>
+        <View style={{ width: 48 }} />
       </View>
 
       <ScrollView
-        contentContainerStyle={[
-          styles.scroll,
-          {
-            paddingTop: insets.top + 76,
-            paddingBottom: insets.bottom + 32,
-          },
-        ]}
+        contentContainerStyle={[styles.scroll, { paddingBottom: insets.bottom + spacing.huge }]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Image / glyph card */}
-        <Animated.View
-          entering={FadeIn.duration(motion.slow)}
-          style={styles.imageWrap}
-        >
-          <NeumorphicCard
-            variant="raised"
-            radius="md"
-            padding={0}
-            style={styles.imageCard}
-          >
-            <View style={styles.imageFace}>
-              {r.imagePath ? (
-                <Image
-                  source={{ uri: r.imagePath }}
-                  style={styles.imagePhoto}
-                  resizeMode="cover"
-                  accessibilityLabel={`${productLc} photo`}
-                />
-              ) : (
-                <CategoryGlyph
-                  category={categoryFor(r.product)}
-                  size={80}
-                  color={colors.primary}
-                />
-              )}
+        {/* Image — rounded-square cushion with circular sage halo inside */}
+        <View style={styles.imageBlock}>
+          <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.imageOuter}>
+            <View style={styles.imageDisc}>
+              <Image
+                source={{
+                  uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDGAUN249VOXzw_5G0YSerj5ODz1xx0RMcbSCU_EtYY3yYLCOOhluYk9YrU8GaEmlMU5ArCK6v9Z51DBAD3WdsGuwUWEKnEFf-UBkFwi82PTr7ljTkGLmwuCgBWitBrOYm5tOZo-P6VCcZn4J6PeSSSM29T1F2q2snt84UKAuXnB-NQbjhUaGvX0Rzcb2WYX85xHJ2Hf6SA_S7tTINoXs08RdAG9QjCwS4WsyCwOaULFMB95YEC0sVpMPaWYLupcGepepL_wUHo3T0=s400',
+                }}
+                style={styles.image}
+              />
             </View>
-          </NeumorphicCard>
-        </Animated.View>
+          </SoftSurface>
+        </View>
 
-        {/* Verdict card */}
-        <Animated.View
-          entering={FadeIn.duration(motion.moderate).delay(120)}
+        {/* Verdict card — RECESSED */}
+        <SoftInset
+          radius="xxl"
+          strength="thick"
           style={styles.verdictWrap}
+          contentStyle={styles.verdictInner}
         >
-          <NeumorphicCard
-            variant="raised"
-            radius="md"
-            padding={24}
-            style={styles.verdictCard}
-          >
-            <Text style={[typeScale.labelSmall, styles.verdictEyebrow]}>
-              VERDICT
-            </Text>
-            <Text
-              style={[typeScale.displayL, styles.verdictHero]}
-              accessibilityRole="header"
-              accessibilityLabel={`Verdict ${r.verdictLabel}`}
+          <Text style={[typeScale.label, styles.verdictLabel]}>VERDICT</Text>
+          <Text style={[typeScale.displayMedium, styles.verdictTitle]}>Perfectly Ripe</Text>
+          <View style={styles.softnessRow}>
+            <SoftnessChip label="87% Softness" iconColor={colors.primary} />
+          </View>
+        </SoftInset>
+
+        {/* Note card — CUSHION raised */}
+        <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.noteCard}>
+          <View style={styles.noteRow}>
+            <SoftInset
+              radius="lg"
+              strength="medium"
+              style={styles.noteIcon}
+              contentStyle={styles.noteIconInner}
             >
-              {r.verdictLabel}
+              <Cloud size={22} color={colors.amber} />
+            </SoftInset>
+            <Text style={[typeScale.body, styles.noteText]}>
+              Rest in a cool shade.{'\n'}Best enjoyed in 2 days.
             </Text>
-            <View style={styles.confidenceChip}>
-              <Droplet size={14} color={colors.onAccent} />
-              <Text style={[typeScale.label, styles.confidenceLabel]}>
-                {Math.round(r.confidence)}% Sure
-              </Text>
-            </View>
-          </NeumorphicCard>
-        </Animated.View>
+          </View>
+        </SoftSurface>
 
-        {/* Storage card */}
-        <Animated.View
-          entering={FadeIn.duration(motion.moderate).delay(240)}
-          style={styles.storageWrap}
-        >
-          <NeumorphicCard
-            variant="raised"
-            radius="md"
-            padding={20}
-            style={styles.storageCard}
-          >
-            <View style={styles.storageRow}>
-              <View style={styles.storageIconTile}>
-                <Cloud size={20} color={colors.primary} />
-              </View>
-              <Text style={[typeScale.body, styles.storageText]}>
-                {storageBlurb}
-              </Text>
-            </View>
-          </NeumorphicCard>
-        </Animated.View>
-
-        {/* CTA stack */}
-        <Animated.View
-          entering={FadeIn.duration(motion.moderate).delay(360)}
-          style={styles.ctaStack}
-        >
-          <PillCTA
-            variant="primary"
+        {/* CTA */}
+        <View style={styles.ctaBlock}>
+          <PrimaryPillCTA
             label="Add to Fridge"
-            onPress={saveToFridge}
-            icon={<Plus size={18} color={colors.onAccent} />}
-            fullWidth
-            accessibilityLabel="add to fridge"
+            onPress={onAddToFridge}
+            iconLeft={<ShoppingBasket size={22} color={colors.amber} strokeWidth={2.2} />}
           />
-          <PillCTA
-            variant="ghost"
-            label="SCAN ANOTHER"
-            onPress={scanAnother}
-            fullWidth
-            accessibilityLabel="scan another item"
-            style={styles.ghostCta}
-          />
-        </Animated.View>
+          <GhostText label="Scan Another" onPress={onScanAnother} />
+        </View>
 
-        {/* Disclaimer */}
-        <Animated.View
-          entering={FadeIn.duration(motion.moderate).delay(480)}
-          style={styles.disclaimerWrap}
-        >
-          <Text style={[typeScale.caption, styles.disclaimer]}>
-            visual check only — won't catch bacteria
-          </Text>
-        </Animated.View>
+        {/* Footer home indicator */}
+        <View style={styles.footer}>
+          <SoftInset
+            radius={8}
+            strength="thin"
+            style={styles.indicator}
+            contentStyle={styles.indicatorInner}
+          >
+            <View />
+          </SoftInset>
+        </View>
       </ScrollView>
-    </AtmosphericBackground>
+    </View>
   );
 }
 
+const IMAGE_OUTER = 240;
+const IMAGE_DISC = 192;
+
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    backgroundColor: colors.canvas,
+  },
   header: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: layout.screenPadding,
-    zIndex: 10,
+    paddingHorizontal: layout.screenPaddingHeader,
+    paddingBottom: layout.headerPaddingBottom,
   },
-  iconBtnCard: {
-    width: 44,
-    height: 44,
-  },
-  iconBtnHit: {
-    width: 44,
-    height: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: radii.full,
-  },
-  eyebrow: {
-    color: colors.outline,
+  headerLabel: {
+    color: colors.inkSecondary,
     textTransform: 'uppercase',
   },
   scroll: {
     paddingHorizontal: layout.screenPadding,
+    paddingTop: spacing.lg,
+    gap: spacing.xxl,
   },
-  imageWrap: {
+  imageBlock: {
     alignItems: 'center',
-    marginTop: spacing.md,
-    marginBottom: spacing.xl,
+    paddingVertical: spacing.lg,
   },
-  imageCard: {
-    width: 240,
-    height: 240,
-  },
-  imageFace: {
-    flex: 1,
+  imageOuter: {
+    width: IMAGE_OUTER,
+    height: IMAGE_OUTER,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.primaryFixed,
-    borderRadius: radii.md,
-    overflow: 'hidden',
   },
-  imagePhoto: {
+  imageDisc: {
+    width: IMAGE_DISC,
+    height: IMAGE_DISC,
+    borderRadius: IMAGE_DISC / 2,
+    overflow: 'hidden',
+    backgroundColor: '#c5d8a4',
+  },
+  image: {
     width: '100%',
     height: '100%',
   },
   verdictWrap: {
-    marginBottom: spacing.lg,
+    width: '100%',
   },
-  verdictCard: {
-    alignItems: 'center',
-  },
-  verdictEyebrow: {
-    color: colors.outline,
-    textTransform: 'uppercase',
-    marginBottom: spacing.xs,
-  },
-  verdictHero: {
-    color: colors.ink,
-    textAlign: 'center',
-    marginBottom: spacing.md,
-  },
-  confidenceChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.accentSoft,
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: radii.full,
-    gap: 6,
-    ...shadows.none,
-  },
-  confidenceLabel: {
-    color: colors.onAccent,
-    textTransform: 'none',
-    letterSpacing: 0.2,
-  },
-  storageWrap: {
-    marginBottom: spacing.xl,
-  },
-  storageCard: {
-    // padding handled by NeumorphicCard prop
-  },
-  storageRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  storageIconTile: {
-    width: 44,
-    height: 44,
-    borderRadius: radii.sm,
+  verdictInner: {
+    paddingVertical: spacing.huge,
+    paddingHorizontal: spacing.huge,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.canvasMist,
   },
-  storageText: {
-    flex: 1,
-    color: colors.onSurfaceVariant,
+  verdictLabel: {
+    color: colors.inkSecondary,
+    textTransform: 'uppercase',
+    marginBottom: 8,
   },
-  ctaStack: {
-    gap: spacing.sm,
-    marginBottom: spacing.lg,
-  },
-  ghostCta: {
-    marginTop: spacing.xxs,
-  },
-  disclaimerWrap: {
-    alignItems: 'center',
-    marginTop: spacing.xs,
-  },
-  disclaimer: {
-    color: colors.outline,
+  verdictTitle: {
+    color: colors.primary,
     textAlign: 'center',
+  },
+  softnessRow: {
+    marginTop: 16,
+    alignItems: 'center',
+  },
+  noteCard: {
+    paddingVertical: spacing.xl,
+    paddingHorizontal: spacing.xl,
+  },
+  noteRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.lg,
+  },
+  noteIcon: {
+    width: 48,
+    height: 48,
+  },
+  noteIconInner: {
+    width: 48,
+    height: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  noteText: {
+    flex: 1,
+    color: colors.ink,
+    opacity: 0.9,
+    lineHeight: 22,
+  },
+  ctaBlock: {
+    gap: spacing.md,
+    paddingTop: spacing.md,
+  },
+  footer: {
+    alignItems: 'center',
+    marginTop: spacing.xl,
+  },
+  indicator: {
+    width: 128,
+    height: 6,
+    opacity: 0.6,
+  },
+  indicatorInner: {
+    width: 128,
+    height: 6,
   },
 });

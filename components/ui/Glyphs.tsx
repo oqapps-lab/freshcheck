@@ -1,208 +1,214 @@
 import React from 'react';
-import Svg, { Path, Circle, Rect, Line, G } from 'react-native-svg';
-import { colors } from '@/constants/tokens';
+import Svg, { Path, Circle, Line, Rect } from 'react-native-svg';
 
-type GlyphProps = {
+type Props = {
   size?: number;
   color?: string;
   strokeWidth?: number;
 };
 
-const defaultColor = colors.ink;
-const defaultStroke = 1.75;
+const stroke = (props: Props) => ({
+  size: props.size ?? 24,
+  color: props.color ?? '#1A1A1A',
+  strokeWidth: props.strokeWidth ?? 2,
+});
 
-export const Sprig: React.FC<GlyphProps> = ({ size = 24, color = defaultColor, strokeWidth = defaultStroke }) => (
-  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-    <Path
-      d="M12 21C12 21 4 17 4 9C4 7 5 4 6 4C7 4 8 6 10 7C12 8 13 10 13 12"
-      stroke={color}
-      strokeWidth={strokeWidth}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <Path
-      d="M12 21C12 21 20 17 20 9C20 7 19 4 18 4C17 4 16 6 14 7C12 8 11 10 11 12"
-      stroke={color}
-      strokeWidth={strokeWidth}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <Path d="M12 12V21" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
-  </Svg>
-);
-
-export const Scan: React.FC<GlyphProps> = ({ size = 24, color = defaultColor, strokeWidth = defaultStroke }) => (
-  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-    <Path d="M4 8V6a2 2 0 0 1 2-2h2" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
-    <Path d="M20 8V6a2 2 0 0 0-2-2h-2" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
-    <Path d="M4 16v2a2 2 0 0 0 2 2h2" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
-    <Path d="M20 16v2a2 2 0 0 1-2 2h-2" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
-    <Circle cx="12" cy="12" r="3.5" stroke={color} strokeWidth={strokeWidth} />
-    <Circle cx="12" cy="12" r="1.2" fill={color} />
-  </Svg>
-);
-
-export const Fridge: React.FC<GlyphProps> = ({ size = 24, color = defaultColor, strokeWidth = defaultStroke }) => (
-  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-    <Rect x="5" y="3" width="14" height="18" rx="3" stroke={color} strokeWidth={strokeWidth} />
-    <Line x1="5" y1="10" x2="19" y2="10" stroke={color} strokeWidth={strokeWidth} />
-    <Line x1="8" y1="6.5" x2="8" y2="8" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
-    <Line x1="8" y1="13" x2="8" y2="15" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
-  </Svg>
-);
-
-export const ChefHat: React.FC<GlyphProps> = ({ size = 24, color = defaultColor, strokeWidth = defaultStroke }) => (
-  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-    <Path
-      d="M6 14c-1.7 0-3-1.3-3-3a3 3 0 0 1 2.4-2.94A4 4 0 0 1 12 5.5a4 4 0 0 1 6.6 2.56A3 3 0 0 1 21 11c0 1.7-1.3 3-3 3"
-      stroke={color}
-      strokeWidth={strokeWidth}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <Path d="M6 14v4a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-4" stroke={color} strokeWidth={strokeWidth} strokeLinejoin="round" />
-    <Line x1="9" y1="14" x2="9" y2="20" stroke={color} strokeWidth={strokeWidth} />
-    <Line x1="15" y1="14" x2="15" y2="20" stroke={color} strokeWidth={strokeWidth} />
-  </Svg>
-);
-
-export const User: React.FC<GlyphProps> = ({ size = 24, color = defaultColor, strokeWidth = defaultStroke }) => (
-  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-    <Circle cx="12" cy="8" r="4" stroke={color} strokeWidth={strokeWidth} />
-    <Path
-      d="M4 20.5C5 16.9 8.2 14.5 12 14.5S19 16.9 20 20.5"
-      stroke={color}
-      strokeWidth={strokeWidth}
-      strokeLinecap="round"
-    />
-  </Svg>
-);
-
-export const Back: React.FC<GlyphProps> = ({ size = 24, color = defaultColor, strokeWidth = defaultStroke }) => (
-  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-    <Path
-      d="M15 5l-7 7 7 7"
-      stroke={color}
-      strokeWidth={strokeWidth + 0.25}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </Svg>
-);
-
-export const Heart: React.FC<GlyphProps> = ({ size = 24, color = defaultColor, strokeWidth = defaultStroke }) => (
-  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-    <Path
-      d="M12 20S3.5 14.2 3.5 8.7A4.7 4.7 0 0 1 12 6.4a4.7 4.7 0 0 1 8.5 2.3C20.5 14.2 12 20 12 20Z"
-      stroke={color}
-      strokeWidth={strokeWidth}
-      strokeLinejoin="round"
-    />
-  </Svg>
-);
-
-export const Menu: React.FC<GlyphProps> = ({ size = 24, color = defaultColor, strokeWidth = defaultStroke }) => (
-  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-    <Line x1="4" y1="7" x2="20" y2="7" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
-    <Line x1="4" y1="12" x2="20" y2="12" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
-    <Line x1="4" y1="17" x2="14" y2="17" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
-  </Svg>
-);
-
-export const Plus: React.FC<GlyphProps> = ({ size = 24, color = defaultColor, strokeWidth = defaultStroke }) => (
-  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-    <Line x1="12" y1="5" x2="12" y2="19" stroke={color} strokeWidth={strokeWidth + 0.25} strokeLinecap="round" />
-    <Line x1="5" y1="12" x2="19" y2="12" stroke={color} strokeWidth={strokeWidth + 0.25} strokeLinecap="round" />
-  </Svg>
-);
-
-export const Check: React.FC<GlyphProps> = ({ size = 24, color = defaultColor, strokeWidth = defaultStroke }) => (
-  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-    <Path
-      d="M5 12.5l4.5 4.5L19 7"
-      stroke={color}
-      strokeWidth={strokeWidth + 0.5}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </Svg>
-);
-
-export const WarningSoft: React.FC<GlyphProps> = ({ size = 16, color = colors.coral, strokeWidth = defaultStroke }) => (
-  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-    <Path
-      d="M12 4.2 21 19.2a1.6 1.6 0 0 1-1.4 2.4H4.4A1.6 1.6 0 0 1 3 19.2L12 4.2Z"
-      stroke={color}
-      strokeWidth={strokeWidth}
-      strokeLinejoin="round"
-    />
-    <Line x1="12" y1="10" x2="12" y2="14" stroke={color} strokeWidth={strokeWidth + 0.25} strokeLinecap="round" />
-    <Circle cx="12" cy="17.5" r="0.9" fill={color} />
-  </Svg>
-);
-
-export const Droplet: React.FC<GlyphProps> = ({ size = 16, color = colors.primary, strokeWidth = defaultStroke }) => (
-  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-    <Path
-      d="M12 3C12 3 5 11 5 15.5A7 7 0 0 0 19 15.5C19 11 12 3 12 3Z"
-      stroke={color}
-      strokeWidth={strokeWidth}
-      strokeLinejoin="round"
-    />
-  </Svg>
-);
-
-export const Clock: React.FC<GlyphProps> = ({ size = 16, color = defaultColor, strokeWidth = defaultStroke }) => (
-  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-    <Circle cx="12" cy="12" r="8.5" stroke={color} strokeWidth={strokeWidth} />
-    <Path d="M12 7.5V12l3 2" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" />
-  </Svg>
-);
-
-export const Chevron: React.FC<GlyphProps & { direction?: 'right' | 'left' | 'up' | 'down' }> = ({
-  size = 16,
-  color = colors.outline,
-  strokeWidth = defaultStroke,
-  direction = 'right',
-}) => {
-  const rotation = { right: 0, left: 180, up: -90, down: 90 }[direction];
+export function Menu(p: Props) {
+  const { size, color, strokeWidth } = stroke(p);
   return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" style={{ transform: [{ rotate: `${rotation}deg` }] }}>
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Line x1="3" y1="7" x2="21" y2="7" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
+      <Line x1="3" y1="12" x2="21" y2="12" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
+      <Line x1="3" y1="17" x2="21" y2="17" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
+    </Svg>
+  );
+}
+
+export function Settings(p: Props) {
+  const { size, color, strokeWidth } = stroke(p);
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path
-        d="M9 6l6 6-6 6"
-        stroke={color}
-        strokeWidth={strokeWidth}
-        strokeLinecap="round"
-        strokeLinejoin="round"
+        d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zm7.4-3.5c0 .47-.04.92-.12 1.36l2.04 1.59-2 3.46-2.4-.96a7.4 7.4 0 0 1-2.36 1.37L14.2 21h-4.4l-.36-2.18a7.4 7.4 0 0 1-2.36-1.37l-2.4.96-2-3.46 2.04-1.59A7.4 7.4 0 0 1 4.6 12c0-.47.04-.92.12-1.36L2.68 9.05l2-3.46 2.4.96A7.4 7.4 0 0 1 9.44 5.18L9.8 3h4.4l.36 2.18a7.4 7.4 0 0 1 2.36 1.37l2.4-.96 2 3.46-2.04 1.59c.08.44.12.89.12 1.36z"
+        stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" fill="none"
       />
     </Svg>
   );
-};
+}
 
-export const Flash: React.FC<GlyphProps> = ({ size = 24, color = defaultColor, strokeWidth = defaultStroke }) => (
-  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-    <Path
-      d="M13 3L5 14h5l-1 7 8-11h-5l1-7Z"
-      stroke={color}
-      strokeWidth={strokeWidth}
-      strokeLinejoin="round"
-    />
-  </Svg>
-);
+export function Back(p: Props) {
+  const { size, color, strokeWidth } = stroke(p);
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M15 18l-6-6 6-6" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
 
-export const Close: React.FC<GlyphProps> = ({ size = 24, color = defaultColor, strokeWidth = defaultStroke }) => (
-  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-    <Line x1="6" y1="6" x2="18" y2="18" stroke={color} strokeWidth={strokeWidth + 0.25} strokeLinecap="round" />
-    <Line x1="18" y1="6" x2="6" y2="18" stroke={color} strokeWidth={strokeWidth + 0.25} strokeLinecap="round" />
-  </Svg>
-);
+export function Chevron(p: Props) {
+  const { size, color, strokeWidth } = stroke(p);
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M9 6l6 6-6 6" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
 
-export const Share: React.FC<GlyphProps> = ({ size = 20, color = defaultColor, strokeWidth = defaultStroke }) => (
-  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-    <Circle cx="6" cy="12" r="2.5" stroke={color} strokeWidth={strokeWidth} />
-    <Circle cx="18" cy="6" r="2.5" stroke={color} strokeWidth={strokeWidth} />
-    <Circle cx="18" cy="18" r="2.5" stroke={color} strokeWidth={strokeWidth} />
-    <Line x1="8.2" y1="11" x2="15.8" y2="7" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
-    <Line x1="8.2" y1="13" x2="15.8" y2="17" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
-  </Svg>
-);
+export function Close(p: Props) {
+  const { size, color, strokeWidth } = stroke(p);
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Line x1="6" y1="6" x2="18" y2="18" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
+      <Line x1="18" y1="6" x2="6" y2="18" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
+    </Svg>
+  );
+}
+
+export function Check(p: Props) {
+  const { size, color, strokeWidth } = stroke(p);
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M5 12l5 5L20 7" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
+export function User(p: Props) {
+  const { size, color, strokeWidth } = stroke(p);
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
+      <Circle cx="12" cy="7" r="4" stroke={color} strokeWidth={strokeWidth} />
+    </Svg>
+  );
+}
+
+/** Eco / leaf — Stitch tab "leaf" icon */
+export function Eco(p: Props) {
+  const { size, color, strokeWidth } = stroke(p);
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M11 3C7 3 4 6 4 11c0 5 4 9 9 9 4 0 7-3 7-7 0-1-.3-2-.7-2.8M11 3c1.5.5 4 2 5.5 4.5M11 3v17"
+        stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" fill="none"
+      />
+    </Svg>
+  );
+}
+
+/** Barcode scanner — used in tab bar + scan orb */
+export function BarcodeScanner(p: Props) {
+  const { size, color, strokeWidth } = stroke(p);
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M3 7V5a2 2 0 0 1 2-2h2M21 7V5a2 2 0 0 0-2-2h-2M3 17v2a2 2 0 0 0 2 2h2M21 17v2a2 2 0 0 1-2 2h-2"
+        stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
+      <Line x1="6.5" y1="8" x2="6.5" y2="16" stroke={color} strokeWidth={strokeWidth + 0.4} strokeLinecap="round" />
+      <Line x1="9.5" y1="8" x2="9.5" y2="16" stroke={color} strokeWidth={strokeWidth + 0.4} strokeLinecap="round" />
+      <Line x1="12.5" y1="8" x2="12.5" y2="16" stroke={color} strokeWidth={strokeWidth + 0.4} strokeLinecap="round" />
+      <Line x1="15.5" y1="8" x2="15.5" y2="16" stroke={color} strokeWidth={strokeWidth + 0.4} strokeLinecap="round" />
+      <Line x1="17.5" y1="8" x2="17.5" y2="16" stroke={color} strokeWidth={strokeWidth + 0.4} strokeLinecap="round" />
+    </Svg>
+  );
+}
+
+/** History — clock-rewind */
+export function History(p: Props) {
+  const { size, color, strokeWidth } = stroke(p);
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      <Path d="M12 7v5l3 2" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" fill="none" />
+    </Svg>
+  );
+}
+
+export function Cloud(p: Props) {
+  const { size, color, strokeWidth } = stroke(p);
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M17 18a4 4 0 0 0 0-8 6 6 0 0 0-11-2 5 5 0 0 0 0 10h11z"
+        stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" fill="none"
+      />
+    </Svg>
+  );
+}
+
+/** Shopping basket — Add to Fridge button */
+export function ShoppingBasket(p: Props) {
+  const { size, color, strokeWidth } = stroke(p);
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M3 9h18l-2 11a2 2 0 0 1-2 1.7H7a2 2 0 0 1-2-1.7L3 9z" stroke={color} strokeWidth={strokeWidth} strokeLinejoin="round" fill="none" />
+      <Path d="M8 9V6a4 4 0 0 1 8 0v3" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
+    </Svg>
+  );
+}
+
+export function WaterDrop(p: Props) {
+  const { size, color, strokeWidth } = stroke(p);
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M12 2.5c-3 4.2-6 7.6-6 11.5a6 6 0 0 0 12 0c0-3.9-3-7.3-6-11.5z"
+        stroke={color} strokeWidth={strokeWidth} fill={color} fillOpacity={0.92} />
+    </Svg>
+  );
+}
+
+/** Material-Symbols-Outlined "nutrition" (apple) — Stitch fridge produce icon */
+export function Nutrition(p: Props) {
+  const { size, color, strokeWidth } = stroke(p);
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M12 6c-2 0-3-2-3-3 1 .5 2 1.5 3 3 1-1.5 2-2.5 3-3 0 1-1 3-3 3z"
+        stroke={color} strokeWidth={strokeWidth} fill={color} fillOpacity={0.15}
+      />
+      <Path
+        d="M7 10c-2 1-3 4-3 6 0 3 3 5 5 5s2.5-1 3-1 1 1 3 1 5-2 5-5c0-2-1-5-3-6-1.5-.7-3 0-5 0s-3.5-.7-5 0z"
+        stroke={color} strokeWidth={strokeWidth} fill={color} fillOpacity={0.92} strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
+/** Material "local_drink" — milk/dairy */
+export function LocalDrink(p: Props) {
+  const { size, color, strokeWidth } = stroke(p);
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M7 4h10l-1 16a2 2 0 0 1-2 1.7H10a2 2 0 0 1-2-1.7L7 4z"
+        stroke={color} strokeWidth={strokeWidth} fill={color} fillOpacity={0.92} strokeLinejoin="round" />
+      <Path d="M8 9c1 .5 3 .5 4 0s3-.5 4 0" stroke="#fff" strokeWidth={strokeWidth} strokeLinecap="round" fill="none" />
+    </Svg>
+  );
+}
+
+/** Material "egg_alt" — avocado-ish */
+export function EggAlt(p: Props) {
+  const { size, color, strokeWidth } = stroke(p);
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M12 3c-4 0-7 5-7 10a7 7 0 0 0 14 0c0-5-3-10-7-10z"
+        stroke={color} strokeWidth={strokeWidth} fill={color} fillOpacity={0.92} strokeLinejoin="round"
+      />
+      <Circle cx="12" cy="13" r="3" fill="#fff" />
+    </Svg>
+  );
+}
+
+export function CategoryGlyph({
+  category,
+  size = 28,
+  color = '#16a34a',
+  strokeWidth = 1.8,
+}: { category: string } & Props) {
+  const props = { size, color, strokeWidth };
+  const c = category.toLowerCase();
+  if (c === 'produce' || c === 'fruit' || c === 'vegetable') return <Nutrition {...props} />;
+  if (c === 'dairy' || c === 'dairy alt' || c === 'milk') return <LocalDrink {...props} />;
+  if (c === 'poultry' || c === 'meat' || c === 'fish') return <EggAlt {...props} />;
+  return <Nutrition {...props} />;
+}

@@ -1,21 +1,11 @@
 import React, { useMemo, useState } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  ActivityIndicator,
-  RefreshControl,
-  Pressable,
-} from 'react-native';
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Animated, { FadeIn } from 'react-native-reanimated';
-import { AtmosphericBackground } from '@/components/ui/AtmosphericBackground';
-import { NeumorphicCard } from '@/components/ui/NeumorphicCard';
+import { IconButton } from '@/components/ui/IconButton';
 import { ProductRow } from '@/components/ui/ProductRow';
-import { SegmentedControl } from '@/components/ui/SegmentedControl';
-import { Menu, User, Fridge as FridgeGlyph } from '@/components/ui/Glyphs';
-import { colors, spacing, typeScale, layout, motion, radii } from '@/constants/tokens';
+import { FilterPillRow } from '@/components/ui/FilterPill';
+import { Menu, Settings } from '@/components/ui/Glyphs';
+import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 import { useFridge } from '@/src/hooks/useFridge';
 
 type FilterValue = 'all' | 'produce' | 'dairy' | 'poultry' | 'bakery' | 'pantry';
@@ -35,17 +25,28 @@ const CATEGORY_ORDER: Exclude<FilterValue, 'all'>[] = [
   'pantry',
 ];
 
+/**
+ * My Fridge — re-implementation of /tmp/stitch_v2/fridge.html.
+ *
+ *   <header neomorph-pill[] / FRESHCHECK / neomorph-pill[]>
+ *   <h1 text-5xl bold>My Fridge</h1>
+ *   <p text-xs tracked uppercase>Inventory Status</p>
+ *   <FilterPillRow All / Produce / Dairy>
+ *   <ProductRow ...> × N (cushion 40px radius, p-8, gap-10)
+ *   <p text-xs tracked uppercase center>4 OF 10 PRODUCTS TRACKED</p>
+ */
 export default function FridgeScreen() {
   const insets = useSafeAreaInsets();
-  const { items, loading, refresh } = useFridge();
+  const { items } = useFridge();
   const [filter, setFilter] = useState<FilterValue>('all');
 
-  // Pills are derived from categories actually present in the fridge,
-  // so users never see a filter that returns zero items.
   const filterOptions = useMemo<{ value: FilterValue; label: string }[]>(() => {
     const present = new Set(items.map((i) => i.category as FilterValue));
     const cats = CATEGORY_ORDER.filter((c) => present.has(c));
-    return [{ value: 'all', label: 'All' }, ...cats.map((c) => ({ value: c, label: CATEGORY_LABEL[c] }))];
+    return [
+      { value: 'all', label: 'All' },
+      ...cats.map((c) => ({ value: c, label: CATEGORY_LABEL[c] })),
+    ];
   }, [items]);
 
   const filtered = useMemo(() => {
@@ -54,224 +55,98 @@ export default function FridgeScreen() {
     return sorted.filter((i) => i.category === filter);
   }, [items, filter]);
 
-  const renderHeader = () => (
-    <View style={[styles.header, { top: insets.top + 8 }]} pointerEvents="box-none">
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="menu"
-        style={styles.headerBtn}
-        hitSlop={8}
-      >
-        <Menu size={22} color={colors.ink} strokeWidth={1.6} />
-      </Pressable>
-      <Text style={[typeScale.labelSmall, styles.wordmark]}>FRESHCHECK</Text>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="settings"
-        style={styles.headerBtn}
-        hitSlop={8}
-      >
-        <User size={22} color={colors.ink} strokeWidth={1.6} />
-      </Pressable>
-    </View>
-  );
-
-  if (loading && items.length === 0) {
-    return (
-      <AtmosphericBackground>
-        {renderHeader()}
-        <View style={styles.center}>
-          <ActivityIndicator color={colors.primary} />
-        </View>
-      </AtmosphericBackground>
-    );
-  }
-
-  if (items.length === 0) {
-    return (
-      <AtmosphericBackground>
-        {renderHeader()}
-        <ScrollView
-          contentContainerStyle={[
-            styles.scrollContent,
-            {
-              paddingTop: insets.top + 72,
-              paddingBottom: insets.bottom + layout.floatingBottomClearance + 24,
-              flexGrow: 1,
-            },
-          ]}
-          refreshControl={
-            <RefreshControl refreshing={loading} onRefresh={refresh} tintColor={colors.primary} />
-          }
-        >
-          <Animated.View entering={FadeIn.duration(motion.moderate)} style={styles.heroBlock}>
-            <Text style={[typeScale.labelSmall, styles.eyebrow]}>INVENTORY STATUS</Text>
-            <Text style={[typeScale.displayXL, styles.hero]}>My Fridge</Text>
-          </Animated.View>
-
-          <Animated.View
-            entering={FadeIn.duration(motion.moderate).delay(80)}
-            style={styles.emptyWrap}
-          >
-            <NeumorphicCard radius="lg" padding={28} style={styles.emptyCard}>
-              <View style={styles.emptyOrb}>
-                <FridgeGlyph size={40} color={colors.primary} strokeWidth={1.4} />
-              </View>
-              <Text style={[typeScale.titleL, styles.emptyTitle]}>the shelves are empty</Text>
-              <Text style={[typeScale.body, styles.emptyBody]}>
-                scan your first item and we&apos;ll start watching it for you.
-              </Text>
-            </NeumorphicCard>
-          </Animated.View>
-        </ScrollView>
-      </AtmosphericBackground>
-    );
-  }
-
   return (
-    <AtmosphericBackground>
-      {renderHeader()}
+    <View style={styles.root}>
+      <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
+        <IconButton accessibilityLabel="menu">
+          <Menu size={20} color={colors.ink} />
+        </IconButton>
+        <Text style={[typeScale.wordmark, { color: colors.inkSecondary }]}>FRESHCHECK</Text>
+        <IconButton accessibilityLabel="settings">
+          <Settings size={20} color={colors.ink} />
+        </IconButton>
+      </View>
+
       <ScrollView
-        contentContainerStyle={[
-          styles.scrollContent,
-          {
-            paddingTop: insets.top + 72,
-            paddingBottom: insets.bottom + layout.floatingBottomClearance + 24,
-          },
-        ]}
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={refresh} tintColor={colors.primary} />
-        }
+        contentContainerStyle={styles.scroll}
       >
-        <Animated.View entering={FadeIn.duration(motion.moderate)} style={styles.heroBlock}>
-          <Text style={[typeScale.labelSmall, styles.eyebrow]}>INVENTORY STATUS</Text>
-          <Text style={[typeScale.displayXL, styles.hero]}>My Fridge</Text>
-        </Animated.View>
+        {/* Hero */}
+        <View style={styles.hero}>
+          <Text style={[typeScale.displayLarge, { color: colors.ink }]}>My Fridge</Text>
+          <Text style={[typeScale.label, styles.eyebrow]}>INVENTORY STATUS</Text>
+        </View>
 
-        <Animated.View
-          entering={FadeIn.duration(motion.moderate).delay(80)}
-          style={styles.filterBlock}
+        {/* Filter chips — horizontal scrolling row */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filterScroll}
         >
-          <SegmentedControl<FilterValue>
-            options={filterOptions}
-            value={filter}
-            onChange={setFilter}
-          />
-        </Animated.View>
+          <FilterPillRow options={filterOptions} value={filter} onChange={setFilter} />
+        </ScrollView>
 
-        <Animated.View
-          entering={FadeIn.duration(motion.moderate).delay(160)}
-          style={styles.listBlock}
-        >
+        {/* Cards */}
+        <View style={styles.list}>
           {filtered.map((item) => (
             <ProductRow
               key={item.id}
               name={item.name}
-              category={(item.category ?? 'produce').toString().toUpperCase()}
-              tone={item.tone}
+              category={item.category}
               daysLeft={item.daysLeft}
-              totalDays={item.totalDays}
-              thumbnail={item.thumbnailPath ?? undefined}
+              shelfDays={item.totalDays || 14}
             />
           ))}
-        </Animated.View>
+        </View>
 
-        <Animated.View
-          entering={FadeIn.duration(motion.moderate).delay(240)}
-          style={styles.footerBlock}
-        >
-          <Text style={[typeScale.labelSmall, styles.footerCount]}>
-            {filtered.length} OF {items.length} PRODUCTS TRACKED
-          </Text>
-        </Animated.View>
+        {/* Footer counter */}
+        <Text style={[typeScale.label, styles.footer]}>
+          {`${filtered.length} OF ${items.length} PRODUCTS TRACKED`}
+        </Text>
       </ScrollView>
-    </AtmosphericBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollContent: {
-    paddingHorizontal: layout.screenPadding,
+  root: {
+    flex: 1,
+    backgroundColor: colors.canvas,
   },
   header: {
-    position: 'absolute',
-    left: layout.screenPadding,
-    right: layout.screenPadding,
-    height: 44,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    zIndex: 10,
+    paddingHorizontal: layout.screenPaddingHeader,
+    paddingBottom: layout.headerPaddingBottom,
   },
-  headerBtn: {
-    width: 44,
-    height: 44,
-    borderRadius: radii.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  wordmark: {
-    color: colors.outline,
-    textTransform: 'uppercase',
-  },
-  heroBlock: {
-    marginBottom: spacing.xl,
-  },
-  eyebrow: {
-    color: colors.outline,
-    textTransform: 'uppercase',
-    marginBottom: spacing.xs,
+  scroll: {
+    paddingHorizontal: layout.screenPadding,
+    paddingTop: spacing.xxl,
+    paddingBottom: layout.floatingBottomClearance,
   },
   hero: {
-    color: colors.ink,
+    paddingHorizontal: 8,
+    marginBottom: spacing.huge,
   },
-  filterBlock: {
-    marginBottom: spacing.xl,
-  },
-  listBlock: {
-    marginBottom: spacing.lg,
-  },
-  footerBlock: {
-    alignItems: 'center',
-    marginTop: spacing.md,
-  },
-  footerCount: {
-    color: colors.outline,
+  eyebrow: {
+    color: colors.inkSecondary,
+    marginTop: 6,
     textTransform: 'uppercase',
+  },
+  filterScroll: {
+    paddingHorizontal: 8,
+    paddingBottom: 8,
+    marginBottom: spacing.huge,
+  },
+  list: {
+    gap: spacing.huge,
+    paddingHorizontal: 8,
+  },
+  footer: {
+    color: colors.inkSecondary,
     textAlign: 'center',
-  },
-  center: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  emptyWrap: {
-    flex: 1,
-    alignItems: 'stretch',
-    justifyContent: 'center',
-    paddingVertical: spacing.xxl,
-  },
-  emptyCard: {
-    alignItems: 'center',
-  },
-  emptyOrb: {
-    width: 96,
-    height: 96,
-    borderRadius: radii.full,
-    backgroundColor: 'rgba(75,93,67,0.08)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.lg,
-  },
-  emptyTitle: {
-    color: colors.ink,
-    textAlign: 'center',
-  },
-  emptyBody: {
-    color: colors.onSurfaceVariant,
-    textAlign: 'center',
-    marginTop: spacing.xs,
-    paddingHorizontal: spacing.md,
+    marginTop: spacing.enormous,
+    textTransform: 'uppercase',
   },
 });

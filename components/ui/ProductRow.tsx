@@ -1,157 +1,147 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable, ViewStyle } from 'react-native';
-import { Image } from 'expo-image';
-import { colors, radii, spacing, typeScale, Tone, toneColor } from '@/constants/tokens';
-import { CategoryGlyph, categoryFor } from './CategoryGlyph';
-import { NeumorphicCard } from './NeumorphicCard';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
+import * as Haptics from 'expo-haptics';
+import { SoftSurface } from './SoftSurface';
+import { SoftInset } from './SoftInset';
+import { CategoryGlyph } from './Glyphs';
+import { RipeningProgress } from './RipeningProgress';
+import { colors, spacing, typeScale } from '@/constants/tokens';
 
 type Props = {
   name: string;
-  expiryText?: string;
-  category?: string;
-  tone: Tone;
-  thumbnail?: string;
-  daysLeft?: number;
-  totalDays?: number;
-  trailing?: React.ReactNode;
+  category: string;
+  daysLeft: number;
+  /** total shelf-life days (defaults 14) */
+  shelfDays?: number;
   onPress?: () => void;
-  style?: ViewStyle;
 };
 
 /**
- * v4 — Stitch fridge card. Pillowy neumorphic surface, thumb in a small
- * tinted square on the left, name + category eyebrow stacked, big days
- * number on the right, tone-tinted countdown stripe along the bottom.
+ * ProductRow — neomorph-cushion fridge card.
+ * Mirrors Stitch HTML in /tmp/stitch_v2/fridge.html.
  *
- * Ref: docs/06-design/DESIGN-V4.md §ProductRow
+ *   ┌───── neomorph-cushion (40px radius, p-8) ─────┐
+ *   │ [recessed 64px glyph]  Title       N         │
+ *   │                        CATEGORY    DAYS      │
+ *   │ ▔▔▔▔▔ recessed 8px progress track ▔▔▔▔▔▔     │
+ *   └───────────────────────────────────────────────┘
  */
-export const ProductRow: React.FC<Props> = ({
+export function ProductRow({
   name,
-  expiryText,
   category,
-  tone,
-  thumbnail,
   daysLeft,
-  totalDays,
-  trailing,
+  shelfDays = 14,
   onPress,
-  style,
-}) => {
-  const t = toneColor[tone];
-  const cat = category ?? categoryFor(name).toUpperCase();
-  const Wrapper: any = onPress ? Pressable : View;
+}: Props) {
+  const progress = Math.max(0.04, Math.min(1, daysLeft / shelfDays));
+
+  // Match Stitch screens: solid colour for definitive states, gradient for transition
+  let fillColor: string | undefined;
+  let countColor: string = colors.primary;
+  let glyphColor: string = colors.primary;
+
+  if (daysLeft <= 1) {
+    fillColor = colors.amber;
+    countColor = colors.amber;
+    glyphColor = colors.amber;
+  } else if (daysLeft <= 3) {
+    // gradient slice — leave fillColor undefined
+    countColor = colors.amber;
+    glyphColor = colors.amber;
+  } else {
+    fillColor = colors.primary;
+    countColor = colors.primary;
+    glyphColor = colors.inkSecondary;
+  }
 
   return (
-    <NeumorphicCard radius="md" padding={0} style={StyleSheet.flatten([styles.outer, style])}>
-      <Wrapper
-        onPress={onPress}
-        accessibilityRole={onPress ? 'button' : undefined}
-        accessibilityLabel={`${name}, ${cat}, ${typeof daysLeft === 'number' ? `${daysLeft} days left` : expiryText ?? ''}`}
-        style={styles.row}
-      >
-        <View style={[styles.thumb, { backgroundColor: t.fill }]}>
-          {thumbnail ? (
-            <Image
-              source={{ uri: thumbnail }}
-              style={StyleSheet.absoluteFill}
-              contentFit="cover"
-              transition={160}
-            />
-          ) : (
-            <CategoryGlyph
-              category={categoryFor(name)}
-              size={26}
-              color={t.accent}
-              strokeWidth={1.6}
-            />
-          )}
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={`${name}, ${daysLeft} ${daysLeft === 1 ? 'day' : 'days'} left`}
+      onPress={() => {
+        Haptics.selectionAsync().catch(() => {});
+        onPress?.();
+      }}
+    >
+      <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.card}>
+        <View style={styles.row}>
+          {/* Recessed glyph tile */}
+          <SoftInset
+            radius="xl"
+            strength="medium"
+            background={colors.canvas}
+            style={styles.glyphWrap}
+            contentStyle={styles.glyphInner}
+          >
+            <CategoryGlyph category={category} size={28} color={glyphColor} />
+          </SoftInset>
+
+          {/* Body */}
+          <View style={styles.body}>
+            <Text style={[typeScale.titleLarge, { color: colors.ink }]} numberOfLines={1}>
+              {name}
+            </Text>
+            <Text style={[typeScale.labelSmall, styles.category]}>
+              {category.toUpperCase()}
+            </Text>
+          </View>
+
+          {/* Days */}
+          <View style={styles.daysWrap}>
+            <Text style={[typeScale.numberHuge, { color: countColor }]}>{daysLeft}</Text>
+            <Text style={[typeScale.labelTiny, styles.daysLabel]}>
+              {daysLeft === 1 ? 'DAY' : 'DAYS'}
+            </Text>
+          </View>
         </View>
 
-        <View style={styles.body}>
-          <Text style={[typeScale.titleM, styles.name]} numberOfLines={2}>
-            {name}
-          </Text>
-          <Text style={[typeScale.labelSmall, styles.category]} numberOfLines={1}>
-            {cat}
-          </Text>
-        </View>
-
-        {trailing ??
-          (typeof daysLeft === 'number' ? (
-            <View style={styles.daysCol}>
-              <Text style={[typeScale.displayM, styles.daysNumber]}>{daysLeft}</Text>
-              <Text style={[typeScale.labelSmall, styles.daysLabel]}>
-                {daysLeft === 1 ? 'DAY' : 'DAYS'}
-              </Text>
-            </View>
-          ) : null)}
-      </Wrapper>
-
-      {/* Tone-tinted countdown stripe along the bottom edge */}
-      {typeof daysLeft === 'number' && typeof totalDays === 'number' && (
-        <View style={styles.barTrack}>
-          <View
-            style={[
-              styles.barFill,
-              {
-                backgroundColor: t.accent,
-                width: `${Math.max(8, Math.min(100, (daysLeft / Math.max(1, totalDays)) * 100))}%`,
-              },
-            ]}
-          />
-        </View>
-      )}
-    </NeumorphicCard>
+        <RipeningProgress progress={progress} fillColor={fillColor} style={styles.progress} />
+      </SoftSurface>
+    </Pressable>
   );
-};
+}
+
+const GLYPH = 64;
 
 const styles = StyleSheet.create({
-  outer: {
-    marginBottom: spacing.md,
+  card: {
+    paddingVertical: spacing.xxl - 4,
+    paddingHorizontal: spacing.xxl - 4,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.md,
+    gap: spacing.xl,
+    marginBottom: spacing.xl,
   },
-  thumb: {
-    width: 56,
-    height: 56,
-    borderRadius: radii.sm,
+  glyphWrap: {
+    width: GLYPH,
+    height: GLYPH,
+  },
+  glyphInner: {
+    width: GLYPH,
+    height: GLYPH,
     alignItems: 'center',
     justifyContent: 'center',
-    overflow: 'hidden',
   },
   body: {
     flex: 1,
-  },
-  name: {
-    color: colors.onSurface,
+    gap: 4,
   },
   category: {
-    color: colors.outline,
+    color: colors.inkSecondary,
     marginTop: 4,
   },
-  daysCol: {
-    alignItems: 'flex-end',
+  daysWrap: {
+    alignItems: 'center',
     minWidth: 56,
-  },
-  daysNumber: {
-    color: colors.onSurface,
-    lineHeight: 30,
+    gap: 2,
   },
   daysLabel: {
-    color: colors.outline,
-    marginTop: 2,
+    color: colors.inkSecondary,
+    marginTop: 4,
   },
-  barTrack: {
-    height: 3,
-    backgroundColor: colors.outlineVariant,
-    overflow: 'hidden',
-  },
-  barFill: {
-    height: '100%',
+  progress: {
+    marginTop: 0,
   },
 });

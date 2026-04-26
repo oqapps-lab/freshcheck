@@ -3,7 +3,15 @@ import { getSupabase } from '@/src/lib/supabase';
 import { useAuth } from './useAuth';
 import type { Database } from '@/src/lib/database.types';
 import { fridgeItems as mockFridge, type FridgeItem as MockItem } from '@/mock/fridge';
-import { categoryFor } from '@/components/ui/CategoryGlyph';
+// Lightweight category guesser — replaces the dropped CategoryGlyph helper.
+function categoryFor(name: string): Row['category'] {
+  const n = name.toLowerCase();
+  if (/(milk|cheese|yogurt|cream|butter|kefir)/.test(n)) return 'dairy';
+  if (/(chicken|beef|pork|turkey|lamb|fish|salmon|tuna)/.test(n)) return 'poultry';
+  if (/(bread|baguette|loaf|bun|bagel|croissant|muffin)/.test(n)) return 'bakery';
+  if (/(rice|pasta|cereal|oats|flour|sugar|salt|spice)/.test(n)) return 'pantry';
+  return 'produce';
+}
 import { refreshExpiryReminders } from '@/src/lib/notifications';
 import type { Tone } from '@/constants/tokens';
 
