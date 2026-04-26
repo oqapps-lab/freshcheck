@@ -7,6 +7,7 @@ import { ProductRow } from '@/components/ui/ProductRow';
 import { FilterPillRow } from '@/components/ui/FilterPill';
 import { SoftSurface } from '@/components/ui/SoftSurface';
 import { PrimaryPillCTA } from '@/components/ui/PrimaryPillCTA';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Menu, Settings, BarcodeScanner, ShoppingBasket } from '@/components/ui/Glyphs';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 import { useFridge } from '@/src/hooks/useFridge';
@@ -112,15 +113,30 @@ export default function FridgeScreen() {
 
         {/* Filter chips — horizontal scrolling row. Hide when there are
             no items at all so the empty state isn't preceded by a lone
-            "All" chip with nothing to filter. */}
+            "All" chip with nothing to filter.
+
+            The right-edge fade gradient is preventive affordance: with
+            ≤4 categories the row fits the 402-pt viewport (verified),
+            but as soon as Bakery/Pantry items show up, chips need to
+            scroll. Without the fade, off-screen chips look like they
+            don't exist (Rule 16). */}
         {items.length > 0 && (
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.filterScroll}
-          >
-            <FilterPillRow options={filterOptions} value={filter} onChange={setFilter} />
-          </ScrollView>
+          <View style={styles.filterRow}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.filterScroll}
+            >
+              <FilterPillRow options={filterOptions} value={filter} onChange={setFilter} />
+            </ScrollView>
+            <LinearGradient
+              pointerEvents="none"
+              colors={[`${colors.canvas}00`, colors.canvas]}
+              start={{ x: 0, y: 0.5 }}
+              end={{ x: 1, y: 0.5 }}
+              style={styles.filterFade}
+            />
+          </View>
         )}
 
         {loading && items.length === 0 ? (
@@ -201,10 +217,20 @@ const styles = StyleSheet.create({
     marginTop: 6,
     textTransform: 'uppercase',
   },
+  filterRow: {
+    position: 'relative',
+    marginBottom: spacing.huge,
+  },
   filterScroll: {
     paddingHorizontal: 8,
     paddingBottom: 8,
-    marginBottom: spacing.huge,
+  },
+  filterFade: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    bottom: 0,
+    width: 32,
   },
   list: {
     gap: spacing.huge,
