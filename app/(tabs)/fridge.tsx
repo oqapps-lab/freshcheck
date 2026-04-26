@@ -1,11 +1,13 @@
 import React, { useMemo, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, ActivityIndicator, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { IconButton } from '@/components/ui/IconButton';
 import { ProductRow } from '@/components/ui/ProductRow';
 import { FilterPillRow } from '@/components/ui/FilterPill';
-import { Menu, Settings } from '@/components/ui/Glyphs';
+import { SoftSurface } from '@/components/ui/SoftSurface';
+import { PrimaryPillCTA } from '@/components/ui/PrimaryPillCTA';
+import { Menu, Settings, BarcodeScanner, ShoppingBasket } from '@/components/ui/Glyphs';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 import { useFridge } from '@/src/hooks/useFridge';
 
@@ -39,7 +41,7 @@ const CATEGORY_ORDER: Exclude<FilterValue, 'all'>[] = [
 export default function FridgeScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { items } = useFridge();
+  const { items, loading } = useFridge();
   const [filter, setFilter] = useState<FilterValue>('all');
 
   const filterOptions = useMemo<{ value: FilterValue; label: string }[]>(() => {
@@ -79,32 +81,66 @@ export default function FridgeScreen() {
           <Text style={[typeScale.label, styles.eyebrow]}>INVENTORY STATUS</Text>
         </View>
 
-        {/* Filter chips — horizontal scrolling row */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.filterScroll}
-        >
-          <FilterPillRow options={filterOptions} value={filter} onChange={setFilter} />
-        </ScrollView>
+        {/* Filter chips — horizontal scrolling row. Hide when there are
+            no items at all so the empty state isn't preceded by a lone
+            "All" chip with nothing to filter. */}
+        {items.length > 0 && (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.filterScroll}
+          >
+            <FilterPillRow options={filterOptions} value={filter} onChange={setFilter} />
+          </ScrollView>
+        )}
 
-        {/* Cards */}
-        <View style={styles.list}>
-          {filtered.map((item) => (
-            <ProductRow
-              key={item.id}
-              name={item.name}
-              category={item.category}
-              daysLeft={item.daysLeft}
-              shelfDays={item.totalDays || 14}
+        {loading && items.length === 0 ? (
+          <View style={styles.loadingState}>
+            <ActivityIndicator color={colors.primary} />
+          </View>
+        ) : items.length === 0 ? (
+          // Empty state — first-run signed-in user with nothing tracked
+          // yet. Without this they'd see a blank slab + "0 OF 0 PRODUCTS
+          // TRACKED" footer that reads as broken.
+          <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.empty}>
+            <View style={styles.emptyIcon}>
+              <ShoppingBasket size={40} color={colors.primary} strokeWidth={1.6} />
+            </View>
+            <Text style={[typeScale.titleLarge, styles.emptyTitle]}>
+              Fridge is empty
+            </Text>
+            <Text style={[typeScale.body, styles.emptyBody]}>
+              Scan an item to start tracking what's in your fridge and when it'll go off.
+            </Text>
+            <PrimaryPillCTA
+              label="Scan first item"
+              onPress={() => router.replace('/(tabs)')}
+              iconLeft={
+                <BarcodeScanner size={22} color={colors.amber} strokeWidth={2.2} />
+              }
             />
-          ))}
-        </View>
+          </SoftSurface>
+        ) : (
+          <>
+            {/* Cards */}
+            <View style={styles.list}>
+              {filtered.map((item) => (
+                <ProductRow
+                  key={item.id}
+                  name={item.name}
+                  category={item.category}
+                  daysLeft={item.daysLeft}
+                  shelfDays={item.totalDays || 14}
+                />
+              ))}
+            </View>
 
-        {/* Footer counter */}
-        <Text style={[typeScale.label, styles.footer]}>
-          {`${filtered.length} OF ${items.length} PRODUCTS TRACKED`}
-        </Text>
+            {/* Footer counter */}
+            <Text style={[typeScale.label, styles.footer]}>
+              {`${filtered.length} OF ${items.length} PRODUCTS TRACKED`}
+            </Text>
+          </>
+        )}
       </ScrollView>
     </View>
   );
@@ -150,5 +186,33 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: spacing.enormous,
     textTransform: 'uppercase',
+  },
+  loadingState: {
+    paddingVertical: spacing.huge * 2,
+    alignItems: 'center',
+  },
+  empty: {
+    paddingVertical: spacing.huge,
+    paddingHorizontal: spacing.xl,
+    alignItems: 'center',
+    gap: spacing.lg,
+  },
+  emptyIcon: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: colors.canvas,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyTitle: {
+    color: colors.ink,
+    textAlign: 'center',
+  },
+  emptyBody: {
+    color: colors.inkSecondary,
+    textAlign: 'center',
+    marginBottom: spacing.sm,
+    lineHeight: 22,
   },
 });
