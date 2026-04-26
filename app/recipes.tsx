@@ -97,7 +97,7 @@ export default function RecipesScreen() {
                   </SoftInset>
 
                   <View style={styles.body}>
-                    <Text style={[typeScale.titleLarge, { color: colors.ink }]} numberOfLines={1}>
+                    <Text style={[typeScale.titleLarge, { color: colors.ink }]} numberOfLines={2}>
                       {recipe.name}
                     </Text>
                     <Text style={[typeScale.bodySmall, styles.blurb]} numberOfLines={2}>
