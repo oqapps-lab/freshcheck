@@ -7,6 +7,7 @@ import { IconButton } from '@/components/ui/IconButton';
 import { SoftSurface } from '@/components/ui/SoftSurface';
 import { Menu, Settings, Chevron, User } from '@/components/ui/Glyphs';
 import { useFridge } from '@/src/hooks/useFridge';
+import { useAuth } from '@/src/hooks/useAuth';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
 /**
@@ -19,12 +20,31 @@ import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { signedIn, summary } = useFridge();
+  const { summary } = useFridge();
+  const { user, signOut } = useAuth();
+  const signedIn = !!user;
 
   const goHome = () => router.replace('/(tabs)');
   const comingSoon = (label: string) => {
     Haptics.selectionAsync().catch(() => {});
     Alert.alert(label, 'Coming soon.');
+  };
+  const onSignInOrOut = () => {
+    Haptics.selectionAsync().catch(() => {});
+    if (signedIn) {
+      Alert.alert('Sign out', 'Sign out of FreshCheck?', [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Sign out',
+          style: 'destructive',
+          onPress: () => {
+            void signOut();
+          },
+        },
+      ]);
+    } else {
+      router.push('/auth');
+    }
   };
 
   return (
@@ -52,7 +72,7 @@ export default function ProfileScreen() {
             <User size={40} color={colors.primary} strokeWidth={1.6} />
           </SoftSurface>
           <Text style={[typeScale.displayMedium, styles.name]}>
-            {signedIn ? 'Your Profile' : 'Guest'}
+            {signedIn ? (user?.email?.split('@')[0] ?? 'You') : 'Guest'}
           </Text>
           <Text style={[typeScale.label, styles.eyebrow]}>
             {signedIn ? 'SIGNED IN' : 'NOT SIGNED IN'}
@@ -68,14 +88,9 @@ export default function ProfileScreen() {
         {/* ACCOUNT section */}
         <Text style={[typeScale.label, styles.sectionLabel]}>ACCOUNT</Text>
         <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cardStack}>
-          <Row
-            label={signedIn ? 'Sign out' : 'Sign in'}
-            onPress={() =>
-              signedIn ? comingSoon('Sign out') : router.push('/auth')
-            }
-          />
+          <Row label={signedIn ? 'Sign out' : 'Sign in'} onPress={onSignInOrOut} />
           <Hairline />
-          <Row label="Email" onPress={() => comingSoon('Email')} />
+          <RowStatic label="Email" value={user?.email ?? '—'} />
         </SoftSurface>
 
         {/* PRO section */}

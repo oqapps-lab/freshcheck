@@ -16,6 +16,7 @@ import { SoftInset } from '@/components/ui/SoftInset';
 import { PrimaryPillCTA } from '@/components/ui/PrimaryPillCTA';
 import { GhostText } from '@/components/ui/GhostText';
 import { Back, User } from '@/components/ui/Glyphs';
+import { useAuth } from '@/src/hooks/useAuth';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
 type Mode = 'signin' | 'signup';
@@ -23,6 +24,7 @@ type Mode = 'signin' | 'signup';
 export default function AuthScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { signInWithEmail, signUpWithEmail, configured } = useAuth();
   const [mode, setMode] = useState<Mode>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -38,14 +40,22 @@ export default function AuthScreen() {
       );
       return;
     }
+    if (!configured) {
+      Alert.alert(
+        isSignIn ? 'Sign in' : 'Sign up',
+        'Supabase is not configured in this build. Continue as guest to keep using the app locally.',
+      );
+      return;
+    }
     setSubmitting(true);
-    // Real auth would hit Supabase here; placeholder Alert until wired.
-    await new Promise((r) => setTimeout(r, 600));
+    const fn = isSignIn ? signInWithEmail : signUpWithEmail;
+    const { error } = await fn(email.trim(), password);
     setSubmitting(false);
-    Alert.alert(
-      isSignIn ? 'Sign in' : 'Sign up',
-      'Coming soon — Supabase auth not configured for this client yet.',
-    );
+    if (error) {
+      Alert.alert(isSignIn ? 'Sign in failed' : 'Sign up failed', error);
+      return;
+    }
+    router.replace('/(tabs)');
   };
 
   return (
