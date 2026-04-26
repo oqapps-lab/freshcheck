@@ -229,8 +229,13 @@ export const layout = {
   screenPaddingHeader: 32,     // header px-8
   headerPaddingTop: 40,        // pt-10
   headerPaddingBottom: 16,     // pb-4
-  tabBarHeight: 80,
+  // v12: pill shrank from ICON_ACTIVE 56 + paddingVertical 12*2 = 80
+  //      to ICON_ACTIVE 44 + paddingVertical 6*2 = 56.
+  tabBarHeight: 56,
   tabBarBottomGap: 40,         // bottom-10
   tabBarSidePadding: 24,       // px-6 inside pill
-  floatingBottomClearance: 132,
+  // pill height (56) + tabBarBottomGap (40) + 16 px breathing room.
+  // Was 132 to match the old chunky pill; trimming to 112 gives back
+  // 20 px of visible scroll content on every tab.
+  floatingBottomClearance: 112,
 } as const;
