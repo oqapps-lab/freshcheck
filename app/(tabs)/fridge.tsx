@@ -18,18 +18,35 @@ import { Menu, User, Fridge as FridgeGlyph } from '@/components/ui/Glyphs';
 import { colors, spacing, typeScale, layout, motion, radii } from '@/constants/tokens';
 import { useFridge } from '@/src/hooks/useFridge';
 
-type FilterValue = 'all' | 'produce' | 'dairy';
+type FilterValue = 'all' | 'produce' | 'dairy' | 'poultry' | 'bakery' | 'pantry';
 
-const FILTER_OPTIONS: { value: FilterValue; label: string }[] = [
-  { value: 'all', label: 'All' },
-  { value: 'produce', label: 'Produce' },
-  { value: 'dairy', label: 'Dairy' },
+const CATEGORY_LABEL: Record<Exclude<FilterValue, 'all'>, string> = {
+  produce: 'Produce',
+  dairy: 'Dairy',
+  poultry: 'Poultry',
+  bakery: 'Bakery',
+  pantry: 'Pantry',
+};
+const CATEGORY_ORDER: Exclude<FilterValue, 'all'>[] = [
+  'produce',
+  'dairy',
+  'poultry',
+  'bakery',
+  'pantry',
 ];
 
 export default function FridgeScreen() {
   const insets = useSafeAreaInsets();
   const { items, loading, refresh } = useFridge();
   const [filter, setFilter] = useState<FilterValue>('all');
+
+  // Pills are derived from categories actually present in the fridge,
+  // so users never see a filter that returns zero items.
+  const filterOptions = useMemo<{ value: FilterValue; label: string }[]>(() => {
+    const present = new Set(items.map((i) => i.category as FilterValue));
+    const cats = CATEGORY_ORDER.filter((c) => present.has(c));
+    return [{ value: 'all', label: 'All' }, ...cats.map((c) => ({ value: c, label: CATEGORY_LABEL[c] }))];
+  }, [items]);
 
   const filtered = useMemo(() => {
     const sorted = [...items].sort((a, b) => a.daysLeft - b.daysLeft);
@@ -137,7 +154,7 @@ export default function FridgeScreen() {
           style={styles.filterBlock}
         >
           <SegmentedControl<FilterValue>
-            options={FILTER_OPTIONS}
+            options={filterOptions}
             value={filter}
             onChange={setFilter}
           />
