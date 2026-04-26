@@ -20,7 +20,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const onScan = () => {
     Haptics.selectionAsync().catch(() => {});
-    router.replace('/(tabs)/scan');
+    router.push('/capture');
   };
 
   return (
