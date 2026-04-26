@@ -34,7 +34,12 @@ export function TabBarPill({ tabs, activeKey, onChange }: Props) {
       style={[styles.wrap, { bottom: Math.max(insets.bottom + 12, layout.tabBarBottomGap) }]}
       pointerEvents="box-none"
     >
-      <SoftSurface variant="pill" radius="full" innerStyle={styles.bar}>
+      <SoftSurface
+        variant="pill"
+        radius="full"
+        style={styles.surface}
+        innerStyle={styles.bar}
+      >
         <View style={styles.row}>
           {tabs.map((tab) => {
             const active = tab.key === activeKey;
@@ -86,11 +91,18 @@ const styles = StyleSheet.create({
     right: '5%',
     alignItems: 'center',
   },
+  // v12.1: width/maxWidth MUST live on the outer SoftSurface View. RN's
+  // shadow-casting wrappers don't propagate child intrinsic-vs-explicit
+  // width, so passing width:100% on innerStyle alone makes the inner
+  // View match the parent's content-fit width — and the pill collapses
+  // to ~206 px (4 icons + padding) regardless of the wrap-margin tweak.
+  surface: {
+    width: '100%',
+    maxWidth: 460,
+  },
   bar: {
     paddingHorizontal: spacing.lg,
     paddingVertical: 6,
-    width: '100%',
-    maxWidth: 460,
   },
   row: {
     flexDirection: 'row',
