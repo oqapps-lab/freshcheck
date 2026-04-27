@@ -2,7 +2,7 @@ import React from 'react';
 import { View, ViewProps, ViewStyle, StyleProp } from 'react-native';
 import { colors, shadows, radii } from '@/constants/tokens';
 
-type Variant = 'cushion' | 'pill';
+type Variant = 'cushion' | 'pill' | 'plate' | 'plateInner';
 type RadiusKey = keyof typeof radii;
 
 type Props = ViewProps & {
@@ -47,8 +47,16 @@ export function SoftSurface({
   ...rest
 }: Props) {
   const r = typeof radius === 'number' ? radius : radii[radius];
-  const drop = variant === 'cushion' ? shadows.cushionDrop : shadows.pillDrop;
-  const highlight = variant === 'cushion' ? shadows.cushionHighlight : shadows.pillHighlight;
+  const drop =
+    variant === 'plate' ? shadows.plateDrop :
+    variant === 'plateInner' ? shadows.innerDrop :
+    variant === 'cushion' ? shadows.cushionDrop :
+    shadows.pillDrop;
+  const highlight =
+    variant === 'plate' ? shadows.plateHighlight :
+    variant === 'plateInner' ? shadows.innerHighlight :
+    variant === 'cushion' ? shadows.cushionHighlight :
+    shadows.pillHighlight;
 
   // RN shadows on a transparent View don't render at all (the shadow needs a "filled" shape).
   // So both shadow casters must have a backgroundColor === their shadow target colour for

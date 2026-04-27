@@ -27,8 +27,8 @@
 // Font: Quicksand (300/400/500/600/700).
 
 export const colors = {
-  // Cool slate-tinted off-white — gives the white highlight contrast
-  canvas: '#ECEFF4',
+  // Warm near-white — matches Stitch #F4F5F6, gives soft integrated neumorphism
+  canvas: '#F4F5F6',
   // Pure white — used for raised cushion surfaces (brighter than canvas)
   surfaceWhite: '#FFFFFF',
   surface: '#FFFFFF',
@@ -154,6 +154,36 @@ export const typeScale = {
 // React Native shadowRadius is roughly = CSS blur / 2. v9: stronger drop
 // + visible highlight (canvas is now off-white so white shadow contrasts).
 export const shadows = {
+  // Stitch "double-contour-plate": 20/40px warm grey — outer scan disc
+  plateDrop: {
+    shadowColor: '#c5c6c7',     // warm grey — Stitch double-contour-plate drop
+    shadowOffset: { width: 20, height: 20 },
+    shadowOpacity: 0.75,
+    shadowRadius: 20,           // RN: CSS blur(40) / 2
+    elevation: 16,
+  },
+  plateHighlight: {
+    shadowColor: '#ffffff',
+    shadowOffset: { width: -20, height: -20 },
+    shadowOpacity: 1,
+    shadowRadius: 20,
+    elevation: 0,
+  },
+  // Stitch "double-contour-inner": 10/20px warm grey — inner raised disc
+  innerDrop: {
+    shadowColor: '#d1d2d3',
+    shadowOffset: { width: 10, height: 10 },
+    shadowOpacity: 0.70,
+    shadowRadius: 10,           // RN: CSS blur(20) / 2
+    elevation: 8,
+  },
+  innerHighlight: {
+    shadowColor: '#ffffff',
+    shadowOffset: { width: -10, height: -10 },
+    shadowOpacity: 1,
+    shadowRadius: 10,
+    elevation: 0,
+  },
   cushionDrop: {
     shadowColor: '#94a3b8',     // slate-400 — slightly darker than CSS slate-300 to compensate for RN's softer rendering
     shadowOffset: { width: 12, height: 14 },
