@@ -1,42 +1,55 @@
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet, Image, Platform } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Image, Platform, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { SoftSurface } from '@/components/ui/SoftSurface';
 
-// Apple packaging "raised rim" effect:
-// drop shadow gives lift, inset top/left bright line = light catching the raised edge
-const appleCardShadow = Platform.select({
+// Image card — double-contour + sharp inset rim
+const imageCardShadow = Platform.select({
   web: {
-    boxShadow: [
-      '0 24px 48px rgba(0,0,0,0.14)',
-      '0 4px 8px rgba(0,0,0,0.07)',
-      '18px 18px 36px rgba(110,110,110,0.22)',
-      '-18px -18px 36px rgba(255,255,255,1)',
-      'inset 1.5px 1.5px 0px rgba(255,255,255,0.85)',
-      'inset -1px -1px 0px rgba(0,0,0,0.08)',
-    ].join(', '),
+    boxShadow: '20px 20px 40px #c5c6c7, -20px -20px 40px #ffffff, inset 1.5px 1.5px 0px rgba(255,255,255,0.85), inset -1px -1px 0px rgba(0,0,0,0.08)',
   } as object,
   default: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 14 },
-    shadowOpacity: 0.12,
-    shadowRadius: 22,
-    elevation: 12,
+    shadowColor: '#c5c6c7',
+    shadowOffset: { width: 20, height: 20 },
+    shadowOpacity: 0.75,
+    shadowRadius: 20,
+    elevation: 16,
+  },
+});
+
+// Double-contour-plate — same as home scanner orb
+const appleCardShadow = Platform.select({
+  web: {
+    boxShadow: '20px 20px 40px #c5c6c7, -20px -20px 40px #ffffff, inset 2px 2px 5px #ffffff, inset -2px -2px 5px #c5c6c7',
+  } as object,
+  default: {
+    shadowColor: '#c5c6c7',
+    shadowOffset: { width: 20, height: 20 },
+    shadowOpacity: 0.75,
+    shadowRadius: 20,
+    elevation: 16,
+  },
+});
+
+const raisedIcon = Platform.select({
+  web: {
+    boxShadow: '6px 6px 12px #c5c6c7, -6px -6px 12px #ffffff',
+  } as object,
+  default: {
+    shadowColor: '#c5c6c7',
+    shadowOffset: { width: 6, height: 6 },
+    shadowOpacity: 0.75,
+    shadowRadius: 6,
+    elevation: 6,
   },
 });
 import { SoftInset } from '@/components/ui/SoftInset';
-import { PrimaryPillCTA } from '@/components/ui/PrimaryPillCTA';
 import { GhostText } from '@/components/ui/GhostText';
 import { SoftnessChip } from '@/components/ui/SoftnessChip';
 import { Cloud, ShoppingBasket } from '@/components/ui/Glyphs';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
-/**
- * Scan tab — currently shows the latest scan result (no real camera flow yet).
- * Lives inside (tabs) so the floating pill tab bar is visible above the
- * Add-to-Fridge CTA. v10: was app/scan/result.tsx (outside tabs, no tab bar).
- */
 export default function ScanScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
@@ -45,7 +58,6 @@ export default function ScanScreen() {
 
   return (
     <View style={styles.root}>
-      {/* Header — single centred eyebrow, no back chevron (top-level tab) */}
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <Text style={[typeScale.label, styles.headerLabel]}>ANALYSIS</Text>
       </View>
@@ -59,7 +71,7 @@ export default function ScanScreen() {
       >
         {/* Image — Apple-style raised rim card */}
         <View style={styles.imageBlock}>
-          <View style={[styles.imageOuter, appleCardShadow]}>
+          <View style={[styles.imageOuter, imageCardShadow]}>
             <View style={styles.imageDisc}>
               <Image
                 source={{
@@ -85,32 +97,26 @@ export default function ScanScreen() {
           </View>
         </SoftInset>
 
-        {/* Note card — CUSHION raised */}
-        <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.noteCard}>
+        {/* Note card — raised-rim (same as image card) */}
+        <View style={[styles.noteCard, appleCardShadow]}>
           <View style={styles.noteRow}>
-            <SoftInset
-              radius="lg"
-              strength="medium"
-              style={styles.noteIcon}
-              contentStyle={styles.noteIconInner}
-            >
+            <View style={[styles.noteIcon, raisedIcon]}>
               <Cloud size={22} color={colors.amber} />
-            </SoftInset>
+            </View>
             <Text style={[typeScale.body, styles.noteText]}>
               Rest in a cool shade.{'\n'}Best enjoyed in 2 days.
             </Text>
           </View>
-        </SoftSurface>
+        </View>
 
         {/* CTA */}
-        <View style={styles.ctaBlock}>
-          <PrimaryPillCTA
-            label="Add to Fridge"
-            onPress={onAddToFridge}
-            iconLeft={<ShoppingBasket size={22} color={colors.amber} strokeWidth={2.2} />}
-          />
-          <GhostText label="Scan Another" onPress={onScanAnother} />
-        </View>
+        <Pressable style={[styles.ctaCard, appleCardShadow]} onPress={onAddToFridge}>
+          <View style={[styles.noteIcon, raisedIcon]}>
+            <ShoppingBasket size={22} color={colors.amber} strokeWidth={2.2} />
+          </View>
+          <Text style={[typeScale.body, styles.ctaLabel]}>Add to Fridge</Text>
+        </Pressable>
+        <GhostText label="Scan Another" onPress={onScanAnother} />
       </ScrollView>
     </View>
   );
@@ -184,6 +190,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   noteCard: {
+    borderRadius: 40,
+    backgroundColor: '#ECEDEF',
     paddingVertical: spacing.xl,
     paddingHorizontal: spacing.xl,
   },
@@ -195,10 +203,8 @@ const styles = StyleSheet.create({
   noteIcon: {
     width: 48,
     height: 48,
-  },
-  noteIconInner: {
-    width: 48,
-    height: 48,
+    borderRadius: 16,
+    backgroundColor: '#ECEDEF',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -208,8 +214,18 @@ const styles = StyleSheet.create({
     opacity: 0.9,
     lineHeight: 22,
   },
-  ctaBlock: {
-    gap: spacing.md,
-    paddingTop: spacing.md,
+  ctaCard: {
+    borderRadius: 40,
+    backgroundColor: '#ECEDEF',
+    paddingVertical: spacing.xl,
+    paddingHorizontal: spacing.xl,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.lg,
+  },
+  ctaLabel: {
+    color: colors.ink,
+    fontFamily: 'Quicksand_600SemiBold',
+    fontSize: 16,
   },
 });
