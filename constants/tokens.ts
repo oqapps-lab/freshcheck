@@ -28,7 +28,7 @@
 
 export const colors = {
   // Warm near-white — matches Stitch #F4F5F6, gives soft integrated neumorphism
-  canvas: '#F4F5F6',
+  canvas: '#E8EAED',
   // Pure white — used for raised cushion surfaces (brighter than canvas)
   surfaceWhite: '#FFFFFF',
   surface: '#FFFFFF',

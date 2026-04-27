@@ -1,8 +1,30 @@
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet, Image } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Image, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { SoftSurface } from '@/components/ui/SoftSurface';
+
+// Apple packaging "raised rim" effect:
+// drop shadow gives lift, inset top/left bright line = light catching the raised edge
+const appleCardShadow = Platform.select({
+  web: {
+    boxShadow: [
+      '0 24px 48px rgba(0,0,0,0.14)',
+      '0 4px 8px rgba(0,0,0,0.07)',
+      '18px 18px 36px rgba(110,110,110,0.22)',
+      '-18px -18px 36px rgba(255,255,255,1)',
+      'inset 1.5px 1.5px 0px rgba(255,255,255,0.85)',
+      'inset -1px -1px 0px rgba(0,0,0,0.08)',
+    ].join(', '),
+  } as object,
+  default: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 14 },
+    shadowOpacity: 0.12,
+    shadowRadius: 22,
+    elevation: 12,
+  },
+});
 import { SoftInset } from '@/components/ui/SoftInset';
 import { PrimaryPillCTA } from '@/components/ui/PrimaryPillCTA';
 import { GhostText } from '@/components/ui/GhostText';
@@ -35,9 +57,9 @@ export default function ScanScreen() {
         ]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Image — rounded-square cushion with circular sage halo inside */}
+        {/* Image — Apple-style raised rim card */}
         <View style={styles.imageBlock}>
-          <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.imageOuter}>
+          <View style={[styles.imageOuter, appleCardShadow]}>
             <View style={styles.imageDisc}>
               <Image
                 source={{
@@ -46,7 +68,7 @@ export default function ScanScreen() {
                 style={styles.image}
               />
             </View>
-          </SoftSurface>
+          </View>
         </View>
 
         {/* Verdict card — RECESSED */}
@@ -123,6 +145,8 @@ const styles = StyleSheet.create({
   imageOuter: {
     width: IMAGE_OUTER,
     height: IMAGE_OUTER,
+    borderRadius: 40,
+    backgroundColor: '#ECEDEF',
     alignItems: 'center',
     justifyContent: 'center',
   },
