@@ -5,14 +5,13 @@ import {
   ScrollView,
   StyleSheet,
   Dimensions,
+  Platform,
   type NativeScrollEvent,
   type NativeSyntheticEvent,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { safeStorage } from '@/src/lib/safeStorage';
-import { SoftSurface } from '@/components/ui/SoftSurface';
-import { SoftInset } from '@/components/ui/SoftInset';
 import { PrimaryPillCTA } from '@/components/ui/PrimaryPillCTA';
 import { GhostText } from '@/components/ui/GhostText';
 import {
@@ -22,6 +21,19 @@ import {
   Sparkle,
 } from '@/components/ui/Glyphs';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
+
+const iconShadow = Platform.select({
+  web: {
+    boxShadow: '6px 6px 12px #cbd5e1, -6px -6px 12px #ffffff',
+  } as object,
+  default: {
+    shadowColor: '#94a3b8',
+    shadowOffset: { width: 6, height: 6 },
+    shadowOpacity: 0.75,
+    shadowRadius: 6,
+    elevation: 6,
+  },
+});
 
 type Slide = {
   id: string;
@@ -120,20 +132,9 @@ export default function OnboardingScreen() {
       >
         {SLIDES.map((slide) => (
           <View key={slide.id} style={[styles.slide, { width: SCREEN_W }]}>
-            <SoftSurface
-              variant="cushion"
-              radius="full"
-              innerStyle={styles.iconOuter}
-            >
-              <SoftInset
-                radius="full"
-                strength="thick"
-                style={styles.iconCup}
-                contentStyle={styles.iconCupInner}
-              >
-                <slide.Icon size={72} color={slide.iconColor} strokeWidth={1.5} />
-              </SoftInset>
-            </SoftSurface>
+            <View style={[styles.iconCircle, iconShadow]}>
+              <slide.Icon size={72} color={slide.iconColor} strokeWidth={1.5} />
+            </View>
 
             <Text style={[typeScale.displayMedium, styles.slideTitle]}>{slide.title}</Text>
             <Text style={[typeScale.body, styles.slideBody]}>{slide.body}</Text>
@@ -165,8 +166,7 @@ export default function OnboardingScreen() {
   );
 }
 
-const ICON_OUTER = 220;
-const ICON_CUP = 176;
+const ICON_SIZE = 160;
 
 const styles = StyleSheet.create({
   root: {
@@ -190,19 +190,11 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
     paddingVertical: spacing.xxl,
   },
-  iconOuter: {
-    width: ICON_OUTER,
-    height: ICON_OUTER,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  iconCup: {
-    width: ICON_CUP,
-    height: ICON_CUP,
-  },
-  iconCupInner: {
-    width: ICON_CUP,
-    height: ICON_CUP,
+  iconCircle: {
+    width: ICON_SIZE,
+    height: ICON_SIZE,
+    borderRadius: ICON_SIZE / 2,
+    backgroundColor: '#ECEDEF',
     alignItems: 'center',
     justifyContent: 'center',
   },

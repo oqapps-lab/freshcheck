@@ -5,16 +5,29 @@ import {
   Pressable,
   Animated,
   StyleSheet,
+  Platform,
   Easing,
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { IconButton } from '@/components/ui/IconButton';
-import { SoftSurface } from '@/components/ui/SoftSurface';
 import { SoftInset } from '@/components/ui/SoftInset';
 import { Back, BarcodeScanner, Sparkle } from '@/components/ui/Glyphs';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
+
+const shutterShadow = Platform.select({
+  web: {
+    boxShadow: '6px 6px 12px #cbd5e1, -6px -6px 12px #ffffff',
+  } as object,
+  default: {
+    shadowColor: '#94a3b8',
+    shadowOffset: { width: 6, height: 6 },
+    shadowOpacity: 0.75,
+    shadowRadius: 6,
+    elevation: 6,
+  },
+});
 
 /**
  * Capture — placeholder viewfinder between the home scan orb and the
@@ -131,24 +144,16 @@ export default function CaptureScreen() {
           disabled={analyzing}
           style={({ pressed }) => [styles.shutter, { opacity: pressed ? 0.85 : 1 }]}
         >
-          <SoftSurface variant="cushion" radius="full" innerStyle={styles.shutterOuter}>
-            <SoftInset
-              radius="full"
-              strength="medium"
-              style={styles.shutterInner}
-              contentStyle={styles.shutterInnerContent}
-            >
-              <BarcodeScanner size={36} color={colors.primary} strokeWidth={1.6} />
-            </SoftInset>
-          </SoftSurface>
+          <View style={[styles.shutterCircle, shutterShadow]}>
+            <BarcodeScanner size={36} color={colors.primary} strokeWidth={1.6} />
+          </View>
         </Pressable>
       </View>
     </View>
   );
 }
 
-const SHUTTER_OUTER = 96;
-const SHUTTER_INNER = 76;
+const SHUTTER_SIZE = 96;
 
 const styles = StyleSheet.create({
   root: {
@@ -229,22 +234,14 @@ const styles = StyleSheet.create({
     paddingTop: spacing.lg,
   },
   shutter: {
-    width: SHUTTER_OUTER,
-    height: SHUTTER_OUTER,
+    width: SHUTTER_SIZE,
+    height: SHUTTER_SIZE,
   },
-  shutterOuter: {
-    width: SHUTTER_OUTER,
-    height: SHUTTER_OUTER,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  shutterInner: {
-    width: SHUTTER_INNER,
-    height: SHUTTER_INNER,
-  },
-  shutterInnerContent: {
-    width: SHUTTER_INNER,
-    height: SHUTTER_INNER,
+  shutterCircle: {
+    width: SHUTTER_SIZE,
+    height: SHUTTER_SIZE,
+    borderRadius: SHUTTER_SIZE / 2,
+    backgroundColor: '#ECEDEF',
     alignItems: 'center',
     justifyContent: 'center',
   },
