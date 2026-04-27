@@ -1,10 +1,22 @@
 import React from 'react';
-import { View, Pressable, StyleSheet } from 'react-native';
+import { View, Pressable, StyleSheet, Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SoftSurface } from './SoftSurface';
-import { SoftInset } from './SoftInset';
 import { colors, layout, spacing } from '@/constants/tokens';
+
+const activeIconShadow = Platform.select({
+  web: {
+    boxShadow: '6px 6px 12px #cbd5e1, -6px -6px 12px #ffffff',
+  } as object,
+  default: {
+    shadowColor: '#94a3b8',
+    shadowOffset: { width: 6, height: 6 },
+    shadowOpacity: 0.75,
+    shadowRadius: 6,
+    elevation: 6,
+  },
+});
 
 type Tab = {
   key: string;
@@ -57,14 +69,9 @@ export function TabBarPill({ tabs, activeKey, onChange }: Props) {
                 style={active ? styles.tabActive : styles.tabInactive}
               >
                 {active ? (
-                  <SoftInset
-                    radius="full"
-                    strength="thin"
-                    style={styles.cup}
-                    contentStyle={styles.cupInner}
-                  >
+                  <View style={[styles.cup, activeIconShadow]}>
                     {tab.icon(true)}
-                  </SoftInset>
+                  </View>
                 ) : (
                   <View style={styles.flatIcon}>{tab.icon(false)}</View>
                 )}
@@ -124,10 +131,8 @@ const styles = StyleSheet.create({
   cup: {
     width: ICON_ACTIVE,
     height: ICON_ACTIVE,
-  },
-  cupInner: {
-    width: ICON_ACTIVE,
-    height: ICON_ACTIVE,
+    borderRadius: ICON_ACTIVE / 2,
+    backgroundColor: '#ECEDEF',
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -1,17 +1,40 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { View, Text, ScrollView, RefreshControl, ActivityIndicator, Pressable, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, RefreshControl, ActivityIndicator, Pressable, StyleSheet, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { IconButton } from '@/components/ui/IconButton';
 import { ProductRow } from '@/components/ui/ProductRow';
 import { FilterPillRow } from '@/components/ui/FilterPill';
-import { SoftSurface } from '@/components/ui/SoftSurface';
-import { SoftInset } from '@/components/ui/SoftInset';
 import { PrimaryPillCTA } from '@/components/ui/PrimaryPillCTA';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Menu, Settings, BarcodeScanner, ShoppingBasket, Nutrition, Chevron } from '@/components/ui/Glyphs';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 import { useFridge } from '@/src/hooks/useFridge';
+
+const cardShadow = Platform.select({
+  web: {
+    boxShadow: '20px 20px 40px #cbd5e1, -20px -20px 40px #ffffff, inset 2px 2px 5px #ffffff, inset -2px -2px 5px #cbd5e1',
+  } as object,
+  default: {
+    shadowColor: '#94a3b8',
+    shadowOffset: { width: 20, height: 20 },
+    shadowOpacity: 0.75,
+    shadowRadius: 20,
+    elevation: 16,
+  },
+});
+
+const iconShadow = Platform.select({
+  web: {
+    boxShadow: '6px 6px 12px #cbd5e1, -6px -6px 12px #ffffff',
+  } as object,
+  default: {
+    shadowColor: '#94a3b8',
+    shadowOffset: { width: 6, height: 6 },
+    shadowOpacity: 0.75,
+    shadowRadius: 6,
+    elevation: 6,
+  },
+});
 
 type FilterValue = 'all' | 'produce' | 'dairy' | 'poultry' | 'bakery' | 'pantry';
 
@@ -108,8 +131,8 @@ export default function FridgeScreen() {
       >
         {/* Hero */}
         <View style={styles.hero}>
-          <Text style={[typeScale.displayLarge, { color: colors.ink }]}>My Fridge</Text>
-          <Text style={[typeScale.label, styles.eyebrow]}>INVENTORY STATUS</Text>
+          <Text style={[typeScale.titleLarge, { color: colors.ink }]}>My Fridge</Text>
+          <Text style={[typeScale.labelSmall, styles.eyebrow]}>INVENTORY STATUS</Text>
         </View>
 
         {/* Recipes shortcut — visible only when there's something to cook with */}
@@ -118,22 +141,17 @@ export default function FridgeScreen() {
             accessibilityRole="button"
             accessibilityLabel="View recipe suggestions"
             onPress={() => router.push('/recipes')}
-            style={styles.recipesCtaWrap}
+            style={[styles.recipesCtaWrap, cardShadow]}
           >
-            <SoftSurface variant="pill" radius="full" innerStyle={styles.recipesCta}>
-              <SoftInset
-                radius="full"
-                strength="thin"
-                style={styles.recipesIconWrap}
-                contentStyle={styles.recipesIconInner}
-              >
+            <View style={styles.recipesCta}>
+              <View style={[styles.recipesIconWrap, iconShadow]}>
                 <Nutrition size={20} color={colors.primary} />
-              </SoftInset>
+              </View>
               <Text style={[typeScale.titleSmall, styles.recipesText]}>
                 Recipes from your fridge
               </Text>
               <Chevron size={18} color={colors.inkMuted} />
-            </SoftSurface>
+            </View>
           </Pressable>
         )}
 
@@ -155,13 +173,6 @@ export default function FridgeScreen() {
             >
               <FilterPillRow options={filterOptions} value={filter} onChange={setFilter} />
             </ScrollView>
-            <LinearGradient
-              pointerEvents="none"
-              colors={[`${colors.canvas}00`, colors.canvas]}
-              start={{ x: 0, y: 0.5 }}
-              end={{ x: 1, y: 0.5 }}
-              style={styles.filterFade}
-            />
           </View>
         )}
 
@@ -173,8 +184,8 @@ export default function FridgeScreen() {
           // Empty state — first-run signed-in user with nothing tracked
           // yet. Without this they'd see a blank slab + "0 OF 0 PRODUCTS
           // TRACKED" footer that reads as broken.
-          <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.empty}>
-            <View style={styles.emptyIcon}>
+          <View style={[styles.empty, cardShadow]}>
+            <View style={[styles.emptyIcon, iconShadow]}>
               <ShoppingBasket size={40} color={colors.primary} strokeWidth={1.6} />
             </View>
             <Text style={[typeScale.titleLarge, styles.emptyTitle]}>
@@ -190,7 +201,7 @@ export default function FridgeScreen() {
                 <BarcodeScanner size={22} color={colors.amber} strokeWidth={2.2} />
               }
             />
-          </SoftSurface>
+          </View>
         ) : (
           <>
             {/* Cards */}
@@ -231,21 +242,23 @@ const styles = StyleSheet.create({
   },
   scroll: {
     paddingHorizontal: layout.screenPadding,
-    paddingTop: spacing.xxl,
+    paddingTop: spacing.sm,
     paddingBottom: layout.floatingBottomClearance,
   },
   hero: {
     paddingHorizontal: 8,
-    marginBottom: spacing.huge,
+    marginBottom: spacing.lg,
   },
   eyebrow: {
     color: colors.inkSecondary,
-    marginTop: 6,
+    marginTop: 4,
     textTransform: 'uppercase',
   },
   recipesCtaWrap: {
     marginHorizontal: 8,
-    marginBottom: spacing.lg,
+    marginBottom: spacing.xxl,
+    borderRadius: 40,
+    backgroundColor: '#ECEDEF',
   },
   recipesCta: {
     flexDirection: 'row',
@@ -258,10 +271,8 @@ const styles = StyleSheet.create({
   recipesIconWrap: {
     width: 36,
     height: 36,
-  },
-  recipesIconInner: {
-    width: 36,
-    height: 36,
+    borderRadius: 12,
+    backgroundColor: '#ECEDEF',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -272,10 +283,11 @@ const styles = StyleSheet.create({
   filterRow: {
     position: 'relative',
     marginBottom: spacing.huge,
+    marginTop: -spacing.sm,
   },
   filterScroll: {
     paddingHorizontal: 8,
-    paddingBottom: 8,
+    paddingVertical: 20,
   },
   filterFade: {
     position: 'absolute',
@@ -299,6 +311,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   empty: {
+    borderRadius: 40,
+    backgroundColor: '#ECEDEF',
     paddingVertical: spacing.huge,
     paddingHorizontal: spacing.xl,
     alignItems: 'center',
@@ -308,7 +322,7 @@ const styles = StyleSheet.create({
     width: 96,
     height: 96,
     borderRadius: 48,
-    backgroundColor: colors.canvas,
+    backgroundColor: '#ECEDEF',
     alignItems: 'center',
     justifyContent: 'center',
   },

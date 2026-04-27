@@ -7,10 +7,10 @@ import { SoftSurface } from '@/components/ui/SoftSurface';
 // Image card — double-contour + sharp inset rim
 const imageCardShadow = Platform.select({
   web: {
-    boxShadow: '20px 20px 40px #c5c6c7, -20px -20px 40px #ffffff, inset 1.5px 1.5px 0px rgba(255,255,255,0.85), inset -1px -1px 0px rgba(0,0,0,0.08)',
+    boxShadow: '20px 20px 40px #cbd5e1, -20px -20px 40px #ffffff, inset 1.5px 1.5px 0px rgba(255,255,255,0.85), inset -1px -1px 0px rgba(0,0,0,0.08)',
   } as object,
   default: {
-    shadowColor: '#c5c6c7',
+    shadowColor: '#94a3b8',
     shadowOffset: { width: 20, height: 20 },
     shadowOpacity: 0.75,
     shadowRadius: 20,
@@ -21,10 +21,10 @@ const imageCardShadow = Platform.select({
 // Double-contour-plate — same as home scanner orb
 const appleCardShadow = Platform.select({
   web: {
-    boxShadow: '20px 20px 40px #c5c6c7, -20px -20px 40px #ffffff, inset 2px 2px 5px #ffffff, inset -2px -2px 5px #c5c6c7',
+    boxShadow: '20px 20px 40px #cbd5e1, -20px -20px 40px #ffffff, inset 2px 2px 5px #ffffff, inset -2px -2px 5px #cbd5e1',
   } as object,
   default: {
-    shadowColor: '#c5c6c7',
+    shadowColor: '#94a3b8',
     shadowOffset: { width: 20, height: 20 },
     shadowOpacity: 0.75,
     shadowRadius: 20,
@@ -34,10 +34,10 @@ const appleCardShadow = Platform.select({
 
 const raisedIcon = Platform.select({
   web: {
-    boxShadow: '6px 6px 12px #c5c6c7, -6px -6px 12px #ffffff',
+    boxShadow: '6px 6px 12px #cbd5e1, -6px -6px 12px #ffffff',
   } as object,
   default: {
-    shadowColor: '#c5c6c7',
+    shadowColor: '#94a3b8',
     shadowOffset: { width: 6, height: 6 },
     shadowOpacity: 0.75,
     shadowRadius: 6,

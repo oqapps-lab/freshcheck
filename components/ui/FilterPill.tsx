@@ -1,9 +1,21 @@
 import React from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
-import { SoftSurface } from './SoftSurface';
 import { SoftInset } from './SoftInset';
 import { colors, spacing, typeScale } from '@/constants/tokens';
+
+const pillShadow = Platform.select({
+  web: {
+    boxShadow: '6px 6px 12px #cbd5e1, -6px -6px 12px #ffffff',
+  } as object,
+  default: {
+    shadowColor: '#94a3b8',
+    shadowOffset: { width: 6, height: 6 },
+    shadowOpacity: 0.75,
+    shadowRadius: 6,
+    elevation: 6,
+  },
+});
 
 type Option<T extends string> = { value: T; label: string };
 
@@ -55,9 +67,9 @@ export function FilterPillRow<T extends string>({ options, value, onChange }: Pr
                 {label}
               </SoftInset>
             ) : (
-              <SoftSurface variant="pill" radius="full" innerStyle={styles.pill}>
+              <View style={[styles.pillInactive, pillShadow]}>
                 {label}
-              </SoftSurface>
+              </View>
             )}
           </Pressable>
         );
@@ -69,16 +81,22 @@ export function FilterPillRow<T extends string>({ options, value, onChange }: Pr
 const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
-    gap: spacing.sm,
+    gap: spacing.xs,
   },
   pill: {
     paddingVertical: 10,
-    // Was 32 — that pushed Poultry/Bakery/Pantry off-screen on a 402-pt
-    // device with 4+ categories. 20 keeps tap-area generous while
-    // letting 4 chips fit visibly inside the 402-pt viewport.
     paddingHorizontal: 20,
     minWidth: 72,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  pillInactive: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    minWidth: 72,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 999,
+    backgroundColor: '#ECEDEF',
   },
 });

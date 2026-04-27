@@ -208,15 +208,22 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: colors.surfaceWhite,
+    backgroundColor: '#ECEDEF',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.sm,
-    shadowColor: '#94a3b8',
-    shadowOffset: { width: 6, height: 8 },
-    shadowOpacity: 0.45,
-    shadowRadius: 12,
-    elevation: 6,
+    ...Platform.select({
+      web: {
+        boxShadow: '6px 6px 12px #cbd5e1, -6px -6px 12px #ffffff',
+      } as object,
+      default: {
+        shadowColor: '#94a3b8',
+        shadowOffset: { width: 6, height: 6 },
+        shadowOpacity: 0.75,
+        shadowRadius: 6,
+        elevation: 6,
+      },
+    }),
   },
   title: {
     color: colors.ink,

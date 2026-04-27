@@ -1,21 +1,39 @@
 import React from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet, Alert } from 'react-native';
+import { View, Text, ScrollView, Pressable, StyleSheet, Alert, Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { SoftSurface } from '@/components/ui/SoftSurface';
 import { Chevron, User } from '@/components/ui/Glyphs';
 import { useFridge } from '@/src/hooks/useFridge';
 import { useAuth } from '@/src/hooks/useAuth';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
-/**
- * Profile — basic settings shell. Placeholder rows give the screen real
- * structure (avatar header + 3 sectioned card stacks) until the real
- * Stitch HTML lands. Everything is read-only / no-op except the header
- * back-buttons; tapping a row toasts a "coming soon" alert so the user
- * can tell the surface is alive even pre-feature-build.
- */
+const cardShadow = Platform.select({
+  web: {
+    boxShadow: '20px 20px 40px #cbd5e1, -20px -20px 40px #ffffff, inset 2px 2px 5px #ffffff, inset -2px -2px 5px #cbd5e1',
+  } as object,
+  default: {
+    shadowColor: '#94a3b8',
+    shadowOffset: { width: 20, height: 20 },
+    shadowOpacity: 0.75,
+    shadowRadius: 20,
+    elevation: 16,
+  },
+});
+
+const iconShadow = Platform.select({
+  web: {
+    boxShadow: '6px 6px 12px #cbd5e1, -6px -6px 12px #ffffff',
+  } as object,
+  default: {
+    shadowColor: '#94a3b8',
+    shadowOffset: { width: 6, height: 6 },
+    shadowOpacity: 0.75,
+    shadowRadius: 6,
+    elevation: 6,
+  },
+});
+
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
@@ -32,13 +50,7 @@ export default function ProfileScreen() {
     if (signedIn) {
       Alert.alert('Sign out', 'Sign out of FreshCheck?', [
         { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Sign out',
-          style: 'destructive',
-          onPress: () => {
-            void signOut();
-          },
-        },
+        { text: 'Sign out', style: 'destructive', onPress: () => { void signOut(); } },
       ]);
     } else {
       router.push('/auth');
@@ -47,11 +59,6 @@ export default function ProfileScreen() {
 
   return (
     <View style={styles.root}>
-      {/* Profile is a top-level tab — no nav drawer to open and no
-          back stack to pop. A bare centred wordmark matches the
-          scan-tab pattern instead of the home/fridge "menu+settings"
-          frame, which lived on those screens because they navigated
-          to Profile via the hamburger/cog. */}
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <Text style={[typeScale.wordmark, styles.headerWordmark]}>FRESHCHECK</Text>
       </View>
@@ -63,11 +70,11 @@ export default function ProfileScreen() {
         ]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Hero — avatar + name */}
+        {/* Hero */}
         <View style={styles.hero}>
-          <SoftSurface variant="cushion" radius="full" innerStyle={styles.avatar}>
+          <View style={[styles.avatar, iconShadow]}>
             <User size={40} color={colors.primary} strokeWidth={1.6} />
-          </SoftSurface>
+          </View>
           <Text style={[typeScale.displayMedium, styles.name]}>
             {signedIn ? (user?.email?.split('@')[0] ?? 'You') : 'Guest'}
           </Text>
@@ -77,44 +84,44 @@ export default function ProfileScreen() {
         </View>
 
         {/* Summary stat */}
-        <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.statCard}>
+        <View style={[styles.statCard, cardShadow]}>
           <Text style={[typeScale.numberLarge, styles.statNum]}>{summary.total}</Text>
           <Text style={[typeScale.label, styles.statLabel]}>ITEMS IN FRIDGE</Text>
-        </SoftSurface>
+        </View>
 
-        {/* ACCOUNT section */}
+        {/* ACCOUNT */}
         <Text style={[typeScale.label, styles.sectionLabel]}>ACCOUNT</Text>
-        <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cardStack}>
+        <View style={[styles.cardStack, cardShadow]}>
           <Row label={signedIn ? 'Sign out' : 'Sign in'} onPress={onSignInOrOut} />
           <Hairline />
           <RowStatic label="Email" value={user?.email ?? '—'} />
-        </SoftSurface>
+        </View>
 
-        {/* PRO section */}
+        {/* PRO */}
         <Text style={[typeScale.label, styles.sectionLabel]}>PRO</Text>
-        <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cardStack}>
+        <View style={[styles.cardStack, cardShadow]}>
           <Row label="Upgrade to FreshCheck Pro" onPress={() => router.push('/paywall')} />
           <Hairline />
           <Row label="Restore purchase" onPress={() => comingSoon('Restore purchase')} />
-        </SoftSurface>
+        </View>
 
-        {/* PREFERENCES section */}
+        {/* PREFERENCES */}
         <Text style={[typeScale.label, styles.sectionLabel]}>PREFERENCES</Text>
-        <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cardStack}>
+        <View style={[styles.cardStack, cardShadow]}>
           <Row label="Notifications" onPress={() => comingSoon('Notifications')} />
           <Hairline />
           <Row label="Expiry warnings" onPress={() => comingSoon('Expiry warnings')} />
-        </SoftSurface>
+        </View>
 
-        {/* ABOUT section */}
+        {/* ABOUT */}
         <Text style={[typeScale.label, styles.sectionLabel]}>ABOUT</Text>
-        <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cardStack}>
+        <View style={[styles.cardStack, cardShadow]}>
           <Row label="Privacy policy" onPress={() => comingSoon('Privacy policy')} />
           <Hairline />
           <Row label="Terms of service" onPress={() => comingSoon('Terms of service')} />
           <Hairline />
           <RowStatic label="Version" value="0.1.0" />
-        </SoftSurface>
+        </View>
       </ScrollView>
     </View>
   );
@@ -173,6 +180,8 @@ const styles = StyleSheet.create({
   avatar: {
     width: 96,
     height: 96,
+    borderRadius: 48,
+    backgroundColor: '#ECEDEF',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -186,6 +195,8 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   statCard: {
+    borderRadius: 40,
+    backgroundColor: '#ECEDEF',
     alignItems: 'center',
     paddingVertical: spacing.xl,
     gap: spacing.xs,
@@ -204,6 +215,8 @@ const styles = StyleSheet.create({
     marginLeft: spacing.md,
   },
   cardStack: {
+    borderRadius: 40,
+    backgroundColor: '#ECEDEF',
     paddingVertical: spacing.xs,
     paddingHorizontal: spacing.lg,
   },
