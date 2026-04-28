@@ -1,15 +1,18 @@
 // Supabase Edge Function: scan-image
 //
 // Takes `{ image_path }` pointing at an object in the `scans` bucket,
-// asks OpenAI gpt-4o-mini with vision for a structured freshness
-// verdict, and returns it.
+// asks OpenAI gpt-5.5 (vision) for a structured freshness verdict,
+// persists it to public.scans, and returns the row.
 //
-// Deploy with:   supabase functions deploy scan-image
-// Set secret:    supabase secrets set OPENAI_API_KEY=sk-...
+// Deploy:  supabase functions deploy scan-image
+// Secret:  supabase secrets set OPENAI_API_KEY=sk-...
 //
-// Auth: the function is invoked with the caller's access token via
-// `supabase.functions.invoke(...)`; we verify via the `authorization`
-// header and hand that token to the service client so RLS applies.
+// Auth: invoked with caller's access token via supabase.functions.invoke;
+// we forward it into a per-request supabase client so RLS applies on the
+// scans-table insert.
+//
+// Model choice: gpt-5.5 verified latest GA on developers.openai.com/api/docs/models
+// (April 28, 2026). Vision-capable, $5 / $30 per 1M tokens.
 
 // @ts-expect-error Deno runtime — TS server in the app workspace has no Deno types.
 import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
@@ -22,10 +25,12 @@ const CORS = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
+const MODEL = 'gpt-5.5';
+
 type VerdictPayload = {
   product: string;
   verdict: 'fresh' | 'safe' | 'soon' | 'past';
-  tone: 'fresh' | 'safe' | 'soon' | 'past';
+  tone: 'fresh' | 'safe' | 'soon' | 'past' | 'neutral';
   confidence: number;
   storage_note?: string;
   days_left?: number;
@@ -71,7 +76,6 @@ serve(async (req) => {
     return json({ error: 'image_path required' }, 400);
   }
 
-  // Auth: forward user JWT.
   const authHeader = req.headers.get('authorization') ?? '';
   const token = authHeader.replace(/^Bearer\s+/i, '');
   if (!token) return json({ error: 'unauthenticated' }, 401);
@@ -89,7 +93,6 @@ serve(async (req) => {
     global: { headers: { Authorization: authHeader } },
   });
 
-  // Confirm caller owns the scans/<uid>/... path.
   const { data: userData } = await supabase.auth.getUser();
   const user = userData?.user;
   if (!user) return json({ error: 'unauthenticated' }, 401);
@@ -97,7 +100,7 @@ serve(async (req) => {
     return json({ error: 'forbidden: image_path must start with your user id' }, 403);
   }
 
-  // Get a short-lived signed URL for the image so OpenAI can fetch it.
+  // Short-lived signed URL so OpenAI's fetcher can read the upload.
   const { data: signed, error: signErr } = await supabase.storage
     .from('scans')
     .createSignedUrl(image_path, 120);
@@ -105,7 +108,6 @@ serve(async (req) => {
     return json({ error: `signed url failed: ${signErr?.message ?? 'no url'}` }, 500);
   }
 
-  // Call OpenAI Vision.
   const openaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -113,7 +115,7 @@ serve(async (req) => {
       authorization: `Bearer ${openaiKey}`,
     },
     body: JSON.stringify({
-      model: 'gpt-4o-mini',
+      model: MODEL,
       response_format: { type: 'json_object' },
       temperature: 0.2,
       messages: [
@@ -145,13 +147,36 @@ serve(async (req) => {
     return json({ error: 'openai returned non-JSON', raw }, 502);
   }
 
-  // Normalize + validate.
   parsed.tone = (parsed.tone ?? parsed.verdict) as VerdictPayload['tone'];
   parsed.confidence = Math.max(0, Math.min(100, Number(parsed.confidence) || 0));
   if (parsed.days_left != null) parsed.days_left = Math.max(0, Math.floor(parsed.days_left));
   if (parsed.total_days != null) parsed.total_days = Math.max(1, Math.floor(parsed.total_days));
 
-  return json(parsed);
+  // Persist the verdict so the user has a scan history (and so /scan can
+  // re-read by id if it's revisited later).
+  const { data: scanRow, error: insErr } = await supabase
+    .from('scans')
+    .insert({
+      user_id: user.id,
+      product: parsed.product || 'unknown',
+      verdict: parsed.verdict,
+      tone: parsed.tone,
+      confidence: parsed.confidence,
+      analysis: parsed.analysis ?? [],
+      storage_note: parsed.storage_note ?? null,
+      days_left: parsed.days_left ?? null,
+      total_days: parsed.total_days ?? null,
+      image_path,
+    })
+    .select('id')
+    .single();
+
+  if (insErr) {
+    // Non-fatal: still return the verdict so UX survives a DB hiccup.
+    return json({ ...parsed, scan_id: null, persist_error: insErr.message });
+  }
+
+  return json({ ...parsed, scan_id: scanRow.id });
 });
 
 function json(body: unknown, status = 200) {
