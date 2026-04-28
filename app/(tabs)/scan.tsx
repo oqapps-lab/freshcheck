@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet, Image } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Image, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { SoftSurface } from '@/components/ui/SoftSurface';
@@ -7,80 +7,158 @@ import { SoftInset } from '@/components/ui/SoftInset';
 import { PrimaryPillCTA } from '@/components/ui/PrimaryPillCTA';
 import { GhostText } from '@/components/ui/GhostText';
 import { SoftnessChip } from '@/components/ui/SoftnessChip';
-import { Cloud, ShoppingBasket } from '@/components/ui/Glyphs';
+import { Cloud, ShoppingBasket, Sparkle } from '@/components/ui/Glyphs';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
+import { useLastScan, setLastScan } from '@/src/state/lastScan';
+import { useFridge } from '@/src/hooks/useFridge';
 
-/**
- * Scan tab — currently shows the latest scan result (no real camera flow yet).
- * Lives inside (tabs) so the floating pill tab bar is visible above the
- * Add-to-Fridge CTA. v10: was app/scan/result.tsx (outside tabs, no tab bar).
- */
+const VERDICT_TITLE: Record<string, string> = {
+  fresh: 'Fresh & ripe',
+  safe: 'Safe to eat',
+  soon: 'Use it soon',
+  past: 'Past its prime',
+};
+
+const VERDICT_COLOR: Record<string, string> = {
+  fresh: colors.primary,
+  safe: colors.primary,
+  soon: colors.amber,
+  past: colors.red,
+};
+
+function expiryText(daysLeft: number | null): string {
+  if (daysLeft == null) return 'Unknown shelf life';
+  if (daysLeft <= 0) return 'Use today';
+  if (daysLeft === 1) return '1 day left';
+  return `${daysLeft} days left`;
+}
+
+function capitalize(s: string): string {
+  return s.length > 0 ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+}
+
 export default function ScanScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const onAddToFridge = () => router.replace('/(tabs)/fridge');
-  const onScanAnother = () => router.replace('/(tabs)');
+  const last = useLastScan();
+  const { addItem, signedIn } = useFridge();
+
+  const onAddToFridge = async () => {
+    if (!last) return;
+    if (!signedIn) {
+      Alert.alert('Sign in required', 'Sign in to save items to your fridge.', [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Sign in', onPress: () => router.push('/auth') },
+      ]);
+      return;
+    }
+    const totalDays = last.totalDays ?? Math.max(last.daysLeft ?? 1, 5);
+    const daysLeft = last.daysLeft ?? totalDays;
+    const result = await addItem({
+      name: capitalize(last.product),
+      location: 'fridge',
+      tone: last.tone,
+      days_left: daysLeft,
+      total_days: totalDays,
+      expiry_text: expiryText(last.daysLeft),
+      warn: last.tone === 'soon' || last.tone === 'past',
+      thumbnail_path: last.imagePath,
+      source_scan_id: last.scanId,
+    });
+    if (result?.error) {
+      Alert.alert('Could not save', result.error);
+      return;
+    }
+    setLastScan(null);
+    router.replace('/(tabs)/fridge');
+  };
+
+  const onScanAnother = () => router.replace('/capture');
+
+  // Empty state — user opened the Scan tab without scanning yet.
+  if (!last) {
+    return (
+      <View style={styles.root}>
+        <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
+          <Text style={[typeScale.label, styles.headerLabel]}>ANALYSIS</Text>
+        </View>
+        <View style={styles.emptyWrap}>
+          <SoftSurface variant="cushion" radius="full" innerStyle={styles.emptyIcon}>
+            <Sparkle size={40} color={colors.amber} strokeWidth={1.6} />
+          </SoftSurface>
+          <Text style={[typeScale.displayMedium, styles.emptyTitle]}>No scans yet</Text>
+          <Text style={[typeScale.body, styles.emptySub]}>
+            Tap the orb on the home tab to scan your first item.
+          </Text>
+          <View style={styles.emptyCta}>
+            <PrimaryPillCTA label="Scan now" onPress={() => router.replace('/capture')} />
+          </View>
+        </View>
+      </View>
+    );
+  }
+
+  const titleColor = VERDICT_COLOR[last.verdict] ?? colors.primary;
+  const verdictTitle = VERDICT_TITLE[last.verdict] ?? capitalize(last.verdict);
 
   return (
     <View style={styles.root}>
-      {/* Header — single centred eyebrow, no back chevron (top-level tab) */}
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <Text style={[typeScale.label, styles.headerLabel]}>ANALYSIS</Text>
       </View>
 
       <ScrollView
-        contentContainerStyle={[
-          styles.scroll,
-          { paddingBottom: insets.bottom + layout.floatingBottomClearance },
-        ]}
+        contentContainerStyle={[styles.scroll, { paddingBottom: insets.bottom + layout.floatingBottomClearance }]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Image — rounded-square cushion with circular sage halo inside */}
+        {/* Image — rounded-square cushion with circular halo inside */}
         <View style={styles.imageBlock}>
           <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.imageOuter}>
             <View style={styles.imageDisc}>
-              <Image
-                source={{
-                  uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDGAUN249VOXzw_5G0YSerj5ODz1xx0RMcbSCU_EtYY3yYLCOOhluYk9YrU8GaEmlMU5ArCK6v9Z51DBAD3WdsGuwUWEKnEFf-UBkFwi82PTr7ljTkGLmwuCgBWitBrOYm5tOZo-P6VCcZn4J6PeSSSM29T1F2q2snt84UKAuXnB-NQbjhUaGvX0Rzcb2WYX85xHJ2Hf6SA_S7tTINoXs08RdAG9QjCwS4WsyCwOaULFMB95YEC0sVpMPaWYLupcGepepL_wUHo3T0=s400',
-                }}
-                style={styles.image}
-              />
+              {last.imageUri ? (
+                <Image source={{ uri: last.imageUri }} style={styles.image} />
+              ) : (
+                <View style={styles.imageFallback}>
+                  <Sparkle size={48} color={colors.inkSecondary} strokeWidth={1.6} />
+                </View>
+              )}
             </View>
           </SoftSurface>
         </View>
 
         {/* Verdict card — RECESSED */}
-        <SoftInset
-          radius="xxl"
-          strength="thick"
-          style={styles.verdictWrap}
-          contentStyle={styles.verdictInner}
-        >
-          <Text style={[typeScale.label, styles.verdictLabel]}>VERDICT</Text>
-          <Text style={[typeScale.displayMedium, styles.verdictTitle]}>Perfectly Ripe</Text>
+        <SoftInset radius="xxl" strength="thick" style={styles.verdictWrap} contentStyle={styles.verdictInner}>
+          <Text style={[typeScale.label, styles.verdictLabel]}>{capitalize(last.product || 'item').toUpperCase()}</Text>
+          <Text style={[typeScale.displayMedium, styles.verdictTitle, { color: titleColor }]}>{verdictTitle}</Text>
           <View style={styles.softnessRow}>
-            <SoftnessChip label="87% Softness" iconColor={colors.primary} />
+            <SoftnessChip
+              label={`${Math.round(last.confidence)}% confidence`}
+              iconColor={titleColor}
+            />
           </View>
         </SoftInset>
 
-        {/* Note card — CUSHION raised */}
-        <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.noteCard}>
-          <View style={styles.noteRow}>
-            <SoftInset
-              radius="lg"
-              strength="medium"
-              style={styles.noteIcon}
-              contentStyle={styles.noteIconInner}
-            >
-              <Cloud size={22} color={colors.amber} />
-            </SoftInset>
-            <Text style={[typeScale.body, styles.noteText]}>
-              Rest in a cool shade.{'\n'}Best enjoyed in 2 days.
-            </Text>
-          </View>
-        </SoftSurface>
+        {/* Storage note — CUSHION raised */}
+        {last.storageNote ? (
+          <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.noteCard}>
+            <View style={styles.noteRow}>
+              <SoftInset radius="lg" strength="medium" style={styles.noteIcon} contentStyle={styles.noteIconInner}>
+                <Cloud size={22} color={colors.amber} />
+              </SoftInset>
+              <Text style={[typeScale.body, styles.noteText]}>{capitalize(last.storageNote)}</Text>
+            </View>
+          </SoftSurface>
+        ) : null}
 
-        {/* CTA */}
+        {/* Days info */}
+        {last.daysLeft != null ? (
+          <SoftInset radius="xxl" strength="medium" style={styles.daysWrap} contentStyle={styles.daysInner}>
+            <Text style={[typeScale.numberLarge, { color: titleColor }]}>{Math.max(0, last.daysLeft)}</Text>
+            <Text style={[typeScale.label, styles.daysLabel]}>{expiryText(last.daysLeft).toUpperCase()}</Text>
+          </SoftInset>
+        ) : null}
+
+        {/* CTAs */}
         <View style={styles.ctaBlock}>
           <PrimaryPillCTA
             label="Add to Fridge"
@@ -98,10 +176,7 @@ const IMAGE_OUTER = 240;
 const IMAGE_DISC = 192;
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: colors.canvas,
-  },
+  root: { flex: 1, backgroundColor: colors.canvas },
   header: {
     alignItems: 'center',
     paddingHorizontal: layout.screenPaddingHeader,
@@ -133,13 +208,15 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: '#c5d8a4',
   },
-  image: {
+  image: { width: '100%', height: '100%' },
+  imageFallback: {
     width: '100%',
     height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.surfaceTint,
   },
-  verdictWrap: {
-    width: '100%',
-  },
+  verdictWrap: { width: '100%' },
   verdictInner: {
     paddingVertical: spacing.huge,
     paddingHorizontal: spacing.huge,
@@ -150,9 +227,9 @@ const styles = StyleSheet.create({
     color: colors.inkSecondary,
     textTransform: 'uppercase',
     marginBottom: 8,
+    letterSpacing: 1.5,
   },
   verdictTitle: {
-    color: colors.primary,
     textAlign: 'center',
   },
   softnessRow: {
@@ -168,10 +245,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.lg,
   },
-  noteIcon: {
-    width: 48,
-    height: 48,
-  },
+  noteIcon: { width: 48, height: 48 },
   noteIconInner: {
     width: 48,
     height: 48,
@@ -184,8 +258,48 @@ const styles = StyleSheet.create({
     opacity: 0.9,
     lineHeight: 22,
   },
+  daysWrap: { width: '100%' },
+  daysInner: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing.xl,
+    gap: spacing.xs,
+  },
+  daysLabel: {
+    color: colors.inkSecondary,
+    letterSpacing: 1.5,
+  },
   ctaBlock: {
     gap: spacing.md,
     paddingTop: spacing.md,
+  },
+  emptyWrap: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: spacing.xl,
+    gap: spacing.md,
+  },
+  emptyIcon: {
+    width: 96,
+    height: 96,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.lg,
+  },
+  emptyTitle: {
+    color: colors.ink,
+    textAlign: 'center',
+  },
+  emptySub: {
+    color: colors.inkSecondary,
+    textAlign: 'center',
+    lineHeight: 22,
+    maxWidth: 320,
+  },
+  emptyCta: {
+    width: '100%',
+    maxWidth: 460,
+    marginTop: spacing.xl,
   },
 });
