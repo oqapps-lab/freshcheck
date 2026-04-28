@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ViewProps, ViewStyle, StyleProp } from 'react-native';
+import { View, ViewProps, ViewStyle, StyleProp, StyleSheet } from 'react-native';
 import { colors, shadows, radii } from '@/constants/tokens';
 
 type Variant = 'cushion' | 'pill';
@@ -36,6 +36,15 @@ type Props = ViewProps & {
  *   View C — actual coloured skin (background prop), holds the children
  *
  * View A and B must be transparent so their shadows don't render on top of each other's edge.
+ *
+ * v13 — round-shadow fix: when the caller passes circular dimensions
+ * via `innerStyle` (e.g. `{ width: 220, height: 220 }` paired with
+ * `radius="full"`), the outer wrapper view's bounds are flex-derived
+ * — iOS sometimes computes the shadow path before layout settles and
+ * draws a rectangular shadow under the otherwise-circular skin (the
+ * user-visible "квадратная тень под кружком" bug). Mirror width /
+ * height / aspectRatio from innerStyle onto the outer view so iOS
+ * has explicit bounds and a stable shadow path matching borderRadius.
  */
 export function SoftSurface({
   variant = 'cushion',
@@ -50,15 +59,18 @@ export function SoftSurface({
   const drop = variant === 'cushion' ? shadows.cushionDrop : shadows.pillDrop;
   const highlight = variant === 'cushion' ? shadows.cushionHighlight : shadows.pillHighlight;
 
-  // RN shadows on a transparent View don't render at all (the shadow needs a "filled" shape).
-  // So both shadow casters must have a backgroundColor === their shadow target colour for
-  // the platform to register a shape. We use the real skin colour for both — drop/highlight
-  // shadows then propagate from those filled views into the canvas around the surface.
+  const flatInner = StyleSheet.flatten(innerStyle) as ViewStyle | undefined;
+  const dimensionForward: ViewStyle = {};
+  if (flatInner?.width != null) dimensionForward.width = flatInner.width;
+  if (flatInner?.height != null) dimensionForward.height = flatInner.height;
+  if (flatInner?.aspectRatio != null) dimensionForward.aspectRatio = flatInner.aspectRatio;
+
   return (
     <View
       {...rest}
       style={[
         { borderRadius: r, backgroundColor: background },
+        dimensionForward,
         drop,
         style,
       ]}
