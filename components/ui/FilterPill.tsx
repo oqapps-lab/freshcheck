@@ -25,6 +25,7 @@ export function FilterPillRow<T extends string>({ options, value, onChange }: Pr
         const active = opt.value === value;
         const label = (
           <Text
+            numberOfLines={1}
             style={[
               typeScale.titleSmall,
               { color: active ? colors.ink : colors.inkSecondary },
@@ -73,11 +74,12 @@ const styles = StyleSheet.create({
   },
   pill: {
     paddingVertical: 10,
-    // Was 32 — that pushed Poultry/Bakery/Pantry off-screen on a 402-pt
-    // device with 4+ categories. 20 keeps tap-area generous while
-    // letting 4 chips fit visibly inside the 402-pt viewport.
-    paddingHorizontal: 20,
-    minWidth: 72,
+    // 393-pt iPhone 17 Pro viewport minus 24pt screen padding × 2 = 345pt
+    // available. With paddingH 16 + minWidth 64, "All / Produce / Dairy /
+    // Poultry" fits at ~338pt with no clipping. Smoke-test 2026-04-28
+    // saw "Poultr" cut off at paddingH=20.
+    paddingHorizontal: 16,
+    minWidth: 64,
     alignItems: 'center',
     justifyContent: 'center',
   },

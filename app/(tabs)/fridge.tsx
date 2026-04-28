@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
     right: 0,
     top: 0,
     bottom: 0,
-    width: 32,
+    width: 48,
   },
   list: {
     gap: spacing.huge,
