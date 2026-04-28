@@ -135,6 +135,7 @@ const styles = StyleSheet.create({
     width: ORB_INNER,
     height: ORB_INNER,
     borderRadius: ORB_INNER / 2,
+    backgroundColor: '#ECEDEF',
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.sm,
