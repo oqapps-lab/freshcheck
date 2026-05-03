@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet, Image, Platform, Pressable } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { SoftSurface } from '@/components/ui/SoftSurface';
@@ -62,7 +63,8 @@ export default function ScanScreen() {
         <Text style={[typeScale.label, styles.headerLabel]}>ANALYSIS</Text>
       </View>
 
-      <ScrollView
+      <View style={styles.scrollWrap}>
+        <ScrollView
         contentContainerStyle={[
           styles.scroll,
           { paddingBottom: insets.bottom + layout.floatingBottomClearance },
@@ -118,6 +120,12 @@ export default function ScanScreen() {
         </Pressable>
         <GhostText label="Scan Another" onPress={onScanAnother} />
       </ScrollView>
+        <LinearGradient
+          colors={[colors.canvas, 'rgba(232,234,237,0)']}
+          style={styles.headerFade}
+          pointerEvents="none"
+        />
+      </View>
     </View>
   );
 }
@@ -129,6 +137,17 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: colors.canvas,
+  },
+  scrollWrap: {
+    flex: 1,
+  },
+  headerFade: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 24,
+    zIndex: 10,
   },
   header: {
     alignItems: 'center',

@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, ScrollView, Pressable, StyleSheet, Platform } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -26,7 +27,8 @@ export default function HomeScreen() {
           <Settings size={20} color={colors.ink} />
         </IconButton>
       </View>
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <View style={styles.scrollWrap}>
+        <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <View style={styles.heroBlock}>
           <Text style={[typeScale.displayLarge, styles.title]}>Ready to Scan</Text>
           <Text style={[typeScale.bodyLarge, styles.subtitle]}>
@@ -51,6 +53,12 @@ export default function HomeScreen() {
           </Pressable>
         </View>
       </ScrollView>
+        <LinearGradient
+          colors={[colors.canvas, 'rgba(232,234,237,0)']}
+          style={styles.headerFade}
+          pointerEvents="none"
+        />
+      </View>
     </View>
   );
 }
@@ -97,6 +105,19 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: layout.screenPaddingHeader,
     paddingBottom: layout.headerPaddingBottom,
+    backgroundColor: colors.canvas,
+    zIndex: 11,
+  },
+  scrollWrap: {
+    flex: 1,
+  },
+  headerFade: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 24,
+    zIndex: 10,
   },
   scroll: {
     paddingHorizontal: layout.screenPadding,

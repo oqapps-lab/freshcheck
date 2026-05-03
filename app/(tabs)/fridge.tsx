@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { View, Text, ScrollView, RefreshControl, ActivityIndicator, Pressable, StyleSheet, Platform } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { IconButton } from '@/components/ui/IconButton';
@@ -12,14 +13,14 @@ import { useFridge } from '@/src/hooks/useFridge';
 
 const cardShadow = Platform.select({
   web: {
-    boxShadow: '20px 20px 40px #cbd5e1, -20px -20px 40px #ffffff, inset 2px 2px 5px #ffffff, inset -2px -2px 5px #cbd5e1',
+    boxShadow: '8px 8px 16px #cbd5e1, -8px -8px 16px #ffffff, inset 2px 2px 5px #ffffff, inset -2px -2px 5px #cbd5e1',
   } as object,
   default: {
     shadowColor: '#94a3b8',
-    shadowOffset: { width: 20, height: 20 },
-    shadowOpacity: 0.75,
-    shadowRadius: 20,
-    elevation: 16,
+    shadowOffset: { width: 8, height: 8 },
+    shadowOpacity: 0.55,
+    shadowRadius: 10,
+    elevation: 8,
   },
 });
 
@@ -116,8 +117,8 @@ export default function FridgeScreen() {
           <Settings size={20} color={colors.ink} />
         </IconButton>
       </View>
-
-      <ScrollView
+      <View style={styles.scrollWrap}>
+        <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scroll}
         refreshControl={
@@ -173,6 +174,20 @@ export default function FridgeScreen() {
             >
               <FilterPillRow options={filterOptions} value={filter} onChange={setFilter} />
             </ScrollView>
+            <LinearGradient
+              colors={['#E8EAED', 'transparent']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.filterFadeLeft}
+              pointerEvents="none"
+            />
+            <LinearGradient
+              colors={['transparent', '#E8EAED']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.filterFadeRight}
+              pointerEvents="none"
+            />
           </View>
         )}
 
@@ -224,6 +239,12 @@ export default function FridgeScreen() {
           </>
         )}
       </ScrollView>
+        <LinearGradient
+          colors={[colors.canvas, 'rgba(232,234,237,0)']}
+          style={styles.headerFade}
+          pointerEvents="none"
+        />
+      </View>
     </View>
   );
 }
@@ -233,12 +254,25 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.canvas,
   },
+  scrollWrap: {
+    flex: 1,
+  },
+  headerFade: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 24,
+    zIndex: 10,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: layout.screenPaddingHeader,
     paddingBottom: layout.headerPaddingBottom,
+    backgroundColor: colors.canvas,
+    zIndex: 11,
   },
   scroll: {
     paddingHorizontal: layout.screenPadding,
@@ -289,12 +323,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 20,
   },
-  filterFade: {
+  filterFadeLeft: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: 40,
+    zIndex: 1,
+  },
+  filterFadeRight: {
     position: 'absolute',
     right: 0,
     top: 0,
     bottom: 0,
-    width: 32,
+    width: 40,
+    zIndex: 1,
   },
   list: {
     gap: spacing.huge,

@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, ScrollView, Pressable, StyleSheet, Alert, Platform } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -62,8 +63,8 @@ export default function ProfileScreen() {
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <Text style={[typeScale.wordmark, styles.headerWordmark]}>FRESHCHECK</Text>
       </View>
-
-      <ScrollView
+      <View style={styles.scrollWrap}>
+        <ScrollView
         contentContainerStyle={[
           styles.scroll,
           { paddingBottom: insets.bottom + layout.floatingBottomClearance },
@@ -123,6 +124,12 @@ export default function ProfileScreen() {
           <RowStatic label="Version" value="0.1.0" />
         </View>
       </ScrollView>
+        <LinearGradient
+          colors={[colors.canvas, 'rgba(232,234,237,0)']}
+          style={styles.headerFade}
+          pointerEvents="none"
+        />
+      </View>
     </View>
   );
 }
@@ -163,6 +170,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: layout.screenPaddingHeader,
     paddingBottom: layout.headerPaddingBottom,
+    backgroundColor: colors.canvas,
+    zIndex: 11,
+  },
+  scrollWrap: {
+    flex: 1,
+  },
+  headerFade: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 24,
+    zIndex: 10,
   },
   headerWordmark: {
     color: colors.inkSecondary,
