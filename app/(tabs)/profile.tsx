@@ -84,11 +84,17 @@ export default function ProfileScreen() {
           </Text>
         </View>
 
-        {/* Summary stat */}
-        <View style={[styles.statCard, cardShadow]}>
-          <Text style={[typeScale.numberLarge, styles.statNum]}>{summary.total}</Text>
-          <Text style={[typeScale.label, styles.statLabel]}>ITEMS IN FRIDGE</Text>
-        </View>
+        {/* Summary stat — only meaningful once the user is signed in.
+            For guests the count would reflect the in-memory mock fixtures
+            (smoke-test 2026-04-28 saw "6 ITEMS IN FRIDGE" against a
+            "Guest / NOT SIGNED IN" header), which contradicts the
+            account state. Hide for guests. */}
+        {signedIn ? (
+          <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.statCard}>
+            <Text style={[typeScale.numberLarge, styles.statNum]}>{summary.total}</Text>
+            <Text style={[typeScale.label, styles.statLabel]}>ITEMS IN FRIDGE</Text>
+          </SoftSurface>
+        ) : null}
 
         {/* ACCOUNT */}
         <Text style={[typeScale.label, styles.sectionLabel]}>ACCOUNT</Text>

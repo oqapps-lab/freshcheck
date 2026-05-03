@@ -8,11 +8,11 @@
     "scheme": "freshcheck",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
-    "backgroundColor": "#F8FAF6",
+    "backgroundColor": "#ECEFF4",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "cover",
-      "backgroundColor": "#F8FAF6"
+      "backgroundColor": "#ECEFF4"
     },
     "ios": {
       "supportsTablet": false,
@@ -26,7 +26,7 @@
       "package": "com.gazetastreet.freshcheck",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#416743"
+        "backgroundColor": "#15803d"
       },
       "permissions": ["android.permission.CAMERA"]
     },
@@ -42,7 +42,7 @@
         "expo-notifications",
         {
           "icon": "./assets/images/adaptive-icon.png",
-          "color": "#416743"
+          "color": "#15803d"
         }
       ]
     ],

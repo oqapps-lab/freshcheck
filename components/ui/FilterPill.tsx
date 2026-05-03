@@ -1,21 +1,9 @@
 import React from 'react';
-import { View, Text, Pressable, StyleSheet, Platform } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import * as Haptics from 'expo-haptics';
+import { SoftSurface } from './SoftSurface';
 import { SoftInset } from './SoftInset';
 import { colors, spacing, typeScale } from '@/constants/tokens';
-
-const pillShadow = Platform.select({
-  web: {
-    boxShadow: '6px 6px 12px #cbd5e1, -6px -6px 12px #ffffff',
-  } as object,
-  default: {
-    shadowColor: '#94a3b8',
-    shadowOffset: { width: 6, height: 6 },
-    shadowOpacity: 0.75,
-    shadowRadius: 6,
-    elevation: 6,
-  },
-});
 
 type Option<T extends string> = { value: T; label: string };
 
@@ -37,6 +25,7 @@ export function FilterPillRow<T extends string>({ options, value, onChange }: Pr
         const active = opt.value === value;
         const label = (
           <Text
+            numberOfLines={1}
             style={[
               typeScale.titleSmall,
               { color: active ? colors.ink : colors.inkSecondary },
@@ -67,9 +56,9 @@ export function FilterPillRow<T extends string>({ options, value, onChange }: Pr
                 {label}
               </SoftInset>
             ) : (
-              <View style={[styles.pillInactive, pillShadow]}>
+              <SoftSurface variant="pill" radius="full" innerStyle={styles.pill}>
                 {label}
-              </View>
+              </SoftSurface>
             )}
           </Pressable>
         );
@@ -81,22 +70,17 @@ export function FilterPillRow<T extends string>({ options, value, onChange }: Pr
 const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
-    gap: spacing.xs,
+    gap: spacing.sm,
   },
   pill: {
     paddingVertical: 10,
-    paddingHorizontal: 20,
-    minWidth: 72,
+    // 393-pt iPhone 17 Pro viewport minus 24pt screen padding × 2 = 345pt
+    // available. With paddingH 16 + minWidth 64, "All / Produce / Dairy /
+    // Poultry" fits at ~338pt with no clipping. Smoke-test 2026-04-28
+    // saw "Poultr" cut off at paddingH=20.
+    paddingHorizontal: 16,
+    minWidth: 64,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  pillInactive: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    minWidth: 72,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 999,
-    backgroundColor: '#ECEDEF',
   },
 });

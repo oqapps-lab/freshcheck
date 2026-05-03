@@ -1,6 +1,12 @@
 <svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-  <!-- Adaptive foreground: only inner 66% is guaranteed safe on Android round masks -->
-  <g transform="translate(512,512) scale(26)" fill="none" stroke="#F8FAF6" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Android adaptive icon foreground.
+       The system applies its own background (set in app.json
+       android.adaptiveIcon.backgroundColor) and clips this layer to
+       a circle/squircle/rounded-square depending on the launcher
+       theme. The safe zone is the inner 66% of the canvas — keep the
+       sprig well inside that. -->
+  <g transform="translate(512,512) scale(28)" fill="none" stroke="#FFFFFF"
+     stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round">
     <path d="M0 9C0 9 -8 5 -8 -3C-8 -5 -7 -8 -6 -8C-5 -8 -4 -6 -2 -5C0 -4 1 -2 1 0"/>
     <path d="M0 9C0 9 8 5 8 -3C8 -5 7 -8 6 -8C5 -8 4 -6 2 -5C0 -4 -1 -2 -1 0"/>
     <path d="M0 0V9"/>
