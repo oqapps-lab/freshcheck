@@ -6,22 +6,45 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "freshcheck",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "backgroundColor": "#ECEFF4",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#ECEFF4"
+    },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.gazetastreet.freshcheck"
+      "bundleIdentifier": "com.gazetastreet.freshcheck",
+      "infoPlist": {
+        "NSCameraUsageDescription": "FreshCheck uses the camera to check the freshness of your food.",
+        "NSPhotoLibraryUsageDescription": "FreshCheck can analyze photos from your library to check food freshness."
+      }
     },
     "android": {
       "package": "com.gazetastreet.freshcheck",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+        "backgroundColor": "#15803d"
+      },
+      "permissions": ["android.permission.CAMERA"]
     },
     "plugins": [
       "expo-router",
-      "expo-haptics"
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "FreshCheck uses the camera to check the freshness of your food."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/adaptive-icon.png",
+          "color": "#15803d"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
