@@ -22,16 +22,30 @@ import {
 } from '@/components/ui/Glyphs';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
-const iconShadow = Platform.select({
+const plateWebShadow = Platform.select({
   web: {
-    boxShadow: '6px 6px 12px #cbd5e1, -6px -6px 12px #ffffff',
+    boxShadow: '20px 20px 40px #c5c6c7, -20px -20px 40px #ffffff, inset 2px 2px 5px #ffffff, inset -2px -2px 5px #c5c6c7',
   } as object,
   default: {
-    shadowColor: '#94a3b8',
-    shadowOffset: { width: 6, height: 6 },
+    shadowColor: '#c5c6c7',
+    shadowOffset: { width: 20, height: 20 },
     shadowOpacity: 0.75,
-    shadowRadius: 6,
-    elevation: 6,
+    shadowRadius: 20,
+    elevation: 16,
+  },
+});
+
+const innerWebShadow = Platform.select({
+  web: {
+    background: 'radial-gradient(circle at center, #f8f8f9 0%, #f0f1f2 100%)',
+    boxShadow: '10px 10px 20px #d1d2d3, -10px -10px 20px #ffffff, inset 2px 2px 4px rgba(255,255,255,0.85), inset -2px -2px 4px rgba(200,201,202,0.85)',
+  } as object,
+  default: {
+    shadowColor: '#d1d2d3',
+    shadowOffset: { width: 10, height: 10 },
+    shadowOpacity: 0.70,
+    shadowRadius: 10,
+    elevation: 8,
   },
 });
 
@@ -132,7 +146,7 @@ export default function OnboardingScreen() {
       >
         {SLIDES.map((slide) => (
           <View key={slide.id} style={[styles.slide, { width: SCREEN_W }]}>
-            <View style={[styles.iconCircle, iconShadow]}>
+            <View style={[styles.orbPlate, plateWebShadow]}>
               <slide.Icon size={72} color={slide.iconColor} strokeWidth={1.5} />
             </View>
 
@@ -190,11 +204,11 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
     paddingVertical: spacing.xxl,
   },
-  iconCircle: {
+  orbPlate: {
     width: ICON_SIZE,
     height: ICON_SIZE,
     borderRadius: ICON_SIZE / 2,
-    backgroundColor: '#ECEDEF',
+    backgroundColor: colors.canvas,
     alignItems: 'center',
     justifyContent: 'center',
   },
