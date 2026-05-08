@@ -17,13 +17,13 @@
 // Placement IDs match the App Store Connect product setup:
 //   - placement: `freshcheck_main_paywall`
 //   - products:  `com.gazetastreet.freshcheck.weekly`
+//                `com.gazetastreet.freshcheck.monthly`
 //                `com.gazetastreet.freshcheck.annual`
-// Map 'monthly'|'yearly' (legacy paywall API) → 'weekly'|'annual'.
 
 import { Alert, Platform } from 'react-native';
 import { env, isAdaptyConfigured } from './env';
 
-type Plan = 'monthly' | 'annual' | 'weekly' | 'yearly';
+type Plan = 'weekly' | 'monthly' | 'annual';
 
 // Lazy require — avoids Expo Go bundle-eval crash.
 function getSdk(): typeof import('react-native-adapty') | null {
@@ -79,9 +79,8 @@ const PLACEMENT_ID = 'freshcheck_main_paywall';
 
 const PRODUCT_BY_PLAN: Record<Plan, string> = {
   weekly: 'com.gazetastreet.freshcheck.weekly',
-  monthly: 'com.gazetastreet.freshcheck.weekly', // alias for paywall API
+  monthly: 'com.gazetastreet.freshcheck.monthly',
   annual: 'com.gazetastreet.freshcheck.annual',
-  yearly: 'com.gazetastreet.freshcheck.annual',  // alias for paywall API
 };
 
 export async function startTrial(params: {

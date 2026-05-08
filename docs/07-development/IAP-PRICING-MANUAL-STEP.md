@@ -15,6 +15,11 @@ Open https://appstoreconnect.apple.com → My Apps → FreshCheck → **Subscrip
 6. **Adjust T2 markets manually if needed** (per pricing-strategy decision: T2 = 50% off T1):
    - India, Indonesia, Vietnam, Brazil, Mexico, Turkey: pick price-tier giving ~$3.50 equivalent
 
+### Monthly Premium (`com.gazetastreet.freshcheck.monthly`)
+1. Same flow → **United States $14.99**
+2. T2 markets: ~$7.50 equivalent
+3. Role on paywall: decoy — makes annual look like a steal, makes weekly look impulse-only
+
 ### Annual Premium (`com.gazetastreet.freshcheck.annual`)
 1. Same flow → **United States $39.99**
 2. T2 markets: ~$20 equivalent
@@ -53,6 +58,7 @@ Once Step 1–3 done for both products:
 | Product | ID | productId | Period | State |
 |---------|----|-----------|--------|-------|
 | Weekly Premium | `6767547687` | `com.gazetastreet.freshcheck.weekly` | ONE_WEEK | MISSING_METADATA |
+| Monthly Premium | `6767555220` | `com.gazetastreet.freshcheck.monthly` | ONE_MONTH | MISSING_METADATA |
 | Annual Premium | `6767547362` | `com.gazetastreet.freshcheck.annual` | ONE_YEAR | MISSING_METADATA |
 
 Subscription Group ID: `22075425` (referenceName "FreshCheck Pro", localized name "FreshCheck Pro" en-US ✅).

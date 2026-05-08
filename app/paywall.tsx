@@ -22,7 +22,7 @@ import { startTrial, restorePurchases } from '@/src/lib/adapty';
 import { LEGAL } from '@/constants/legal';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
-type Plan = 'weekly' | 'annual';
+type Plan = 'weekly' | 'monthly' | 'annual';
 
 const FEATURES: { icon: React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>; title: string; body: string }[] = [
   { icon: BarcodeScanner, title: 'Unlimited scans', body: 'Scan as many items as you want, no daily cap.' },
@@ -87,11 +87,12 @@ export default function PaywallScreen() {
     Linking.openURL(url).catch((e) => Alert.alert('Could not open link', String(e)));
   };
 
-  const ctaLabel = plan === 'annual' ? 'Start 3-day free trial' : 'Start 3-day free trial';
-  const fineprint =
-    plan === 'annual'
-      ? 'First 3 days free, then $39.99 / year. Auto-renews unless cancelled at least 24 hours before period end.'
-      : 'First 3 days free, then $6.99 / week. Auto-renews unless cancelled at least 24 hours before period end.';
+  const ctaLabel = 'Start 3-day free trial';
+  const fineprint = (() => {
+    if (plan === 'annual') return 'First 3 days free, then $39.99 / year. Auto-renews unless cancelled at least 24 hours before period end.';
+    if (plan === 'monthly') return 'First 3 days free, then $14.99 / month. Auto-renews unless cancelled at least 24 hours before period end.';
+    return 'First 3 days free, then $6.99 / week. Auto-renews unless cancelled at least 24 hours before period end.';
+  })();
 
   return (
     <View style={styles.root}>
@@ -150,7 +151,7 @@ export default function PaywallScreen() {
           ))}
         </View>
 
-        {/* Plans */}
+        {/* Plans — annual default, monthly decoy, weekly impulse */}
         <View style={styles.plansBlock}>
           <PlanCard
             value="annual"
@@ -163,11 +164,20 @@ export default function PaywallScreen() {
             onPress={() => setPlan('annual')}
           />
           <PlanCard
+            value="monthly"
+            label="Monthly"
+            price="$14.99"
+            unit="/ month"
+            sublabel="Flexible — cancel anytime"
+            active={plan === 'monthly'}
+            onPress={() => setPlan('monthly')}
+          />
+          <PlanCard
             value="weekly"
             label="Weekly"
             price="$6.99"
             unit="/ week"
-            sublabel="Cancel anytime"
+            sublabel="Just trying it out"
             active={plan === 'weekly'}
             onPress={() => setPlan('weekly')}
           />
