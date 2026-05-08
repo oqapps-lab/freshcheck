@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet, Alert } from 'react-native';
+import { View, Text, ScrollView, Pressable, StyleSheet, Alert, Linking } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -18,9 +18,11 @@ import {
   History,
   Check,
 } from '@/components/ui/Glyphs';
+import { startTrial, restorePurchases } from '@/src/lib/adapty';
+import { LEGAL } from '@/constants/legal';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
-type Plan = 'monthly' | 'yearly';
+type Plan = 'weekly' | 'annual';
 
 const FEATURES: { icon: React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>; title: string; body: string }[] = [
   { icon: BarcodeScanner, title: 'Unlimited scans', body: 'Scan as many items as you want, no daily cap.' },
@@ -32,20 +34,64 @@ const FEATURES: { icon: React.ComponentType<{ size?: number; color?: string; str
 export default function PaywallScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const [plan, setPlan] = useState<Plan>('yearly');
+  const [plan, setPlan] = useState<Plan>('annual');
+  const [busy, setBusy] = useState(false);
 
-  const onStart = () => {
+  const onStart = async () => {
+    if (busy) return;
     Haptics.selectionAsync().catch(() => {});
-    Alert.alert(
-      'Start free trial',
-      `7 days free, then ${plan === 'yearly' ? '$39.99 / year' : '$4.99 / month'}.\n\nReal billing is not wired up in this build.`,
-    );
+    setBusy(true);
+    try {
+      const r = await startTrial({ plan });
+      if (r.ok) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+        Alert.alert('Welcome to Pro', 'Your free trial has started. Enjoy unlimited scans!');
+        router.back();
+      } else if (r.error === 'cancelled') {
+        // user-cancelled → no toast
+      } else if (r.error === 'pending') {
+        Alert.alert('Awaiting approval', 'Your purchase is pending Apple ID approval.');
+      } else if (r.error === 'adapty-not-configured' || r.error === 'adapty-sdk-missing') {
+        // SDK already shows its own alert
+      } else {
+        Alert.alert('Purchase failed', r.error ?? 'Unknown error');
+      }
+    } finally {
+      setBusy(false);
+    }
   };
 
-  const onRestore = () => {
+  const onRestore = async () => {
+    if (busy) return;
     Haptics.selectionAsync().catch(() => {});
-    Alert.alert('Restore purchases', 'Coming soon.');
+    setBusy(true);
+    try {
+      const r = await restorePurchases();
+      if (r.ok) {
+        Alert.alert('Restored', 'Your subscription is active again.');
+        router.back();
+      } else if (r.error === 'no-active-subscription') {
+        Alert.alert('Nothing to restore', 'No active subscription was found on this Apple ID.');
+      } else if (r.error === 'adapty-not-configured' || r.error === 'adapty-sdk-missing') {
+        // SDK already shows its own alert
+      } else {
+        Alert.alert('Restore failed', r.error ?? 'Unknown error');
+      }
+    } finally {
+      setBusy(false);
+    }
   };
+
+  const openUrl = (url: string) => {
+    Haptics.selectionAsync().catch(() => {});
+    Linking.openURL(url).catch((e) => Alert.alert('Could not open link', String(e)));
+  };
+
+  const ctaLabel = plan === 'annual' ? 'Start 3-day free trial' : 'Start 3-day free trial';
+  const fineprint =
+    plan === 'annual'
+      ? 'First 3 days free, then $39.99 / year. Auto-renews unless cancelled at least 24 hours before period end.'
+      : 'First 3 days free, then $6.99 / week. Auto-renews unless cancelled at least 24 hours before period end.';
 
   return (
     <View style={styles.root}>
@@ -73,7 +119,7 @@ export default function PaywallScreen() {
             Unlock FreshCheck Pro
           </Text>
           <Text style={[typeScale.body, styles.subtitle]}>
-            Stop guessing. Track every item, every recipe, every reminder — for less than a coffee a month.
+            Stop guessing. Track every item, every recipe, every reminder — for less than a coffee a week.
           </Text>
         </View>
 
@@ -107,39 +153,47 @@ export default function PaywallScreen() {
         {/* Plans */}
         <View style={styles.plansBlock}>
           <PlanCard
-            value="yearly"
-            label="Yearly"
+            value="annual"
+            label="Annual"
             price="$39.99"
             unit="/ year"
-            badge="BEST VALUE"
-            sublabel="Just $3.33 / month, billed yearly"
-            active={plan === 'yearly'}
-            onPress={() => setPlan('yearly')}
+            badge="SAVE 89%"
+            sublabel="Just $0.77 / week, billed yearly"
+            active={plan === 'annual'}
+            onPress={() => setPlan('annual')}
           />
           <PlanCard
-            value="monthly"
-            label="Monthly"
-            price="$4.99"
-            unit="/ month"
+            value="weekly"
+            label="Weekly"
+            price="$6.99"
+            unit="/ week"
             sublabel="Cancel anytime"
-            active={plan === 'monthly'}
-            onPress={() => setPlan('monthly')}
+            active={plan === 'weekly'}
+            onPress={() => setPlan('weekly')}
           />
         </View>
 
         {/* CTA */}
         <View style={styles.ctaBlock}>
           <PrimaryPillCTA
-            label="Start 7-day free trial"
+            label={ctaLabel}
             onPress={onStart}
             iconLeft={<Zap size={22} color={colors.amber} strokeWidth={2.2} />}
           />
           <GhostText label="Restore purchase" onPress={onRestore} />
         </View>
 
-        <Text style={[typeScale.bodySmall, styles.fineprint]}>
-          7 days free, then your selected plan auto-renews. Cancel anytime in your App Store settings.
-        </Text>
+        {/* Apple 3.1.2(c) — actual price + period prominent, plus links */}
+        <Text style={[typeScale.bodySmall, styles.fineprint]}>{fineprint}</Text>
+        <View style={styles.legalRow}>
+          <Pressable onPress={() => openUrl(LEGAL.termsOfUse)} accessibilityRole="link">
+            <Text style={[typeScale.bodySmall, styles.legalLink]}>Terms of Use</Text>
+          </Pressable>
+          <Text style={[typeScale.bodySmall, styles.legalDot]}>·</Text>
+          <Pressable onPress={() => openUrl(LEGAL.privacyPolicy)} accessibilityRole="link">
+            <Text style={[typeScale.bodySmall, styles.legalLink]}>Privacy Policy</Text>
+          </Pressable>
+        </View>
       </ScrollView>
     </View>
   );
@@ -376,5 +430,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     lineHeight: 18,
     marginTop: spacing.lg,
+  },
+  legalRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.xs,
+    marginTop: spacing.sm,
+  },
+  legalLink: {
+    color: colors.inkSecondary,
+    textDecorationLine: 'underline',
+  },
+  legalDot: {
+    color: colors.inkMuted,
   },
 });

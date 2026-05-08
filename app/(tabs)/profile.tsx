@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet, Alert } from 'react-native';
+import { View, Text, ScrollView, Pressable, StyleSheet, Alert, Linking } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -7,15 +7,11 @@ import { SoftSurface } from '@/components/ui/SoftSurface';
 import { Chevron, User } from '@/components/ui/Glyphs';
 import { useFridge } from '@/src/hooks/useFridge';
 import { useAuth } from '@/src/hooks/useAuth';
+import { restorePurchases, logoutAdaptyUser } from '@/src/lib/adapty';
+import { getSupabase } from '@/src/lib/supabase';
+import { LEGAL } from '@/constants/legal';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
-/**
- * Profile — basic settings shell. Placeholder rows give the screen real
- * structure (avatar header + 3 sectioned card stacks) until the real
- * Stitch HTML lands. Everything is read-only / no-op except the header
- * back-buttons; tapping a row toasts a "coming soon" alert so the user
- * can tell the surface is alive even pre-feature-build.
- */
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
@@ -23,10 +19,6 @@ export default function ProfileScreen() {
   const { user, signOut } = useAuth();
   const signedIn = !!user;
 
-  const comingSoon = (label: string) => {
-    Haptics.selectionAsync().catch(() => {});
-    Alert.alert(label, 'Coming soon.');
-  };
   const onSignInOrOut = () => {
     Haptics.selectionAsync().catch(() => {});
     if (signedIn) {
@@ -36,7 +28,9 @@ export default function ProfileScreen() {
           text: 'Sign out',
           style: 'destructive',
           onPress: () => {
-            void signOut();
+            void logoutAdaptyUser().finally(() => {
+              void signOut();
+            });
           },
         },
       ]);
@@ -45,13 +39,77 @@ export default function ProfileScreen() {
     }
   };
 
+  const onRestore = async () => {
+    Haptics.selectionAsync().catch(() => {});
+    const r = await restorePurchases();
+    if (r.ok) {
+      Alert.alert('Restored', 'Your subscription is active again.');
+    } else if (r.error === 'no-active-subscription') {
+      Alert.alert('Nothing to restore', 'No active subscription was found on this Apple ID.');
+    } else if (r.error === 'adapty-not-configured' || r.error === 'adapty-sdk-missing') {
+      // SDK already shows its own alert
+    } else {
+      Alert.alert('Restore failed', r.error ?? 'Unknown error');
+    }
+  };
+
+  const openUrl = (url: string) => {
+    Haptics.selectionAsync().catch(() => {});
+    Linking.openURL(url).catch((e) => {
+      Alert.alert('Could not open link', String(e));
+    });
+  };
+
+  const onDeleteAccount = () => {
+    Haptics.selectionAsync().catch(() => {});
+    Alert.alert(
+      'Delete account',
+      'This permanently deletes your account, fridge items, scans, and saved recipes. This cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+            // Second confirmation — App Store reviewers expect a deliberate two-step flow.
+            Alert.alert(
+              'Are you sure?',
+              'Type-and-tap is not required, but this is your last chance to cancel.',
+              [
+                { text: 'Keep account', style: 'cancel' },
+                {
+                  text: 'Yes, delete',
+                  style: 'destructive',
+                  onPress: () => {
+                    void runDelete();
+                  },
+                },
+              ],
+            );
+          },
+        },
+      ],
+    );
+  };
+
+  const runDelete = async () => {
+    const supabase = getSupabase();
+    if (!supabase) {
+      Alert.alert('Not signed in', 'Please sign in first.');
+      return;
+    }
+    const { data, error } = await supabase.functions.invoke('delete-account', { body: {} });
+    if (error || (data && data.ok === false)) {
+      Alert.alert('Deletion failed', error?.message ?? data?.error ?? 'Try again or contact support.');
+      return;
+    }
+    await logoutAdaptyUser().catch(() => {});
+    await signOut();
+    Alert.alert('Account deleted', 'Your account and data have been removed.');
+  };
+
   return (
     <View style={styles.root}>
-      {/* Profile is a top-level tab — no nav drawer to open and no
-          back stack to pop. A bare centred wordmark matches the
-          scan-tab pattern instead of the home/fridge "menu+settings"
-          frame, which lived on those screens because they navigated
-          to Profile via the hamburger/cog. */}
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <Text style={[typeScale.wordmark, styles.headerWordmark]}>FRESHCHECK</Text>
       </View>
@@ -76,11 +134,6 @@ export default function ProfileScreen() {
           </Text>
         </View>
 
-        {/* Summary stat — only meaningful once the user is signed in.
-            For guests the count would reflect the in-memory mock fixtures
-            (smoke-test 2026-04-28 saw "6 ITEMS IN FRIDGE" against a
-            "Guest / NOT SIGNED IN" header), which contradicts the
-            account state. Hide for guests. */}
         {signedIn ? (
           <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.statCard}>
             <Text style={[typeScale.numberLarge, styles.statNum]}>{summary.total}</Text>
@@ -94,6 +147,16 @@ export default function ProfileScreen() {
           <Row label={signedIn ? 'Sign out' : 'Sign in'} onPress={onSignInOrOut} />
           <Hairline />
           <RowStatic label="Email" value={user?.email ?? '—'} />
+          {signedIn ? (
+            <>
+              <Hairline />
+              <Row
+                label="Delete account"
+                onPress={onDeleteAccount}
+                tone="destructive"
+              />
+            </>
+          ) : null}
         </SoftSurface>
 
         {/* PRO section */}
@@ -101,32 +164,42 @@ export default function ProfileScreen() {
         <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cardStack}>
           <Row label="Upgrade to FreshCheck Pro" onPress={() => router.push('/paywall')} />
           <Hairline />
-          <Row label="Restore purchase" onPress={() => comingSoon('Restore purchase')} />
+          <Row label="Restore purchase" onPress={onRestore} />
         </SoftSurface>
 
         {/* PREFERENCES section */}
         <Text style={[typeScale.label, styles.sectionLabel]}>PREFERENCES</Text>
         <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cardStack}>
-          <Row label="Notifications" onPress={() => comingSoon('Notifications')} />
+          <Row label="Notifications" onPress={() => Alert.alert('Notifications', 'Coming soon.')} />
           <Hairline />
-          <Row label="Expiry warnings" onPress={() => comingSoon('Expiry warnings')} />
+          <Row label="Expiry warnings" onPress={() => Alert.alert('Expiry warnings', 'Coming soon.')} />
         </SoftSurface>
 
         {/* ABOUT section */}
         <Text style={[typeScale.label, styles.sectionLabel]}>ABOUT</Text>
         <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cardStack}>
-          <Row label="Privacy policy" onPress={() => comingSoon('Privacy policy')} />
+          <Row label="Privacy policy" onPress={() => openUrl(LEGAL.privacyPolicy)} />
           <Hairline />
-          <Row label="Terms of service" onPress={() => comingSoon('Terms of service')} />
+          <Row label="Terms of service" onPress={() => openUrl(LEGAL.termsOfUse)} />
           <Hairline />
-          <RowStatic label="Version" value="0.1.0" />
+          <Row label="Support" onPress={() => openUrl(LEGAL.support)} />
+          <Hairline />
+          <RowStatic label="Version" value="0.2.0" />
         </SoftSurface>
       </ScrollView>
     </View>
   );
 }
 
-function Row({ label, onPress }: { label: string; onPress: () => void }) {
+function Row({
+  label,
+  onPress,
+  tone,
+}: {
+  label: string;
+  onPress: () => void;
+  tone?: 'default' | 'destructive';
+}) {
   return (
     <Pressable
       accessibilityRole="button"
@@ -134,7 +207,14 @@ function Row({ label, onPress }: { label: string; onPress: () => void }) {
       onPress={onPress}
       style={({ pressed }) => [styles.row, { opacity: pressed ? 0.7 : 1 }]}
     >
-      <Text style={[typeScale.titleMedium, { color: colors.ink }]}>{label}</Text>
+      <Text
+        style={[
+          typeScale.titleMedium,
+          { color: tone === 'destructive' ? colors.red : colors.ink },
+        ]}
+      >
+        {label}
+      </Text>
       <Chevron size={18} color={colors.inkMuted} />
     </Pressable>
   );

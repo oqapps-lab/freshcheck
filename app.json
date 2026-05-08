@@ -2,7 +2,7 @@
   "expo": {
     "name": "FreshCheck",
     "slug": "freshcheck",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "freshcheck",
@@ -17,13 +17,17 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.gazetastreet.freshcheck",
+      "buildNumber": "1",
       "infoPlist": {
         "NSCameraUsageDescription": "FreshCheck uses the camera to check the freshness of your food.",
-        "NSPhotoLibraryUsageDescription": "FreshCheck can analyze photos from your library to check food freshness."
+        "NSPhotoLibraryUsageDescription": "FreshCheck can analyze photos from your library to check food freshness.",
+        "NSUserTrackingUsageDescription": "FreshCheck uses your device identifier to measure ad performance and improve our recommendations.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
       "package": "com.gazetastreet.freshcheck",
+      "versionCode": 2,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#15803d"
@@ -32,6 +36,15 @@
     },
     "plugins": [
       "expo-router",
+      "expo-dev-client",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "15.0"
+          }
+        }
+      ],
       [
         "expo-camera",
         {
@@ -44,7 +57,8 @@
           "icon": "./assets/images/adaptive-icon.png",
           "color": "#15803d"
         }
-      ]
+      ],
+      ["react-native-adapty", { "replaceAndroidBackupConfig": true }]
     ],
     "experiments": {
       "typedRoutes": true

@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -10,6 +10,8 @@ import { PrimaryPillCTA } from '@/components/ui/PrimaryPillCTA';
 import { Sparkle } from '@/components/ui/Glyphs';
 import { spacing, typeScale } from '@/constants/tokens';
 import { safeStorage } from '@/src/lib/safeStorage';
+import { activateAdaptyIfNeeded, identifyAdaptyUser, logoutAdaptyUser } from '@/src/lib/adapty';
+import { useAuth } from '@/src/hooks/useAuth';
 import {
   useFonts,
   Quicksand_300Light,
@@ -40,6 +42,23 @@ function FirstRunRedirect() {
       cancelled = true;
     };
   }, [router]);
+  return null;
+}
+
+// Activates Adapty once at root mount and keeps customerUserId in sync
+// with the Supabase session. Renders nothing.
+function AdaptyBoot() {
+  const { user } = useAuth();
+  useEffect(() => {
+    void activateAdaptyIfNeeded();
+  }, []);
+  useEffect(() => {
+    if (user?.id) {
+      void identifyAdaptyUser(user.id);
+    } else {
+      void logoutAdaptyUser();
+    }
+  }, [user?.id]);
   return null;
 }
 
@@ -118,6 +137,7 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <StatusBar style="dark" />
         <FirstRunRedirect />
+        <AdaptyBoot />
         <Stack
           screenOptions={{
             headerShown: false,
