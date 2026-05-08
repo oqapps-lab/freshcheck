@@ -1,6 +1,38 @@
-# IAP Pricing — Manual UI Step
+# IAP Pricing — DONE via API ✅
 
-Apple's `/v1/subscriptionPrices` endpoint returns 409 `ENTITY_ERROR.RELATIONSHIP.INVALID` for valid price point IDs (well-known Apple quirk — pricing API ≠ feature-complete). The 30-second UI step:
+> Done 2026-05-08 via API. Initial 409 was misleading — Apple actually wants
+> `subscriptionAvailabilities` POST'd FIRST (not documented well), then
+> `subscriptionPrices` POST works without `startDate` for the initial price.
+> Subsequent price changes need `startDate >= tomorrow`.
+>
+> The order that worked:
+> 1. POST `/v1/subscriptionAvailabilities` for each subscription (sets allowed
+>    territories) — `availableInNewTerritories: true` + USA in `availableTerritories`
+> 2. POST `/v1/subscriptionPrices` for each — relationships only, no startDate
+> 3. POST `/v1/subscriptionIntroductoryOffers` for each — duration THREE_DAYS,
+>    offerMode FREE_TRIAL, USA territory
+>
+> Original "manual UI step" rationale below kept for historical record.
+
+## What's set now (verified 2026-05-08)
+
+- **Weekly** `com.gazetastreet.freshcheck.weekly` — $6.99/wk USA + 3-day free trial ✅
+- **Monthly** `com.gazetastreet.freshcheck.monthly` — $14.99/mo USA + 3-day free trial ✅
+- **Annual** `com.gazetastreet.freshcheck.annual` — $39.99/yr USA + 3-day free trial ✅
+
+Apple auto-priced all other 174 territories from USA base. T2 markets (India,
+Indonesia, Brazil, Mexico, Turkey) get default Apple-translated values, NOT the
+50%-off pricing-strategy recommendation. To customize T2 pricing manually, use
+ASC UI per-territory OR re-run the API with explicit territory price points.
+
+## Remaining manual steps (only when ready to submit for review)
+
+- [ ] Upload review screenshot for each subscription product (ASC requires for review)
+- [ ] Submit alongside first app version (subscriptions can't be standalone-reviewed)
+
+---
+
+## Original (now-stale) instructions kept for reference
 
 ## Step 1 — Set base price
 
