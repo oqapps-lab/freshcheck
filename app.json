@@ -24,7 +24,9 @@
         "NSPhotoLibraryUsageDescription": "FreshCheck can analyze photos from your library to check food freshness.",
         "NSUserTrackingUsageDescription": "FreshCheck uses your device identifier to measure ad performance and improve our recommendations.",
         "ITSAppUsesNonExemptEncryption": false,
-        "UIBackgroundModes": ["remote-notification"]
+        "UIBackgroundModes": [
+          "remote-notification"
+        ]
       }
     },
     "android": {
@@ -35,7 +37,11 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#15803d"
       },
-      "permissions": ["android.permission.CAMERA", "android.permission.POST_NOTIFICATIONS"]
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "plugins": [
       "expo-router",
@@ -62,13 +68,30 @@
           "color": "#15803d"
         }
       ],
-      ["react-native-adapty", { "replaceAndroidBackupConfig": true }],
-      ["react-native-appsflyer", { "shouldUseStrictMode": true }],
+      [
+        "react-native-adapty",
+        {
+          "replaceAndroidBackupConfig": true
+        }
+      ],
+      [
+        "react-native-appsflyer",
+        {
+          "shouldUseStrictMode": true
+        }
+      ],
       "@react-native-firebase/app",
       "@react-native-firebase/crashlytics"
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "5ad2a528-532b-47f9-939b-46c508643ada"
+      }
+    },
+    "owner": "gazetastreet"
   }
 }
