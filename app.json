@@ -18,21 +18,24 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.gazetastreet.freshcheck",
       "buildNumber": "1",
+      "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "NSCameraUsageDescription": "FreshCheck uses the camera to check the freshness of your food.",
         "NSPhotoLibraryUsageDescription": "FreshCheck can analyze photos from your library to check food freshness.",
         "NSUserTrackingUsageDescription": "FreshCheck uses your device identifier to measure ad performance and improve our recommendations.",
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "UIBackgroundModes": ["remote-notification"]
       }
     },
     "android": {
       "package": "com.gazetastreet.freshcheck",
       "versionCode": 2,
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#15803d"
       },
-      "permissions": ["android.permission.CAMERA"]
+      "permissions": ["android.permission.CAMERA", "android.permission.POST_NOTIFICATIONS"]
     },
     "plugins": [
       "expo-router",
@@ -59,7 +62,9 @@
         }
       ],
       ["react-native-adapty", { "replaceAndroidBackupConfig": true }],
-      ["react-native-appsflyer", { "shouldUseStrictMode": true }]
+      ["react-native-appsflyer", { "shouldUseStrictMode": true }],
+      "@react-native-firebase/app",
+      "@react-native-firebase/crashlytics"
     ],
     "experiments": {
       "typedRoutes": true
