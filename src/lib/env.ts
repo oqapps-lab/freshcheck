@@ -17,10 +17,6 @@ export const env = {
     process.env.EXPO_PUBLIC_APPSFLYER_DEV_KEY ?? extra.appsflyerDevKey ?? '',
   appleAppId:
     process.env.EXPO_PUBLIC_APPLE_APP_ID ?? extra.appleAppId ?? '',
-  posthogKey:
-    process.env.EXPO_PUBLIC_POSTHOG_KEY ?? extra.posthogKey ?? '',
-  posthogHost:
-    process.env.EXPO_PUBLIC_POSTHOG_HOST ?? extra.posthogHost ?? 'https://us.i.posthog.com',
 };
 
 export const isSupabaseConfigured = () =>
@@ -29,5 +25,3 @@ export const isSupabaseConfigured = () =>
 export const isAdaptyConfigured = () => env.adaptyPublicKey.length > 0;
 
 export const isAppsFlyerConfigured = () => env.appsflyerDevKey.length > 0;
-
-export const isPostHogConfigured = () => env.posthogKey.length > 0;

@@ -12,7 +12,6 @@ import { spacing, typeScale } from '@/constants/tokens';
 import { safeStorage } from '@/src/lib/safeStorage';
 import { activateAdaptyIfNeeded, identifyAdaptyUser, logoutAdaptyUser } from '@/src/lib/adapty';
 import { initAppsFlyerWithATT, setAppsFlyerCustomerId } from '@/src/lib/appsflyer';
-import { bootPostHog, identifyPostHogUser, resetPostHogUser } from '@/src/lib/posthog';
 import { bootFirebase, setFirebaseUser, resetFirebaseUser } from '@/src/lib/firebase';
 import { useAuth } from '@/src/hooks/useAuth';
 import {
@@ -58,7 +57,6 @@ function VendorBoot() {
   const { user } = useAuth();
   useEffect(() => {
     void activateAdaptyIfNeeded();
-    void bootPostHog();
     void bootFirebase();
     const t = setTimeout(() => {
       void initAppsFlyerWithATT();
@@ -69,11 +67,9 @@ function VendorBoot() {
     if (user?.id) {
       void identifyAdaptyUser(user.id);
       setAppsFlyerCustomerId(user.id);
-      identifyPostHogUser(user.id, { email: user.email ?? undefined });
       void setFirebaseUser(user.id, { email: user.email ?? undefined });
     } else {
       void logoutAdaptyUser();
-      resetPostHogUser();
       void resetFirebaseUser();
     }
   }, [user?.id, user?.email]);
