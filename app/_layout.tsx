@@ -12,6 +12,7 @@ import { spacing, typeScale } from '@/constants/tokens';
 import { safeStorage } from '@/src/lib/safeStorage';
 import { activateAdaptyIfNeeded, identifyAdaptyUser, logoutAdaptyUser } from '@/src/lib/adapty';
 import { initAppsFlyerWithATT, setAppsFlyerCustomerId } from '@/src/lib/appsflyer';
+import { bootPostHog, identifyPostHogUser, resetPostHogUser } from '@/src/lib/posthog';
 import { useAuth } from '@/src/hooks/useAuth';
 import {
   useFonts,
@@ -56,6 +57,7 @@ function VendorBoot() {
   const { user } = useAuth();
   useEffect(() => {
     void activateAdaptyIfNeeded();
+    void bootPostHog();
     const t = setTimeout(() => {
       void initAppsFlyerWithATT();
     }, 600);
@@ -65,10 +67,12 @@ function VendorBoot() {
     if (user?.id) {
       void identifyAdaptyUser(user.id);
       setAppsFlyerCustomerId(user.id);
+      identifyPostHogUser(user.id, { email: user.email ?? undefined });
     } else {
       void logoutAdaptyUser();
+      resetPostHogUser();
     }
-  }, [user?.id]);
+  }, [user?.id, user?.email]);
   return null;
 }
 
