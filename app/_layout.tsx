@@ -11,6 +11,7 @@ import { Sparkle } from '@/components/ui/Glyphs';
 import { spacing, typeScale } from '@/constants/tokens';
 import { safeStorage } from '@/src/lib/safeStorage';
 import { activateAdaptyIfNeeded, identifyAdaptyUser, logoutAdaptyUser } from '@/src/lib/adapty';
+import { initAppsFlyerWithATT, setAppsFlyerCustomerId } from '@/src/lib/appsflyer';
 import { useAuth } from '@/src/hooks/useAuth';
 import {
   useFonts,
@@ -45,16 +46,25 @@ function FirstRunRedirect() {
   return null;
 }
 
-// Activates Adapty once at root mount and keeps customerUserId in sync
-// with the Supabase session. Renders nothing.
-function AdaptyBoot() {
+// Activates Adapty + AppsFlyer once at root mount and keeps the
+// customerUserId in sync with the Supabase session. Renders nothing.
+//
+// AppsFlyer init is deferred ~600ms so the first screen renders before
+// iOS shows the ATT prompt — Apple wants the prompt to come after a
+// user-facing context, not at cold launch.
+function VendorBoot() {
   const { user } = useAuth();
   useEffect(() => {
     void activateAdaptyIfNeeded();
+    const t = setTimeout(() => {
+      void initAppsFlyerWithATT();
+    }, 600);
+    return () => clearTimeout(t);
   }, []);
   useEffect(() => {
     if (user?.id) {
       void identifyAdaptyUser(user.id);
+      setAppsFlyerCustomerId(user.id);
     } else {
       void logoutAdaptyUser();
     }
@@ -137,7 +147,7 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <StatusBar style="dark" />
         <FirstRunRedirect />
-        <AdaptyBoot />
+        <VendorBoot />
         <Stack
           screenOptions={{
             headerShown: false,

@@ -58,7 +58,8 @@
           "color": "#15803d"
         }
       ],
-      ["react-native-adapty", { "replaceAndroidBackupConfig": true }]
+      ["react-native-adapty", { "replaceAndroidBackupConfig": true }],
+      ["react-native-appsflyer", { "shouldUseStrictMode": true }]
     ],
     "experiments": {
       "typedRoutes": true
