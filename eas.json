@@ -28,6 +28,7 @@
     },
     "production": {
       "autoIncrement": true,
+      "credentialsSource": "local",
       "cache": {
         "disabled": true
       },
