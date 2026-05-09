@@ -68,18 +68,6 @@
           "color": "#15803d"
         }
       ],
-      [
-        "react-native-adapty",
-        {
-          "replaceAndroidBackupConfig": true
-        }
-      ],
-      [
-        "react-native-appsflyer",
-        {
-          "shouldUseStrictMode": true
-        }
-      ],
       "@react-native-firebase/app",
       "@react-native-firebase/crashlytics",
       "./plugins/with-modular-headers-fix.js"
