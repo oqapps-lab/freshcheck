@@ -28,6 +28,9 @@
     },
     "production": {
       "autoIncrement": true,
+      "cache": {
+        "disabled": true
+      },
       "ios": {
         "resourceClass": "m-medium"
       }
