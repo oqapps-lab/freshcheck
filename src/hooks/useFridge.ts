@@ -73,8 +73,10 @@ export function useFridge() {
   const refresh = useCallback(async () => {
     setError(null);
     if (!supabase || !user) {
-      // Fallback to mocks while unauthenticated / unconfigured.
-      setItems(mockFridge.map(fromMock));
+      // Signed-out / unconfigured: real users see an empty fridge with the
+      // sign-in CTA. Mock data was masking actual state and would have shipped
+      // 6 phantom items to App Reviewers viewing a guest session.
+      setItems(__DEV__ && !supabase ? mockFridge.map(fromMock) : []);
       setLoading(false);
       return;
     }
@@ -85,8 +87,12 @@ export function useFridge() {
       .eq('user_id', user.id)
       .order('days_left', { ascending: true });
     if (err) {
+      // Surface the real error instead of swapping in mocks — the user needs
+      // to know something failed (network, RLS, etc.) so they can recover
+      // (sign out / retry) rather than seeing fake fixtures as if they were
+      // theirs.
       setError(err.message);
-      setItems(mockFridge.map(fromMock));
+      setItems([]);
     } else {
       setItems((data ?? []).map(fromRow));
     }

@@ -1,12 +1,14 @@
 import React from 'react';
 import { View, Text, ScrollView, Pressable, StyleSheet, Alert, Linking } from 'react-native';
 import * as Haptics from 'expo-haptics';
+import Constants from 'expo-constants';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { SoftSurface } from '@/components/ui/SoftSurface';
 import { Chevron, User } from '@/components/ui/Glyphs';
 import { useFridge } from '@/src/hooks/useFridge';
 import { useAuth } from '@/src/hooks/useAuth';
+import { usePremium } from '@/src/hooks/usePremium';
 import { restorePurchases, logoutAdaptyUser } from '@/src/lib/adapty';
 import { getSupabase } from '@/src/lib/supabase';
 import { LEGAL } from '@/constants/legal';
@@ -18,6 +20,7 @@ export default function ProfileScreen() {
   const { summary } = useFridge();
   const { user, signOut } = useAuth();
   const signedIn = !!user;
+  const isPremium = usePremium();
 
   const onSignInOrOut = () => {
     Haptics.selectionAsync().catch(() => {});
@@ -141,14 +144,15 @@ export default function ProfileScreen() {
           </SoftSurface>
         ) : null}
 
-        {/* ACCOUNT section */}
+        {/* ACCOUNT section — Email + Delete only render when signed in
+            (no point showing "Email —" to a guest). */}
         <Text style={[typeScale.label, styles.sectionLabel]}>ACCOUNT</Text>
         <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cardStack}>
           <Row label={signedIn ? 'Sign out' : 'Sign in'} onPress={onSignInOrOut} />
-          <Hairline />
-          <RowStatic label="Email" value={user?.email ?? '—'} />
-          {signedIn ? (
+          {signedIn && user?.email ? (
             <>
+              <Hairline />
+              <RowStatic label="Email" value={user.email} />
               <Hairline />
               <Row
                 label="Delete account"
@@ -159,23 +163,33 @@ export default function ProfileScreen() {
           ) : null}
         </SoftSurface>
 
-        {/* PRO section */}
+        {/* PRO section — show "Active" state when user already has a subscription
+            so we don't display "Upgrade" to a paying customer (Apple Review flag). */}
         <Text style={[typeScale.label, styles.sectionLabel]}>PRO</Text>
         <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cardStack}>
-          <Row label="Upgrade to FreshCheck Pro" onPress={() => router.push('/paywall')} />
-          <Hairline />
-          <Row label="Restore purchase" onPress={onRestore} />
+          {isPremium ? (
+            <>
+              <RowStatic label="FreshCheck Pro" value="Active" />
+              <Hairline />
+              <Row
+                label="Manage subscription"
+                onPress={() =>
+                  Linking.openURL('https://apps.apple.com/account/subscriptions').catch(() => {})
+                }
+              />
+            </>
+          ) : (
+            <>
+              <Row label="Upgrade to FreshCheck Pro" onPress={() => router.push('/paywall')} />
+              <Hairline />
+              <Row label="Restore purchase" onPress={onRestore} />
+            </>
+          )}
         </SoftSurface>
 
-        {/* PREFERENCES section */}
-        <Text style={[typeScale.label, styles.sectionLabel]}>PREFERENCES</Text>
-        <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cardStack}>
-          <Row label="Notifications" onPress={() => Alert.alert('Notifications', 'Coming soon.')} />
-          <Hairline />
-          <Row label="Expiry warnings" onPress={() => Alert.alert('Expiry warnings', 'Coming soon.')} />
-        </SoftSurface>
-
-        {/* ABOUT section */}
+        {/* ABOUT section — Notifications/Expiry warnings rows removed; the
+            features ARE wired (refreshExpiryReminders runs from useFridge) but
+            the rows said "Coming soon" which contradicted real behaviour. */}
         <Text style={[typeScale.label, styles.sectionLabel]}>ABOUT</Text>
         <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cardStack}>
           <Row label="Privacy policy" onPress={() => openUrl(LEGAL.privacyPolicy)} />
@@ -184,7 +198,7 @@ export default function ProfileScreen() {
           <Hairline />
           <Row label="Support" onPress={() => openUrl(LEGAL.support)} />
           <Hairline />
-          <RowStatic label="Version" value="0.2.0" />
+          <RowStatic label="Version" value={Constants.expoConfig?.version ?? '0.2.0'} />
         </SoftSurface>
       </ScrollView>
     </View>

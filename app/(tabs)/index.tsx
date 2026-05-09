@@ -31,13 +31,7 @@ export default function HomeScreen() {
           { paddingTop: insets.top + 16 },
         ]}
       >
-        <IconButton accessibilityLabel="menu" onPress={() => router.replace('/(tabs)/profile')}>
-          <Menu size={20} color={colors.ink} />
-        </IconButton>
         <Text style={[typeScale.wordmark, { color: colors.inkSecondary }]}>FRESHCHECK</Text>
-        <IconButton accessibilityLabel="settings" onPress={() => router.replace('/(tabs)/profile')}>
-          <Settings size={20} color={colors.ink} />
-        </IconButton>
       </View>
       <ScrollView
         contentContainerStyle={styles.scroll}
