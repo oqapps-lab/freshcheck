@@ -1,0 +1,47 @@
+{
+  "cli": {
+    "version": ">= 18.8.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": {
+        "simulator": false,
+        "resourceClass": "m-medium"
+      }
+    },
+    "development-simulator": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": {
+        "simulator": true,
+        "resourceClass": "m-medium"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "ios": {
+        "resourceClass": "m-medium"
+      }
+    },
+    "production": {
+      "autoIncrement": true,
+      "ios": {
+        "resourceClass": "m-medium"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "appleTeamId": "6Y6BFVDS4L",
+        "ascAppId": "6767547114",
+        "ascApiKeyPath": "/Users/evgenij/.appstoreconnect/private_keys/AuthKey_787835NFD8.p8",
+        "ascApiKeyId": "787835NFD8",
+        "ascApiKeyIssuerId": "2f01e90d-40ee-4f1d-9a37-651713378b40"
+      }
+    }
+  }
+}

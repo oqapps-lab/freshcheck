@@ -1,51 +1,156 @@
-import { Alert } from 'react-native';
-import { isAdaptyConfigured } from './env';
+// Adapty subscription wrapper.
+//
+// react-native-adapty is a native module → only available in dev-client / EAS
+// builds, NOT in Expo Go. We `require()` it dynamically inside try/catch so
+// the module evaluates safely under Expo Go (where the import would crash at
+// bundle-eval time) and the stub messages still fire.
+//
+// Activate flow (called once from app/_layout.tsx on root mount):
+//   activateAdaptyIfNeeded()  → adapty.activate(publicKey, opts)
+//   identifyAdaptyUser(uid)   → adapty.identify(uid)        (after sign-in)
+//   logoutAdaptyUser()        → adapty.logout()             (on sign-out)
+//
+// Purchase flow (called from app/paywall.tsx):
+//   startTrial({plan})        → fetch placement, find product, makePurchase
+//   restorePurchases()        → adapty.restorePurchases()
+//
+// Placement IDs match the App Store Connect product setup:
+//   - placement: `freshcheck_main_paywall`
+//   - products:  `com.gazetastreet.freshcheck.weekly`
+//                `com.gazetastreet.freshcheck.monthly`
+//                `com.gazetastreet.freshcheck.annual`
 
-/**
- * Adapty wrapper — stub form.
- *
- * react-native-adapty requires a dev-client (or bare) build; it crashes
- * in Expo Go at bundle-eval time because its native event-emitter is
- * missing. So this file intentionally does NOT import the real SDK.
- *
- * When you're ready for real subscriptions:
- *   1. `npm install react-native-adapty` (and add it to app.json plugins
- *      or bare-link on iOS/Android).
- *   2. Build a dev-client (`npx expo run:ios` or `eas build --profile dev`).
- *   3. Replace the three methods below with real Adapty calls. Types
- *      are the same as the public SDK so the paywall screen needs no
- *      changes.
- *   4. Set EXPO_PUBLIC_ADAPTY_PUBLIC_KEY.
- */
+import { Alert, Platform } from 'react-native';
+import { env, isAdaptyConfigured } from './env';
 
-export async function activateAdaptyIfNeeded(): Promise<void> {
-  // no-op in Expo Go / stub build.
+type Plan = 'weekly' | 'monthly' | 'annual';
+
+// Lazy require — avoids Expo Go bundle-eval crash.
+function getSdk(): typeof import('react-native-adapty') | null {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const mod = require('react-native-adapty');
+    return mod;
+  } catch {
+    return null;
+  }
 }
 
+let activated = false;
+
+export async function activateAdaptyIfNeeded(): Promise<void> {
+  if (activated) return;
+  if (!isAdaptyConfigured()) return; // no key set → silently skip
+  const sdk = getSdk();
+  if (!sdk) return; // Expo Go / SDK not installed → silently skip
+
+  try {
+    await sdk.adapty.activate(env.adaptyPublicKey, {
+      logLevel: __DEV__ ? 'verbose' : 'error',
+      __ignoreActivationOnFastRefresh: __DEV__,
+    });
+    activated = true;
+  } catch (e) {
+    if (__DEV__) console.warn('[adapty] activate failed:', e);
+  }
+}
+
+export async function identifyAdaptyUser(customerUserId: string): Promise<void> {
+  const sdk = getSdk();
+  if (!sdk || !activated) return;
+  try {
+    await sdk.adapty.identify(customerUserId);
+  } catch (e) {
+    if (__DEV__) console.warn('[adapty] identify failed:', e);
+  }
+}
+
+export async function logoutAdaptyUser(): Promise<void> {
+  const sdk = getSdk();
+  if (!sdk || !activated) return;
+  try {
+    await sdk.adapty.logout();
+  } catch (e) {
+    if (__DEV__) console.warn('[adapty] logout failed:', e);
+  }
+}
+
+const PLACEMENT_ID = 'freshcheck_main_paywall';
+
+const PRODUCT_BY_PLAN: Record<Plan, string> = {
+  weekly: 'com.gazetastreet.freshcheck.weekly',
+  monthly: 'com.gazetastreet.freshcheck.monthly',
+  annual: 'com.gazetastreet.freshcheck.annual',
+};
+
 export async function startTrial(params: {
-  plan: 'monthly' | 'annual';
+  plan: Plan;
 }): Promise<{ ok: boolean; error?: string }> {
   if (!isAdaptyConfigured()) {
     Alert.alert(
-      'stub purchase',
-      `adapty isn\u2019t wired in this build. selected: ${params.plan}.\nadd react-native-adapty + dev-client to enable real subscriptions.`,
+      'Stub purchase',
+      `Adapty key is not set. Add EXPO_PUBLIC_ADAPTY_PUBLIC_KEY to .env then build a dev-client.`,
     );
     return { ok: false, error: 'adapty-not-configured' };
   }
-  Alert.alert(
-    'rebuild required',
-    'adapty key set, but the SDK isn\u2019t installed. re-add react-native-adapty and build a dev-client.',
-  );
-  return { ok: false, error: 'adapty-sdk-missing' };
+  const sdk = getSdk();
+  if (!sdk) {
+    Alert.alert(
+      'Dev-client required',
+      `Real purchases need a dev-client build (${Platform.OS}). Run \`eas build --profile development --platform ${Platform.OS}\` and reinstall.`,
+    );
+    return { ok: false, error: 'adapty-sdk-missing' };
+  }
+
+  try {
+    const paywall = await sdk.adapty.getPaywall(PLACEMENT_ID);
+    const products = await sdk.adapty.getPaywallProducts(paywall);
+    const targetVendorId = PRODUCT_BY_PLAN[params.plan];
+    const product = products.find((p) => p.vendorProductId === targetVendorId);
+    if (!product) {
+      return { ok: false, error: `product-not-found: ${targetVendorId}` };
+    }
+    const result = await sdk.adapty.makePurchase(product);
+    if (result.type === 'success') {
+      return { ok: true };
+    }
+    if (result.type === 'user_cancelled') {
+      return { ok: false, error: 'cancelled' };
+    }
+    if (result.type === 'pending') {
+      return { ok: false, error: 'pending' };
+    }
+    return { ok: false, error: 'unknown' };
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : 'unknown-error';
+    return { ok: false, error: msg };
+  }
 }
 
 export async function restorePurchases(): Promise<{ ok: boolean; error?: string }> {
   if (!isAdaptyConfigured()) {
-    Alert.alert(
-      'no active subscription',
-      'once adapty is wired, this will restore your purchases across devices.',
-    );
+    Alert.alert('No Adapty key', 'Set EXPO_PUBLIC_ADAPTY_PUBLIC_KEY then rebuild.');
     return { ok: false, error: 'adapty-not-configured' };
   }
-  return { ok: false, error: 'adapty-sdk-missing' };
+  const sdk = getSdk();
+  if (!sdk) return { ok: false, error: 'adapty-sdk-missing' };
+  try {
+    const profile = await sdk.adapty.restorePurchases();
+    const hasPro = !!profile?.accessLevels?.['premium']?.isActive;
+    return { ok: hasPro, error: hasPro ? undefined : 'no-active-subscription' };
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : 'unknown-error';
+    return { ok: false, error: msg };
+  }
+}
+
+export async function isPremium(): Promise<boolean> {
+  const sdk = getSdk();
+  if (!sdk || !activated) return false;
+  try {
+    const profile = await sdk.adapty.getProfile();
+    return !!profile?.accessLevels?.['premium']?.isActive;
+  } catch {
+    return false;
+  }
 }

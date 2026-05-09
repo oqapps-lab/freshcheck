@@ -1,39 +1,17 @@
 import React from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet, Alert, Platform } from 'react-native';
+import { View, Text, ScrollView, Pressable, StyleSheet, Alert, Linking } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { SoftSurface } from '@/components/ui/SoftSurface';
 import { Chevron, User } from '@/components/ui/Glyphs';
 import { useFridge } from '@/src/hooks/useFridge';
 import { useAuth } from '@/src/hooks/useAuth';
+import { restorePurchases, logoutAdaptyUser } from '@/src/lib/adapty';
+import { getSupabase } from '@/src/lib/supabase';
+import { LEGAL } from '@/constants/legal';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
-
-const cardShadow = Platform.select({
-  web: {
-    boxShadow: '20px 20px 40px #cbd5e1, -20px -20px 40px #ffffff, inset 2px 2px 5px #ffffff, inset -2px -2px 5px #cbd5e1',
-  } as object,
-  default: {
-    shadowColor: '#94a3b8',
-    shadowOffset: { width: 20, height: 20 },
-    shadowOpacity: 0.75,
-    shadowRadius: 20,
-    elevation: 16,
-  },
-});
-
-const iconShadow = Platform.select({
-  web: {
-    boxShadow: '6px 6px 12px #cbd5e1, -6px -6px 12px #ffffff',
-  } as object,
-  default: {
-    shadowColor: '#94a3b8',
-    shadowOffset: { width: 6, height: 6 },
-    shadowOpacity: 0.75,
-    shadowRadius: 6,
-    elevation: 6,
-  },
-});
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
@@ -42,20 +20,93 @@ export default function ProfileScreen() {
   const { user, signOut } = useAuth();
   const signedIn = !!user;
 
-  const comingSoon = (label: string) => {
-    Haptics.selectionAsync().catch(() => {});
-    Alert.alert(label, 'Coming soon.');
-  };
   const onSignInOrOut = () => {
     Haptics.selectionAsync().catch(() => {});
     if (signedIn) {
       Alert.alert('Sign out', 'Sign out of FreshCheck?', [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Sign out', style: 'destructive', onPress: () => { void signOut(); } },
+        {
+          text: 'Sign out',
+          style: 'destructive',
+          onPress: () => {
+            void logoutAdaptyUser().finally(() => {
+              void signOut();
+            });
+          },
+        },
       ]);
     } else {
       router.push('/auth');
     }
+  };
+
+  const onRestore = async () => {
+    Haptics.selectionAsync().catch(() => {});
+    const r = await restorePurchases();
+    if (r.ok) {
+      Alert.alert('Restored', 'Your subscription is active again.');
+    } else if (r.error === 'no-active-subscription') {
+      Alert.alert('Nothing to restore', 'No active subscription was found on this Apple ID.');
+    } else if (r.error === 'adapty-not-configured' || r.error === 'adapty-sdk-missing') {
+      // SDK already shows its own alert
+    } else {
+      Alert.alert('Restore failed', r.error ?? 'Unknown error');
+    }
+  };
+
+  const openUrl = (url: string) => {
+    Haptics.selectionAsync().catch(() => {});
+    Linking.openURL(url).catch((e) => {
+      Alert.alert('Could not open link', String(e));
+    });
+  };
+
+  const onDeleteAccount = () => {
+    Haptics.selectionAsync().catch(() => {});
+    Alert.alert(
+      'Delete account',
+      'This permanently deletes your account, fridge items, scans, and saved recipes. This cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+            // Second confirmation — App Store reviewers expect a deliberate two-step flow.
+            Alert.alert(
+              'Are you sure?',
+              'Type-and-tap is not required, but this is your last chance to cancel.',
+              [
+                { text: 'Keep account', style: 'cancel' },
+                {
+                  text: 'Yes, delete',
+                  style: 'destructive',
+                  onPress: () => {
+                    void runDelete();
+                  },
+                },
+              ],
+            );
+          },
+        },
+      ],
+    );
+  };
+
+  const runDelete = async () => {
+    const supabase = getSupabase();
+    if (!supabase) {
+      Alert.alert('Not signed in', 'Please sign in first.');
+      return;
+    }
+    const { data, error } = await supabase.functions.invoke('delete-account', { body: {} });
+    if (error || (data && data.ok === false)) {
+      Alert.alert('Deletion failed', error?.message ?? data?.error ?? 'Try again or contact support.');
+      return;
+    }
+    await logoutAdaptyUser().catch(() => {});
+    await signOut();
+    Alert.alert('Account deleted', 'Your account and data have been removed.');
   };
 
   return (
@@ -63,19 +114,20 @@ export default function ProfileScreen() {
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <Text style={[typeScale.wordmark, styles.headerWordmark]}>FRESHCHECK</Text>
       </View>
+
       <View style={styles.scrollWrap}>
         <ScrollView
-        contentContainerStyle={[
-          styles.scroll,
-          { paddingBottom: insets.bottom + layout.floatingBottomClearance },
-        ]}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Hero */}
+          contentContainerStyle={[
+            styles.scroll,
+            { paddingBottom: insets.bottom + layout.floatingBottomClearance },
+          ]}
+          showsVerticalScrollIndicator={false}
+        >
+        {/* Hero — avatar + name */}
         <View style={styles.hero}>
-          <View style={[styles.avatar, iconShadow]}>
+          <SoftSurface variant="cushion" radius="full" innerStyle={styles.avatar}>
             <User size={40} color={colors.primary} strokeWidth={1.6} />
-          </View>
+          </SoftSurface>
           <Text style={[typeScale.displayMedium, styles.name]}>
             {signedIn ? (user?.email?.split('@')[0] ?? 'You') : 'Guest'}
           </Text>
@@ -84,11 +136,6 @@ export default function ProfileScreen() {
           </Text>
         </View>
 
-        {/* Summary stat — only meaningful once the user is signed in.
-            For guests the count would reflect the in-memory mock fixtures
-            (smoke-test 2026-04-28 saw "6 ITEMS IN FRIDGE" against a
-            "Guest / NOT SIGNED IN" header), which contradicts the
-            account state. Hide for guests. */}
         {signedIn ? (
           <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.statCard}>
             <Text style={[typeScale.numberLarge, styles.statNum]}>{summary.total}</Text>
@@ -96,40 +143,52 @@ export default function ProfileScreen() {
           </SoftSurface>
         ) : null}
 
-        {/* ACCOUNT */}
+        {/* ACCOUNT section */}
         <Text style={[typeScale.label, styles.sectionLabel]}>ACCOUNT</Text>
-        <View style={[styles.cardStack, cardShadow]}>
+        <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cardStack}>
           <Row label={signedIn ? 'Sign out' : 'Sign in'} onPress={onSignInOrOut} />
           <Hairline />
           <RowStatic label="Email" value={user?.email ?? '—'} />
-        </View>
+          {signedIn ? (
+            <>
+              <Hairline />
+              <Row
+                label="Delete account"
+                onPress={onDeleteAccount}
+                tone="destructive"
+              />
+            </>
+          ) : null}
+        </SoftSurface>
 
-        {/* PRO */}
+        {/* PRO section */}
         <Text style={[typeScale.label, styles.sectionLabel]}>PRO</Text>
-        <View style={[styles.cardStack, cardShadow]}>
+        <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cardStack}>
           <Row label="Upgrade to FreshCheck Pro" onPress={() => router.push('/paywall')} />
           <Hairline />
-          <Row label="Restore purchase" onPress={() => comingSoon('Restore purchase')} />
-        </View>
+          <Row label="Restore purchase" onPress={onRestore} />
+        </SoftSurface>
 
-        {/* PREFERENCES */}
+        {/* PREFERENCES section */}
         <Text style={[typeScale.label, styles.sectionLabel]}>PREFERENCES</Text>
-        <View style={[styles.cardStack, cardShadow]}>
-          <Row label="Notifications" onPress={() => comingSoon('Notifications')} />
+        <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cardStack}>
+          <Row label="Notifications" onPress={() => Alert.alert('Notifications', 'Coming soon.')} />
           <Hairline />
-          <Row label="Expiry warnings" onPress={() => comingSoon('Expiry warnings')} />
-        </View>
+          <Row label="Expiry warnings" onPress={() => Alert.alert('Expiry warnings', 'Coming soon.')} />
+        </SoftSurface>
 
-        {/* ABOUT */}
+        {/* ABOUT section */}
         <Text style={[typeScale.label, styles.sectionLabel]}>ABOUT</Text>
-        <View style={[styles.cardStack, cardShadow]}>
-          <Row label="Privacy policy" onPress={() => comingSoon('Privacy policy')} />
+        <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cardStack}>
+          <Row label="Privacy policy" onPress={() => openUrl(LEGAL.privacyPolicy)} />
           <Hairline />
-          <Row label="Terms of service" onPress={() => comingSoon('Terms of service')} />
+          <Row label="Terms of service" onPress={() => openUrl(LEGAL.termsOfUse)} />
           <Hairline />
-          <RowStatic label="Version" value="0.1.0" />
-        </View>
-      </ScrollView>
+          <Row label="Support" onPress={() => openUrl(LEGAL.support)} />
+          <Hairline />
+          <RowStatic label="Version" value="0.2.0" />
+        </SoftSurface>
+        </ScrollView>
         <LinearGradient
           colors={[colors.canvas, 'rgba(232,234,237,0)']}
           style={styles.headerFade}
@@ -140,7 +199,15 @@ export default function ProfileScreen() {
   );
 }
 
-function Row({ label, onPress }: { label: string; onPress: () => void }) {
+function Row({
+  label,
+  onPress,
+  tone,
+}: {
+  label: string;
+  onPress: () => void;
+  tone?: 'default' | 'destructive';
+}) {
   return (
     <Pressable
       accessibilityRole="button"
@@ -148,7 +215,14 @@ function Row({ label, onPress }: { label: string; onPress: () => void }) {
       onPress={onPress}
       style={({ pressed }) => [styles.row, { opacity: pressed ? 0.7 : 1 }]}
     >
-      <Text style={[typeScale.titleMedium, { color: colors.ink }]}>{label}</Text>
+      <Text
+        style={[
+          typeScale.titleMedium,
+          { color: tone === 'destructive' ? colors.red : colors.ink },
+        ]}
+      >
+        {label}
+      </Text>
       <Chevron size={18} color={colors.inkMuted} />
     </Pressable>
   );
@@ -172,13 +246,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.canvas,
   },
-  header: {
-    alignItems: 'center',
-    paddingHorizontal: layout.screenPaddingHeader,
-    paddingBottom: layout.headerPaddingBottom,
-    backgroundColor: colors.canvas,
-    zIndex: 11,
-  },
   scrollWrap: {
     flex: 1,
   },
@@ -189,6 +256,11 @@ const styles = StyleSheet.create({
     right: 0,
     height: 24,
     zIndex: 10,
+  },
+  header: {
+    alignItems: 'center',
+    paddingHorizontal: layout.screenPaddingHeader,
+    paddingBottom: layout.headerPaddingBottom,
   },
   headerWordmark: {
     color: colors.inkSecondary,
@@ -206,8 +278,6 @@ const styles = StyleSheet.create({
   avatar: {
     width: 96,
     height: 96,
-    borderRadius: 48,
-    backgroundColor: '#ECEDEF',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -221,8 +291,6 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   statCard: {
-    borderRadius: 40,
-    backgroundColor: '#ECEDEF',
     alignItems: 'center',
     paddingVertical: spacing.xl,
     gap: spacing.xs,
@@ -241,8 +309,6 @@ const styles = StyleSheet.create({
     marginLeft: spacing.md,
   },
   cardStack: {
-    borderRadius: 40,
-    backgroundColor: '#ECEDEF',
     paddingVertical: spacing.xs,
     paddingHorizontal: spacing.lg,
   },

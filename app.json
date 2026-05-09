@@ -2,7 +2,7 @@
   "expo": {
     "name": "FreshCheck",
     "slug": "freshcheck",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "freshcheck",
@@ -17,21 +17,44 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.gazetastreet.freshcheck",
+      "buildNumber": "1",
+      "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "NSCameraUsageDescription": "FreshCheck uses the camera to check the freshness of your food.",
-        "NSPhotoLibraryUsageDescription": "FreshCheck can analyze photos from your library to check food freshness."
+        "NSPhotoLibraryUsageDescription": "FreshCheck can analyze photos from your library to check food freshness.",
+        "NSUserTrackingUsageDescription": "FreshCheck uses your device identifier to measure ad performance and improve our recommendations.",
+        "ITSAppUsesNonExemptEncryption": false,
+        "UIBackgroundModes": [
+          "remote-notification"
+        ]
       }
     },
     "android": {
       "package": "com.gazetastreet.freshcheck",
+      "versionCode": 2,
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#15803d"
       },
-      "permissions": ["android.permission.CAMERA"]
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "plugins": [
       "expo-router",
+      "expo-dev-client",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "15.1",
+            "useFrameworks": "static"
+          }
+        }
+      ],
       [
         "expo-camera",
         {
@@ -44,10 +67,32 @@
           "icon": "./assets/images/adaptive-icon.png",
           "color": "#15803d"
         }
-      ]
+      ],
+      [
+        "react-native-adapty",
+        {
+          "replaceAndroidBackupConfig": true
+        }
+      ],
+      [
+        "react-native-appsflyer",
+        {
+          "shouldUseStrictMode": true
+        }
+      ],
+      "@react-native-firebase/app",
+      "@react-native-firebase/crashlytics",
+      "./plugins/with-modular-headers-fix.js"
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "5ad2a528-532b-47f9-939b-46c508643ada"
+      }
+    },
+    "owner": "gazetastreet"
   }
 }

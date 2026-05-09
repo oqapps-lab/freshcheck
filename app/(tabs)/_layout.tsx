@@ -41,7 +41,7 @@ export default function TabsLayout() {
   const segments = useSegments();
   // Detect which tab segment is active. expo-router gives us
   // ['(tabs)', '<tab>'] when inside the tab stack.
-  const active = (segments[1] ?? 'index') as string;
+  const active = ((segments as readonly string[])[1] ?? 'index');
 
   return (
     <View style={styles.root}>
