@@ -77,6 +77,12 @@
           "userTrackingPermission": "FreshCheck uses your device identifier to measure ad performance and improve our recommendations."
         }
       ],
+      [
+        "react-native-adapty",
+        {
+          "replaceAndroidBackupConfig": true
+        }
+      ],
       "./plugins/with-modular-headers-fix.js"
     ],
     "experiments": {
