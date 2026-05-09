@@ -71,6 +71,12 @@
           "color": "#15803d"
         }
       ],
+      [
+        "expo-tracking-transparency",
+        {
+          "userTrackingPermission": "FreshCheck uses your device identifier to measure ad performance and improve our recommendations."
+        }
+      ],
       "./plugins/with-modular-headers-fix.js"
     ],
     "experiments": {
