@@ -82,7 +82,8 @@
         {
           "shouldUseStrictMode": true
         }
-      ]
+      ],
+      "./plugins/with-modular-headers-fix.js"
     ],
     "experiments": {
       "typedRoutes": true
