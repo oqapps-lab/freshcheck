@@ -84,6 +84,12 @@
           "replaceAndroidBackupConfig": true
         }
       ],
+      [
+        "react-native-appsflyer",
+        {
+          "shouldUseStrictMode": true
+        }
+      ],
       "./plugins/with-modular-headers-fix.js"
     ],
     "experiments": {

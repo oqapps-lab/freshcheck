@@ -1,28 +1,30 @@
 #!/usr/bin/env node
-// Verbatim from sugar-quit (last shipped 2026-05-09 17:00, build a223cc41).
+// Patches non-modular header imports in iOS native modules so they can compile
+// under useFrameworks: static + Expo SDK 55 prebuilt RNCore. Was originally
+// for @react-native-firebase only (per sugar-quit recipe), extended for
+// react-native-appsflyer in v1.1.4 (Phase 4 of vendor restore).
 //
-// Runs from package.json `postinstall` to physically rewrite
-// @react-native-firebase headers to use @import (modular) instead of
-// #import <React/...> (non-modular). This is what unblocks the
-// "include of non-modular header inside framework module" Xcode error
-// under useFrameworks: static + Expo SDK 55 prebuilt RNCore.
+// Walks each TARGET_DIR and rewrites .h/.m files:
+//   #import <React/X.h>       → @import React;
+//   #import <RCTRequired/X.h> → @import RCTRequired;
+//   #import <RCTTypeSafety/X.h> → @import RCTTypeSafety;
 //
-// Why a postinstall script in addition to the config plugin: EAS Build
-// runs `npm install` (or `npm ci`) BEFORE running config plugins, and
-// the plugin doesn't always re-run reliably on EAS Cloud. Postinstall
-// hook is guaranteed to fire on every install — so the headers are
-// patched before Xcode ever touches them.
+// Runs from package.json `postinstall` so it fires on every npm install,
+// including EAS Build's `npm install` step before prebuild.
 
 const fs = require('fs');
 const path = require('path');
 
-const rnfbDir = path.join(__dirname, '..', 'node_modules', '@react-native-firebase');
-if (!fs.existsSync(rnfbDir)) {
-  console.log('[patch-rnfb-headers] node_modules/@react-native-firebase not found, skipping');
-  process.exit(0);
-}
+// node_modules subdirs whose .h/.m files need their React-Core imports
+// rewritten to modular form. Add new entries when a freshly-installed
+// vendor SDK breaks the build with the same non-modular error class.
+const TARGET_DIRS = [
+  '@react-native-firebase',
+  'react-native-appsflyer',
+];
 
-let patched = 0;
+let totalPatched = 0;
+
 function walk(dir) {
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
     const p = path.join(dir, e.name);
@@ -37,10 +39,19 @@ function walk(dir) {
       src = src.replace(/^#import\s+<RCTTypeSafety\/[^>]+\.h>\s*$/gm, '@import RCTTypeSafety;');
       if (src !== before) {
         fs.writeFileSync(p, src);
-        patched++;
+        totalPatched++;
       }
     }
   }
 }
-walk(rnfbDir);
-console.log(`[patch-rnfb-headers] patched ${patched} files`);
+
+for (const target of TARGET_DIRS) {
+  const dir = path.join(__dirname, '..', 'node_modules', target);
+  if (!fs.existsSync(dir)) {
+    console.log(`[patch-rnfb-headers] ${target} not installed, skipping`);
+    continue;
+  }
+  walk(dir);
+}
+
+console.log(`[patch-rnfb-headers] patched ${totalPatched} files across ${TARGET_DIRS.length} target dir(s)`);
