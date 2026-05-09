@@ -81,7 +81,8 @@
         }
       ],
       "@react-native-firebase/app",
-      "@react-native-firebase/crashlytics"
+      "@react-native-firebase/crashlytics",
+      "./plugins/with-modular-headers-fix.js"
     ],
     "experiments": {
       "typedRoutes": true
