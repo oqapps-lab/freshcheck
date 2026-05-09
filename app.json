@@ -45,7 +45,9 @@
     },
     "plugins": [
       "expo-router",
-      "expo-dev-client",
+      "expo-image",
+      "@react-native-firebase/app",
+      "@react-native-firebase/crashlytics",
       [
         "expo-build-properties",
         {
@@ -55,6 +57,7 @@
           }
         }
       ],
+      "expo-dev-client",
       [
         "expo-camera",
         {
@@ -68,8 +71,6 @@
           "color": "#15803d"
         }
       ],
-      "@react-native-firebase/app",
-      "@react-native-firebase/crashlytics",
       "./plugins/with-modular-headers-fix.js"
     ],
     "experiments": {
