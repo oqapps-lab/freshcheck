@@ -77,14 +77,33 @@ export default function AuthScreen() {
       return;
     }
     setSubmitting(true);
-    const fn = isSignIn ? signInWithEmail : signUpWithEmail;
-    const { error } = await fn(email.trim(), password);
-    setSubmitting(false);
-    if (error) {
-      Alert.alert(isSignIn ? 'Sign in failed' : 'Sign up failed', error);
+    if (isSignIn) {
+      const { error } = await signInWithEmail(email.trim(), password);
+      setSubmitting(false);
+      if (error) {
+        Alert.alert('Sign in failed', error);
+        return;
+      }
+      router.back();
       return;
     }
-    router.replace('/(tabs)');
+    const { error, needsEmailConfirmation } = await signUpWithEmail(email.trim(), password);
+    setSubmitting(false);
+    if (error) {
+      Alert.alert('Sign up failed', error);
+      return;
+    }
+    if (needsEmailConfirmation) {
+      // Supabase email-confirmation flow. Without this prompt the user
+      // is dropped into the tabs as a guest with no idea why nothing works.
+      Alert.alert(
+        'Check your email',
+        `We sent a confirmation link to ${email.trim()}. Tap it, then come back and sign in.`,
+        [{ text: 'OK', onPress: () => setMode('signin') }],
+      );
+      return;
+    }
+    router.back();
   };
 
   return (

@@ -45,7 +45,10 @@
     },
     "plugins": [
       "expo-router",
-      "expo-dev-client",
+      "expo-image",
+      "@react-native-firebase/app",
+      "@react-native-firebase/crashlytics",
+      "@react-native-firebase/messaging",
       [
         "expo-build-properties",
         {
@@ -55,6 +58,7 @@
           }
         }
       ],
+      "expo-dev-client",
       [
         "expo-camera",
         {
@@ -69,6 +73,12 @@
         }
       ],
       [
+        "expo-tracking-transparency",
+        {
+          "userTrackingPermission": "FreshCheck uses your device identifier to measure ad performance and improve our recommendations."
+        }
+      ],
+      [
         "react-native-adapty",
         {
           "replaceAndroidBackupConfig": true
@@ -80,8 +90,6 @@
           "shouldUseStrictMode": true
         }
       ],
-      "@react-native-firebase/app",
-      "@react-native-firebase/crashlytics",
       "./plugins/with-modular-headers-fix.js"
     ],
     "experiments": {

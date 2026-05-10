@@ -9,9 +9,17 @@ type AuthState = {
   configured: boolean;
 };
 
+type SignUpResult = {
+  error: string | null;
+  // True when Supabase returned no session (email-confirmation required).
+  // Caller should show a "check your email" prompt instead of routing into
+  // the app — otherwise the user lands as a silent guest.
+  needsEmailConfirmation: boolean;
+};
+
 export function useAuth(): AuthState & {
   signInWithEmail: (email: string, password: string) => Promise<{ error: string | null }>;
-  signUpWithEmail: (email: string, password: string, name?: string) => Promise<{ error: string | null }>;
+  signUpWithEmail: (email: string, password: string, name?: string) => Promise<SignUpResult>;
   signOut: () => Promise<void>;
 } {
   const supabase = getSupabase();
@@ -46,13 +54,19 @@ export function useAuth(): AuthState & {
       return { error: error?.message ?? null };
     },
     async signUpWithEmail(email, password, name) {
-      if (!supabase) return { error: 'Supabase not configured' };
-      const { error } = await supabase.auth.signUp({
+      if (!supabase) return { error: 'Supabase not configured', needsEmailConfirmation: false };
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: { data: name ? { name } : undefined },
       });
-      return { error: error?.message ?? null };
+      return {
+        error: error?.message ?? null,
+        // When email-confirmation is enabled in Supabase Auth settings,
+        // signUp returns user without a session. UI must show a prompt
+        // and NOT silently drop the user into the tabs.
+        needsEmailConfirmation: !error && !data.session,
+      };
     },
     async signOut() {
       if (!supabase) return;

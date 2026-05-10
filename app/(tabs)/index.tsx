@@ -18,14 +18,13 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.root}>
-      <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-        <IconButton accessibilityLabel="menu" onPress={() => router.replace('/(tabs)/profile')}>
-          <Menu size={20} color={colors.ink} />
-        </IconButton>
+      <View
+        style={[
+          styles.header,
+          { paddingTop: insets.top + 16 },
+        ]}
+      >
         <Text style={[typeScale.wordmark, { color: colors.inkSecondary }]}>FRESHCHECK</Text>
-        <IconButton accessibilityLabel="settings" onPress={() => router.replace('/(tabs)/profile')}>
-          <Settings size={20} color={colors.ink} />
-        </IconButton>
       </View>
       <View style={styles.scrollWrap}>
         <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>

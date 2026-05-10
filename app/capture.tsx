@@ -258,7 +258,13 @@ export default function CaptureScreen() {
               }}
             />
           </View>
-        ) : null}
+        ) : (
+          // Backend not configured (missing EXPO_PUBLIC_SUPABASE_URL etc.) —
+          // give the user a recovery path instead of a dead-end card.
+          <View style={styles.ctaWide}>
+            <PrimaryPillCTA label="Back" onPress={() => router.back()} />
+          </View>
+        )}
       </View>
     </View>
   );

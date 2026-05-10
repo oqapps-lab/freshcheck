@@ -52,7 +52,11 @@ export default function ScanScreen() {
       ]);
       return;
     }
-    const totalDays = last.totalDays ?? Math.max(last.daysLeft ?? 1, 5);
+    // Don't fabricate days when the AI didn't return any. If both are
+    // missing, the item still gets saved to the fridge with a neutral
+    // 7-day reminder window — better than telling the user "5 DAYS LEFT"
+    // when the AI never said so.
+    const totalDays = last.totalDays ?? last.daysLeft ?? 7;
     const daysLeft = last.daysLeft ?? totalDays;
     const result = await addItem({
       name: capitalize(last.product),

@@ -28,7 +28,20 @@
     },
     "production": {
       "autoIncrement": true,
+      "credentialsSource": "local",
+      "cache": {
+        "disabled": true
+      },
       "ios": {
+        "resourceClass": "m-medium"
+      }
+    },
+    "production-simulator": {
+      "cache": {
+        "disabled": true
+      },
+      "ios": {
+        "simulator": true,
         "resourceClass": "m-medium"
       }
     }
