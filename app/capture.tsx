@@ -68,10 +68,7 @@ export default function CaptureScreen() {
   const onShutter = async () => {
     if (analyzing) return;
     if (!cameraRef.current || !supabase || !user) {
-      Alert.alert('Sign in required', 'Sign in to scan and sync your results.', [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Sign in', onPress: () => router.push('/auth') },
-      ]);
+      Alert.alert('Preparing scan', 'Please wait a moment and try again.');
       return;
     }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
@@ -143,13 +140,12 @@ export default function CaptureScreen() {
         </View>
       );
     }
-    // Signed out — gate scan behind /auth.
+    // Anonymous-auth bootstrap in progress (useAuth signs in anonymously on
+    // first launch so scan/fridge/recipes work without forced registration).
     if (!user) {
       return (
         <View style={styles.gateBody}>
-          <Sparkle size={48} color={colors.amber} strokeWidth={1.6} />
-          <Text style={[typeScale.titleMedium, styles.gateTitle]}>Sign in to scan</Text>
-          <Text style={[typeScale.bodySmall, styles.gateSub]}>Results are stored in your account so you can revisit them.</Text>
+          <Text style={[typeScale.bodySmall, styles.gateSub]}>Preparing scan…</Text>
         </View>
       );
     }
@@ -243,7 +239,7 @@ export default function CaptureScreen() {
           </Pressable>
         ) : showSignInCta ? (
           <View style={styles.ctaWide}>
-            <PrimaryPillCTA label="Sign in to scan" onPress={() => router.push('/auth')} />
+            <PrimaryPillCTA label="Preparing scan…" onPress={() => {}} />
           </View>
         ) : showPermCta ? (
           <View style={styles.ctaWide}>

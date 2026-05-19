@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { View, Text, ScrollView, RefreshControl, ActivityIndicator, Pressable, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, RefreshControl, ActivityIndicator, Pressable, StyleSheet, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { IconButton } from '@/components/ui/IconButton';
@@ -43,7 +43,17 @@ const CATEGORY_ORDER: Exclude<FilterValue, 'all'>[] = [
 export default function FridgeScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { items, loading, refresh } = useFridge();
+  const { items, loading, refresh, removeItem } = useFridge();
+
+  const confirmRemove = useCallback(
+    (id: string, name: string) => {
+      Alert.alert('Remove item', `Remove "${name}" from your fridge?`, [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Remove', style: 'destructive', onPress: () => { void removeItem(id); } },
+      ]);
+    },
+    [removeItem],
+  );
   const [filter, setFilter] = useState<FilterValue>('all');
   const [refreshing, setRefreshing] = useState(false);
 
@@ -196,6 +206,7 @@ export default function FridgeScreen() {
                   category={item.category}
                   daysLeft={item.daysLeft}
                   shelfDays={item.totalDays || 14}
+                  onLongPress={() => confirmRemove(item.id, item.name)}
                 />
               ))}
             </View>

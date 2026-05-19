@@ -14,6 +14,7 @@ type Props = {
   /** total shelf-life days (defaults 14) */
   shelfDays?: number;
   onPress?: () => void;
+  onLongPress?: () => void;
 };
 
 /**
@@ -32,6 +33,7 @@ export function ProductRow({
   daysLeft,
   shelfDays = 14,
   onPress,
+  onLongPress,
 }: Props) {
   const progress = Math.max(0.04, Math.min(1, daysLeft / shelfDays));
 
@@ -58,15 +60,20 @@ export function ProductRow({
   // we don't want a fake "button" affordance — silent haptic on tap with
   // no follow-through reads as a dead control.
   const a11yLabel = `${name}, ${daysLeft} ${daysLeft === 1 ? 'day' : 'days'} left`;
-  const Container: React.ComponentType<{ children: React.ReactNode }> = onPress
+  const interactive = onPress || onLongPress;
+  const Container: React.ComponentType<{ children: React.ReactNode }> = interactive
     ? ({ children }) => (
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={a11yLabel}
-          onPress={() => {
+          onPress={onPress ? () => {
             Haptics.selectionAsync().catch(() => {});
             onPress();
-          }}
+          } : undefined}
+          onLongPress={onLongPress ? () => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+            onLongPress();
+          } : undefined}
         >
           {children}
         </Pressable>

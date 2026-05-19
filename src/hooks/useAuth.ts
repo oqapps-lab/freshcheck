@@ -29,9 +29,20 @@ export function useAuth(): AuthState & {
   useEffect(() => {
     if (!supabase) return;
     let mounted = true;
-    supabase.auth.getSession().then(({ data }) => {
+    supabase.auth.getSession().then(async ({ data }) => {
       if (!mounted) return;
-      setSession(data.session);
+      if (data.session) {
+        setSession(data.session);
+        setLoading(false);
+        return;
+      }
+      // No session — auto sign in anonymously so scan/fridge/recipes work
+      // without forcing registration. Apple Guideline 5.1.1(iv) discourages
+      // mandatory account creation for features that don't strictly need it.
+      // Email sign-up remains available in Profile → "Save your data".
+      const { data: anonData } = await supabase.auth.signInAnonymously();
+      if (!mounted) return;
+      setSession(anonData?.session ?? null);
       setLoading(false);
     });
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
@@ -55,6 +66,21 @@ export function useAuth(): AuthState & {
     },
     async signUpWithEmail(email, password, name) {
       if (!supabase) return { error: 'Supabase not configured', needsEmailConfirmation: false };
+      // If we're currently signed-in as an anonymous user, convert that user
+      // to an email identity so their existing scans / fridge / recipes
+      // are preserved instead of being orphaned under the anon uid.
+      const current = (await supabase.auth.getUser()).data.user;
+      if (current?.is_anonymous) {
+        const { error: updErr } = await supabase.auth.updateUser({
+          email,
+          password,
+          data: name ? { name } : undefined,
+        });
+        return {
+          error: updErr?.message ?? null,
+          needsEmailConfirmation: false,
+        };
+      }
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -62,9 +88,6 @@ export function useAuth(): AuthState & {
       });
       return {
         error: error?.message ?? null,
-        // When email-confirmation is enabled in Supabase Auth settings,
-        // signUp returns user without a session. UI must show a prompt
-        // and NOT silently drop the user into the tabs.
         needsEmailConfirmation: !error && !data.session,
       };
     },

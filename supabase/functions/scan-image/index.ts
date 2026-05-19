@@ -117,7 +117,7 @@ serve(async (req) => {
     body: JSON.stringify({
       model: MODEL,
       response_format: { type: 'json_object' },
-      temperature: 0.2,
+      
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
         {
