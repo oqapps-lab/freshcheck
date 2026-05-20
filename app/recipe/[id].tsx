@@ -17,8 +17,9 @@ import {
   Check,
 } from '@/components/ui/Glyphs';
 import { getRecipe } from '@/src/state/recipeStore';
-import type { RecipeStepIcon } from '@/src/hooks/useRecipes';
+import { useRecipes, type RecipeStepIcon } from '@/src/hooks/useRecipes';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const STEP_ICON: Record<RecipeStepIcon, React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>> = {
   prep: BarcodeScanner,
@@ -46,7 +47,11 @@ export default function RecipeDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const recipe = id ? getRecipe(String(id)) : undefined;
+  const cached = id ? getRecipe(String(id)) : undefined;
+  // Fallback: if cache empty (cold launch / hot reload), regenerate the
+  // batch so the user can navigate via fridge even after a kill.
+  const { recipes, status } = useRecipes();
+  const recipe = cached ?? (id ? recipes.find((r) => r.id === String(id)) : undefined);
 
   if (!recipe) {
     return (
@@ -60,9 +65,13 @@ export default function RecipeDetailScreen() {
         </View>
         <View style={styles.emptyCenter}>
           <Sparkle size={48} color={colors.amber} strokeWidth={1.6} />
-          <Text style={[typeScale.titleMedium, styles.emptyText]}>Recipe expired</Text>
+          <Text style={[typeScale.titleMedium, styles.emptyText]}>
+            {status === 'loading' ? 'Loading recipe…' : 'Recipe not found'}
+          </Text>
           <Text style={[typeScale.bodySmall, styles.emptySub]}>
-            Recipes are generated fresh — head back and pick another.
+            {status === 'loading'
+              ? 'Generating fresh recipes for you'
+              : 'Head back and pick another recipe.'}
           </Text>
         </View>
       </View>
@@ -93,6 +102,11 @@ export default function RecipeDetailScreen() {
               <Cloud size={48} color={colors.inkMuted} strokeWidth={1.4} />
             </View>
           )}
+          <LinearGradient
+            colors={['rgba(0,0,0,0.28)', 'rgba(0,0,0,0)']}
+            style={styles.headerScrim}
+            pointerEvents="none"
+          />
           <View style={[styles.headerOverlay, { paddingTop: insets.top + 16 }]}>
             <IconButton accessibilityLabel="back" onPress={() => router.back()}>
               <Back size={20} color={colors.ink} />
@@ -234,6 +248,13 @@ const styles = StyleSheet.create({
     left: 0,
     paddingHorizontal: layout.screenPaddingHeader,
   },
+  headerScrim: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 140,
+  },
   headerSpacer: { width: 48, height: 48 },
   emptyCenter: {
     flex: 1,
@@ -247,7 +268,8 @@ const styles = StyleSheet.create({
   scroll: { paddingBottom: spacing.huge },
   heroWrap: {
     width: '100%',
-    aspectRatio: 1,
+    aspectRatio: 16 / 12,
+    maxHeight: 360,
     backgroundColor: colors.canvas,
   },
   heroImage: { width: '100%', height: '100%' },

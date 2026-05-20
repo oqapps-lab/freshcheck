@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { getSupabase } from '@/src/lib/supabase';
 import { setRecipes as setRecipesCache, updateRecipeImage } from '@/src/state/recipeStore';
 
@@ -52,12 +52,14 @@ export function useRecipes() {
   const [error, setError] = useState<string | null>(null);
   const [recipes, setRecipes] = useState<Recipe[]>([]);
 
+  const requestRef = React.useRef(0);
   const generate = useCallback(async () => {
     if (!supabase) {
       setError('Backend not configured');
       setStatus('error');
       return;
     }
+    const myReq = ++requestRef.current;
     setStatus('loading');
     setError(null);
     try {
@@ -65,6 +67,7 @@ export function useRecipes() {
         recipes?: Recipe[];
         error?: string;
       }>('generate-recipes', { body: {} });
+      if (myReq !== requestRef.current) return; // superseded by newer request
       if (fnErr) throw new Error(fnErr.message);
       if (!data?.recipes?.length) throw new Error(data?.error ?? 'no recipes generated');
       // Render text immediately
@@ -79,6 +82,7 @@ export function useRecipes() {
             body: { slug: r.id, prompt: r.hero_image_prompt },
           })
           .then(({ data: imgData }) => {
+            if (myReq !== requestRef.current) return; // stale, bail
             if (imgData?.url) {
               updateRecipeImage(r.id, imgData.url);
               setRecipes((prev) => {
@@ -93,6 +97,7 @@ export function useRecipes() {
           .catch(() => {});
       });
     } catch (e) {
+      if (myReq !== requestRef.current) return;
       setError(e instanceof Error ? e.message : String(e));
       setStatus('error');
     }

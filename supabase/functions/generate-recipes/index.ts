@@ -47,8 +47,9 @@ type Recipe = {
 const SYSTEM_PROMPT = `You are a creative chef. Given a list of items in a user's fridge (with days_left until they spoil), generate exactly 3 recipes.
 
 Rules:
-- ALWAYS prioritize ingredients expiring within 3 days. Recipe 1 must use the fastest-expiring item.
-- Each recipe must use AT LEAST 1 ingredient from the fridge.
+- CRITICAL: Identify the SINGLE fastest-expiring item in the fridge (lowest days_left). Recipe #1 MUST feature this item as its PRIMARY ingredient (name it in the recipe title if possible). Recipe #2 should also use this item. Recipe #3 may use it OR another expiring-soon item.
+- All 3 recipes COMBINED must use every item that has days_left <= 3.
+- Each recipe must use AT LEAST 1 ingredient from the fridge marked from_fridge:true.
 - Difficulty progression: recipe 1 = easy, recipe 2 = easy/medium, recipe 3 = medium/hard.
 - Steps must be CONCRETE actions, not vague. "Slice onion thinly" not "prepare onion".
 - Each step.minutes is realistic time for THAT step.
@@ -112,11 +113,40 @@ serve(async (req) => {
     .limit(50);
   if (fridgeErr) return json({ error: `fridge fetch: ${fridgeErr.message}` }, 500);
 
-  const fridgeDesc = (items ?? []).length
-    ? (items ?? []).map((i: { name: string; category: string; days_left: number | null }) =>
-        `- ${i.name} (${i.category}, ${i.days_left ?? '?'} days left)`,
-      ).join('\n')
-    : '(fridge is empty — suggest 3 simple starter recipes the user can buy ingredients for)';
+  const fridgeItems = items ?? [];
+  let userPrompt: string;
+  if (fridgeItems.length === 0) {
+    userPrompt = 'Fridge is empty. Suggest 3 simple starter recipes the user can buy ingredients for.';
+  } else {
+    const sorted = [...fridgeItems].sort(
+      (a: { days_left: number | null }, b: { days_left: number | null }) =>
+        (a.days_left ?? 99) - (b.days_left ?? 99),
+    );
+    const mandatory = sorted[0];
+    const expiringSoon = sorted.filter(
+      (i: { days_left: number | null }) => (i.days_left ?? 99) <= 3,
+    );
+    const others = sorted.filter(
+      (i: { days_left: number | null }) => (i.days_left ?? 99) > 3,
+    );
+
+    const fmt = (i: { name: string; category: string; days_left: number | null }) =>
+      `- ${i.name} (${i.category}, ${i.days_left ?? '?'} days left)`;
+
+    userPrompt = [
+      `MANDATORY ingredient (use in Recipe #1 — name it in the title): ${mandatory.name} (${mandatory.days_left ?? '?'} days left)`,
+      '',
+      'Other items expiring within 3 days (use ALL of these across the 3 recipes):',
+      expiringSoon.length === 1 ? '(none besides the mandatory item)' : expiringSoon.slice(1).map(fmt).join('\n'),
+      '',
+      others.length ? 'Optional pool (lots of time left):' : '',
+      others.map(fmt).join('\n'),
+      '',
+      'Generate the 3-recipe JSON object now.',
+    ]
+      .filter((l) => l !== '')
+      .join('\n');
+  }
 
   const openaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -129,10 +159,7 @@ serve(async (req) => {
       response_format: { type: 'json_object' },
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
-        {
-          role: 'user',
-          content: `Fridge contents:\n${fridgeDesc}\n\nGenerate 3 recipes as the JSON array described.`,
-        },
+        { role: 'user', content: userPrompt },
       ],
     }),
   });
@@ -162,11 +189,45 @@ serve(async (req) => {
     return json({ error: 'no recipes in response', raw }, 502);
   }
 
+  // Post-validation: if there's a mandatory item, ensure Recipe #1 names it
+  // (cheap correctness check vs trusting the LLM completely).
+  const mandatoryName = fridgeItems.length
+    ? [...fridgeItems].sort(
+        (a: { days_left: number | null }, b: { days_left: number | null }) =>
+          (a.days_left ?? 99) - (b.days_left ?? 99),
+      )[0].name.toLowerCase()
+    : null;
+  if (mandatoryName) {
+    const usesMandatory = (r: Recipe) =>
+      r.name.toLowerCase().includes(mandatoryName) ||
+      r.ingredients.some((ing) => ing.name.toLowerCase().includes(mandatoryName));
+    // If recipe #1 doesn't use mandatory but another recipe does, swap into position 1.
+    if (!usesMandatory(recipes[0])) {
+      const idx = recipes.findIndex(usesMandatory);
+      if (idx > 0) {
+        const swapped = [...recipes];
+        [swapped[0], swapped[idx]] = [swapped[idx], swapped[0]];
+        recipes.length = 0;
+        recipes.push(...swapped);
+      }
+    }
+  }
+
   // Assign deterministic IDs (hash of name) so the same recipe across users
-  // can share a cached hero image in Storage.
+  // can share a cached hero image in Storage. Hash the FULL name so two
+  // recipes with the same slug (after stripping) don't collide on storage.
   const withIds = recipes.map((r) => {
     const slug = r.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-    return { ...r, id: slug.slice(0, 64) || 'recipe' };
+    let id = slug.slice(0, 64);
+    if (!id) {
+      // Fallback: short hash of the full name
+      let h = 0;
+      for (let i = 0; i < r.name.length; i++) {
+        h = (h * 31 + r.name.charCodeAt(i)) | 0;
+      }
+      id = `recipe-${Math.abs(h).toString(36)}`;
+    }
+    return { ...r, id };
   });
 
   return json({ recipes: withIds });
