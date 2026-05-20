@@ -9,12 +9,13 @@ import {
   Back,
   Sparkle,
   Nutrition,
-  BarcodeScanner,
   Cloud,
-  LocalDrink,
-  EggAlt,
-  History,
   Check,
+  Knife,
+  Flame,
+  Whisk,
+  Hourglass,
+  Bowl,
 } from '@/components/ui/Glyphs';
 import { getRecipe } from '@/src/state/recipeStore';
 import { useRecipes, type RecipeStepIcon } from '@/src/hooks/useRecipes';
@@ -22,11 +23,11 @@ import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const STEP_ICON: Record<RecipeStepIcon, React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>> = {
-  prep: BarcodeScanner,
-  cook: EggAlt,
-  mix: LocalDrink,
-  wait: History,
-  serve: Nutrition,
+  prep: Knife,
+  cook: Flame,
+  mix: Whisk,
+  wait: Hourglass,
+  serve: Bowl,
 };
 
 const STEP_LABEL: Record<RecipeStepIcon, string> = {

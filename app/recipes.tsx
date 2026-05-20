@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Image,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -36,6 +37,20 @@ export default function RecipesScreen() {
 
   const onRefresh = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    // Confirm if we already have a batch — each regeneration calls the
+    // gpt-5.5 + gpt-image-1 pipeline (~$0.13). Cheap to skip, expensive
+    // to thrash.
+    if (recipes.length > 0) {
+      Alert.alert(
+        'Generate fresh recipes?',
+        'This replaces your current 3 picks with brand-new ones based on your fridge right now.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Generate', onPress: () => refresh() },
+        ],
+      );
+      return;
+    }
     refresh();
   };
 
@@ -140,10 +155,15 @@ export default function RecipesScreen() {
                     <View
                       style={[
                         styles.difficultyPill,
-                        { backgroundColor: DIFFICULTY_COLOR[recipe.difficulty] },
+                        { borderColor: DIFFICULTY_COLOR[recipe.difficulty] },
                       ]}
                     >
-                      <Text style={[typeScale.labelTiny, styles.difficultyText]}>
+                      <Text
+                        style={[
+                          typeScale.labelTiny,
+                          { color: DIFFICULTY_COLOR[recipe.difficulty], letterSpacing: 1.4 },
+                        ]}
+                      >
                         {recipe.difficulty.toUpperCase()}
                       </Text>
                     </View>
@@ -209,12 +229,10 @@ const styles = StyleSheet.create({
   metaTime: { color: colors.amber, letterSpacing: 1.4 },
   difficultyPill: {
     paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingVertical: 2,
     borderRadius: 999,
-  },
-  difficultyText: {
-    color: colors.surfaceWhite,
-    letterSpacing: 1.4,
+    borderWidth: 1.2,
+    backgroundColor: 'transparent',
   },
   fridgePill: {
     backgroundColor: colors.primary,

@@ -227,6 +227,105 @@ export function Zap(p: Props) {
   );
 }
 
+// --- Cooking step icons -----------------------------------------------------
+
+export function Knife(p: Props) {
+  const { size, color, strokeWidth } = stroke(p);
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      {/* Blade */}
+      <Path
+        d="M3 21 L13 11 Q19 5 21 3 L21 8 Q15 14 13 16 L11 14 Z"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinejoin="round"
+        strokeLinecap="round"
+        fill="none"
+      />
+      {/* Handle */}
+      <Line x1="3" y1="21" x2="6" y2="18" stroke={color} strokeWidth={strokeWidth + 1} strokeLinecap="round" />
+    </Svg>
+  );
+}
+
+export function Flame(p: Props) {
+  const { size, color, strokeWidth } = stroke(p);
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M12 3 C 12 7, 8 8, 8 13 a4 4 0 0 0 8 0 c0-2-1-3-1-5 c-1 1-2 1-2 0 c0-2 0-3-1-5z"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinejoin="round"
+        strokeLinecap="round"
+        fill="none"
+      />
+      <Path
+        d="M12 12 c-1 1-1 2-1 3 a2 2 0 0 0 2 2 a2 2 0 0 0 2-2 c0-1-1-2-1-3"
+        stroke={color}
+        strokeWidth={strokeWidth - 0.4}
+        strokeLinejoin="round"
+        fill="none"
+      />
+    </Svg>
+  );
+}
+
+export function Whisk(p: Props) {
+  const { size, color, strokeWidth } = stroke(p);
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      {/* Handle */}
+      <Line x1="14" y1="3" x2="9" y2="11" stroke={color} strokeWidth={strokeWidth + 0.6} strokeLinecap="round" />
+      {/* Wires */}
+      <Path d="M9 11 C 7 14, 7 17, 9 19" stroke={color} strokeWidth={strokeWidth - 0.4} strokeLinecap="round" fill="none" />
+      <Path d="M10 11 C 9 14, 10 18, 12 19" stroke={color} strokeWidth={strokeWidth - 0.4} strokeLinecap="round" fill="none" />
+      <Path d="M12 11 C 13 14, 14 17, 13 20" stroke={color} strokeWidth={strokeWidth - 0.4} strokeLinecap="round" fill="none" />
+      <Path d="M14 11 C 15 14, 16 16, 15 19" stroke={color} strokeWidth={strokeWidth - 0.4} strokeLinecap="round" fill="none" />
+      {/* Base */}
+      <Path d="M8 19 Q 12 22, 16 19" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" fill="none" />
+    </Svg>
+  );
+}
+
+export function Hourglass(p: Props) {
+  const { size, color, strokeWidth } = stroke(p);
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M6 3 h12 v3 c0 3-4 4-4 6 c0 2 4 3 4 6 v3 H6 v-3 c0-3 4-4 4-6 c0-2-4-3-4-6 z"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinejoin="round"
+        strokeLinecap="round"
+        fill="none"
+      />
+      {/* Sand bottom */}
+      <Path d="M9 18 Q12 16, 15 18 L15 20 H9 z" stroke={color} strokeWidth={strokeWidth - 0.4} fill={color} fillOpacity={0.18} />
+    </Svg>
+  );
+}
+
+export function Bowl(p: Props) {
+  const { size, color, strokeWidth } = stroke(p);
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      {/* Bowl */}
+      <Path
+        d="M3 11 H 21 C 21 17, 17 21, 12 21 C 7 21, 3 17, 3 11 z"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinejoin="round"
+        fill="none"
+      />
+      {/* Steam */}
+      <Path d="M9 7 c0 1 1 1 1 2 c0 1 -1 1 -1 2" stroke={color} strokeWidth={strokeWidth - 0.4} strokeLinecap="round" fill="none" />
+      <Path d="M12 5 c0 1 1 1 1 2 c0 1 -1 1 -1 2 c0 1 1 1 1 2" stroke={color} strokeWidth={strokeWidth - 0.4} strokeLinecap="round" fill="none" />
+      <Path d="M15 7 c0 1 1 1 1 2 c0 1 -1 1 -1 2" stroke={color} strokeWidth={strokeWidth - 0.4} strokeLinecap="round" fill="none" />
+    </Svg>
+  );
+}
+
 export function CategoryGlyph({
   category,
   size = 28,
