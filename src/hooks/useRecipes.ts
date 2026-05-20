@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { getSupabase } from '@/src/lib/supabase';
 import { setRecipes as setRecipesCache, updateRecipeImage } from '@/src/state/recipeStore';
+import { usePremium } from '@/src/hooks/usePremium';
 
 export type RecipeStepIcon = 'prep' | 'cook' | 'wait' | 'mix' | 'serve';
 
@@ -51,6 +52,7 @@ export function useRecipes() {
   const [status, setStatus] = useState<Status>('idle');
   const [error, setError] = useState<string | null>(null);
   const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const premium = usePremium();
 
   const requestRef = React.useRef(0);
   const generate = useCallback(async () => {
@@ -63,12 +65,18 @@ export function useRecipes() {
     setStatus('loading');
     setError(null);
     try {
+      // Premium signal so the Edge Function skips the 24h rate limit.
       const { data, error: fnErr } = await supabase.functions.invoke<{
         recipes?: Recipe[];
         error?: string;
-      }>('generate-recipes', { body: {} });
+        message?: string;
+      }>('generate-recipes', { body: { entitled: premium } });
       if (myReq !== requestRef.current) return; // superseded by newer request
-      if (fnErr) throw new Error(fnErr.message);
+      if (fnErr) {
+        // Edge function returned 429 with structured rate-limit message
+        const errMsg = data?.message ?? data?.error ?? fnErr.message;
+        throw new Error(errMsg);
+      }
       if (!data?.recipes?.length) throw new Error(data?.error ?? 'no recipes generated');
       // Render text immediately
       setRecipes(data.recipes);

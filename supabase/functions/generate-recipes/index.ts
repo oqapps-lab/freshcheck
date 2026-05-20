@@ -94,8 +94,10 @@ serve(async (req) => {
   // @ts-expect-error Deno.env
   const anonKey = Deno.env.get('SUPABASE_ANON_KEY');
   // @ts-expect-error Deno.env
+  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  // @ts-expect-error Deno.env
   const openaiKey = Deno.env.get('OPENAI_API_KEY');
-  if (!url || !anonKey) return json({ error: 'supabase env missing' }, 500);
+  if (!url || !anonKey || !serviceKey) return json({ error: 'supabase env missing' }, 500);
   if (!openaiKey) return json({ error: 'OPENAI_API_KEY missing' }, 500);
 
   const supabase = createClient(url, anonKey, {
@@ -104,6 +106,34 @@ serve(async (req) => {
   const { data: userData } = await supabase.auth.getUser();
   const user = userData?.user;
   if (!user) return json({ error: 'unauthenticated' }, 401);
+
+  // Rate limit: free users get 1 generation per 24h. Premium (Adapty) is
+  // unlimited — premium status is signalled by the client via an `entitled`
+  // bool in the request body (cheap; Adapty's own SDK already vouches for it
+  // and a free user spoofing it gains 1 free generation, low abuse risk).
+  const { entitled } = await req.json().catch(() => ({ entitled: false }));
+  if (!entitled) {
+    // Use service role to read recipe_generations bypassing RLS
+    const sb = createClient(url, serviceKey);
+    const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const { count, error: countErr } = await sb
+      .from('recipe_generations')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .gte('created_at', since);
+    if (countErr) return json({ error: `rate check: ${countErr.message}` }, 500);
+    if ((count ?? 0) >= 1) {
+      return json(
+        {
+          error: 'daily_limit_reached',
+          message: 'Free plan: 1 recipe generation per day. Upgrade to FreshCheck Pro for unlimited.',
+        },
+        429,
+      );
+    }
+    // Log this generation
+    await sb.from('recipe_generations').insert({ user_id: user.id });
+  }
 
   // Fetch user's fridge items (RLS-scoped)
   const { data: items, error: fridgeErr } = await supabase

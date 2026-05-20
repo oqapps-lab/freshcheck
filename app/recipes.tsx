@@ -147,9 +147,27 @@ export default function RecipesScreen() {
           <View style={styles.loadingState}>
             <Sparkle size={48} color={colors.amber} strokeWidth={1.6} />
             <Text style={[typeScale.titleMedium, styles.loadingText]}>
-              Couldn't generate recipes
+              {error?.includes('Free plan') ? 'Daily limit reached' : "Couldn't generate recipes"}
             </Text>
             <Text style={[typeScale.bodySmall, styles.loadingSub]}>{error}</Text>
+            {error?.includes('Free plan') && (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Upgrade to FreshCheck Pro"
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+                  router.push('/paywall' as never);
+                }}
+                style={({ pressed }) => [styles.idleCta, { opacity: pressed ? 0.85 : 1 }]}
+              >
+                <SoftSurface variant="cushion" radius="full" innerStyle={styles.idleCtaInner}>
+                  <Sparkle size={20} color={colors.amber} strokeWidth={1.8} />
+                  <Text style={[typeScale.titleMedium, styles.idleCtaText]}>
+                    Unlock unlimited recipes
+                  </Text>
+                </SoftSurface>
+              </Pressable>
+            )}
           </View>
         )}
 
