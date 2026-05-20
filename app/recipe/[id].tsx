@@ -1,0 +1,327 @@
+import React from 'react';
+import { View, Text, ScrollView, StyleSheet, Image } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { IconButton } from '@/components/ui/IconButton';
+import { SoftSurface } from '@/components/ui/SoftSurface';
+import { SoftInset } from '@/components/ui/SoftInset';
+import {
+  Back,
+  Sparkle,
+  Nutrition,
+  BarcodeScanner,
+  Cloud,
+  LocalDrink,
+  EggAlt,
+  History,
+  Check,
+} from '@/components/ui/Glyphs';
+import { getRecipe } from '@/src/state/recipeStore';
+import type { RecipeStepIcon } from '@/src/hooks/useRecipes';
+import { colors, layout, spacing, typeScale } from '@/constants/tokens';
+
+const STEP_ICON: Record<RecipeStepIcon, React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>> = {
+  prep: BarcodeScanner,
+  cook: EggAlt,
+  mix: LocalDrink,
+  wait: History,
+  serve: Nutrition,
+};
+
+const STEP_LABEL: Record<RecipeStepIcon, string> = {
+  prep: 'PREP',
+  cook: 'COOK',
+  mix: 'MIX',
+  wait: 'WAIT',
+  serve: 'SERVE',
+};
+
+const DIFFICULTY_COLOR = {
+  easy: colors.primary,
+  medium: colors.amber,
+  hard: colors.red,
+} as const;
+
+export default function RecipeDetailScreen() {
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const insets = useSafeAreaInsets();
+  const router = useRouter();
+  const recipe = id ? getRecipe(String(id)) : undefined;
+
+  if (!recipe) {
+    return (
+      <View style={styles.root}>
+        <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
+          <IconButton accessibilityLabel="back" onPress={() => router.back()}>
+            <Back size={20} color={colors.ink} />
+          </IconButton>
+          <View style={styles.headerSpacer} />
+          <View style={styles.headerSpacer} />
+        </View>
+        <View style={styles.emptyCenter}>
+          <Sparkle size={48} color={colors.amber} strokeWidth={1.6} />
+          <Text style={[typeScale.titleMedium, styles.emptyText]}>Recipe expired</Text>
+          <Text style={[typeScale.bodySmall, styles.emptySub]}>
+            Recipes are generated fresh — head back and pick another.
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
+  const fridgeCount = recipe.ingredients.filter((i) => i.from_fridge).length;
+
+  return (
+    <View style={styles.root}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.scroll,
+          { paddingBottom: insets.bottom + spacing.huge },
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Hero image */}
+        <View style={styles.heroWrap}>
+          {recipe.hero_image_url ? (
+            <Image
+              source={{ uri: recipe.hero_image_url }}
+              style={styles.heroImage}
+              resizeMode="cover"
+            />
+          ) : (
+            <View style={styles.heroSkeleton}>
+              <Cloud size={48} color={colors.inkMuted} strokeWidth={1.4} />
+            </View>
+          )}
+          <View style={[styles.headerOverlay, { paddingTop: insets.top + 16 }]}>
+            <IconButton accessibilityLabel="back" onPress={() => router.back()}>
+              <Back size={20} color={colors.ink} />
+            </IconButton>
+          </View>
+        </View>
+
+        {/* Title block */}
+        <View style={styles.titleBlock}>
+          <Text style={[typeScale.displayLarge, { color: colors.ink }]}>
+            {recipe.name}
+          </Text>
+          <Text style={[typeScale.body, styles.blurb]}>{recipe.blurb}</Text>
+          <View style={styles.metaRow}>
+            <View style={styles.metaItem}>
+              <Text style={[typeScale.labelSmall, styles.metaLabel]}>TIME</Text>
+              <Text style={[typeScale.titleMedium, styles.metaValue]}>
+                {recipe.minutes}min
+              </Text>
+            </View>
+            <View style={styles.metaItem}>
+              <Text style={[typeScale.labelSmall, styles.metaLabel]}>DIFFICULTY</Text>
+              <Text
+                style={[
+                  typeScale.titleMedium,
+                  { color: DIFFICULTY_COLOR[recipe.difficulty] },
+                ]}
+              >
+                {recipe.difficulty.toUpperCase()}
+              </Text>
+            </View>
+            <View style={styles.metaItem}>
+              <Text style={[typeScale.labelSmall, styles.metaLabel]}>FROM FRIDGE</Text>
+              <Text style={[typeScale.titleMedium, styles.metaValue]}>
+                {fridgeCount}/{recipe.ingredients.length}
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Ingredients */}
+        <View style={styles.section}>
+          <Text style={[typeScale.label, styles.sectionLabel]}>INGREDIENTS</Text>
+          <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.card}>
+            {recipe.ingredients.map((ing, idx) => (
+              <View
+                key={`${ing.name}-${idx}`}
+                style={[
+                  styles.ingRow,
+                  idx < recipe.ingredients.length - 1 && styles.ingRowBorder,
+                ]}
+              >
+                <View
+                  style={[
+                    styles.checkBubble,
+                    ing.from_fridge && styles.checkBubbleActive,
+                  ]}
+                >
+                  {ing.from_fridge && (
+                    <Check size={12} color={colors.surfaceWhite} strokeWidth={2.6} />
+                  )}
+                </View>
+                <View style={styles.ingBody}>
+                  <Text style={[typeScale.body, styles.ingName]} numberOfLines={1}>
+                    {ing.name}
+                  </Text>
+                  <Text style={[typeScale.bodySmall, styles.ingAmount]}>
+                    {ing.amount}
+                  </Text>
+                </View>
+                {ing.from_fridge && (
+                  <View style={styles.haveBadge}>
+                    <Text style={[typeScale.labelTiny, styles.haveText]}>HAVE</Text>
+                  </View>
+                )}
+              </View>
+            ))}
+          </SoftSurface>
+        </View>
+
+        {/* Steps */}
+        <View style={styles.section}>
+          <Text style={[typeScale.label, styles.sectionLabel]}>STEPS</Text>
+          <View style={styles.stepsList}>
+            {recipe.steps.map((step) => {
+              const Icon = STEP_ICON[step.icon] ?? Nutrition;
+              return (
+                <SoftSurface
+                  key={step.order}
+                  variant="cushion"
+                  radius="xxl"
+                  innerStyle={styles.stepCard}
+                >
+                  <View style={styles.stepRow}>
+                    <SoftInset
+                      radius="lg"
+                      strength="medium"
+                      style={styles.stepIcon}
+                      contentStyle={styles.stepIconInner}
+                    >
+                      <Icon size={22} color={colors.primary} strokeWidth={1.8} />
+                    </SoftInset>
+                    <View style={styles.stepBody}>
+                      <View style={styles.stepHeader}>
+                        <Text style={[typeScale.labelSmall, styles.stepLabel]}>
+                          STEP {step.order} · {STEP_LABEL[step.icon]}
+                        </Text>
+                        <Text style={[typeScale.labelSmall, styles.stepTime]}>
+                          {step.minutes} MIN
+                        </Text>
+                      </View>
+                      <Text style={[typeScale.body, styles.stepText]}>
+                        {step.text}
+                      </Text>
+                    </View>
+                  </View>
+                </SoftSurface>
+              );
+            })}
+          </View>
+        </View>
+      </ScrollView>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  root: { flex: 1, backgroundColor: colors.canvas },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: layout.screenPaddingHeader,
+    paddingBottom: layout.headerPaddingBottom,
+  },
+  headerOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    paddingHorizontal: layout.screenPaddingHeader,
+  },
+  headerSpacer: { width: 48, height: 48 },
+  emptyCenter: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.md,
+    paddingHorizontal: spacing.xl,
+  },
+  emptyText: { color: colors.ink },
+  emptySub: { color: colors.inkSecondary, textAlign: 'center' },
+  scroll: { paddingBottom: spacing.huge },
+  heroWrap: {
+    width: '100%',
+    aspectRatio: 1,
+    backgroundColor: colors.canvas,
+  },
+  heroImage: { width: '100%', height: '100%' },
+  heroSkeleton: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  titleBlock: {
+    paddingHorizontal: layout.screenPadding,
+    paddingTop: spacing.huge,
+    gap: spacing.sm,
+  },
+  blurb: { color: colors.inkSecondary, marginTop: 4 },
+  metaRow: {
+    flexDirection: 'row',
+    gap: spacing.xl,
+    marginTop: spacing.lg,
+  },
+  metaItem: { gap: 2 },
+  metaLabel: { color: colors.inkSecondary, letterSpacing: 1.2 },
+  metaValue: { color: colors.ink },
+  section: {
+    paddingHorizontal: layout.screenPadding,
+    marginTop: spacing.huge,
+  },
+  sectionLabel: {
+    color: colors.inkSecondary,
+    marginBottom: spacing.md,
+    paddingHorizontal: 4,
+  },
+  card: { padding: spacing.lg },
+  ingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: spacing.md,
+    gap: spacing.md,
+  },
+  ingRowBorder: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.hairline,
+  },
+  checkBubble: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 1.4,
+    borderColor: colors.inkMuted,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkBubbleActive: {
+    borderColor: colors.primary,
+    backgroundColor: colors.primary,
+  },
+  ingBody: { flex: 1, gap: 2 },
+  ingName: { color: colors.ink },
+  ingAmount: { color: colors.inkSecondary },
+  haveBadge: {
+    backgroundColor: 'rgba(22, 163, 74, 0.1)',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 999,
+  },
+  haveText: { color: colors.primary, letterSpacing: 1.4 },
+  stepsList: { gap: spacing.md },
+  stepCard: { padding: spacing.lg },
+  stepRow: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.lg },
+  stepIcon: { width: 44, height: 44 },
+  stepIconInner: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  stepBody: { flex: 1, gap: 6 },
+  stepHeader: { flexDirection: 'row', justifyContent: 'space-between' },
+  stepLabel: { color: colors.inkSecondary, letterSpacing: 1.4 },
+  stepTime: { color: colors.amber, letterSpacing: 1.4 },
+  stepText: { color: colors.ink, lineHeight: 22 },
+});

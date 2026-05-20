@@ -7,6 +7,7 @@
     "icon": "./assets/images/icon.png",
     "scheme": "freshcheck",
     "userInterfaceStyle": "light",
+    "newArchEnabled": true,
     "backgroundColor": "#ECEFF4",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -16,7 +17,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.gazetastreet.freshcheck",
-      "buildNumber": "34",
+      "buildNumber": "37",
       "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "NSCameraUsageDescription": "FreshCheck uses the camera to check the freshness of your food.",

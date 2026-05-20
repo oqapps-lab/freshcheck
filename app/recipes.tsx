@@ -1,57 +1,42 @@
-import React, { useMemo } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet, Alert } from 'react-native';
+import React from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  Pressable,
+  StyleSheet,
+  Image,
+  ActivityIndicator,
+} from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { IconButton } from '@/components/ui/IconButton';
 import { SoftSurface } from '@/components/ui/SoftSurface';
 import { SoftInset } from '@/components/ui/SoftInset';
-import { Back, Nutrition, Cloud, EggAlt, LocalDrink, Chevron } from '@/components/ui/Glyphs';
-import { useFridge } from '@/src/hooks/useFridge';
+import { Back, Chevron, Sparkle } from '@/components/ui/Glyphs';
+import { useRecipes, type Recipe } from '@/src/hooks/useRecipes';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
-type Recipe = {
-  id: string;
-  name: string;
-  minutes: number;
-  uses: string[]; // categories or item-name keywords used
-  blurb: string;
-  Icon: React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>;
+const DIFFICULTY_COLOR: Record<Recipe['difficulty'], string> = {
+  easy: colors.primary,
+  medium: colors.amber,
+  hard: colors.red,
 };
-
-const RECIPES: Recipe[] = [
-  { id: '1', name: 'Avocado toast', minutes: 7,  uses: ['produce'],          blurb: 'Toast + avocado + lime + flaky salt.',           Icon: Nutrition },
-  { id: '2', name: 'Caprese salad',  minutes: 10, uses: ['produce', 'dairy'], blurb: 'Tomato, mozzarella, basil, olive oil.',          Icon: Nutrition },
-  { id: '3', name: 'Cheddar omelette', minutes: 8,  uses: ['dairy'],          blurb: 'Eggs, sharp cheddar, butter, fresh herbs.',      Icon: LocalDrink },
-  { id: '4', name: 'Chicken stir-fry', minutes: 18, uses: ['poultry', 'produce'], blurb: 'Chicken, vegetables, soy, garlic, ginger.',  Icon: EggAlt },
-  { id: '5', name: 'Tomato cream pasta', minutes: 20, uses: ['produce', 'dairy'], blurb: 'Cherry tomatoes, cream, garlic, parmesan.',  Icon: Nutrition },
-  { id: '6', name: 'Spinach smoothie', minutes: 5,  uses: ['produce', 'dairy'], blurb: 'Spinach, banana, milk, honey.',                Icon: Cloud },
-];
 
 export default function RecipesScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { items } = useFridge();
+  const { status, error, recipes, refresh } = useRecipes();
 
-  // Match recipes to fridge contents — count how many "uses" categories
-  // are present in the fridge. Recipes with more matches surface first;
-  // ties broken by shortest cook time (fastest wins).
-  const ranked = useMemo(() => {
-    const present = new Set(items.map((i) => i.category));
-    return [...RECIPES]
-      .map((r) => ({
-        ...r,
-        matches: r.uses.filter((u) => present.has(u as never)).length,
-      }))
-      .sort((a, b) => {
-        if (b.matches !== a.matches) return b.matches - a.matches;
-        return a.minutes - b.minutes;
-      });
-  }, [items]);
-
-  const onCook = (recipe: Recipe) => {
+  const onOpen = (recipe: Recipe) => {
     Haptics.selectionAsync().catch(() => {});
-    Alert.alert(recipe.name, 'Step-by-step view coming soon.');
+    router.push(`/recipe/${recipe.id}` as never);
+  };
+
+  const onRefresh = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    refresh();
   };
 
   return (
@@ -61,7 +46,12 @@ export default function RecipesScreen() {
           <Back size={20} color={colors.ink} />
         </IconButton>
         <Text style={[typeScale.wordmark, styles.eyebrow]}>RECIPES</Text>
-        <View style={styles.headerSpacer} />
+        <IconButton
+          accessibilityLabel="regenerate recipes"
+          onPress={status === 'loading' ? () => {} : onRefresh}
+        >
+          <Sparkle size={20} color={status === 'loading' ? colors.inkMuted : colors.amber} strokeWidth={1.8} />
+        </IconButton>
       </View>
 
       <ScrollView
@@ -71,53 +61,100 @@ export default function RecipesScreen() {
         ]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Hero */}
         <View style={styles.hero}>
-          <Text style={[typeScale.displayLarge, { color: colors.ink }]}>Cook with what you have</Text>
-          <Text style={[typeScale.label, styles.eyebrow2]}>SUGGESTED FOR YOUR FRIDGE</Text>
+          <Text style={[typeScale.displayLarge, { color: colors.ink }]}>
+            Cook with what you have
+          </Text>
+          <Text style={[typeScale.label, styles.eyebrow2]}>
+            AI-CRAFTED FROM YOUR FRIDGE
+          </Text>
         </View>
 
+        {status === 'loading' && recipes.length === 0 && (
+          <View style={styles.loadingState}>
+            <ActivityIndicator size="large" color={colors.primary} />
+            <Text style={[typeScale.body, styles.loadingText]}>
+              Reading your fridge and dreaming up recipes…
+            </Text>
+            <Text style={[typeScale.bodySmall, styles.loadingSub]}>
+              This takes ~30 seconds. Worth the wait.
+            </Text>
+          </View>
+        )}
+
+        {status === 'error' && (
+          <View style={styles.loadingState}>
+            <Sparkle size={48} color={colors.amber} strokeWidth={1.6} />
+            <Text style={[typeScale.titleMedium, styles.loadingText]}>
+              Couldn't generate recipes
+            </Text>
+            <Text style={[typeScale.bodySmall, styles.loadingSub]}>{error}</Text>
+          </View>
+        )}
+
         <View style={styles.list}>
-          {ranked.map((recipe) => (
+          {recipes.map((recipe) => (
             <Pressable
               key={recipe.id}
               accessibilityRole="button"
               accessibilityLabel={`${recipe.name}, ${recipe.minutes} minutes`}
-              onPress={() => onCook(recipe)}
+              onPress={() => onOpen(recipe)}
             >
               <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.card}>
-                <View style={styles.cardRow}>
-                  <SoftInset
-                    radius="xl"
-                    strength="medium"
-                    style={styles.glyphWrap}
-                    contentStyle={styles.glyphInner}
-                  >
-                    <recipe.Icon size={28} color={colors.primary} strokeWidth={1.8} />
-                  </SoftInset>
+                <View style={styles.heroImageWrap}>
+                  {recipe.hero_image_url ? (
+                    <Image
+                      source={{ uri: recipe.hero_image_url }}
+                      style={styles.heroImage}
+                      resizeMode="cover"
+                    />
+                  ) : (
+                    <SoftInset
+                      radius="xxl"
+                      strength="medium"
+                      style={styles.heroSkeleton}
+                      contentStyle={styles.heroSkeletonInner}
+                    >
+                      <ActivityIndicator size="small" color={colors.inkMuted} />
+                    </SoftInset>
+                  )}
+                </View>
 
-                  <View style={styles.body}>
-                    <Text style={[typeScale.titleLarge, { color: colors.ink }]} numberOfLines={2}>
+                <View style={styles.body}>
+                  <View style={styles.titleRow}>
+                    <Text
+                      style={[typeScale.titleLarge, { color: colors.ink, flex: 1 }]}
+                      numberOfLines={2}
+                    >
                       {recipe.name}
                     </Text>
-                    <Text style={[typeScale.bodySmall, styles.blurb]} numberOfLines={2}>
-                      {recipe.blurb}
-                    </Text>
-                    <View style={styles.metaRow}>
-                      <Text style={[typeScale.labelSmall, styles.metaTime]}>
-                        {recipe.minutes} MIN
-                      </Text>
-                      {recipe.matches > 0 && (
-                        <View style={styles.matchPill}>
-                          <Text style={[typeScale.labelTiny, styles.matchText]}>
-                            {recipe.matches} IN FRIDGE
-                          </Text>
-                        </View>
-                      )}
-                    </View>
+                    <Chevron size={20} color={colors.inkMuted} />
                   </View>
-
-                  <Chevron size={20} color={colors.inkMuted} />
+                  <Text style={[typeScale.bodySmall, styles.blurb]} numberOfLines={2}>
+                    {recipe.blurb}
+                  </Text>
+                  <View style={styles.metaRow}>
+                    <Text style={[typeScale.labelSmall, styles.metaTime]}>
+                      {recipe.minutes} MIN
+                    </Text>
+                    <View
+                      style={[
+                        styles.difficultyPill,
+                        { backgroundColor: DIFFICULTY_COLOR[recipe.difficulty] },
+                      ]}
+                    >
+                      <Text style={[typeScale.labelTiny, styles.difficultyText]}>
+                        {recipe.difficulty.toUpperCase()}
+                      </Text>
+                    </View>
+                    {recipe.ingredients.filter((i) => i.from_fridge).length > 0 && (
+                      <View style={styles.fridgePill}>
+                        <Text style={[typeScale.labelTiny, styles.fridgeText]}>
+                          {recipe.ingredients.filter((i) => i.from_fridge).length} FROM FRIDGE
+                        </Text>
+                      </View>
+                    )}
+                  </View>
                 </View>
               </SoftSurface>
             </Pressable>
@@ -129,10 +166,7 @@ export default function RecipesScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: colors.canvas,
-  },
+  root: { flex: 1, backgroundColor: colors.canvas },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -140,70 +174,53 @@ const styles = StyleSheet.create({
     paddingHorizontal: layout.screenPaddingHeader,
     paddingBottom: layout.headerPaddingBottom,
   },
-  headerSpacer: { width: 48, height: 48 },
   eyebrow: { color: colors.inkSecondary },
-  scroll: {
-    paddingHorizontal: layout.screenPadding,
-    paddingTop: spacing.lg,
-  },
-  hero: {
-    paddingHorizontal: 8,
-    marginBottom: spacing.huge,
-  },
+  scroll: { paddingHorizontal: layout.screenPadding, paddingTop: spacing.lg },
+  hero: { paddingHorizontal: 8, marginBottom: spacing.huge },
   eyebrow2: {
     color: colors.inkSecondary,
     marginTop: 6,
     textTransform: 'uppercase',
   },
-  list: {
-    gap: spacing.lg,
-    paddingHorizontal: 8,
-  },
-  card: {
-    paddingVertical: spacing.lg,
-    paddingHorizontal: spacing.lg,
-  },
-  cardRow: {
-    flexDirection: 'row',
+  loadingState: {
     alignItems: 'center',
-    gap: spacing.lg,
+    paddingVertical: spacing.huge * 2,
+    gap: spacing.md,
+    paddingHorizontal: spacing.xl,
   },
-  glyphWrap: {
-    width: 56,
-    height: 56,
-  },
-  glyphInner: {
-    width: 56,
-    height: 56,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  body: {
-    flex: 1,
-    gap: 4,
-  },
-  blurb: {
-    color: colors.inkSecondary,
-    lineHeight: 18,
-  },
+  loadingText: { color: colors.ink, textAlign: 'center' },
+  loadingSub: { color: colors.inkSecondary, textAlign: 'center' },
+  list: { gap: spacing.xl, paddingHorizontal: 8 },
+  card: { padding: 0, overflow: 'hidden' },
+  heroImageWrap: { width: '100%', aspectRatio: 16 / 10 },
+  heroImage: { width: '100%', height: '100%' },
+  heroSkeleton: { width: '100%', height: '100%' },
+  heroSkeletonInner: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  body: { gap: 6, padding: spacing.lg },
+  titleRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  blurb: { color: colors.inkSecondary, lineHeight: 18 },
   metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
-    marginTop: 4,
+    marginTop: 6,
+    flexWrap: 'wrap',
   },
-  metaTime: {
-    color: colors.amber,
+  metaTime: { color: colors.amber, letterSpacing: 1.4 },
+  difficultyPill: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 999,
+  },
+  difficultyText: {
+    color: colors.surfaceWhite,
     letterSpacing: 1.4,
   },
-  matchPill: {
+  fridgePill: {
     backgroundColor: colors.primary,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 999,
   },
-  matchText: {
-    color: colors.surfaceWhite,
-    letterSpacing: 1.4,
-  },
+  fridgeText: { color: colors.surfaceWhite, letterSpacing: 1.4 },
 });
