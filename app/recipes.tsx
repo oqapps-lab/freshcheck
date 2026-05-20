@@ -99,6 +99,38 @@ export default function RecipesScreen() {
           </SoftSurface>
         )}
 
+        {status === 'idle' && recipes.length === 0 && (
+          <View style={styles.idleState}>
+            <SoftSurface variant="cushion" radius="full" innerStyle={styles.idleIcon}>
+              <Sparkle size={56} color={colors.amber} strokeWidth={1.6} />
+            </SoftSurface>
+            <Text style={[typeScale.titleLarge, styles.idleTitle]}>
+              {fridgeEmpty ? 'Try AI starter recipes' : 'Pick a recipe in 10 seconds'}
+            </Text>
+            <Text style={[typeScale.bodySmall, styles.idleSub]}>
+              {fridgeEmpty
+                ? 'No fridge items yet — get 3 simple ideas you can shop for.'
+                : `We'll dream up 3 recipes from the ${fridgeItems.length} items in your fridge, prioritizing what expires soon.`}
+            </Text>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Generate recipes"
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+                refresh();
+              }}
+              style={({ pressed }) => [styles.idleCta, { opacity: pressed ? 0.85 : 1 }]}
+            >
+              <SoftSurface variant="cushion" radius="full" innerStyle={styles.idleCtaInner}>
+                <Sparkle size={20} color={colors.amber} strokeWidth={1.8} />
+                <Text style={[typeScale.titleMedium, styles.idleCtaText]}>
+                  Generate recipes
+                </Text>
+              </SoftSurface>
+            </Pressable>
+          </View>
+        )}
+
         {status === 'loading' && recipes.length === 0 && (
           <View style={styles.loadingState}>
             <ActivityIndicator size="large" color={colors.primary} />
@@ -233,6 +265,31 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   emptyBannerText: { color: colors.inkSecondary, flex: 1, lineHeight: 18 },
+  idleState: {
+    alignItems: 'center',
+    paddingVertical: spacing.huge,
+    paddingHorizontal: spacing.xl,
+    gap: spacing.md,
+  },
+  idleIcon: {
+    width: 96,
+    height: 96,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.md,
+  },
+  idleTitle: { color: colors.ink, textAlign: 'center' },
+  idleSub: { color: colors.inkSecondary, textAlign: 'center', lineHeight: 20 },
+  idleCta: { marginTop: spacing.lg, alignSelf: 'stretch' },
+  idleCtaInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.xl,
+  },
+  idleCtaText: { color: colors.ink },
   list: { gap: spacing.xl, paddingHorizontal: 8 },
   card: { padding: 0, overflow: 'hidden' },
   heroImageWrap: { width: '100%', aspectRatio: 16 / 10 },

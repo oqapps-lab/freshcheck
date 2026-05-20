@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { getSupabase } from '@/src/lib/supabase';
 import { setRecipes as setRecipesCache, updateRecipeImage } from '@/src/state/recipeStore';
 
@@ -103,12 +103,10 @@ export function useRecipes() {
     }
   }, [supabase]);
 
-  // Auto-generate on first mount
-  useEffect(() => {
-    if (status === 'idle' && supabase) {
-      void generate();
-    }
-  }, [status, supabase, generate]);
+  // Note: deliberately NOT auto-generating on mount. Each generation costs
+  // ~$0.13 (gpt-5.5 + 3x gpt-image-1) — opening the tab shouldn't burn money.
+  // The recipes screen now shows a "Generate Recipes" CTA that the user taps
+  // explicitly.
 
   return { status, error, recipes, refresh: generate };
 }
