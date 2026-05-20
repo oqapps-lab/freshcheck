@@ -17,7 +17,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.gazetastreet.freshcheck",
-      "buildNumber": "1",
+      "buildNumber": "41",
       "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "NSCameraUsageDescription": "FreshCheck uses the camera to check the freshness of your food.",
