@@ -17,6 +17,7 @@ import {
   Nutrition,
   History,
   Check,
+  Bowl,
 } from '@/components/ui/Glyphs';
 import { startTrial, restorePurchases } from '@/src/lib/adapty';
 import { LEGAL } from '@/constants/legal';
@@ -27,6 +28,7 @@ type Plan = 'weekly' | 'monthly' | 'annual';
 const FEATURES: { icon: React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>; title: string; body: string }[] = [
   { icon: BarcodeScanner, title: 'Unlimited scans', body: 'Scan as many items as you want, no daily cap.' },
   { icon: Nutrition,      title: 'AI ripeness analysis', body: 'Per-item softness, ripeness and best-by guidance.' },
+  { icon: Bowl,           title: 'AI recipes from your fridge', body: 'Three personalized recipes a day, prioritizing items about to expire.' },
   { icon: Cloud,          title: 'Cloud sync',       body: 'Your fridge follows you across iPhone and iPad.' },
   { icon: History,        title: 'Smart reminders',  body: 'Custom alerts before items go off — never waste again.' },
 ];

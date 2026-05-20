@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
 import { getSupabase } from '@/src/lib/supabase';
+import { clearRecipes } from '@/src/state/recipeStore';
 
 type AuthState = {
   session: Session | null;
@@ -93,6 +94,7 @@ export function useAuth(): AuthState & {
     },
     async signOut() {
       if (!supabase) return;
+      clearRecipes();
       await supabase.auth.signOut();
     },
   };

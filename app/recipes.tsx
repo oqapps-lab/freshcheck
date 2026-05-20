@@ -17,6 +17,7 @@ import { SoftSurface } from '@/components/ui/SoftSurface';
 import { SoftInset } from '@/components/ui/SoftInset';
 import { Back, Chevron, Sparkle } from '@/components/ui/Glyphs';
 import { useRecipes, type Recipe } from '@/src/hooks/useRecipes';
+import { useFridge } from '@/src/hooks/useFridge';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
 const DIFFICULTY_COLOR: Record<Recipe['difficulty'], string> = {
@@ -29,6 +30,8 @@ export default function RecipesScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { status, error, recipes, refresh } = useRecipes();
+  const { items: fridgeItems } = useFridge();
+  const fridgeEmpty = fridgeItems.length === 0;
 
   const onOpen = (recipe: Recipe) => {
     Haptics.selectionAsync().catch(() => {});
@@ -78,12 +81,23 @@ export default function RecipesScreen() {
       >
         <View style={styles.hero}>
           <Text style={[typeScale.displayLarge, { color: colors.ink }]}>
-            Cook with what you have
+            {fridgeEmpty ? 'Starter recipes' : 'Cook with what you have'}
           </Text>
           <Text style={[typeScale.label, styles.eyebrow2]}>
-            AI-CRAFTED FROM YOUR FRIDGE
+            {fridgeEmpty
+              ? 'SCAN ITEMS FOR PERSONALIZED PICKS'
+              : 'AI-CRAFTED FROM YOUR FRIDGE'}
           </Text>
         </View>
+
+        {fridgeEmpty && recipes.length > 0 && (
+          <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.emptyBanner}>
+            <Sparkle size={20} color={colors.amber} strokeWidth={1.6} />
+            <Text style={[typeScale.bodySmall, styles.emptyBannerText]}>
+              Your fridge is empty — these are generic starter ideas. Scan a few items first for recipes built around what you actually have.
+            </Text>
+          </SoftSurface>
+        )}
 
         {status === 'loading' && recipes.length === 0 && (
           <View style={styles.loadingState}>
@@ -92,7 +106,7 @@ export default function RecipesScreen() {
               Reading your fridge and dreaming up recipes…
             </Text>
             <Text style={[typeScale.bodySmall, styles.loadingSub]}>
-              This takes ~30 seconds. Worth the wait.
+              Recipes appear in ~10 seconds. Photos load right after.
             </Text>
           </View>
         )}
@@ -210,6 +224,15 @@ const styles = StyleSheet.create({
   },
   loadingText: { color: colors.ink, textAlign: 'center' },
   loadingSub: { color: colors.inkSecondary, textAlign: 'center' },
+  emptyBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    padding: spacing.lg,
+    marginHorizontal: 8,
+    marginBottom: spacing.lg,
+  },
+  emptyBannerText: { color: colors.inkSecondary, flex: 1, lineHeight: 18 },
   list: { gap: spacing.xl, paddingHorizontal: 8 },
   card: { padding: 0, overflow: 'hidden' },
   heroImageWrap: { width: '100%', aspectRatio: 16 / 10 },

@@ -19,3 +19,7 @@ export function updateRecipeImage(id: string, url: string) {
   const r = cache.get(id);
   if (r) cache.set(id, { ...r, hero_image_url: url });
 }
+
+export function clearRecipes() {
+  cache = new Map();
+}
