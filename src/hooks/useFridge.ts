@@ -31,17 +31,41 @@ export type FridgeItem = {
   thumbnailPath: string | null;
 };
 
+// days_left is stored as a snapshot at insert time. Without subtracting
+// the days that have passed since `created_at`, an item scanned with "3
+// days left" still reads "3 days left" three days later — Rule 14 stale
+// copy despite changed state. Recompute at read time so freshness reflects
+// real-world elapsed days, and re-derive the tone (and warn flag) so the
+// soon/past colour and expiry-summary counter follow along.
+function effectiveExpiryText(daysLeft: number): string {
+  if (daysLeft <= 0) return 'Use today';
+  if (daysLeft === 1) return '1 day left';
+  return `${daysLeft} days left`;
+}
+
 function fromRow(r: Row): FridgeItem {
+  const daysAgo = Math.max(
+    0,
+    Math.floor((Date.now() - new Date(r.created_at).getTime()) / 86400000),
+  );
+  const effectiveDaysLeft = Math.max(0, r.days_left - daysAgo);
+  const storedTone = r.tone as Tone;
+  const effectiveTone: Tone =
+    effectiveDaysLeft <= 0
+      ? 'past'
+      : effectiveDaysLeft <= 1
+        ? 'soon'
+        : storedTone;
   return {
     id: r.id,
     name: r.name,
     category: r.category,
     location: r.location,
-    tone: r.tone as Tone,
-    daysLeft: r.days_left,
+    tone: effectiveTone,
+    daysLeft: effectiveDaysLeft,
     totalDays: r.total_days,
-    expiryText: r.expiry_text,
-    warn: r.warn,
+    expiryText: effectiveExpiryText(effectiveDaysLeft),
+    warn: effectiveTone === 'soon' || effectiveTone === 'past',
     thumbnailPath: r.thumbnail_path,
   };
 }
