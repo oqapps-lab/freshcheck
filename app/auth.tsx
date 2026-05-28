@@ -35,6 +35,15 @@ export default function AuthScreen() {
 
   const isSignIn = mode === 'signin';
 
+  // Onboarding finishes with `router.replace('/auth')`, which leaves an
+  // empty stack — a plain `router.back()` would be a no-op and strand the
+  // user on the auth screen after sign-in or after tapping the top-left
+  // back button. Fall back to /(tabs) when there is nothing to pop to.
+  const dismiss = () => {
+    if (router.canGoBack()) router.back();
+    else router.replace('/(tabs)');
+  };
+
   // iOS keyboard with QuickType / Passwords accessory bar can occlude the
   // password input. Smoke-test 2026-04-28 caught taps at the field's
   // visual y-coordinate landing on the keyboard accessory instead of the
@@ -84,7 +93,7 @@ export default function AuthScreen() {
         Alert.alert('Sign in failed', error);
         return;
       }
-      router.back();
+      dismiss();
       return;
     }
     const { error, needsEmailConfirmation } = await signUpWithEmail(email.trim(), password);
@@ -103,7 +112,7 @@ export default function AuthScreen() {
       );
       return;
     }
-    router.back();
+    dismiss();
   };
 
   return (
@@ -113,7 +122,7 @@ export default function AuthScreen() {
       style={styles.root}
     >
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-        <IconButton accessibilityLabel="back" onPress={() => router.back()}>
+        <IconButton accessibilityLabel="back" onPress={dismiss}>
           <Back size={20} color={colors.ink} />
         </IconButton>
         <Text style={[typeScale.wordmark, styles.eyebrow]}>FRESHCHECK</Text>

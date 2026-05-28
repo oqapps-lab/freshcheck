@@ -47,6 +47,15 @@ export default function CaptureScreen() {
   const [analyzingMsg, setAnalyzingMsg] = useState('Analyzing…');
   const pulse = useRef(new Animated.Value(0)).current;
 
+  // Reachable via router.replace('/capture') from the empty-scan tab and
+  // from "Scan another", which both leave the stack with no history —
+  // a plain router.back() would be a no-op and strand the user. Fall back
+  // to /(tabs) when there's nothing to pop to.
+  const dismiss = () => {
+    if (router.canGoBack()) router.back();
+    else router.replace('/(tabs)');
+  };
+
   useEffect(() => {
     const loop = Animated.loop(
       Animated.sequence([
@@ -195,7 +204,7 @@ export default function CaptureScreen() {
   return (
     <View style={styles.root}>
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-        <IconButton accessibilityLabel="back" onPress={() => router.back()}>
+        <IconButton accessibilityLabel="back" onPress={dismiss}>
           <Back size={20} color={colors.ink} />
         </IconButton>
         <Text style={[typeScale.wordmark, styles.eyebrow]}>SCAN</Text>
@@ -258,7 +267,7 @@ export default function CaptureScreen() {
           // Backend not configured (missing EXPO_PUBLIC_SUPABASE_URL etc.) —
           // give the user a recovery path instead of a dead-end card.
           <View style={styles.ctaWide}>
-            <PrimaryPillCTA label="Back" onPress={() => router.back()} />
+            <PrimaryPillCTA label="Back" onPress={dismiss} />
           </View>
         )}
       </View>
