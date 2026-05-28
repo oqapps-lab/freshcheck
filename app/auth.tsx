@@ -17,6 +17,8 @@ import { PrimaryPillCTA } from '@/components/ui/PrimaryPillCTA';
 import { GhostText } from '@/components/ui/GhostText';
 import { Back, User } from '@/components/ui/Glyphs';
 import { useAuth } from '@/src/hooks/useAuth';
+import { logSignUpEvent } from '@/src/lib/firebase';
+import { logSignUp as afLogSignUp } from '@/src/lib/appsflyer';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
 type Mode = 'signin' | 'signup';
@@ -119,6 +121,11 @@ export default function AuthScreen() {
       );
       return;
     }
+    // Fire to Firebase GA4 ('sign_up') + AppsFlyer ('af_complete_registration')
+    // so UAC and Apple Search Ads can optimise on registration as a
+    // conversion event. Without this the post-install funnel is invisible.
+    void logSignUpEvent('email');
+    afLogSignUp('email');
     dismiss();
   };
 

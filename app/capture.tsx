@@ -24,6 +24,7 @@ import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 import { useAuth } from '@/src/hooks/useAuth';
 import { getSupabase } from '@/src/lib/supabase';
 import { setLastScan } from '@/src/state/lastScan';
+import { logScan as afLogScan } from '@/src/lib/appsflyer';
 
 /**
  * Capture — real camera viewfinder. Shutter takes a picture, resizes
@@ -125,6 +126,11 @@ export default function CaptureScreen() {
         analysis: Array.isArray(data.analysis) ? data.analysis : [],
       });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+      // AppsFlyer 'af_content_view' — primary in-app engagement signal that
+      // ad networks can attribute installs against. Firebase Analytics
+      // auto-tracks screen views via logScreenView elsewhere; AppsFlyer
+      // doesn't, so we fan this one out explicitly.
+      afLogScan(data.product ?? 'unknown');
       router.replace('/(tabs)/scan');
     } catch (err) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});

@@ -21,10 +21,23 @@ import {
 } from '@/components/ui/Glyphs';
 import { startTrial, restorePurchases } from '@/src/lib/adapty';
 import { usePremium } from '@/src/hooks/usePremium';
+import { logTrialStartEvent, logBeginCheckout } from '@/src/lib/firebase';
+import { logTrialStart as afLogTrialStart } from '@/src/lib/appsflyer';
 import { LEGAL } from '@/constants/legal';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
 type Plan = 'weekly' | 'monthly' | 'annual';
+
+const PRODUCT_ID: Record<Plan, string> = {
+  weekly: 'com.gazetastreet.freshcheck.weekly',
+  monthly: 'com.gazetastreet.freshcheck.monthly',
+  annual: 'com.gazetastreet.freshcheck.annual',
+};
+const PRICE_USD: Record<Plan, number> = {
+  weekly: 6.99,
+  monthly: 14.99,
+  annual: 39.99,
+};
 
 const FEATURES: { icon: React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>; title: string; body: string }[] = [
   { icon: BarcodeScanner, title: 'Unlimited scans', body: 'Scan as many items as you want, no daily cap.' },
@@ -56,10 +69,19 @@ export default function PaywallScreen() {
     if (busy) return;
     Haptics.selectionAsync().catch(() => {});
     setBusy(true);
+    // Begin-checkout fires whether or not the user completes — this is
+    // the funnel step ad networks optimise on (init-purchase vs purchase).
+    void logBeginCheckout(PRODUCT_ID[plan], PRICE_USD[plan]);
     try {
       const r = await startTrial({ plan });
       if (r.ok) {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+        // Fire to both Firebase (GA4 / UAC bidding) and AppsFlyer
+        // (attribution + Apple Search Ads). Without these neither
+        // dashboard sees the conversion and paid acquisition can't
+        // optimise on trial-start events.
+        void logTrialStartEvent(PRODUCT_ID[plan]);
+        afLogTrialStart(PRODUCT_ID[plan], PRICE_USD[plan]);
         Alert.alert('Welcome to Pro', 'Your free trial has started. Enjoy unlimited scans!');
         router.back();
       } else if (r.error === 'cancelled') {
