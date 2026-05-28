@@ -37,6 +37,11 @@ function getSdk(): typeof import('react-native-adapty') | null {
 }
 
 let activated = false;
+// Holds the customerUserId set during the brief window before activation
+// completes — fired automatically once activation lands so the first
+// post-cold-launch sign-in is never silently dropped from Adapty's
+// per-user analytics + entitlement reconciliation.
+let pendingIdentify: string | null = null;
 
 export async function activateAdaptyIfNeeded(): Promise<void> {
   if (activated) return;
@@ -50,6 +55,15 @@ export async function activateAdaptyIfNeeded(): Promise<void> {
       __ignoreActivationOnFastRefresh: __DEV__,
     });
     activated = true;
+    if (pendingIdentify) {
+      const queued = pendingIdentify;
+      pendingIdentify = null;
+      try {
+        await sdk.adapty.identify(queued);
+      } catch (e) {
+        if (__DEV__) console.warn('[adapty] queued identify failed:', e);
+      }
+    }
   } catch (e) {
     if (__DEV__) console.warn('[adapty] activate failed:', e);
   }
@@ -57,7 +71,15 @@ export async function activateAdaptyIfNeeded(): Promise<void> {
 
 export async function identifyAdaptyUser(customerUserId: string): Promise<void> {
   const sdk = getSdk();
-  if (!sdk || !activated) return;
+  if (!sdk) return;
+  if (!activated) {
+    // Activation still in flight — queue and let activateAdaptyIfNeeded
+    // flush this once the SDK is ready. Without this, the very first
+    // sign-in after a cold launch was silently dropped because the
+    // activate → identify ordering wasn't enforced anywhere.
+    pendingIdentify = customerUserId;
+    return;
+  }
   try {
     await sdk.adapty.identify(customerUserId);
   } catch (e) {
