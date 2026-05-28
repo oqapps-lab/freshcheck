@@ -131,8 +131,9 @@ serve(async (req) => {
         429,
       );
     }
-    // Log this generation
-    await sb.from('recipe_generations').insert({ user_id: user.id });
+    // Defer the insert until the OpenAI call succeeds — see line ~ after
+    // the response check. Logging here would burn the free user's daily
+    // quota on a 502 / timeout they never saw recipes for.
   }
 
   // Fetch user's fridge items (RLS-scoped)
@@ -217,6 +218,15 @@ serve(async (req) => {
 
   if (!Array.isArray(recipes) || recipes.length === 0) {
     return json({ error: 'no recipes in response', raw }, 502);
+  }
+
+  // Now that we have a real result, log against the free-tier daily quota.
+  // Inserting earlier would burn the user's only daily attempt on an OpenAI
+  // 502 / timeout (since the row gets counted in the next 24h-window check
+  // even though the user never got recipes).
+  if (!entitled) {
+    const sb = createClient(url, serviceKey);
+    await sb.from('recipe_generations').insert({ user_id: user.id });
   }
 
   // Post-validation: if there's a mandatory item, ensure Recipe #1 names it
