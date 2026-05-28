@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Pressable, StyleSheet, Alert, Linking } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -20,6 +20,7 @@ import {
   Bowl,
 } from '@/components/ui/Glyphs';
 import { startTrial, restorePurchases } from '@/src/lib/adapty';
+import { usePremium } from '@/src/hooks/usePremium';
 import { LEGAL } from '@/constants/legal';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
@@ -36,8 +37,20 @@ const FEATURES: { icon: React.ComponentType<{ size?: number; color?: string; str
 export default function PaywallScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const isPremium = usePremium();
   const [plan, setPlan] = useState<Plan>('annual');
   const [busy, setBusy] = useState(false);
+
+  // Pre-mount short-circuit: an already-Pro user reaching this screen via
+  // a deep link or stale push would otherwise see "Start 3-day free trial"
+  // and tapping it routes them through Adapty for a duplicate purchase
+  // that StoreKit then has to reject. Bounce them back instead.
+  useEffect(() => {
+    if (isPremium) {
+      if (router.canGoBack()) router.back();
+      else router.replace('/(tabs)');
+    }
+  }, [isPremium, router]);
 
   const onStart = async () => {
     if (busy) return;

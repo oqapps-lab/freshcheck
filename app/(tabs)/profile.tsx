@@ -141,7 +141,10 @@ export default function ProfileScreen() {
           </Text>
         </View>
 
-        {signedIn ? (
+        {/* Stats card shows for anyone with items — anon (guest) users can
+            still add to the fridge, so hiding their count while the Fridge
+            tab visibly contains those items was a cross-surface mismatch. */}
+        {summary.total > 0 ? (
           <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.statCard}>
             <Text style={[typeScale.numberLarge, styles.statNum]}>{summary.total}</Text>
             <Text style={[typeScale.label, styles.statLabel]}>ITEMS IN FRIDGE</Text>
