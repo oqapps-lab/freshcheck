@@ -71,6 +71,7 @@ export default function AuthScreen() {
   };
 
   const onSubmit = async () => {
+    if (submitting) return;
     if (!email.includes('@') || password.length < 6) {
       Alert.alert(
         isSignIn ? 'Sign in failed' : 'Sign up failed',

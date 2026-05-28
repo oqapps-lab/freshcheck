@@ -89,7 +89,7 @@ export default function PaywallScreen() {
     Linking.openURL(url).catch((e) => Alert.alert('Could not open link', String(e)));
   };
 
-  const ctaLabel = 'Start 3-day free trial';
+  const ctaLabel = busy ? 'Processing…' : 'Start 3-day free trial';
   const fineprint = (() => {
     if (plan === 'annual') return 'First 3 days free, then $39.99 / year. Auto-renews unless cancelled at least 24 hours before period end.';
     if (plan === 'monthly') return 'First 3 days free, then $14.99 / month. Auto-renews unless cancelled at least 24 hours before period end.';
