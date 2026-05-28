@@ -109,7 +109,7 @@ export function useRecipes() {
       setError(e instanceof Error ? e.message : String(e));
       setStatus('error');
     }
-  }, [supabase]);
+  }, [supabase, premium]);
 
   // Note: deliberately NOT auto-generating on mount. Each generation costs
   // ~$0.13 (gpt-5.5 + 3x gpt-image-1) — opening the tab shouldn't burn money.

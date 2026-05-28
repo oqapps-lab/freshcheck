@@ -47,17 +47,34 @@ const CATEGORY_ORDER: Exclude<FilterValue, 'all'>[] = [
 export default function FridgeScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { items, loading, refresh, removeItem } = useFridge();
+  const { items, loading, error, refresh, removeItem } = useFridge();
 
   const confirmRemove = useCallback(
     (id: string, name: string) => {
       Alert.alert('Remove item', `Remove "${name}" from your fridge?`, [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Remove', style: 'destructive', onPress: () => { void removeItem(id); } },
+        {
+          text: 'Remove',
+          style: 'destructive',
+          onPress: async () => {
+            const r = await removeItem(id);
+            if (r?.error) {
+              Alert.alert('Could not remove', r.error);
+            }
+          },
+        },
       ]);
     },
     [removeItem],
   );
+
+  // Surface refresh errors instead of swallowing them — silently showing
+  // an empty fridge while a network/RLS error happened reads as data loss.
+  useEffect(() => {
+    if (error) {
+      Alert.alert('Could not load fridge', error);
+    }
+  }, [error]);
   const [filter, setFilter] = useState<FilterValue>('all');
   const [refreshing, setRefreshing] = useState(false);
 

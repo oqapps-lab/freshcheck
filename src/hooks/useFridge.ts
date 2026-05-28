@@ -159,9 +159,11 @@ export function useFridge() {
 
   const removeItem = useCallback(
     async (id: string) => {
-      if (!supabase || !user) return;
-      await supabase.from('fridge_items').delete().eq('id', id);
+      if (!supabase || !user) return { error: 'not signed in' as const };
+      const { error: err } = await supabase.from('fridge_items').delete().eq('id', id);
+      if (err) return { error: err.message };
       await refresh();
+      return { error: null };
     },
     [supabase, user, refresh],
   );
