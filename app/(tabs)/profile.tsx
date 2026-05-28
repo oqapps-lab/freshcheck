@@ -19,7 +19,11 @@ export default function ProfileScreen() {
   const router = useRouter();
   const { summary } = useFridge();
   const { user, signOut } = useAuth();
-  const signedIn = !!user;
+  // Anonymous users from supabase.auth.signInAnonymously() have a non-null
+  // `user` but no real account — they should see the "Guest" + "Sign in"
+  // affordance, not the "SIGNED IN" badge + "Sign out" row of an email user
+  // (Rule 21 label vs underlying-state).
+  const signedIn = !!user && !user.is_anonymous;
   const isPremium = usePremium();
 
   const onSignInOrOut = () => {
