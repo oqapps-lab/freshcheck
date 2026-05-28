@@ -3,11 +3,17 @@ import { getSupabase } from '@/src/lib/supabase';
 import { useAuth } from './useAuth';
 import type { Database } from '@/src/lib/database.types';
 import { fridgeItems as mockFridge, type FridgeItem as MockItem } from '@/mock/fridge';
-// Lightweight category guesser — replaces the dropped CategoryGlyph helper.
+// Lightweight category guesser — the scan-image edge fn doesn't return a
+// category field, so we infer one from the product name. The DB enum has
+// distinct meat / fish / poultry buckets — collapsing beef + salmon + pork
+// into "poultry" (the previous behaviour) was wrong both semantically and
+// for the filter chips.
 function categoryFor(name: string): Row['category'] {
   const n = name.toLowerCase();
   if (/(milk|cheese|yogurt|cream|butter|kefir)/.test(n)) return 'dairy';
-  if (/(chicken|beef|pork|turkey|lamb|fish|salmon|tuna)/.test(n)) return 'poultry';
+  if (/(chicken|turkey|duck|hen|quail)/.test(n)) return 'poultry';
+  if (/(beef|steak|pork|bacon|ham|lamb|veal|sausage|mince)/.test(n)) return 'meat';
+  if (/(fish|salmon|tuna|cod|shrimp|prawn|tilapia|trout|crab|lobster)/.test(n)) return 'fish';
   if (/(bread|baguette|loaf|bun|bagel|croissant|muffin)/.test(n)) return 'bakery';
   if (/(rice|pasta|cereal|oats|flour|sugar|salt|spice)/.test(n)) return 'pantry';
   return 'produce';
