@@ -25,6 +25,7 @@ import { useAuth } from '@/src/hooks/useAuth';
 import { getSupabase } from '@/src/lib/supabase';
 import { setLastScan } from '@/src/state/lastScan';
 import { logScan as afLogScan } from '@/src/lib/appsflyer';
+import { recordError } from '@/src/lib/firebase';
 
 /**
  * Capture — real camera viewfinder. Shutter takes a picture, resizes
@@ -135,6 +136,10 @@ export default function CaptureScreen() {
     } catch (err) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
       const msg = err instanceof Error ? err.message : 'Scan failed.';
+      // Report to Crashlytics so post-launch we can see which step (camera /
+      // resize / upload / edge fn) is failing in the wild — the alert
+      // message names the step but is invisible to us without this.
+      recordError(err, 'scan-pipeline');
       Alert.alert('Scan failed', msg);
       setAnalyzing(false);
       setAnalyzingMsg('Analyzing…');

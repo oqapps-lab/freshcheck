@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/Glyphs';
 import { startTrial, restorePurchases } from '@/src/lib/adapty';
 import { usePremium } from '@/src/hooks/usePremium';
-import { logTrialStartEvent, logBeginCheckout } from '@/src/lib/firebase';
+import { logTrialStartEvent, logBeginCheckout, recordError } from '@/src/lib/firebase';
 import { logTrialStart as afLogTrialStart } from '@/src/lib/appsflyer';
 import { LEGAL } from '@/constants/legal';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
@@ -91,6 +91,7 @@ export default function PaywallScreen() {
       } else if (r.error === 'adapty-not-configured' || r.error === 'adapty-sdk-missing') {
         // SDK already shows its own alert
       } else {
+        recordError(new Error(`startTrial: ${r.error ?? 'unknown'}`), 'paywall-start-trial');
         Alert.alert('Purchase failed', r.error ?? 'Unknown error');
       }
     } finally {
