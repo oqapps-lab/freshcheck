@@ -72,7 +72,13 @@ export default function AuthScreen() {
 
   const onSubmit = async () => {
     if (submitting) return;
-    if (!email.includes('@') || password.length < 6) {
+    // Cheap client-side gate so an obvious typo ("john@doe", trailing
+    // spaces, no dot) doesn't burn a Supabase round-trip + a confusing
+    // server-side error string. email.includes('@') alone passed "@",
+    // "@b", "  @  ", etc.
+    const trimmedEmail = trimmedEmail;
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail);
+    if (!emailOk || password.length < 6) {
       Alert.alert(
         isSignIn ? 'Sign in failed' : 'Sign up failed',
         'Enter a valid email and a password of at least 6 characters.',
@@ -88,7 +94,7 @@ export default function AuthScreen() {
     }
     setSubmitting(true);
     if (isSignIn) {
-      const { error } = await signInWithEmail(email.trim(), password);
+      const { error } = await signInWithEmail(trimmedEmail, password);
       setSubmitting(false);
       if (error) {
         Alert.alert('Sign in failed', error);
@@ -97,7 +103,7 @@ export default function AuthScreen() {
       dismiss();
       return;
     }
-    const { error, needsEmailConfirmation } = await signUpWithEmail(email.trim(), password);
+    const { error, needsEmailConfirmation } = await signUpWithEmail(trimmedEmail, password);
     setSubmitting(false);
     if (error) {
       Alert.alert('Sign up failed', error);
@@ -108,7 +114,7 @@ export default function AuthScreen() {
       // is dropped into the tabs as a guest with no idea why nothing works.
       Alert.alert(
         'Check your email',
-        `We sent a confirmation link to ${email.trim()}. Tap it, then come back and sign in.`,
+        `We sent a confirmation link to ${trimmedEmail}. Tap it, then come back and sign in.`,
         [{ text: 'OK', onPress: () => setMode('signin') }],
       );
       return;
