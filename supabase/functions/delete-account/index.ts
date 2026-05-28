@@ -52,6 +52,22 @@ Deno.serve(async (req) => {
   const adminClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
+
+  // Clean up the user's scan images in storage BEFORE deleting the auth
+  // row — Supabase FK cascade only handles DB rows, not storage objects.
+  // Without this, scans/<uid>/*.jpg files (publicly readable per the
+  // storage RLS policy) outlive the user — a GDPR / privacy concern and
+  // an App Review 5.1.1(v) gap (account deletion should remove personal
+  // content, not just the auth row). recipe-images bucket is intentionally
+  // shared across users (slug-keyed) and is NOT cleaned here.
+  const { data: scanFiles } = await adminClient.storage
+    .from('scans')
+    .list(userId, { limit: 1000 });
+  if (scanFiles && scanFiles.length > 0) {
+    const paths = scanFiles.map((f) => `${userId}/${f.name}`);
+    await adminClient.storage.from('scans').remove(paths);
+  }
+
   const { error: deleteErr } = await adminClient.auth.admin.deleteUser(userId);
   if (deleteErr) {
     return json({ ok: false, error: deleteErr.message }, 500);
