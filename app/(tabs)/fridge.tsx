@@ -13,12 +13,14 @@ import { Menu, Settings, BarcodeScanner, ShoppingBasket, Nutrition, Chevron } fr
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 import { useFridge } from '@/src/hooks/useFridge';
 
-type FilterValue = 'all' | 'produce' | 'dairy' | 'poultry' | 'bakery' | 'pantry';
+type FilterValue = 'all' | 'produce' | 'dairy' | 'poultry' | 'meat' | 'fish' | 'bakery' | 'pantry';
 
 const CATEGORY_LABEL: Record<Exclude<FilterValue, 'all'>, string> = {
   produce: 'Produce',
   dairy: 'Dairy',
   poultry: 'Poultry',
+  meat: 'Meat',
+  fish: 'Fish',
   bakery: 'Bakery',
   pantry: 'Pantry',
 };
@@ -26,6 +28,8 @@ const CATEGORY_ORDER: Exclude<FilterValue, 'all'>[] = [
   'produce',
   'dairy',
   'poultry',
+  'meat',
+  'fish',
   'bakery',
   'pantry',
 ];
