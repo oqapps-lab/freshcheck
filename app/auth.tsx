@@ -212,7 +212,7 @@ export default function AuthScreen() {
             autoCorrect={false}
             spellCheck={false}
             autoComplete="off"
-            textContentType="oneTimeCode"
+            textContentType="none"
             importantForAutofill="no"
             passwordRules=""
             returnKeyType="go"
