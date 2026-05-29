@@ -252,7 +252,11 @@ export default function CaptureScreen() {
             accessibilityState={{ disabled: analyzing }}
             onPress={onShutter}
             disabled={analyzing}
-            style={({ pressed }) => [styles.shutter, { opacity: pressed ? 0.85 : 1 }]}
+            // Dim while analyzing so the button visually matches its
+            // disabled state — without this the shutter sat at full
+            // opacity during the 3s OpenAI call and users tapped it
+            // expecting a response, getting nothing, assuming a stuck UI.
+            style={({ pressed }) => [styles.shutter, { opacity: analyzing ? 0.4 : pressed ? 0.85 : 1 }]}
           >
             <SoftSurface variant="cushion" radius="full" innerStyle={styles.shutterOuter}>
               <SoftInset
