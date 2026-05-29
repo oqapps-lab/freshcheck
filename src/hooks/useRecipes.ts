@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { getSupabase } from '@/src/lib/supabase';
 import { setRecipes as setRecipesCache, updateRecipeImage } from '@/src/state/recipeStore';
 import { usePremium } from '@/src/hooks/usePremium';
+import { recordError } from '@/src/lib/firebase';
 
 export type RecipeStepIcon = 'prep' | 'cook' | 'wait' | 'mix' | 'serve';
 
@@ -106,7 +107,13 @@ export function useRecipes() {
       });
     } catch (e) {
       if (myReq !== requestRef.current) return;
-      setError(e instanceof Error ? e.message : String(e));
+      // Skip Crashlytics noise for the daily-limit 429 — that's expected
+      // behaviour for free users, not a runtime error worth alerting on.
+      const msg = e instanceof Error ? e.message : String(e);
+      if (!msg.includes('Free plan') && !msg.includes('daily_limit')) {
+        recordError(e, 'recipe-generate');
+      }
+      setError(msg);
       setStatus('error');
     }
   }, [supabase, premium]);
