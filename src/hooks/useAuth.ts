@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
 import { getSupabase } from '@/src/lib/supabase';
 import { clearRecipes } from '@/src/state/recipeStore';
+import { setLastScan } from '@/src/state/lastScan';
 
 type AuthState = {
   session: Session | null;
@@ -94,7 +95,12 @@ export function useAuth(): AuthState & {
     },
     async signOut() {
       if (!supabase) return;
+      // Wipe all in-memory caches so the next user (immediate anon re-signin
+      // or a returning email user) doesn't see the previous account's scan
+      // result + recipes. Without clearing lastScan, account-switching
+      // leaked the previous user's scan/photo into the new session.
       clearRecipes();
+      setLastScan(null);
       await supabase.auth.signOut();
     },
   };

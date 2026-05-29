@@ -55,6 +55,13 @@ function getATT(): typeof import('expo-tracking-transparency') | null {
 }
 
 let initialized = false;
+// _layout's VendorBoot delays AppsFlyer init by 600ms so the first
+// frame renders before the ATT prompt. The Supabase anon-signin
+// usually settles in ~500ms, so setAppsFlyerCustomerId(uid) fires
+// from VendorBoot BEFORE init completes — without queueing, the
+// very first install→user mapping is silently dropped and AppsFlyer
+// attribution shows the install as anonymous forever.
+let pendingCustomerId: string | null = null;
 
 export async function initAppsFlyerWithATT(): Promise<void> {
   if (initialized) return;
@@ -85,6 +92,15 @@ export async function initAppsFlyerWithATT(): Promise<void> {
     },
   );
   initialized = true;
+  if (pendingCustomerId) {
+    const queued = pendingCustomerId;
+    pendingCustomerId = null;
+    try {
+      sdk.setCustomerUserId(queued);
+    } catch (e) {
+      if (__DEV__) console.warn('[appsflyer] queued setCustomerUserId failed', e);
+    }
+  }
 
   // 2) On iOS, prompt ATT shortly after init. Apple wants the prompt
   //    triggered by a user-visible context — first screen render is fine.
@@ -103,7 +119,14 @@ export async function initAppsFlyerWithATT(): Promise<void> {
 
 export function setAppsFlyerCustomerId(uid: string): void {
   const sdk = getSdk();
-  if (!sdk || !initialized) return;
+  if (!sdk) return;
+  if (!initialized) {
+    // Init still pending behind the 600ms ATT-prompt delay. Queue and let
+    // initAppsFlyerWithATT flush this once the SDK is ready, otherwise
+    // the very first install→user mapping is lost.
+    pendingCustomerId = uid;
+    return;
+  }
   try {
     sdk.setCustomerUserId(uid);
   } catch (e) {
