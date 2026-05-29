@@ -22,10 +22,7 @@
       "infoPlist": {
         "NSCameraUsageDescription": "FreshCheck uses the camera to check the freshness of your food.",
         "NSUserTrackingUsageDescription": "FreshCheck uses your device identifier to measure ad performance and improve our recommendations.",
-        "ITSAppUsesNonExemptEncryption": false,
-        "UIBackgroundModes": [
-          "remote-notification"
-        ]
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
