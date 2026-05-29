@@ -97,7 +97,13 @@ export default function FridgeScreen() {
   }, [items]);
 
   const filtered = useMemo(() => {
-    const sorted = [...items].sort((a, b) => a.daysLeft - b.daysLeft);
+    // Primary: daysLeft asc (about-to-spoil first). Secondary: name asc so
+    // a fridge full of items added the same day doesn't shuffle on every
+    // refresh — useFridge re-fetches on focus and Postgres doesn't
+    // guarantee row order, which made the list flicker its layout.
+    const sorted = [...items].sort(
+      (a, b) => a.daysLeft - b.daysLeft || a.name.localeCompare(b.name),
+    );
     if (filter === 'all') return sorted;
     return sorted.filter((i) => i.category === filter);
   }, [items, filter]);
