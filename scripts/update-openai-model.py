@@ -12,7 +12,11 @@ for line in open(os.path.join(PROJECT, '.env')):
 OPENAI_KEY = ENV['OPENAI_API_KEY']
 SUPABASE_TOKEN = ENV.get('SUPABASE_ACCESS_TOKEN', '')
 PROJECT_REF = ENV.get('SUPABASE_PROJECT_REF', 'fxggqnlicjuvzfqzbqfm')
-FN_PATH = os.path.join(PROJECT, 'supabase', 'functions', 'scan-image', 'index.ts')
+# Both edge functions pin the same `const MODEL = 'gpt-X.X'` constant. The
+# v1 version of this script only touched scan-image — that bumped vision
+# scans to the newer model while leaving generate-recipes silently on the
+# stale one, slowly diverging recipe quality from scan accuracy.
+FN_NAMES = ['scan-image', 'generate-recipes']
 
 # Probe likely GPT-5.X variants. /v1/models doesn't list all dated aliases,
 # but POST /v1/chat/completions with a base name returns the resolved variant.
@@ -67,33 +71,41 @@ def main():
     chosen_resolved = pick['resolved']
     print(f"\nLatest by date: {chosen_base} (resolved: {chosen_resolved})")
 
-    src = open(FN_PATH).read()
-    m = re.search(r"const MODEL = '([^']+)'", src)
-    if not m:
-        print(f"[!] couldn't find MODEL constant in {FN_PATH}")
-        raise SystemExit(1)
-    current = m.group(1)
-    if current == chosen_base:
-        print(f"[=] already using {current}, no change needed")
+    changed = []
+    for fn in FN_NAMES:
+        fn_path = os.path.join(PROJECT, 'supabase', 'functions', fn, 'index.ts')
+        src = open(fn_path).read()
+        m = re.search(r"const MODEL = '([^']+)'", src)
+        if not m:
+            print(f"[!] couldn't find MODEL constant in {fn_path}")
+            raise SystemExit(1)
+        current = m.group(1)
+        if current == chosen_base:
+            print(f"[=] {fn} already on {current}, skip")
+            continue
+        print(f"\nUpdating MODEL: '{current}' → '{chosen_base}' in {fn_path}")
+        src2 = src.replace(f"const MODEL = '{current}'", f"const MODEL = '{chosen_base}'")
+        open(fn_path, 'w').write(src2)
+        changed.append(fn)
+
+    if not changed:
+        print("[=] nothing to deploy")
         return
 
-    print(f"\nUpdating MODEL: '{current}' → '{chosen_base}' in {FN_PATH}")
-    src2 = src.replace(f"const MODEL = '{current}'", f"const MODEL = '{chosen_base}'")
-    open(FN_PATH, 'w').write(src2)
-
-    print("Redeploying via supabase CLI…")
-    r = subprocess.run(
-        ['npx', '-y', 'supabase', 'functions', 'deploy', 'scan-image',
-         '--project-ref', PROJECT_REF, '--no-verify-jwt'],
-        cwd=PROJECT,
-        env={**os.environ, 'SUPABASE_ACCESS_TOKEN': SUPABASE_TOKEN, 'PATH': '/opt/homebrew/bin:' + os.environ.get('PATH', '')},
-        capture_output=True, text=True, timeout=180,
-    )
-    print(r.stdout.strip().splitlines()[-3:] if r.stdout else '')
-    if r.returncode != 0:
-        print(f"[!] deploy failed: {r.stderr[:500]}")
-        raise SystemExit(1)
-    print(f"[✓] scan-image deployed with model={chosen_base}")
+    for fn in changed:
+        print(f"Redeploying {fn} via supabase CLI…")
+        r = subprocess.run(
+            ['npx', '-y', 'supabase', 'functions', 'deploy', fn,
+             '--project-ref', PROJECT_REF, '--no-verify-jwt'],
+            cwd=PROJECT,
+            env={**os.environ, 'SUPABASE_ACCESS_TOKEN': SUPABASE_TOKEN, 'PATH': '/opt/homebrew/bin:' + os.environ.get('PATH', '')},
+            capture_output=True, text=True, timeout=180,
+        )
+        print(r.stdout.strip().splitlines()[-3:] if r.stdout else '')
+        if r.returncode != 0:
+            print(f"[!] {fn} deploy failed: {r.stderr[:500]}")
+            raise SystemExit(1)
+        print(f"[✓] {fn} deployed with model={chosen_base}")
 
 
 if __name__ == '__main__':
