@@ -39,12 +39,19 @@ const PRICE_USD: Record<Plan, number> = {
   annual: 39.99,
 };
 
+// Feature copy must match what Pro actually unlocks — free already gets
+// unlimited scans + ripeness analysis + cloud sync + reminders, so the
+// real differentiator is recipe generation cadence (free is capped at
+// 1 generation / 24h). Phrasing "Unlimited scans" + "Three recipes a
+// day" was misleading on both ends — could trigger Apple Review 3.1.2(c)
+// "subscription must offer genuine value" pushback and was confusing for
+// users who'd already noticed free wasn't actually capped on scans.
 const FEATURES: { icon: React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>; title: string; body: string }[] = [
-  { icon: BarcodeScanner, title: 'Unlimited scans', body: 'Scan as many items as you want, no daily cap.' },
+  { icon: Bowl,           title: 'Unlimited AI recipes', body: 'Generate fresh recipes from your fridge whenever you want, no daily cap.' },
+  { icon: BarcodeScanner, title: 'Unlimited scans',     body: 'Scan as many items as you want, no daily cap.' },
   { icon: Nutrition,      title: 'AI ripeness analysis', body: 'Per-item softness, ripeness and best-by guidance.' },
-  { icon: Bowl,           title: 'AI recipes from your fridge', body: 'Three personalized recipes a day, prioritizing items about to expire.' },
-  { icon: Cloud,          title: 'Cloud sync',       body: 'Your fridge follows you across iPhone and iPad.' },
-  { icon: History,        title: 'Smart reminders',  body: 'Custom alerts before items go off — never waste again.' },
+  { icon: Cloud,          title: 'Cloud sync',          body: 'Your fridge follows you across iPhone and iPad.' },
+  { icon: History,        title: 'Smart reminders',     body: 'Custom alerts before items go off — never waste again.' },
 ];
 
 export default function PaywallScreen() {
@@ -82,7 +89,7 @@ export default function PaywallScreen() {
         // optimise on trial-start events.
         void logTrialStartEvent(PRODUCT_ID[plan]);
         afLogTrialStart(PRODUCT_ID[plan], PRICE_USD[plan]);
-        Alert.alert('Welcome to Pro', 'Your free trial has started. Enjoy unlimited scans!');
+        Alert.alert('Welcome to Pro', 'Your free trial has started. Generate unlimited AI recipes from your fridge!');
         router.back();
       } else if (r.error === 'cancelled') {
         // user-cancelled → no toast
