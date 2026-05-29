@@ -215,7 +215,7 @@ export default function RecipeDetailScreen() {
                     <View style={styles.stepBody}>
                       <View style={styles.stepHeader}>
                         <Text style={[typeScale.labelSmall, styles.stepLabel]}>
-                          STEP {step.order} · {STEP_LABEL[step.icon]}
+                          STEP {step.order} · {STEP_LABEL[step.icon] ?? step.icon.toUpperCase()}
                         </Text>
                         <Text style={[typeScale.labelSmall, styles.stepTime]}>
                           {step.minutes} MIN
