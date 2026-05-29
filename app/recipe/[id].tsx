@@ -38,10 +38,12 @@ const STEP_LABEL: Record<RecipeStepIcon, string> = {
   serve: 'SERVE',
 };
 
+// See recipes.tsx for rationale — keep aligned with the list-screen palette
+// so a recipe doesn't change difficulty colour when the user drills in.
 const DIFFICULTY_COLOR = {
   easy: colors.primary,
   medium: colors.amber,
-  hard: colors.red,
+  hard: colors.amberDeep,
 } as const;
 
 export default function RecipeDetailScreen() {

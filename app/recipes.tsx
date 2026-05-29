@@ -20,10 +20,15 @@ import { useRecipes, type Recipe } from '@/src/hooks/useRecipes';
 import { useFridge } from '@/src/hooks/useFridge';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
+// Difficulty != freshness. `hard: red` overlapped with the `past`
+// (spoiled-food) verdict colour, so a recipe labelled HARD read as a
+// food-safety warning to anyone scanning the screen. Keep the warmth of
+// the cooking surface — amberDeep for hard signals "challenging" without
+// borrowing the spoilage red.
 const DIFFICULTY_COLOR: Record<Recipe['difficulty'], string> = {
   easy: colors.primary,
   medium: colors.amber,
-  hard: colors.red,
+  hard: colors.amberDeep,
 };
 
 export default function RecipesScreen() {

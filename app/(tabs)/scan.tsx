@@ -132,7 +132,7 @@ export default function ScanScreen() {
 
         {/* Verdict card — RECESSED */}
         <SoftInset radius="xxl" strength="thick" style={styles.verdictWrap} contentStyle={styles.verdictInner}>
-          <Text style={[typeScale.label, styles.verdictLabel]}>{capitalize(last.product || 'item').toUpperCase()}</Text>
+          <Text style={[typeScale.label, styles.verdictLabel]} numberOfLines={2}>{capitalize(last.product || 'item').toUpperCase()}</Text>
           <Text style={[typeScale.displayMedium, styles.verdictTitle, { color: titleColor }]}>{verdictTitle}</Text>
           <View style={styles.softnessRow}>
             <SoftnessChip
