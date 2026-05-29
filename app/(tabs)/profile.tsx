@@ -81,7 +81,7 @@ export default function ProfileScreen() {
             // Second confirmation — App Store reviewers expect a deliberate two-step flow.
             Alert.alert(
               'Are you sure?',
-              'Type-and-tap is not required, but this is your last chance to cancel.',
+              'This is your last chance to keep your data. Tap "Yes, delete" to permanently remove your account.',
               [
                 { text: 'Keep account', style: 'cancel' },
                 {
