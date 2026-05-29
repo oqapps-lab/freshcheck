@@ -26,6 +26,15 @@ const TARGET_DIRS = [
 ];
 
 function patchHeaders(projectRoot) {
+  // Mirror the postinstall script's simulator skip — see
+  // scripts/patch-rnfb-headers.js for the modulemap rationale. Without
+  // bailing here the prebuild step still rewrites headers to @import,
+  // breaking sim slice compilation even after npm install was sim-safe.
+  const PROFILE = process.env.EAS_BUILD_PROFILE || '';
+  if (/simulator/i.test(PROFILE)) {
+    console.log(`[with-modular-headers-fix] header patch skipped — EAS_BUILD_PROFILE=${PROFILE}`);
+    return 0;
+  }
   let total = 0;
   for (const target of TARGET_DIRS) {
     const dir = path.join(projectRoot, 'node_modules', target);

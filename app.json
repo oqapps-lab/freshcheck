@@ -43,7 +43,6 @@
       "expo-image",
       "@react-native-firebase/app",
       "@react-native-firebase/crashlytics",
-      "@react-native-firebase/messaging",
       [
         "expo-build-properties",
         {
