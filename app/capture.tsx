@@ -87,10 +87,18 @@ export default function CaptureScreen() {
     setAnalyzingMsg('Capturing…');
 
     try {
-      const shot = await cameraRef.current.takePictureAsync({ quality: 0.85, skipProcessing: false });
+      // exif:false explicitly — expo-camera's default has shifted between
+      // versions, and the `scans` bucket is publicly readable, so without
+      // this the user's GPS coordinates + capture time + camera model end
+      // up as a public URL anyone with the link can read. Apple Privacy
+      // Review flags GPS leakage even when the bucket isn't intentionally
+      // public-listed.
+      const shot = await cameraRef.current.takePictureAsync({ quality: 0.85, skipProcessing: false, exif: false });
       if (!shot?.uri) throw new Error('camera returned no image');
 
       setAnalyzingMsg('Compressing…');
+      // manipulateAsync re-encodes the JPEG, which also drops any EXIF
+      // metadata that may have slipped through above (defence in depth).
       const resized = await manipulateAsync(
         shot.uri,
         [{ resize: { width: 1024 } }],
