@@ -232,9 +232,14 @@ export default function FridgeScreen() {
               ))}
             </View>
 
-            {/* Footer counter */}
+            {/* Footer counter + delete hint (long-press is the only way
+                to remove an item; without this label first-time users tap
+                the row, get nothing, and assume the card is broken). */}
             <Text style={[typeScale.label, styles.footer]}>
               {`${filtered.length} OF ${items.length} PRODUCTS TRACKED`}
+            </Text>
+            <Text style={[typeScale.labelTiny, styles.footerHint]}>
+              HOLD A CARD TO REMOVE IT
             </Text>
           </>
         )}
@@ -319,6 +324,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: spacing.enormous,
     textTransform: 'uppercase',
+  },
+  footerHint: {
+    color: colors.inkMuted,
+    textAlign: 'center',
+    marginTop: spacing.xs,
+    letterSpacing: 1.4,
   },
   loadingState: {
     paddingVertical: spacing.huge * 2,
