@@ -47,8 +47,17 @@ export function useAuth(): AuthState & {
       setSession(anonData?.session ?? null);
       setLoading(false);
     });
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
+    const { data: sub } = supabase.auth.onAuthStateChange(async (event, s) => {
       setSession(s);
+      // When the email user signs out we'd otherwise leave the app in a
+      // sessionless state — capture/fridge/recipes all gate on `user`, so
+      // the user would land on Profile with everything broken until a
+      // restart. Mirror the initial-launch behaviour by spinning up a
+      // fresh anon session so the rest of the app keeps working.
+      if (event === 'SIGNED_OUT' && mounted) {
+        const { data: anonData } = await supabase.auth.signInAnonymously();
+        if (mounted && anonData?.session) setSession(anonData.session);
+      }
     });
     return () => {
       mounted = false;
