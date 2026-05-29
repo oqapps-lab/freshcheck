@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import React, { useEffect } from 'react';
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
+import { Stack, useRouter, useSegments } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
@@ -12,7 +12,7 @@ import { spacing, typeScale } from '@/constants/tokens';
 import { safeStorage } from '@/src/lib/safeStorage';
 import { activateAdaptyIfNeeded, identifyAdaptyUser, logoutAdaptyUser } from '@/src/lib/adapty';
 import { initAppsFlyerWithATT, setAppsFlyerCustomerId } from '@/src/lib/appsflyer';
-import { bootFirebase, setFirebaseUser, resetFirebaseUser } from '@/src/lib/firebase';
+import { bootFirebase, setFirebaseUser, resetFirebaseUser, logScreenView } from '@/src/lib/firebase';
 import { useAuth } from '@/src/hooks/useAuth';
 import {
   useFonts,
@@ -44,6 +44,23 @@ function FirstRunRedirect() {
       cancelled = true;
     };
   }, [router]);
+  return null;
+}
+
+// Fires a Firebase Analytics screen_view event each time the active
+// route segment changes. expo-router doesn't wire this automatically
+// (the @react-native-firebase/analytics autotrack hooks into native
+// navigators, but expo-router's Stack works through a different layer).
+// Without it the GA4 funnel is install → blank → purchase, no per-screen
+// drop-off visibility.
+function ScreenViewTracker() {
+  const segments = useSegments();
+  useEffect(() => {
+    if (!segments || segments.length === 0) return;
+    // ['(tabs)', 'fridge'] → 'fridge'; ['paywall'] → 'paywall'; etc.
+    const last = segments[segments.length - 1];
+    if (last) void logScreenView(String(last));
+  }, [segments]);
   return null;
 }
 
@@ -152,6 +169,7 @@ export default function RootLayout() {
         <StatusBar style="dark" />
         <FirstRunRedirect />
         <VendorBoot />
+        <ScreenViewTracker />
         <Stack
           screenOptions={{
             headerShown: false,
