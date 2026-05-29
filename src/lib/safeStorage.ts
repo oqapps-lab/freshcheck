@@ -8,6 +8,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
  */
 const memStore = new Map<string, string>();
 
+// Centralised keys so any rename happens in one place. Previously both
+// app/_layout.tsx and app/onboarding.tsx defined ONBOARDING_KEY as their
+// own constant — drifting one (e.g. bump to v2) without the other would
+// have re-triggered onboarding for every user on every launch.
+export const STORAGE_KEYS = {
+  onboardingDone: 'freshcheck_onboarding_done_v1',
+} as const;
+
 export const safeStorage = {
   getItem: async (key: string): Promise<string | null> => {
     try {

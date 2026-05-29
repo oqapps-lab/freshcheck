@@ -9,7 +9,7 @@ import { SoftSurface } from '@/components/ui/SoftSurface';
 import { PrimaryPillCTA } from '@/components/ui/PrimaryPillCTA';
 import { Sparkle } from '@/components/ui/Glyphs';
 import { spacing, typeScale } from '@/constants/tokens';
-import { safeStorage } from '@/src/lib/safeStorage';
+import { safeStorage, STORAGE_KEYS } from '@/src/lib/safeStorage';
 import { activateAdaptyIfNeeded, identifyAdaptyUser, logoutAdaptyUser } from '@/src/lib/adapty';
 import { initAppsFlyerWithATT, setAppsFlyerCustomerId } from '@/src/lib/appsflyer';
 import { bootFirebase, setFirebaseUser, resetFirebaseUser, logScreenView } from '@/src/lib/firebase';
@@ -24,8 +24,6 @@ import {
 } from '@expo-google-fonts/quicksand';
 import { colors } from '@/constants/tokens';
 
-const ONBOARDING_KEY = 'freshcheck_onboarding_done_v1';
-
 function FirstRunRedirect() {
   const router = useRouter();
   useEffect(() => {
@@ -35,7 +33,7 @@ function FirstRunRedirect() {
       // native module is unregistered (Expo Go SDK 55 quirk), so the
       // first-run check actually triggers in dev instead of being a
       // silent no-op.
-      const v = await safeStorage.getItem(ONBOARDING_KEY);
+      const v = await safeStorage.getItem(STORAGE_KEYS.onboardingDone);
       if (!cancelled && !v) {
         router.replace('/onboarding');
       }
