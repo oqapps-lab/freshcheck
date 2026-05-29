@@ -3,10 +3,9 @@ import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { IconButton } from '@/components/ui/IconButton';
 import { SoftSurface } from '@/components/ui/SoftSurface';
 import { SoftInset } from '@/components/ui/SoftInset';
-import { Menu, Settings, BarcodeScanner } from '@/components/ui/Glyphs';
+import { BarcodeScanner } from '@/components/ui/Glyphs';
 import { colors, typeScale, spacing, layout } from '@/constants/tokens';
 
 /**
