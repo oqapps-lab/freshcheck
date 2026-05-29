@@ -99,7 +99,11 @@ export async function logoutAdaptyUser(): Promise<void> {
 
 const PLACEMENT_ID = 'freshcheck_main_paywall';
 
-const PRODUCT_BY_PLAN: Record<Plan, string> = {
+// Exported so paywall.tsx logs the same product_id that startTrial buys —
+// duplicating the literals in two files was a maintenance footgun (rename
+// one, forget the other, and the Firebase/AppsFlyer purchase events refer
+// to a SKU that doesn't match what StoreKit actually charged for).
+export const PRODUCT_BY_PLAN: Record<Plan, string> = {
   weekly: 'com.gazetastreet.freshcheck.weekly',
   monthly: 'com.gazetastreet.freshcheck.monthly',
   annual: 'com.gazetastreet.freshcheck.annual',

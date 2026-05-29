@@ -19,7 +19,7 @@ import {
   Check,
   Bowl,
 } from '@/components/ui/Glyphs';
-import { startTrial, restorePurchases } from '@/src/lib/adapty';
+import { startTrial, restorePurchases, PRODUCT_BY_PLAN } from '@/src/lib/adapty';
 import { usePremium } from '@/src/hooks/usePremium';
 import { logTrialStartEvent, logBeginCheckout, recordError } from '@/src/lib/firebase';
 import { logTrialStart as afLogTrialStart } from '@/src/lib/appsflyer';
@@ -28,11 +28,8 @@ import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
 type Plan = 'weekly' | 'monthly' | 'annual';
 
-const PRODUCT_ID: Record<Plan, string> = {
-  weekly: 'com.gazetastreet.freshcheck.weekly',
-  monthly: 'com.gazetastreet.freshcheck.monthly',
-  annual: 'com.gazetastreet.freshcheck.annual',
-};
+// Product IDs live in src/lib/adapty.ts (PRODUCT_BY_PLAN). Importing keeps
+// the analytics event payloads in sync with what startTrial actually buys.
 const PRICE_USD: Record<Plan, number> = {
   weekly: 6.99,
   monthly: 14.99,
@@ -78,7 +75,7 @@ export default function PaywallScreen() {
     setBusy(true);
     // Begin-checkout fires whether or not the user completes — this is
     // the funnel step ad networks optimise on (init-purchase vs purchase).
-    void logBeginCheckout(PRODUCT_ID[plan], PRICE_USD[plan]);
+    void logBeginCheckout(PRODUCT_BY_PLAN[plan], PRICE_USD[plan]);
     try {
       const r = await startTrial({ plan });
       if (r.ok) {
@@ -87,8 +84,8 @@ export default function PaywallScreen() {
         // (attribution + Apple Search Ads). Without these neither
         // dashboard sees the conversion and paid acquisition can't
         // optimise on trial-start events.
-        void logTrialStartEvent(PRODUCT_ID[plan]);
-        afLogTrialStart(PRODUCT_ID[plan], PRICE_USD[plan]);
+        void logTrialStartEvent(PRODUCT_BY_PLAN[plan]);
+        afLogTrialStart(PRODUCT_BY_PLAN[plan], PRICE_USD[plan]);
         Alert.alert('Welcome to Pro', 'Your free trial has started. Generate unlimited AI recipes from your fridge!');
         router.back();
       } else if (r.error === 'cancelled') {
