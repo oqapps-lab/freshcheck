@@ -8,6 +8,7 @@ import {
   Platform,
   StyleSheet,
   Alert,
+  Linking,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -20,6 +21,7 @@ import { useAuth } from '@/src/hooks/useAuth';
 import { logSignUpEvent } from '@/src/lib/firebase';
 import { logSignUp as afLogSignUp } from '@/src/lib/appsflyer';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
+import { LEGAL } from '@/constants/legal';
 
 type Mode = 'signin' | 'signup';
 
@@ -243,8 +245,28 @@ export default function AuthScreen() {
 
         {/* Continue as guest */}
         <View style={styles.guestBlock}>
+          {/* Terms + Privacy must be reachable from the account-creation
+              flow per Apple Review 5.1.1 — previously this was flat text
+              with no tap target, and the only inline path to them was
+              the paywall (which a free-only signup never sees). */}
           <Text style={[typeScale.bodySmall, styles.fineprint]}>
-            By continuing you agree to the Terms and Privacy Policy.
+            By continuing you agree to the{' '}
+            <Text
+              style={styles.fineprintLink}
+              accessibilityRole="link"
+              onPress={() => Linking.openURL(LEGAL.termsOfUse).catch(() => {})}
+            >
+              Terms
+            </Text>
+            {' '}and{' '}
+            <Text
+              style={styles.fineprintLink}
+              accessibilityRole="link"
+              onPress={() => Linking.openURL(LEGAL.privacyPolicy).catch(() => {})}
+            >
+              Privacy Policy
+            </Text>
+            .
           </Text>
           <GhostText label="Continue as guest" onPress={() => router.replace('/(tabs)')} />
         </View>
@@ -331,5 +353,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingHorizontal: spacing.lg,
     lineHeight: 18,
+  },
+  fineprintLink: {
+    color: colors.inkSecondary,
+    textDecorationLine: 'underline',
   },
 });
