@@ -11,6 +11,19 @@
 //
 // Runs from package.json `postinstall` so it fires on every npm install,
 // including EAS Build's `npm install` step before prebuild.
+//
+// Simulator skip: `@import React` resolves on the device modulemap but
+// the sim slice exposes `React_RCTAppDelegate` only — no `React` module
+// — so the rewrite that fixes device builds breaks sim builds. We detect
+// the EAS sim profile via EAS_BUILD_PROFILE (set by eas-cli) and bail
+// so unmodified `#import <React/...>` lines stay, which the sim slice
+// resolves through header search paths instead.
+
+const PROFILE = process.env.EAS_BUILD_PROFILE || '';
+if (/simulator/i.test(PROFILE)) {
+  console.log(`[patch-rnfb-headers] skip — EAS_BUILD_PROFILE=${PROFILE}`);
+  process.exit(0);
+}
 
 const fs = require('fs');
 const path = require('path');
