@@ -8,6 +8,7 @@ import {
   Easing,
   Linking,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -270,8 +271,16 @@ export default function CaptureScreen() {
             </SoftSurface>
           </Pressable>
         ) : showSignInCta ? (
+          // Anon-auth bootstrap is in-flight (typically <500ms). The
+          // viewfinder body already says "Preparing scan…"; rendering a
+          // pill with the same text and a no-op onPress made the screen
+          // look interactive when it wasn't — users tapped, got no
+          // response, assumed the app was stuck. Show a subtle spinner
+          // instead so the wait reads as ongoing work, not as a dead UI.
+          // If anon-signin never completes (network down), the user can
+          // back out via the header chevron.
           <View style={styles.ctaWide}>
-            <PrimaryPillCTA label="Preparing scan…" onPress={() => {}} />
+            <ActivityIndicator color={colors.primary} />
           </View>
         ) : showPermCta ? (
           <View style={styles.ctaWide}>
