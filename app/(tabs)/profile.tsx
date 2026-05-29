@@ -71,7 +71,7 @@ export default function ProfileScreen() {
     Haptics.selectionAsync().catch(() => {});
     Alert.alert(
       'Delete account',
-      'This permanently deletes your account, fridge items, scans, and saved recipes. This cannot be undone.',
+      'This permanently deletes your account, fridge items, and scan history. This cannot be undone.',
       [
         { text: 'Cancel', style: 'cancel' },
         {
