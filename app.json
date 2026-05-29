@@ -21,7 +21,6 @@
       "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "NSCameraUsageDescription": "FreshCheck uses the camera to check the freshness of your food.",
-        "NSPhotoLibraryUsageDescription": "FreshCheck can analyze photos from your library to check food freshness.",
         "NSUserTrackingUsageDescription": "FreshCheck uses your device identifier to measure ad performance and improve our recommendations.",
         "ITSAppUsesNonExemptEncryption": false,
         "UIBackgroundModes": [
