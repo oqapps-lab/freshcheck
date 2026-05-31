@@ -10,6 +10,15 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, radii } from '@/constants/tokens';
 
+// A radius this large means the surface is a circle / pill (orb, icon cup).
+// Axis-aligned vertical+horizontal gradients double their alpha at the
+// corners, producing an L-shaped "square" dark rim that reads as a square
+// shadow inside a circle (the user-flagged bug). For round surfaces we
+// switch to a SINGLE diagonal gradient instead — clipped to the circle it
+// renders a clean dark crescent (top-left) + light crescent (bottom-right),
+// the canonical neumorphic pressed-cup look with no angular corners.
+const ROUND_RADIUS_THRESHOLD = radii.pill; // 100
+
 type RadiusKey = keyof typeof radii;
 type Strength = 'thin' | 'medium' | 'thick';
 
@@ -86,6 +95,7 @@ export function SoftInset({
   const [size, setSize] = useState({ w: 0, h: 0 });
   const r = typeof radius === 'number' ? radius : radii[radius];
   const s = STRENGTH[strength];
+  const isRound = r >= ROUND_RADIUS_THRESHOLD;
 
   const onLayout = (e: LayoutChangeEvent) => {
     const { width, height } = e.nativeEvent.layout;
@@ -121,6 +131,12 @@ export function SoftInset({
   const vStops = [0, vRim * 0.5, vRim, 1 - vRim, 1 - vRim * 0.5, 1] as const;
   const hStops = [0, hRim * 0.5, hRim, 1 - hRim, 1 - hRim * 0.5, 1] as const;
 
+  // Round path: rim measured along the diagonal (≈ side × √2), so the
+  // crescent thickness matches the rectangular rim visually.
+  const diag = size.w > 0 ? Math.hypot(size.w, size.h) : 0;
+  const dRim = diag > 0 ? Math.min(MAX_RIM_FRACTION, s.rimPx / diag) : FALLBACK_RIM;
+  const dStops = [0, dRim * 0.5, dRim, 1 - dRim, 1 - dRim * 0.5, 1] as const;
+
   return (
     <View
       {...rest}
@@ -131,24 +147,41 @@ export function SoftInset({
         style,
       ]}
     >
-      {/* VERTICAL — dark top edge → transparent middle → white bottom edge */}
-      <LinearGradient
-        colors={vColors as unknown as readonly [string, string, ...string[]]}
-        locations={vStops as unknown as readonly [number, number, ...number[]]}
-        start={{ x: 0.5, y: 0 }}
-        end={{ x: 0.5, y: 1 }}
-        style={StyleSheet.absoluteFill}
-        pointerEvents="none"
-      />
-      {/* HORIZONTAL — dark left edge → transparent middle → white right edge */}
-      <LinearGradient
-        colors={hColors as unknown as readonly [string, string, ...string[]]}
-        locations={hStops as unknown as readonly [number, number, ...number[]]}
-        start={{ x: 0, y: 0.5 }}
-        end={{ x: 1, y: 0.5 }}
-        style={StyleSheet.absoluteFill}
-        pointerEvents="none"
-      />
+      {isRound ? (
+        /* ROUND — single diagonal gradient: dark crescent top-left →
+           transparent core → light crescent bottom-right. Clipped to the
+           circle by overflow:hidden, this avoids the corner-doubling that
+           made the inner shadow read as square. */
+        <LinearGradient
+          colors={vColors as unknown as readonly [string, string, ...string[]]}
+          locations={dStops as unknown as readonly [number, number, ...number[]]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={StyleSheet.absoluteFill}
+          pointerEvents="none"
+        />
+      ) : (
+        <>
+          {/* VERTICAL — dark top edge → transparent middle → white bottom edge */}
+          <LinearGradient
+            colors={vColors as unknown as readonly [string, string, ...string[]]}
+            locations={vStops as unknown as readonly [number, number, ...number[]]}
+            start={{ x: 0.5, y: 0 }}
+            end={{ x: 0.5, y: 1 }}
+            style={StyleSheet.absoluteFill}
+            pointerEvents="none"
+          />
+          {/* HORIZONTAL — dark left edge → transparent middle → white right edge */}
+          <LinearGradient
+            colors={hColors as unknown as readonly [string, string, ...string[]]}
+            locations={hStops as unknown as readonly [number, number, ...number[]]}
+            start={{ x: 0, y: 0.5 }}
+            end={{ x: 1, y: 0.5 }}
+            style={StyleSheet.absoluteFill}
+            pointerEvents="none"
+          />
+        </>
+      )}
       <View style={[styles.content, contentStyle]}>{children}</View>
     </View>
   );
