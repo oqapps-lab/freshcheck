@@ -171,38 +171,39 @@ export default function PaywallScreen() {
             Unlock FreshCheck Pro
           </Text>
           <Text style={[typeScale.body, styles.subtitle]}>
-            Stop guessing. Track every item, every recipe, every reminder — for less than a coffee a week.
+            Turn what's in your fridge into recipes, and never throw away food again.
           </Text>
+          {/* Trust signal — families save ~$2,913/yr (the product thesis). */}
+          <View style={styles.trustPill}>
+            <Sparkle size={14} color={colors.primary} strokeWidth={2} />
+            <Text style={[typeScale.labelSmall, styles.trustPillText]}>
+              SAVES THE AVERAGE FAMILY $2,913 / YEAR
+            </Text>
+          </View>
         </View>
 
-        {/* Features */}
-        <View style={styles.featuresList}>
-          {FEATURES.map(({ icon: Icon, title, body }) => (
-            <SoftSurface
+        {/* Features — one clean card with a checklist (premium feel, vs. five
+            heavy stacked cards). */}
+        <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.featuresCard}>
+          <Text style={[typeScale.label, styles.featuresHeader]}>EVERYTHING IN PRO</Text>
+          {FEATURES.map(({ title, body }, i) => (
+            <View
               key={title}
-              variant="cushion"
-              radius="xxl"
-              innerStyle={styles.featureCard}
+              style={[styles.checkRow, i === FEATURES.length - 1 && styles.checkRowLast]}
             >
-              <View style={styles.featureRow}>
-                <SoftInset
-                  radius="lg"
-                  strength="medium"
-                  style={styles.featureIcon}
-                  contentStyle={styles.featureIconInner}
-                >
-                  <Icon size={22} color={colors.primary} />
-                </SoftInset>
-                <View style={styles.featureText}>
-                  <Text style={[typeScale.titleMedium, styles.featureTitle]}>{title}</Text>
-                  <Text style={[typeScale.bodySmall, styles.featureBody]}>{body}</Text>
-                </View>
+              <View style={styles.checkBadge}>
+                <Check size={14} color={colors.surfaceWhite} strokeWidth={3} />
               </View>
-            </SoftSurface>
+              <View style={styles.featureText}>
+                <Text style={[typeScale.titleSmall, styles.featureTitle]}>{title}</Text>
+                <Text style={[typeScale.bodySmall, styles.featureBody]}>{body}</Text>
+              </View>
+            </View>
           ))}
-        </View>
+        </SoftSurface>
 
         {/* Plans — annual default, monthly decoy, weekly impulse */}
+        <Text style={[typeScale.label, styles.plansEyebrow]}>CHOOSE YOUR PLAN · 3 DAYS FREE</Text>
         <View style={styles.plansBlock}>
           <PlanCard
             value="annual"
@@ -241,6 +242,10 @@ export default function PaywallScreen() {
             onPress={onStart}
             iconLeft={<Zap size={22} color={colors.amber} strokeWidth={2.2} />}
           />
+          {/* Reassurance — the #1 lever on trial-start conversion. */}
+          <Text style={[typeScale.bodySmall, styles.reassure]}>
+            No payment due now · Cancel anytime
+          </Text>
           <GhostText label="Restore purchase" onPress={onRestore} />
         </View>
 
@@ -386,25 +391,45 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     lineHeight: 22,
   },
-  featuresList: {
-    gap: spacing.md,
-  },
-  featureCard: {
-    paddingVertical: spacing.lg,
-    paddingHorizontal: spacing.lg,
-  },
-  featureRow: {
+  trustPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.lg,
+    gap: 6,
+    marginTop: spacing.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: '#dcfce7', // green-100 — soft "savings" tint
   },
-  featureIcon: {
-    width: 48,
-    height: 48,
+  trustPillText: {
+    color: colors.primaryDeep,
+    letterSpacing: 1.2,
   },
-  featureIconInner: {
-    width: 48,
-    height: 48,
+  featuresCard: {
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.xl,
+  },
+  featuresHeader: {
+    color: colors.inkSecondary,
+    textTransform: 'uppercase',
+    marginBottom: spacing.md,
+  },
+  checkRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    paddingVertical: spacing.sm,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.hairline,
+  },
+  checkRowLast: {
+    borderBottomWidth: 0,
+  },
+  checkBadge: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -419,9 +444,19 @@ const styles = StyleSheet.create({
     color: colors.inkSecondary,
     lineHeight: 18,
   },
+  plansEyebrow: {
+    color: colors.inkSecondary,
+    textTransform: 'uppercase',
+    textAlign: 'center',
+    marginTop: spacing.xxl,
+  },
   plansBlock: {
     gap: spacing.md,
-    marginTop: spacing.xxl,
+    marginTop: spacing.md,
+  },
+  reassure: {
+    color: colors.inkSecondary,
+    textAlign: 'center',
   },
   planInner: {
     paddingVertical: spacing.lg,
