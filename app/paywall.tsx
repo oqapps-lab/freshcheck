@@ -58,6 +58,15 @@ export default function PaywallScreen() {
   const [plan, setPlan] = useState<Plan>('annual');
   const [busy, setBusy] = useState(false);
 
+  // The paywall is reached two ways: pushed from profile/recipes (back()
+  // returns there) OR replaced into from the post-onboarding auth funnel
+  // (empty stack — back() is a no-op that would strand the user on the
+  // paywall). Fall through to the tabs when there's nothing to pop to.
+  const dismiss = () => {
+    if (router.canGoBack()) router.back();
+    else router.replace('/(tabs)');
+  };
+
   // Pre-mount short-circuit: an already-Pro user reaching this screen via
   // a deep link or stale push would otherwise see "Start 3-day free trial"
   // and tapping it routes them through Adapty for a duplicate purchase
@@ -87,7 +96,7 @@ export default function PaywallScreen() {
         void logTrialStartEvent(PRODUCT_BY_PLAN[plan]);
         afLogTrialStart(PRODUCT_BY_PLAN[plan], PRICE_USD[plan]);
         Alert.alert('Welcome to Pro', 'Your free trial has started. Generate unlimited AI recipes from your fridge!');
-        router.back();
+        dismiss();
       } else if (r.error === 'cancelled') {
         // user-cancelled → no toast
       } else if (r.error === 'pending') {
@@ -111,7 +120,7 @@ export default function PaywallScreen() {
       const r = await restorePurchases();
       if (r.ok) {
         Alert.alert('Restored', 'Your subscription is active again.');
-        router.back();
+        dismiss();
       } else if (r.error === 'no-active-subscription') {
         Alert.alert('Nothing to restore', 'No active subscription was found on this Apple ID.');
       } else if (r.error === 'adapty-not-configured' || r.error === 'adapty-sdk-missing') {
@@ -141,7 +150,7 @@ export default function PaywallScreen() {
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <View style={styles.headerSpacer} />
         <Text style={[typeScale.wordmark, styles.eyebrow]}>FRESHCHECK PRO</Text>
-        <IconButton accessibilityLabel="close" onPress={() => router.back()}>
+        <IconButton accessibilityLabel="close" onPress={dismiss}>
           <Close size={20} color={colors.ink} />
         </IconButton>
       </View>

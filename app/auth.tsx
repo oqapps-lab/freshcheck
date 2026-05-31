@@ -48,6 +48,12 @@ export default function AuthScreen() {
     else router.replace('/(tabs)');
   };
 
+  // After the user resolves auth (sign-in, sign-up, or continue-as-guest)
+  // we send them through the paywall once — this is the post-onboarding
+  // funnel step the user expected ("почему paywall не было после
+  // онбординга"). The paywall closes into /(tabs) on its own.
+  const proceed = () => router.replace('/paywall');
+
   // iOS keyboard with QuickType / Passwords accessory bar can occlude the
   // password input. Smoke-test 2026-04-28 caught taps at the field's
   // visual y-coordinate landing on the keyboard accessory instead of the
@@ -80,7 +86,7 @@ export default function AuthScreen() {
     // spaces, no dot) doesn't burn a Supabase round-trip + a confusing
     // server-side error string. email.includes('@') alone passed "@",
     // "@b", "  @  ", etc.
-    const trimmedEmail = trimmedEmail;
+    const trimmedEmail = email.trim();
     const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail);
     if (!emailOk || password.length < 6) {
       Alert.alert(
@@ -104,7 +110,7 @@ export default function AuthScreen() {
         Alert.alert('Sign in failed', error);
         return;
       }
-      dismiss();
+      proceed();
       return;
     }
     const { error, needsEmailConfirmation } = await signUpWithEmail(trimmedEmail, password);
@@ -128,7 +134,7 @@ export default function AuthScreen() {
     // conversion event. Without this the post-install funnel is invisible.
     void logSignUpEvent('email');
     afLogSignUp('email');
-    dismiss();
+    proceed();
   };
 
   return (
@@ -268,7 +274,7 @@ export default function AuthScreen() {
             </Text>
             .
           </Text>
-          <GhostText label="Continue as guest" onPress={() => router.replace('/(tabs)')} />
+          <GhostText label="Continue as guest" onPress={proceed} />
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
