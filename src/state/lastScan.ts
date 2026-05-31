@@ -3,7 +3,7 @@ import type { Tone } from '@/constants/tokens';
 
 /**
  * Module-level singleton holding the most recent scan result so /capture
- * can hand it to /(tabs)/scan without round-tripping through router params
+ * can hand it to /scan-result without round-tripping through router params
  * (which serialize as strings and choke on the analysis array).
  *
  * Deliberately not Zustand: a single value with subscribe semantics is

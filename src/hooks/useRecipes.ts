@@ -1,6 +1,12 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { getSupabase } from '@/src/lib/supabase';
-import { setRecipes as setRecipesCache, updateRecipeImage } from '@/src/state/recipeStore';
+import {
+  setRecipes as setRecipesCache,
+  updateRecipeImage,
+  getRecipeList,
+  subscribeRecipes,
+  hydrateRecipes,
+} from '@/src/state/recipeStore';
 import { usePremium } from '@/src/hooks/usePremium';
 import { recordError } from '@/src/lib/firebase';
 
@@ -52,8 +58,25 @@ export function useRecipes() {
   const supabase = getSupabase();
   const [status, setStatus] = useState<Status>('idle');
   const [error, setError] = useState<string | null>(null);
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  // Recipes live in the module-level store (persisted + shared) so the tab
+  // shows the last batch after navigating away or restarting. We mirror the
+  // store into local state via a subscription; the store is the single
+  // source of truth for the recipe LIST (status/error stay local per-hook).
+  const [recipes, setLocalRecipes] = useState<Recipe[]>(getRecipeList());
   const premium = usePremium();
+
+  useEffect(() => {
+    let active = true;
+    void hydrateRecipes();
+    setLocalRecipes(getRecipeList());
+    const unsub = subscribeRecipes(() => {
+      if (active) setLocalRecipes(getRecipeList());
+    });
+    return () => {
+      active = false;
+      unsub();
+    };
+  }, []);
 
   const requestRef = React.useRef(0);
   const generate = useCallback(async () => {
@@ -95,29 +118,21 @@ export function useRecipes() {
         throw new Error(errMsg);
       }
       if (!data?.recipes?.length) throw new Error(data?.error ?? 'no recipes generated');
-      // Render text immediately
-      setRecipes(data.recipes);
+      // Write to the store — our subscription mirrors it into local state
+      // and persists it so the batch survives navigation / restart.
       setRecipesCache(data.recipes);
       setStatus('ready');
 
-      // Kick off image fetch per recipe (don't block UI)
-      data.recipes.forEach((r, idx) => {
+      // Kick off image fetch per recipe (don't block UI). updateRecipeImage
+      // emits a store change → subscription re-renders the card with the photo.
+      data.recipes.forEach((r) => {
         void supabase.functions
           .invoke<{ url?: string; error?: string }>('recipe-image', {
             body: { slug: r.id, prompt: r.hero_image_prompt },
           })
           .then(({ data: imgData }) => {
             if (myReq !== requestRef.current) return; // stale, bail
-            if (imgData?.url) {
-              updateRecipeImage(r.id, imgData.url);
-              setRecipes((prev) => {
-                const next = [...prev];
-                if (next[idx] && next[idx].id === r.id) {
-                  next[idx] = { ...next[idx], hero_image_url: imgData.url };
-                }
-                return next;
-              });
-            }
+            if (imgData?.url) updateRecipeImage(r.id, imgData.url);
           })
           .catch(() => {});
       });

@@ -178,8 +178,8 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="auth" options={{ presentation: 'card' }} />
           <Stack.Screen name="capture" options={{ presentation: 'card' }} />
+          <Stack.Screen name="scan-result" options={{ presentation: 'card' }} />
           <Stack.Screen name="paywall" options={{ presentation: 'modal' }} />
-          <Stack.Screen name="recipes" options={{ presentation: 'card' }} />
           <Stack.Screen name="recipe/[id]" options={{ presentation: 'card', headerShown: false }} />
           <Stack.Screen name="onboarding" options={{ presentation: 'card', animation: 'fade' }} />
         </Stack>

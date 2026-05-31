@@ -36,7 +36,7 @@ import { recordError } from '@/src/lib/firebase';
  * the Supabase `scans` bucket under `${user.id}/scan_<ts>.jpg`, then
  * invokes the `scan-image` Edge Function which calls OpenAI gpt-5.5.
  * The verdict + local image URI is staged in the lastScan store and
- * the user is routed to /(tabs)/scan to see the result.
+ * the user is routed to /scan-result to see the result.
  *
  * Camera preview lives INSIDE the recessed cushion viewfinder so the
  * neumorphic frame stays consistent with the rest of the app.
@@ -129,7 +129,7 @@ export default function CaptureScreen() {
       // AppsFlyer 'af_content_view' — primary in-app engagement signal that
       // ad networks can attribute installs against.
       afLogScan(data.product ?? 'unknown');
-      router.replace('/(tabs)/scan');
+      router.replace('/scan-result');
     } catch (err) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
       const msg = err instanceof Error ? err.message : 'Scan failed.';

@@ -1,25 +1,89 @@
 import type { Recipe } from '@/src/hooks/useRecipes';
+import { safeStorage, STORAGE_KEYS } from '@/src/lib/safeStorage';
 
 /**
- * Module-level cache: list screen sets the latest batch, detail screen
- * reads by id. Survives navigation, lost on app restart (recipes are
- * regenerated per session anyway).
+ * Module-level cache for the latest generated recipe batch.
+ *
+ * - The list screen sets the batch; the detail screen reads by id.
+ * - Persisted to safeStorage so the Recipes tab shows the user's recipes
+ *   after navigating away or restarting the app, instead of resetting to
+ *   the empty "Generate" state (user-flagged "где история моих рецептов").
+ * - Subscribers (the Recipes tab) are notified on every change so a
+ *   hero-image arriving after generation, or a fresh batch, re-renders.
  */
-let cache: Map<string, Recipe> = new Map();
+let list: Recipe[] = [];
+let byId: Map<string, Recipe> = new Map();
+const listeners = new Set<() => void>();
+
+function emit() {
+  listeners.forEach((l) => l());
+}
+
+function reindex() {
+  byId = new Map(list.map((r) => [r.id, r]));
+}
+
+function persist() {
+  // Fire-and-forget; the in-memory copy is the source of truth this session.
+  void safeStorage.setItem(STORAGE_KEYS.recipes, JSON.stringify(list));
+}
 
 export function setRecipes(recipes: Recipe[]) {
-  cache = new Map(recipes.map((r) => [r.id, r]));
+  list = recipes;
+  reindex();
+  persist();
+  emit();
 }
 
 export function getRecipe(id: string): Recipe | undefined {
-  return cache.get(id);
+  return byId.get(id);
+}
+
+export function getRecipeList(): Recipe[] {
+  return list;
 }
 
 export function updateRecipeImage(id: string, url: string) {
-  const r = cache.get(id);
-  if (r) cache.set(id, { ...r, hero_image_url: url });
+  const idx = list.findIndex((r) => r.id === id);
+  if (idx === -1) return;
+  list = [...list];
+  list[idx] = { ...list[idx], hero_image_url: url };
+  reindex();
+  persist();
+  emit();
 }
 
 export function clearRecipes() {
-  cache = new Map();
+  list = [];
+  reindex();
+  void safeStorage.removeItem(STORAGE_KEYS.recipes);
+  emit();
+}
+
+export function subscribeRecipes(fn: () => void): () => void {
+  listeners.add(fn);
+  return () => {
+    listeners.delete(fn);
+  };
+}
+
+/**
+ * Rehydrate the cache from disk. Safe to call repeatedly; only populates
+ * when the in-memory list is still empty (i.e. a cold start), so it never
+ * clobbers a fresher in-session batch.
+ */
+export async function hydrateRecipes(): Promise<void> {
+  if (list.length > 0) return;
+  try {
+    const raw = await safeStorage.getItem(STORAGE_KEYS.recipes);
+    if (!raw) return;
+    const parsed = JSON.parse(raw) as Recipe[];
+    if (Array.isArray(parsed) && parsed.length > 0 && list.length === 0) {
+      list = parsed;
+      reindex();
+      emit();
+    }
+  } catch {
+    /* corrupt cache — ignore, user can regenerate */
+  }
 }

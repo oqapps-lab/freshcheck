@@ -14,6 +14,10 @@ const memStore = new Map<string, string>();
 // have re-triggered onboarding for every user on every launch.
 export const STORAGE_KEYS = {
   onboardingDone: 'freshcheck_onboarding_done_v1',
+  // Last generated recipe batch — persisted so the Recipes tab shows the
+  // user's recipes after they navigate away / restart, instead of resetting
+  // to the empty "Generate" state (user-flagged "где история моих рецептов").
+  recipes: 'freshcheck_recipes_v1',
 } as const;
 
 export const safeStorage = {
