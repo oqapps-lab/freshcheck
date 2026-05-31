@@ -20,6 +20,7 @@ import {
   History,
   Cloud,
   Sparkle,
+  Bowl,
 } from '@/components/ui/Glyphs';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
@@ -52,6 +53,13 @@ const SLIDES: Slide[] = [
     body: 'Your fridge gets a colour-coded timeline. Items closest to expiry float to the top automatically.',
     Icon: History,
     iconColor: colors.primary,
+  },
+  {
+    id: 'recipes',
+    title: 'Recipes from your fridge',
+    body: 'One tap turns what you already have into 3 AI recipes — built around the items expiring soonest, so nothing goes to waste.',
+    Icon: Bowl,
+    iconColor: colors.amber,
   },
   {
     id: 'sync',
