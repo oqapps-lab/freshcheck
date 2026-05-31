@@ -129,7 +129,9 @@ export default function CaptureScreen() {
       // AppsFlyer 'af_content_view' — primary in-app engagement signal that
       // ad networks can attribute installs against.
       afLogScan(data.product ?? 'unknown');
-      router.replace('/scan-result');
+      // as never: typedRoutes regenerates the route union at prebuild; the
+      // string is correct, the generated types just lag in a bare tsc.
+      router.replace('/scan-result' as never);
     } catch (err) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
       const msg = err instanceof Error ? err.message : 'Scan failed.';

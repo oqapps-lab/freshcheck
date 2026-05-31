@@ -142,7 +142,7 @@ export default function FridgeScreen() {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="View recipe suggestions"
-            onPress={() => router.push('/(tabs)/recipes')}
+            onPress={() => router.push('/(tabs)/recipes' as never)}
             style={styles.recipesCtaWrap}
           >
             <SoftSurface variant="pill" radius="full" innerStyle={styles.recipesCta}>

@@ -52,7 +52,10 @@ function FirstRunRedirect() {
 // Without it the GA4 funnel is install → blank → purchase, no per-screen
 // drop-off visibility.
 function ScreenViewTracker() {
-  const segments = useSegments();
+  // Cast to string[] — typedRoutes types useSegments() as a fixed-length
+  // tuple, which makes the defensive `length === 0` guard a TS2367 "no
+  // overlap" error. A plain string[] keeps the guard valid.
+  const segments = useSegments() as string[];
   useEffect(() => {
     if (!segments || segments.length === 0) return;
     // ['(tabs)', 'fridge'] → 'fridge'; ['paywall'] → 'paywall'; etc.
