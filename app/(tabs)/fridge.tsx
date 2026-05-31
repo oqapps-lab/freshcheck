@@ -49,21 +49,15 @@ export default function FridgeScreen() {
   const router = useRouter();
   const { items, loading, error, refresh, removeItem } = useFridge();
 
-  const confirmRemove = useCallback(
-    (id: string, name: string) => {
-      Alert.alert('Remove item', `Remove "${name}" from your fridge?`, [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Remove',
-          style: 'destructive',
-          onPress: async () => {
-            const r = await removeItem(id);
-            if (r?.error) {
-              Alert.alert('Could not remove', r.error);
-            }
-          },
-        },
-      ]);
+  // Swipe-left → Delete deletes immediately (the swipe + Delete tap are the
+  // confirmation, matching the iOS list convention the user asked for). We
+  // only surface an Alert if the delete actually fails.
+  const handleDelete = useCallback(
+    async (id: string) => {
+      const r = await removeItem(id);
+      if (r?.error) {
+        Alert.alert('Could not remove', r.error);
+      }
     },
     [removeItem],
   );
@@ -233,19 +227,19 @@ export default function FridgeScreen() {
                   category={item.category}
                   daysLeft={item.daysLeft}
                   shelfDays={item.totalDays || 14}
-                  onLongPress={() => confirmRemove(item.id, item.name)}
+                  onDelete={() => handleDelete(item.id)}
                 />
               ))}
             </View>
 
-            {/* Footer counter + delete hint (long-press is the only way
-                to remove an item; without this label first-time users tap
-                the row, get nothing, and assume the card is broken). */}
+            {/* Footer counter + swipe hint (swipe-left reveals Delete;
+                without this label first-time users don't discover the
+                gesture). */}
             <Text style={[typeScale.label, styles.footer]}>
               {`${filtered.length} OF ${items.length} PRODUCTS TRACKED`}
             </Text>
             <Text style={[typeScale.labelTiny, styles.footerHint]}>
-              HOLD A CARD TO REMOVE IT
+              SWIPE A CARD LEFT TO REMOVE IT
             </Text>
           </>
         )}

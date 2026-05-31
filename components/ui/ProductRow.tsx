@@ -1,11 +1,12 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import * as Haptics from 'expo-haptics';
+import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { SoftSurface } from './SoftSurface';
 import { SoftInset } from './SoftInset';
-import { CategoryGlyph } from './Glyphs';
+import { CategoryGlyph, Trash } from './Glyphs';
 import { RipeningProgress } from './RipeningProgress';
-import { colors, spacing, typeScale } from '@/constants/tokens';
+import { colors, radii, spacing, typeScale } from '@/constants/tokens';
 
 type Props = {
   name: string;
@@ -14,7 +15,8 @@ type Props = {
   /** total shelf-life days (defaults 14) */
   shelfDays?: number;
   onPress?: () => void;
-  onLongPress?: () => void;
+  /** Swipe-left reveals a Delete action that calls this. */
+  onDelete?: () => void;
 };
 
 /**
@@ -33,7 +35,7 @@ export function ProductRow({
   daysLeft,
   shelfDays = 14,
   onPress,
-  onLongPress,
+  onDelete,
 }: Props) {
   const progress = Math.max(0.04, Math.min(1, daysLeft / shelfDays));
 
@@ -60,20 +62,15 @@ export function ProductRow({
   // we don't want a fake "button" affordance — silent haptic on tap with
   // no follow-through reads as a dead control.
   const a11yLabel = `${name}, ${daysLeft} ${daysLeft === 1 ? 'day' : 'days'} left`;
-  const interactive = onPress || onLongPress;
-  const Container: React.ComponentType<{ children: React.ReactNode }> = interactive
+  const Container: React.ComponentType<{ children: React.ReactNode }> = onPress
     ? ({ children }) => (
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={a11yLabel}
-          onPress={onPress ? () => {
+          onPress={() => {
             Haptics.selectionAsync().catch(() => {});
             onPress();
-          } : undefined}
-          onLongPress={onLongPress ? () => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
-            onLongPress();
-          } : undefined}
+          }}
         >
           {children}
         </Pressable>
@@ -82,7 +79,7 @@ export function ProductRow({
         <View accessibilityLabel={a11yLabel}>{children}</View>
       );
 
-  return (
+  const card = (
     <Container>
       <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.card}>
         <View style={styles.row}>
@@ -119,6 +116,45 @@ export function ProductRow({
         <RipeningProgress progress={progress} fillColor={fillColor} style={styles.progress} />
       </SoftSurface>
     </Container>
+  );
+
+  if (!onDelete) return card;
+
+  // Swipe-left reveals a Delete action (iOS list convention). Tapping it
+  // deletes immediately — the swipe + tap together are the confirmation,
+  // so no extra Alert. Replaces the old long-press → Apple context menu.
+  const renderRightActions = (
+    _progress: unknown,
+    _translation: unknown,
+    swipeable: { close: () => void },
+  ) => (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={`Delete ${name}`}
+      style={styles.deleteAction}
+      onPress={() => {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+        swipeable.close();
+        onDelete();
+      }}
+    >
+      <View style={styles.deleteInner}>
+        <Trash size={26} color={colors.surfaceWhite} strokeWidth={2} />
+        <Text style={[typeScale.labelSmall, styles.deleteLabel]}>DELETE</Text>
+      </View>
+    </Pressable>
+  );
+
+  return (
+    <ReanimatedSwipeable
+      friction={2}
+      rightThreshold={40}
+      overshootRight={false}
+      renderRightActions={renderRightActions}
+      containerStyle={styles.swipeContainer}
+    >
+      {card}
+    </ReanimatedSwipeable>
   );
 }
 
@@ -166,5 +202,29 @@ const styles = StyleSheet.create({
   },
   progress: {
     marginTop: 0,
+  },
+  swipeContainer: {
+    borderRadius: radii.xxl,
+  },
+  deleteAction: {
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    // Pull left under the card's rounded right edge so the red fills flush
+    // to the card corner instead of leaving a canvas-coloured sliver.
+    marginLeft: -radii.xxl,
+    paddingLeft: radii.xxl,
+  },
+  deleteInner: {
+    backgroundColor: colors.red,
+    borderRadius: radii.xxl,
+    width: 96,
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+  },
+  deleteLabel: {
+    color: colors.surfaceWhite,
+    letterSpacing: 1.4,
   },
 });
