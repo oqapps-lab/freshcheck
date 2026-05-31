@@ -1,3 +1,7 @@
+# ⚠️ DO NOT USE — builds are LOCAL-ONLY (eas build --local on the Mac).
+# This file is kept as a historical reference of the signing setup only.
+# The auto-trigger was REMOVED on 2026-05-31 so pushes to main no longer
+# burn paid Codemagic CI minutes. See project CLAUDE.md "BUILDS: LOCAL ONLY".
 workflows:
   ios-production:
     name: iOS Production
@@ -14,13 +18,9 @@ workflows:
       node: v22.11.0
       cocoapods: default
       xcode: latest
-    triggering:
-      events:
-        - push
-      branch_patterns:
-        - pattern: 'main'
-          include: true
-      cancel_previous_builds: true
+    # triggering block intentionally removed — no auto-build on push.
+    # (Was: events:[push], branch_patterns:[main]. Re-adding it would resume
+    # burning paid CI minutes on every push, which is forbidden.)
     scripts:
       - name: Decode signing assets from env
         script: |
