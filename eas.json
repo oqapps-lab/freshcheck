@@ -34,6 +34,13 @@
       },
       "ios": {
         "resourceClass": "m-medium"
+      },
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://fxggqnlicjuvzfqzbqfm.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4Z2dxbmxpY2p1dnpmcXpicWZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxNDU5MzQsImV4cCI6MjA5MjcyMTkzNH0.jARL1G5CrTpN9xkd6uN3Ti3ODYiFbKG7MY5pxy_Z_Ms",
+        "EXPO_PUBLIC_ADAPTY_PUBLIC_KEY": "public_live_cLljS4xE.PHI6Z9KwDElMq086Ir8b",
+        "EXPO_PUBLIC_APPSFLYER_DEV_KEY": "QfoivzNipwRnnAgKjWwTqZ",
+        "EXPO_PUBLIC_APPLE_APP_ID": "6767547114"
       }
     },
     "production-simulator": {
@@ -43,6 +50,13 @@
       "ios": {
         "simulator": true,
         "resourceClass": "m-medium"
+      },
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://fxggqnlicjuvzfqzbqfm.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4Z2dxbmxpY2p1dnpmcXpicWZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxNDU5MzQsImV4cCI6MjA5MjcyMTkzNH0.jARL1G5CrTpN9xkd6uN3Ti3ODYiFbKG7MY5pxy_Z_Ms",
+        "EXPO_PUBLIC_ADAPTY_PUBLIC_KEY": "public_live_cLljS4xE.PHI6Z9KwDElMq086Ir8b",
+        "EXPO_PUBLIC_APPSFLYER_DEV_KEY": "QfoivzNipwRnnAgKjWwTqZ",
+        "EXPO_PUBLIC_APPLE_APP_ID": "6767547114"
       }
     }
   },
