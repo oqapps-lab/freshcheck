@@ -14,9 +14,7 @@ import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { CameraView, useCameraPermissions } from 'expo-camera';
-import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
-import { File } from 'expo-file-system';
 import { IconButton } from '@/components/ui/IconButton';
 import { SoftSurface } from '@/components/ui/SoftSurface';
 import { SoftInset } from '@/components/ui/SoftInset';
@@ -27,6 +25,8 @@ import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 import { useAuth } from '@/src/hooks/useAuth';
 import { getSupabase } from '@/src/lib/supabase';
 import { setLastScan } from '@/src/state/lastScan';
+import { scanImage } from '@/src/lib/scanPipeline';
+import { enqueueScans, processQueue, useScanQueue } from '@/src/state/scanQueue';
 import { logScan as afLogScan } from '@/src/lib/appsflyer';
 import { recordError } from '@/src/lib/firebase';
 
@@ -50,6 +50,12 @@ export default function CaptureScreen() {
   const cameraRef = useRef<CameraView>(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [analyzingMsg, setAnalyzingMsg] = useState('Analyzing…');
+  // Batch mode: rapid-fire capture that enqueues each shot for background
+  // scanning instead of blocking on each one. `capturing` debounces the
+  // shutter between quick shots.
+  const [batchMode, setBatchMode] = useState(false);
+  const [capturing, setCapturing] = useState(false);
+  const queue = useScanQueue();
   const pulse = useRef(new Animated.Value(0)).current;
 
   // Reachable via router.replace('/capture') from the empty-scan tab and
@@ -79,56 +85,20 @@ export default function CaptureScreen() {
     }
   }, [permission, requestPermission]);
 
-  // Shared scan pipeline: compress → upload → scan-image → stage result →
-  // navigate. Fed by BOTH the camera shutter and the gallery picker so the
-  // two entry points stay byte-for-byte identical downstream. Assumes the
-  // caller already set analyzing=true and verified supabase+user.
+  // Single scan: run the shared pipeline (src/lib/scanPipeline) then stage
+  // the result + navigate. Fed by BOTH the camera shutter and the gallery
+  // picker. Assumes the caller already set analyzing=true and verified
+  // supabase+user. (Batch scanning uses the same scanImage() via scanQueue.)
   const runScanPipeline = async (sourceUri: string) => {
     if (!supabase || !user) return;
     try {
-      setAnalyzingMsg('Compressing…');
-      // manipulateAsync re-encodes the JPEG, which also drops any EXIF
-      // metadata (GPS/time) — defence in depth, since the scans bucket is
-      // publicly readable.
-      const resized = await manipulateAsync(
-        sourceUri,
-        [{ resize: { width: 1024 } }],
-        { compress: 0.7, format: SaveFormat.JPEG },
-      );
-
-      setAnalyzingMsg('Uploading…');
-      const file = new File(resized.uri);
-      const bytes = await file.arrayBuffer();
-      const imagePath = `${user.id}/scan_${Date.now()}.jpg`;
-      const { error: upErr } = await supabase.storage
-        .from('scans')
-        .upload(imagePath, bytes, { contentType: 'image/jpeg', upsert: false });
-      if (upErr) throw new Error(`upload: ${upErr.message}`);
-
       setAnalyzingMsg('Reading ripeness…');
-      const { data, error: fnErr } = await supabase.functions.invoke('scan-image', {
-        body: { image_path: imagePath },
-      });
-      if (fnErr) throw new Error(fnErr.message);
-      if (!data || data.error) throw new Error(data?.error ?? 'scan failed');
-
-      setLastScan({
-        scanId: data.scan_id ?? null,
-        imagePath,
-        imageUri: resized.uri,
-        product: data.product ?? 'unknown',
-        verdict: data.verdict ?? 'safe',
-        tone: data.tone ?? data.verdict ?? 'safe',
-        confidence: typeof data.confidence === 'number' ? data.confidence : 0,
-        storageNote: data.storage_note ?? null,
-        daysLeft: data.days_left ?? null,
-        totalDays: data.total_days ?? null,
-        analysis: Array.isArray(data.analysis) ? data.analysis : [],
-      });
+      const result = await scanImage(supabase, user.id, sourceUri);
+      setLastScan(result);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
       // AppsFlyer 'af_content_view' — primary in-app engagement signal that
       // ad networks can attribute installs against.
-      afLogScan(data.product ?? 'unknown');
+      afLogScan(result.product);
       // as never: typedRoutes regenerates the route union at prebuild; the
       // string is correct, the generated types just lag in a bare tsc.
       router.replace('/scan-result' as never);
@@ -142,7 +112,35 @@ export default function CaptureScreen() {
     }
   };
 
+  const goToBatch = () => router.push('/scan-batch' as never);
+
+  // Batch shutter: snap a photo and drop it on the queue, then keep the
+  // camera live so the user can fire off the next one immediately
+  // ("чик-чик-чик"). The queue scans each in the background; results are
+  // reviewed on /scan-batch. No full-screen analyzing overlay here.
+  const onBatchShutter = async () => {
+    if (capturing) return;
+    if (!cameraRef.current || !supabase || !user) {
+      Alert.alert('Preparing scan', 'Please wait a moment and try again.');
+      return;
+    }
+    setCapturing(true);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    try {
+      const shot = await cameraRef.current.takePictureAsync({ quality: 0.85, skipProcessing: false, exif: false });
+      if (shot?.uri) {
+        enqueueScans([shot.uri]);
+        void processQueue(supabase, user.id);
+      }
+    } catch (err) {
+      recordError(err, 'scan-batch-capture');
+    } finally {
+      setCapturing(false);
+    }
+  };
+
   const onShutter = async () => {
+    if (batchMode) return onBatchShutter();
     if (analyzing) return;
     if (!cameraRef.current || !supabase || !user) {
       Alert.alert('Preparing scan', 'Please wait a moment and try again.');
@@ -193,8 +191,23 @@ export default function CaptureScreen() {
       mediaTypes: ['images'],
       quality: 1,
       allowsEditing: false,
+      // Batch mode → let the user pick a whole bunch at once; they all
+      // queue and scan in the background.
+      allowsMultipleSelection: batchMode,
+      selectionLimit: batchMode ? 20 : 1,
     });
-    if (result.canceled || !result.assets?.[0]?.uri) return;
+    if (result.canceled || !result.assets?.length) return;
+
+    if (batchMode) {
+      const uris = result.assets.map((a) => a.uri).filter(Boolean);
+      if (uris.length === 0) return;
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+      enqueueScans(uris);
+      void processQueue(supabase, user.id);
+      goToBatch();
+      return;
+    }
+
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
     setAnalyzing(true);
     setAnalyzingMsg('Loading photo…');
@@ -286,8 +299,42 @@ export default function CaptureScreen() {
         >
           {renderViewfinderBody()}
         </SoftInset>
+
+        {/* Single / Batch mode toggle. Batch lets you fire off many photos
+            in a row (or multi-pick from the library) and scan them all in
+            the background. */}
+        {showShutter && (
+          <SoftInset radius="full" strength="thin" contentStyle={styles.modeToggle}>
+            {(['single', 'batch'] as const).map((m) => {
+              const on = (m === 'batch') === batchMode;
+              return (
+                <Pressable
+                  key={m}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: on }}
+                  onPress={() => {
+                    Haptics.selectionAsync().catch(() => {});
+                    setBatchMode(m === 'batch');
+                  }}
+                  style={[styles.modeOption, on && styles.modeOptionOn]}
+                >
+                  <Text style={[typeScale.labelSmall, { color: on ? colors.surfaceWhite : colors.inkSecondary }]}>
+                    {m === 'single' ? 'SINGLE' : 'BATCH'}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </SoftInset>
+        )}
+
         <Text style={[typeScale.label, styles.hint]}>
-          {analyzing ? '' : showShutter ? 'POINT AT FOOD · TAP TO CAPTURE' : ''}
+          {analyzing
+            ? ''
+            : showShutter
+              ? batchMode
+                ? 'TAP TO ADD · SCANS RUN IN BACKGROUND'
+                : 'POINT AT FOOD · TAP TO CAPTURE'
+              : ''}
         </Text>
       </View>
 
@@ -333,9 +380,23 @@ export default function CaptureScreen() {
               </SoftSurface>
             </Pressable>
 
-            {/* Spacer mirrors the gallery button width so the shutter stays
-                visually centred in the row. */}
-            <View style={styles.galleryBtn} />
+            {/* Batch: a Review pill showing the queued count (mirrors the
+                gallery button slot so the shutter stays centred). Single
+                mode: an inert spacer. */}
+            {batchMode && queue.length > 0 ? (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`review ${queue.length} scans`}
+                onPress={goToBatch}
+                style={({ pressed }) => [styles.galleryBtn, { opacity: pressed ? 0.85 : 1 }]}
+              >
+                <SoftSurface variant="pill" radius="full" innerStyle={styles.reviewInner}>
+                  <Text style={[typeScale.numberLarge, styles.reviewCount]}>{queue.length}</Text>
+                </SoftSurface>
+              </Pressable>
+            ) : (
+              <View style={styles.galleryBtn} />
+            )}
           </View>
         ) : showSignInCta ? (
           // Anon-auth bootstrap is in-flight (typically <500ms). The
@@ -478,12 +539,36 @@ const styles = StyleSheet.create({
     paddingTop: spacing.lg,
     paddingHorizontal: layout.screenPadding,
   },
+  modeToggle: {
+    flexDirection: 'row',
+    padding: 4,
+    gap: 4,
+  },
+  modeOption: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: 8,
+    borderRadius: 999,
+  },
+  modeOptionOn: {
+    backgroundColor: colors.primary,
+  },
   shutterRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
     maxWidth: 360,
+  },
+  reviewInner: {
+    width: 56,
+    height: 56,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  reviewCount: {
+    color: colors.primary,
+    fontSize: 24,
+    lineHeight: 26,
   },
   shutter: { width: SHUTTER_OUTER, height: SHUTTER_OUTER },
   galleryBtn: { width: 56, height: 56, alignItems: 'center', justifyContent: 'center' },
