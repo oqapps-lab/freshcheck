@@ -74,8 +74,24 @@ export function useRecipes() {
       }>('generate-recipes', { body: { entitled: premium } });
       if (myReq !== requestRef.current) return; // superseded by newer request
       if (fnErr) {
-        // Edge function returned 429 with structured rate-limit message
-        const errMsg = data?.message ?? data?.error ?? fnErr.message;
+        // supabase-js does NOT parse the response body into `data` on a
+        // non-2xx — it throws a FunctionsHttpError whose `.message` is the
+        // useless generic "Edge Function returned a non-2xx status code".
+        // The real structured payload (e.g. our 429 daily-limit message) is
+        // on the raw Response at `fnErr.context`. Read it so the user sees
+        // "Free plan: 1 recipe generation per day…" instead of the generic
+        // error, and so the screen's `error.includes('Free plan')` branch
+        // can surface the upgrade CTA.
+        let body: { error?: string; message?: string } | null = data ?? null;
+        const ctx = (fnErr as unknown as { context?: Response }).context;
+        if (!body?.message && !body?.error && ctx && typeof ctx.json === 'function') {
+          try {
+            body = await ctx.json();
+          } catch {
+            /* body wasn't JSON — fall through to generic message */
+          }
+        }
+        const errMsg = body?.message ?? body?.error ?? fnErr.message;
         throw new Error(errMsg);
       }
       if (!data?.recipes?.length) throw new Error(data?.error ?? 'no recipes generated');
