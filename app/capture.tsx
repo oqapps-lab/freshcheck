@@ -15,12 +15,14 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
+import * as ImagePicker from 'expo-image-picker';
 import { File } from 'expo-file-system';
 import { IconButton } from '@/components/ui/IconButton';
 import { SoftSurface } from '@/components/ui/SoftSurface';
 import { SoftInset } from '@/components/ui/SoftInset';
 import { PrimaryPillCTA } from '@/components/ui/PrimaryPillCTA';
-import { Back, BarcodeScanner, Sparkle } from '@/components/ui/Glyphs';
+import { GhostText } from '@/components/ui/GhostText';
+import { Back, BarcodeScanner, Gallery, Sparkle } from '@/components/ui/Glyphs';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 import { useAuth } from '@/src/hooks/useAuth';
 import { getSupabase } from '@/src/lib/supabase';
@@ -77,31 +79,19 @@ export default function CaptureScreen() {
     }
   }, [permission, requestPermission]);
 
-  const onShutter = async () => {
-    if (analyzing) return;
-    if (!cameraRef.current || !supabase || !user) {
-      Alert.alert('Preparing scan', 'Please wait a moment and try again.');
-      return;
-    }
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
-    setAnalyzing(true);
-    setAnalyzingMsg('Capturing…');
-
+  // Shared scan pipeline: compress → upload → scan-image → stage result →
+  // navigate. Fed by BOTH the camera shutter and the gallery picker so the
+  // two entry points stay byte-for-byte identical downstream. Assumes the
+  // caller already set analyzing=true and verified supabase+user.
+  const runScanPipeline = async (sourceUri: string) => {
+    if (!supabase || !user) return;
     try {
-      // exif:false explicitly — expo-camera's default has shifted between
-      // versions, and the `scans` bucket is publicly readable, so without
-      // this the user's GPS coordinates + capture time + camera model end
-      // up as a public URL anyone with the link can read. Apple Privacy
-      // Review flags GPS leakage even when the bucket isn't intentionally
-      // public-listed.
-      const shot = await cameraRef.current.takePictureAsync({ quality: 0.85, skipProcessing: false, exif: false });
-      if (!shot?.uri) throw new Error('camera returned no image');
-
       setAnalyzingMsg('Compressing…');
       // manipulateAsync re-encodes the JPEG, which also drops any EXIF
-      // metadata that may have slipped through above (defence in depth).
+      // metadata (GPS/time) — defence in depth, since the scans bucket is
+      // publicly readable.
       const resized = await manipulateAsync(
-        shot.uri,
+        sourceUri,
         [{ resize: { width: 1024 } }],
         { compress: 0.7, format: SaveFormat.JPEG },
       );
@@ -137,22 +127,76 @@ export default function CaptureScreen() {
       });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
       // AppsFlyer 'af_content_view' — primary in-app engagement signal that
-      // ad networks can attribute installs against. Firebase Analytics
-      // auto-tracks screen views via logScreenView elsewhere; AppsFlyer
-      // doesn't, so we fan this one out explicitly.
+      // ad networks can attribute installs against.
       afLogScan(data.product ?? 'unknown');
       router.replace('/(tabs)/scan');
     } catch (err) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
       const msg = err instanceof Error ? err.message : 'Scan failed.';
-      // Report to Crashlytics so post-launch we can see which step (camera /
-      // resize / upload / edge fn) is failing in the wild — the alert
-      // message names the step but is invisible to us without this.
       recordError(err, 'scan-pipeline');
       Alert.alert('Scan failed', msg);
       setAnalyzing(false);
       setAnalyzingMsg('Analyzing…');
     }
+  };
+
+  const onShutter = async () => {
+    if (analyzing) return;
+    if (!cameraRef.current || !supabase || !user) {
+      Alert.alert('Preparing scan', 'Please wait a moment and try again.');
+      return;
+    }
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    setAnalyzing(true);
+    setAnalyzingMsg('Capturing…');
+    try {
+      // exif:false — strip GPS/time/camera before the public scans bucket.
+      const shot = await cameraRef.current.takePictureAsync({ quality: 0.85, skipProcessing: false, exif: false });
+      if (!shot?.uri) throw new Error('camera returned no image');
+      await runScanPipeline(shot.uri);
+    } catch (err) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+      recordError(err, 'scan-capture');
+      Alert.alert('Scan failed', err instanceof Error ? err.message : 'Could not capture photo.');
+      setAnalyzing(false);
+      setAnalyzingMsg('Analyzing…');
+    }
+  };
+
+  // Gallery alternative: pick an existing photo and run the same pipeline.
+  // Works even when camera permission is denied — a key fallback the user
+  // asked for. Library access prompts via NSPhotoLibraryUsageDescription.
+  const onPickFromGallery = async () => {
+    if (analyzing) return;
+    if (!supabase || !user) {
+      Alert.alert('Preparing scan', 'Please wait a moment and try again.');
+      return;
+    }
+    Haptics.selectionAsync().catch(() => {});
+    const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!perm.granted) {
+      Alert.alert(
+        'Photo access needed',
+        perm.canAskAgain
+          ? 'Allow photo access to pick a food photo from your library.'
+          : 'Enable photo access in Settings, then come back.',
+        perm.canAskAgain ? undefined : [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Open Settings', onPress: () => Linking.openSettings() },
+        ],
+      );
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      quality: 1,
+      allowsEditing: false,
+    });
+    if (result.canceled || !result.assets?.[0]?.uri) return;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    setAnalyzing(true);
+    setAnalyzingMsg('Loading photo…');
+    await runScanPipeline(result.assets[0].uri);
   };
 
   const ringScale = pulse.interpolate({ inputRange: [0, 1], outputRange: [1, 1.06] });
@@ -247,29 +291,50 @@ export default function CaptureScreen() {
 
       <View style={[styles.shutterBlock, { paddingBottom: insets.bottom + spacing.xxl }]}>
         {showShutter ? (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="capture"
-            accessibilityState={{ disabled: analyzing }}
-            onPress={onShutter}
-            disabled={analyzing}
-            // Dim while analyzing so the button visually matches its
-            // disabled state — without this the shutter sat at full
-            // opacity during the 3s OpenAI call and users tapped it
-            // expecting a response, getting nothing, assuming a stuck UI.
-            style={({ pressed }) => [styles.shutter, { opacity: analyzing ? 0.4 : pressed ? 0.85 : 1 }]}
-          >
-            <SoftSurface variant="cushion" radius="full" innerStyle={styles.shutterOuter}>
-              <SoftInset
-                radius="full"
-                strength="medium"
-                style={styles.shutterInner}
-                contentStyle={styles.shutterInnerContent}
-              >
-                <BarcodeScanner size={36} color={colors.primary} strokeWidth={1.6} />
-              </SoftInset>
-            </SoftSurface>
-          </Pressable>
+          <View style={styles.shutterRow}>
+            {/* Gallery picker — left of the shutter (mirrors the iOS camera
+                app's library shortcut). Runs the same scan pipeline. */}
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="choose photo from library"
+              accessibilityState={{ disabled: analyzing }}
+              onPress={onPickFromGallery}
+              disabled={analyzing}
+              style={({ pressed }) => [styles.galleryBtn, { opacity: analyzing ? 0.4 : pressed ? 0.85 : 1 }]}
+            >
+              <SoftSurface variant="pill" radius="full" innerStyle={styles.galleryInner}>
+                <Gallery size={26} color={colors.inkSecondary} strokeWidth={1.8} />
+              </SoftSurface>
+            </Pressable>
+
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="capture"
+              accessibilityState={{ disabled: analyzing }}
+              onPress={onShutter}
+              disabled={analyzing}
+              // Dim while analyzing so the button visually matches its
+              // disabled state — without this the shutter sat at full
+              // opacity during the 3s OpenAI call and users tapped it
+              // expecting a response, getting nothing, assuming a stuck UI.
+              style={({ pressed }) => [styles.shutter, { opacity: analyzing ? 0.4 : pressed ? 0.85 : 1 }]}
+            >
+              <SoftSurface variant="cushion" radius="full" innerStyle={styles.shutterOuter}>
+                <SoftInset
+                  radius="full"
+                  strength="medium"
+                  style={styles.shutterInner}
+                  contentStyle={styles.shutterInnerContent}
+                >
+                  <BarcodeScanner size={36} color={colors.primary} strokeWidth={1.6} />
+                </SoftInset>
+              </SoftSurface>
+            </Pressable>
+
+            {/* Spacer mirrors the gallery button width so the shutter stays
+                visually centred in the row. */}
+            <View style={styles.galleryBtn} />
+          </View>
         ) : showSignInCta ? (
           // Anon-auth bootstrap is in-flight (typically <500ms). The
           // viewfinder body already says "Preparing scan…"; rendering a
@@ -294,6 +359,10 @@ export default function CaptureScreen() {
                 }
               }}
             />
+            {/* Camera blocked? You can still scan a photo from the library. */}
+            <View style={styles.galleryFallback}>
+              <GhostText label="Choose from library instead" onPress={onPickFromGallery} />
+            </View>
           </View>
         ) : (
           // Backend not configured (missing EXPO_PUBLIC_SUPABASE_URL etc.) —
@@ -407,7 +476,25 @@ const styles = StyleSheet.create({
     paddingTop: spacing.lg,
     paddingHorizontal: layout.screenPadding,
   },
+  shutterRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    maxWidth: 360,
+  },
   shutter: { width: SHUTTER_OUTER, height: SHUTTER_OUTER },
+  galleryBtn: { width: 56, height: 56, alignItems: 'center', justifyContent: 'center' },
+  galleryInner: {
+    width: 56,
+    height: 56,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  galleryFallback: {
+    alignItems: 'center',
+    marginTop: spacing.md,
+  },
   shutterOuter: {
     width: SHUTTER_OUTER,
     height: SHUTTER_OUTER,

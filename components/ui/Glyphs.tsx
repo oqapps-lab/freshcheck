@@ -77,6 +77,17 @@ export function Trash(p: Props) {
   );
 }
 
+export function Gallery(p: Props) {
+  const { size, color, strokeWidth } = stroke(p);
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Rect x="3" y="4" width="18" height="16" rx="3" stroke={color} strokeWidth={strokeWidth} />
+      <Circle cx="8.5" cy="9" r="1.6" stroke={color} strokeWidth={strokeWidth} />
+      <Path d="M5 18l4.5-5 3.5 3.5L16 13l3 4" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
 export function Check(p: Props) {
   const { size, color, strokeWidth } = stroke(p);
   return (

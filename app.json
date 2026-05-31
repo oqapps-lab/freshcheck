@@ -21,6 +21,7 @@
       "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "NSCameraUsageDescription": "FreshCheck uses the camera to check the freshness of your food.",
+        "NSPhotoLibraryUsageDescription": "FreshCheck lets you pick a photo of your food from your library to check its freshness.",
         "NSUserTrackingUsageDescription": "FreshCheck uses your device identifier to measure ad performance and improve our recommendations.",
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -57,6 +58,12 @@
         "expo-camera",
         {
           "cameraPermission": "FreshCheck uses the camera to check the freshness of your food."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "FreshCheck lets you pick a photo of your food from your library to check its freshness."
         }
       ],
       [
