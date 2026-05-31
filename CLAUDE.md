@@ -1,5 +1,16 @@
 # FreshCheck
 
+## 🚫 BUILDS: LOCAL ONLY — NEVER Codemagic / EAS Cloud
+
+**ALL iOS builds for this project go through `eas build --local` on the Mac via SSH.** Use the `eas-build-local-mac` skill. Never Codemagic, never EAS Cloud, never any other hosted CI — the user pays per-minute on those and has explicitly forbidden them.
+
+- ✅ **DO**: `ssh -p 2222 evgenij@localhost` → `eas build --local --profile production --platform ios` → `eas submit` (or `xcrun altool`) to TestFlight. The skill handles all setup.
+- ❌ **DON'T**: trigger `codemagic.io` builds via API, push to a branch that auto-triggers CM, run `eas build` without `--local`.
+- The `codemagic.yaml` in the repo exists for record only — **do not invoke its workflow**. If the user pushes to main and CM auto-triggers, cancel it.
+- If EAS local fails (Xcode 26 + RN 0.83 prebuilt-frameworks React module path issue is a known blocker), fix the local config — don't pivot to CM.
+
+Violating this wastes paid CI minutes. The user has corrected this rule more than once. No exceptions.
+
 ## Stack
 - Expo SDK 55, React Native, TypeScript strict
 - expo-router (file-based routing)
