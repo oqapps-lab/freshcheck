@@ -308,11 +308,17 @@ const styles = StyleSheet.create({
   },
   filterRow: {
     position: 'relative',
-    marginBottom: spacing.huge,
+    marginBottom: spacing.lg,
   },
   filterScroll: {
     paddingHorizontal: 8,
-    paddingBottom: 8,
+    // A horizontal ScrollView clips its content to its own frame height.
+    // The raised pills cast a drop shadow ~20px below + a white highlight
+    // ~18px above; with only paddingBottom:8 the bottom shadow was sliced
+    // off (user-flagged "тени режутся снизу"). Give vertical room so the
+    // full neumorphic shadow renders inside the scroll frame.
+    paddingTop: 10,
+    paddingBottom: 24,
   },
   filterFade: {
     position: 'absolute',
