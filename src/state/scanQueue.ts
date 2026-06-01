@@ -74,6 +74,23 @@ export function clearQueue() {
   emit();
 }
 
+/**
+ * Add already-scanned results straight to the queue as DONE entries (K9
+ * multi-item scan: one photo yields several items). They show up on
+ * /scan-batch ready to add to the fridge — no further processing.
+ */
+export function addScannedItems(results: LastScan[]) {
+  const base = Date.now();
+  const done: QueueItem[] = results.map((r, i) => ({
+    id: `m_${base}_${i}_${Math.floor(Math.random() * 1e6)}`,
+    uri: r.imageUri ?? '',
+    status: 'done',
+    result: r,
+  }));
+  items = [...items, ...done];
+  emit();
+}
+
 export function removeQueued(id: string) {
   items = items.filter((it) => it.id !== id);
   emit();

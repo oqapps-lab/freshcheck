@@ -65,6 +65,30 @@ Scoring guide:
 If unclear, lower confidence. Never invent a product; if you cannot tell,
 return { "product": "unknown", "verdict": "safe", "confidence": 30, "analysis": [] }.`;
 
+// Multi-item mode (K9): the photo may contain SEVERAL distinct food items
+// (e.g. groceries on a table). Detect each and return an array.
+const MULTI_SYSTEM_PROMPT = `You are a food-safety assistant. A user photographed SEVERAL food items at once (e.g. groceries on a table).
+Identify each DISTINCT food item you can see (up to 8; ignore packaging clutter, hands, background). For EACH, assess freshness.
+Respond with VALID JSON (no markdown fence, no commentary) of this exact shape:
+{
+  "items": [
+    {
+      "product": string (short human name, lowercase),
+      "verdict": "fresh" | "safe" | "soon" | "past",
+      "tone": same as verdict,
+      "confidence": integer 0-100,
+      "reasoning": string (ONE short lowercase sentence — what you see + typical shelf life),
+      "storage_note": string (1-2 sentences, lowercase),
+      "days_left": integer (0 if past),
+      "total_days": integer (typical shelf-life when fresh),
+      "analysis": [ { "label": "Color", "value": 0-100 }, { "label": "Texture", "value": 0-100 }, { "label": "Smell", "value": 0-100 } ]
+    }
+  ]
+}
+Base days_left on what you SEE + typical shelf life ASSUMING just-bought (you don't know purchase date).
+Scoring: fresh = great/long life; safe = eat within a day or two; soon = use within 24h; past = don't eat.
+If you genuinely see no food, return { "items": [] }.`;
+
 // @ts-expect-error Deno.serve is available at runtime.
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -74,10 +98,11 @@ serve(async (req) => {
     return json({ error: 'method not allowed' }, 405);
   }
 
-  const { image_path } = await req.json().catch(() => ({}));
+  const { image_path, multi } = await req.json().catch(() => ({}));
   if (!image_path || typeof image_path !== 'string') {
     return json({ error: 'image_path required' }, 400);
   }
+  const isMulti = multi === true;
 
   const authHeader = req.headers.get('authorization') ?? '';
   const token = authHeader.replace(/^Bearer\s+/i, '');
@@ -122,11 +147,11 @@ serve(async (req) => {
       response_format: { type: 'json_object' },
       
       messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'system', content: isMulti ? MULTI_SYSTEM_PROMPT : SYSTEM_PROMPT },
         {
           role: 'user',
           content: [
-            { type: 'text', text: 'Assess this food and return the JSON.' },
+            { type: 'text', text: isMulti ? 'Detect every food item and return the JSON.' : 'Assess this food and return the JSON.' },
             { type: 'image_url', image_url: { url: signed.signedUrl } },
           ],
         },
@@ -142,6 +167,30 @@ serve(async (req) => {
   const openaiJson = await openaiRes.json();
   const raw = openaiJson?.choices?.[0]?.message?.content;
   if (!raw) return json({ error: 'empty openai response' }, 502);
+
+  // Multi-item mode (K9): normalize + return the array. We do NOT persist each
+  // to the scans table here — the client lets the user pick which to keep
+  // (they get saved when added to the fridge).
+  if (isMulti) {
+    let mp: { items?: VerdictPayload[] };
+    try {
+      mp = JSON.parse(raw);
+    } catch {
+      return json({ error: 'openai returned non-JSON', raw }, 502);
+    }
+    const items = (Array.isArray(mp.items) ? mp.items : []).map((it) => ({
+      product: it.product || 'unknown',
+      verdict: it.verdict ?? 'safe',
+      tone: (it.tone ?? it.verdict ?? 'safe') as VerdictPayload['tone'],
+      confidence: Math.max(0, Math.min(100, Number(it.confidence) || 0)),
+      reasoning: it.reasoning ?? null,
+      storage_note: it.storage_note ?? null,
+      days_left: it.days_left != null ? Math.max(0, Math.floor(it.days_left)) : null,
+      total_days: it.total_days != null ? Math.max(1, Math.floor(it.total_days)) : null,
+      analysis: Array.isArray(it.analysis) ? it.analysis : [],
+    }));
+    return json({ items, image_path });
+  }
 
   let parsed: VerdictPayload;
   try {

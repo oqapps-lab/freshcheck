@@ -25,8 +25,8 @@ import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 import { useAuth } from '@/src/hooks/useAuth';
 import { getSupabase } from '@/src/lib/supabase';
 import { setLastScan } from '@/src/state/lastScan';
-import { scanImage } from '@/src/lib/scanPipeline';
-import { enqueueScans, processQueue, useScanQueue } from '@/src/state/scanQueue';
+import { scanImage, scanMultiImage } from '@/src/lib/scanPipeline';
+import { enqueueScans, processQueue, useScanQueue, addScannedItems } from '@/src/state/scanQueue';
 import { logScan as afLogScan } from '@/src/lib/appsflyer';
 import { recordError } from '@/src/lib/firebase';
 
@@ -113,6 +113,40 @@ export default function CaptureScreen() {
   };
 
   const goToBatch = () => router.push('/scan-batch' as never);
+
+  // K9 — "Scan the whole table": one photo, detect EVERY food item in it, and
+  // drop them all on the batch-results screen ready to add to the fridge.
+  const onScanTable = async () => {
+    if (analyzing) return;
+    if (!cameraRef.current || !supabase || !user) {
+      Alert.alert('Preparing scan', 'Please wait a moment and try again.');
+      return;
+    }
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    setAnalyzing(true);
+    setAnalyzingMsg('Finding items…');
+    try {
+      const shot = await cameraRef.current.takePictureAsync({ quality: 0.85, skipProcessing: false, exif: false });
+      if (!shot?.uri) throw new Error('camera returned no image');
+      const results = await scanMultiImage(supabase, user.id, shot.uri);
+      if (results.length === 0) {
+        Alert.alert('No food found', 'Couldn’t spot any food items in that photo. Try getting closer or better light.');
+        setAnalyzing(false);
+        setAnalyzingMsg('Analyzing…');
+        return;
+      }
+      addScannedItems(results);
+      setAnalyzing(false);
+      setAnalyzingMsg('Analyzing…');
+      goToBatch();
+    } catch (err) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+      recordError(err, 'scan-table');
+      Alert.alert('Scan failed', err instanceof Error ? err.message : 'Could not scan.');
+      setAnalyzing(false);
+      setAnalyzingMsg('Analyzing…');
+    }
+  };
 
   // Batch shutter: snap a photo and drop it on the queue, then keep the
   // camera live so the user can fire off the next one immediately
@@ -336,6 +370,18 @@ export default function CaptureScreen() {
                 : 'POINT AT FOOD · TAP TO CAPTURE'
               : ''}
         </Text>
+
+        {/* K9 — one photo, every item on the table at once. */}
+        {showShutter && !analyzing && (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="scan the whole table"
+            onPress={onScanTable}
+            style={({ pressed }) => [styles.tableBtn, { opacity: pressed ? 0.7 : 1 }]}
+          >
+            <Text style={[typeScale.labelSmall, styles.tableBtnText]}>📋  SCAN THE WHOLE TABLE</Text>
+          </Pressable>
+        )}
       </View>
 
       <View style={[styles.shutterBlock, { paddingBottom: insets.bottom + spacing.xxl }]}>
@@ -556,6 +602,15 @@ const styles = StyleSheet.create({
   },
   modeOptionOn: {
     backgroundColor: colors.primary,
+  },
+  tableBtn: {
+    marginTop: spacing.md,
+    paddingVertical: 8,
+    paddingHorizontal: spacing.lg,
+  },
+  tableBtnText: {
+    color: colors.primary,
+    letterSpacing: 1.2,
   },
   shutterRow: {
     flexDirection: 'row',
