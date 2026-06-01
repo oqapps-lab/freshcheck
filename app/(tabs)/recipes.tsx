@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
@@ -16,9 +16,14 @@ import { IconButton } from '@/components/ui/IconButton';
 import { SoftSurface } from '@/components/ui/SoftSurface';
 import { SoftInset } from '@/components/ui/SoftInset';
 import { RecipeCookingLoader } from '@/components/ui/RecipeCookingLoader';
-import { Chevron, Sparkle } from '@/components/ui/Glyphs';
+import { Chevron, Sparkle, Star } from '@/components/ui/Glyphs';
 import { useRecipes, type Recipe } from '@/src/hooks/useRecipes';
 import { useFridge } from '@/src/hooks/useFridge';
+import {
+  useFavorites,
+  toggleFavorite,
+  hydrateFavorites,
+} from '@/src/state/favoritesStore';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
 // Difficulty != freshness. `hard: red` overlapped with the `past`
@@ -48,10 +53,21 @@ export default function RecipesTab() {
   // screen flashes "Starter recipes"/"fridge empty" for a frame, then snaps
   // to the real content (user-flagged G1 + G3).
   const ready = hydrated && !fridgeLoading;
+  const favorites = useFavorites();
+  const favIds = new Set(favorites.map((r) => r.id));
+
+  useEffect(() => {
+    void hydrateFavorites();
+  }, []);
 
   const onOpen = (recipe: Recipe) => {
     Haptics.selectionAsync().catch(() => {});
     router.push(`/recipe/${recipe.id}` as never);
+  };
+
+  const onToggleFav = (recipe: Recipe) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    toggleFavorite(recipe);
   };
 
   const onRefresh = () => {
@@ -187,6 +203,43 @@ export default function RecipesTab() {
           </View>
         )}
 
+        {/* Saved recipes — persist across regeneration (G4). */}
+        {ready && favorites.length > 0 && (
+          <View style={styles.savedSection}>
+            <Text style={[typeScale.label, styles.savedHeader]}>★ SAVED</Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.savedScroll}
+            >
+              {favorites.map((recipe) => (
+                <Pressable
+                  key={recipe.id}
+                  accessibilityRole="button"
+                  accessibilityLabel={`open ${recipe.name}`}
+                  onPress={() => onOpen(recipe)}
+                  style={styles.savedChip}
+                >
+                  <SoftSurface variant="cushion" radius="lg" innerStyle={styles.savedChipInner}>
+                    <View style={styles.savedThumbWrap}>
+                      {recipe.hero_image_url ? (
+                        <Image source={{ uri: recipe.hero_image_url }} style={styles.savedThumb} />
+                      ) : (
+                        <View style={styles.savedThumbFallback}>
+                          <Sparkle size={20} color={colors.inkMuted} strokeWidth={1.6} />
+                        </View>
+                      )}
+                    </View>
+                    <Text style={[typeScale.labelSmall, styles.savedName]} numberOfLines={2}>
+                      {recipe.name}
+                    </Text>
+                  </SoftSurface>
+                </Pressable>
+              ))}
+            </ScrollView>
+          </View>
+        )}
+
         <View style={styles.list}>
           {recipes.map((recipe) => (
             <Pressable
@@ -213,6 +266,19 @@ export default function RecipesTab() {
                       <ActivityIndicator size="small" color={colors.inkMuted} />
                     </SoftInset>
                   )}
+                  {/* Favorite toggle — tapping the star saves the recipe so it
+                      survives regeneration (nested Pressable captures the tap,
+                      so it doesn't also open the recipe). */}
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={favIds.has(recipe.id) ? 'remove from saved' : 'save recipe'}
+                    accessibilityState={{ selected: favIds.has(recipe.id) }}
+                    onPress={() => onToggleFav(recipe)}
+                    style={styles.starBtn}
+                    hitSlop={8}
+                  >
+                    <Star size={20} color={favIds.has(recipe.id) ? colors.amber : colors.surfaceWhite} filled={favIds.has(recipe.id)} strokeWidth={2} />
+                  </Pressable>
                 </View>
 
                 <View style={styles.body}>
@@ -325,6 +391,31 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xl,
   },
   idleCtaText: { color: colors.ink },
+  savedSection: { marginBottom: spacing.xl },
+  savedHeader: {
+    color: colors.amber,
+    textTransform: 'uppercase',
+    marginLeft: 8,
+    marginBottom: spacing.sm,
+  },
+  savedScroll: { paddingHorizontal: 8, paddingBottom: 8, gap: spacing.md },
+  savedChip: { width: 128, marginRight: spacing.md },
+  savedChipInner: { padding: 0, overflow: 'hidden' },
+  savedThumbWrap: { width: '100%', aspectRatio: 16 / 10, backgroundColor: colors.surfaceTint },
+  savedThumb: { width: '100%', height: '100%' },
+  savedThumbFallback: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  savedName: { color: colors.ink, padding: spacing.sm },
+  starBtn: {
+    position: 'absolute',
+    top: spacing.sm,
+    right: spacing.sm,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(15, 23, 42, 0.35)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   list: { gap: spacing.xl, paddingHorizontal: 8 },
   card: { padding: 0, overflow: 'hidden' },
   heroImageWrap: { width: '100%', aspectRatio: 16 / 10 },

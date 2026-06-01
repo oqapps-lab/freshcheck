@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet, Image } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { IconButton } from '@/components/ui/IconButton';
@@ -11,6 +12,7 @@ import {
   Nutrition,
   Cloud,
   Check,
+  Star,
   Knife,
   Flame,
   Whisk,
@@ -18,6 +20,7 @@ import {
   Bowl,
 } from '@/components/ui/Glyphs';
 import { getRecipe } from '@/src/state/recipeStore';
+import { useFavorites, getFavorite, toggleFavorite } from '@/src/state/favoritesStore';
 import { useRecipes, type RecipeStepIcon } from '@/src/hooks/useRecipes';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -51,10 +54,15 @@ export default function RecipeDetailScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const cached = id ? getRecipe(String(id)) : undefined;
-  // Fallback: if cache empty (cold launch / hot reload), regenerate the
-  // batch so the user can navigate via fridge even after a kill.
+  // Fallback chain: current batch cache → generated list → favorites store
+  // (so a saved recipe opens even after the batch was regenerated/killed).
   const { recipes, status } = useRecipes();
-  const recipe = cached ?? (id ? recipes.find((r) => r.id === String(id)) : undefined);
+  const favorites = useFavorites();
+  const recipe =
+    cached ??
+    (id ? recipes.find((r) => r.id === String(id)) : undefined) ??
+    (id ? getFavorite(String(id)) : undefined);
+  const isFav = !!recipe && favorites.some((r) => r.id === recipe.id);
 
   if (!recipe) {
     return (
@@ -113,6 +121,15 @@ export default function RecipeDetailScreen() {
           <View style={[styles.headerOverlay, { paddingTop: insets.top + 16 }]}>
             <IconButton accessibilityLabel="back" onPress={() => router.back()}>
               <Back size={20} color={colors.ink} />
+            </IconButton>
+            <IconButton
+              accessibilityLabel={isFav ? 'remove from saved' : 'save recipe'}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                toggleFavorite(recipe);
+              }}
+            >
+              <Star size={20} color={isFav ? colors.amber : colors.ink} filled={isFav} strokeWidth={2} />
             </IconButton>
           </View>
         </View>
@@ -249,6 +266,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: 0,
+    right: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: layout.screenPaddingHeader,
   },
   headerScrim: {
