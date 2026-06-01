@@ -276,7 +276,10 @@ const styles = StyleSheet.create({
   },
   recipesCtaWrap: {
     marginHorizontal: 8,
-    marginBottom: spacing.lg,
+    // Extra bottom room: the raised pill casts a ~20px drop shadow that was
+    // being clipped where the filter row started right below it.
+    marginBottom: spacing.xxl,
+    paddingBottom: 4,
   },
   recipesCta: {
     flexDirection: 'row',
