@@ -20,7 +20,7 @@ import { SoftSurface } from '@/components/ui/SoftSurface';
 import { SoftInset } from '@/components/ui/SoftInset';
 import { PrimaryPillCTA } from '@/components/ui/PrimaryPillCTA';
 import { GhostText } from '@/components/ui/GhostText';
-import { Back, BarcodeScanner, Gallery, Sparkle } from '@/components/ui/Glyphs';
+import { Back, BarcodeScanner, Chevron, Gallery, Sparkle } from '@/components/ui/Glyphs';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 import { useAuth } from '@/src/hooks/useAuth';
 import { getSupabase } from '@/src/lib/supabase';
@@ -340,64 +340,69 @@ export default function CaptureScreen() {
 
       <View style={[styles.shutterBlock, { paddingBottom: insets.bottom + spacing.xxl }]}>
         {showShutter ? (
-          <View style={styles.shutterRow}>
-            {/* Gallery picker — left of the shutter (mirrors the iOS camera
-                app's library shortcut). Runs the same scan pipeline. */}
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="choose photo from library"
-              accessibilityState={{ disabled: analyzing }}
-              onPress={onPickFromGallery}
-              disabled={analyzing}
-              style={({ pressed }) => [styles.galleryBtn, { opacity: analyzing ? 0.4 : pressed ? 0.85 : 1 }]}
-            >
-              <SoftSurface variant="pill" radius="full" innerStyle={styles.galleryInner}>
-                <Gallery size={26} color={colors.inkSecondary} strokeWidth={1.8} />
-              </SoftSurface>
-            </Pressable>
+          <>
+            <View style={styles.shutterRow}>
+              {/* Gallery picker — left of the shutter (mirrors the iOS camera
+                  app's library shortcut). Runs the same scan pipeline. */}
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="choose photo from library"
+                accessibilityState={{ disabled: analyzing }}
+                onPress={onPickFromGallery}
+                disabled={analyzing}
+                style={({ pressed }) => [styles.galleryBtn, { opacity: analyzing ? 0.4 : pressed ? 0.85 : 1 }]}
+              >
+                <SoftSurface variant="pill" radius="full" innerStyle={styles.galleryInner}>
+                  <Gallery size={26} color={colors.inkSecondary} strokeWidth={1.8} />
+                </SoftSurface>
+              </Pressable>
 
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="capture"
-              accessibilityState={{ disabled: analyzing }}
-              onPress={onShutter}
-              disabled={analyzing}
-              // Dim while analyzing so the button visually matches its
-              // disabled state — without this the shutter sat at full
-              // opacity during the 3s OpenAI call and users tapped it
-              // expecting a response, getting nothing, assuming a stuck UI.
-              style={({ pressed }) => [styles.shutter, { opacity: analyzing ? 0.4 : pressed ? 0.85 : 1 }]}
-            >
-              <SoftSurface variant="cushion" radius="full" innerStyle={styles.shutterOuter}>
-                <SoftInset
-                  radius="full"
-                  strength="medium"
-                  style={styles.shutterInner}
-                  contentStyle={styles.shutterInnerContent}
-                >
-                  <BarcodeScanner size={36} color={colors.primary} strokeWidth={1.6} />
-                </SoftInset>
-              </SoftSurface>
-            </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="capture"
+                accessibilityState={{ disabled: analyzing }}
+                onPress={onShutter}
+                disabled={analyzing}
+                // Dim while analyzing so the button visually matches its
+                // disabled state — without this the shutter sat at full
+                // opacity during the 3s OpenAI call and users tapped it
+                // expecting a response, getting nothing, assuming a stuck UI.
+                style={({ pressed }) => [styles.shutter, { opacity: analyzing ? 0.4 : pressed ? 0.85 : 1 }]}
+              >
+                <SoftSurface variant="cushion" radius="full" innerStyle={styles.shutterOuter}>
+                  <SoftInset
+                    radius="full"
+                    strength="medium"
+                    style={styles.shutterInner}
+                    contentStyle={styles.shutterInnerContent}
+                  >
+                    <BarcodeScanner size={36} color={colors.primary} strokeWidth={1.6} />
+                  </SoftInset>
+                </SoftSurface>
+              </Pressable>
 
-            {/* Batch: a Review pill showing the queued count (mirrors the
-                gallery button slot so the shutter stays centred). Single
-                mode: an inert spacer. */}
-            {batchMode && queue.length > 0 ? (
+              {/* Symmetry spacer so the shutter stays centred. */}
+              <View style={styles.galleryBtn} />
+            </View>
+
+            {/* Batch: a clear, labelled Review button below the row (a bare
+                count pill read as non-tappable to the user). */}
+            {batchMode && queue.length > 0 && (
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel={`review ${queue.length} scans`}
                 onPress={goToBatch}
-                style={({ pressed }) => [styles.galleryBtn, { opacity: pressed ? 0.85 : 1 }]}
+                style={({ pressed }) => [styles.reviewBtnWrap, { opacity: pressed ? 0.85 : 1 }]}
               >
-                <SoftSurface variant="pill" radius="full" innerStyle={styles.reviewInner}>
-                  <Text style={[typeScale.numberLarge, styles.reviewCount]}>{queue.length}</Text>
+                <SoftSurface variant="pill" radius="full" innerStyle={styles.reviewBtnInner}>
+                  <Text style={[typeScale.titleSmall, styles.reviewBtnText]}>
+                    {`Review ${queue.length} ${queue.length === 1 ? 'scan' : 'scans'}`}
+                  </Text>
+                  <Chevron size={18} color={colors.primary} />
                 </SoftSurface>
               </Pressable>
-            ) : (
-              <View style={styles.galleryBtn} />
             )}
-          </View>
+          </>
         ) : showSignInCta ? (
           // Anon-auth bootstrap is in-flight (typically <500ms). The
           // viewfinder body already says "Preparing scan…"; rendering a
@@ -559,16 +564,19 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 360,
   },
-  reviewInner: {
-    width: 56,
-    height: 56,
-    alignItems: 'center',
-    justifyContent: 'center',
+  reviewBtnWrap: {
+    marginTop: spacing.lg,
+    alignSelf: 'center',
   },
-  reviewCount: {
+  reviewBtnInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingVertical: 12,
+    paddingHorizontal: spacing.xl,
+  },
+  reviewBtnText: {
     color: colors.primary,
-    fontSize: 24,
-    lineHeight: 26,
   },
   shutter: { width: SHUTTER_OUTER, height: SHUTTER_OUTER },
   galleryBtn: { width: 56, height: 56, alignItems: 'center', justifyContent: 'center' },
