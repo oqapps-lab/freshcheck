@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   Image,
   ActivityIndicator,
   Alert,
+  Modal,
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -17,7 +18,7 @@ import { SoftSurface } from '@/components/ui/SoftSurface';
 import { SoftInset } from '@/components/ui/SoftInset';
 import { RecipeCookingLoader } from '@/components/ui/RecipeCookingLoader';
 import { Shimmer } from '@/components/ui/Shimmer';
-import { Chevron, Sparkle, Star, Trash } from '@/components/ui/Glyphs';
+import { Check, Chevron, Sparkle, Star, Trash } from '@/components/ui/Glyphs';
 import { useRecipes, type Recipe } from '@/src/hooks/useRecipes';
 import { useFridge } from '@/src/hooks/useFridge';
 import { clearRecipes } from '@/src/state/recipeStore';
@@ -84,23 +85,36 @@ export default function RecipesTab() {
     );
   };
 
-  const onRefresh = () => {
+  // K7: ingredient picker. Empty fridge → straight to starter recipes;
+  // otherwise let the user tick which items to cook with, then generate.
+  const [selectorOpen, setSelectorOpen] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
+  const openGenerate = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
-    // Confirm if we already have a batch — each regeneration calls the
-    // gpt-5.5 + gpt-image-1 pipeline (~$0.13). Cheap to skip, expensive
-    // to thrash.
-    if (recipes.length > 0) {
-      Alert.alert(
-        'Generate fresh recipes?',
-        'This replaces your current picks with brand-new ones based on your fridge right now.',
-        [
-          { text: 'Cancel', style: 'cancel' },
-          { text: 'Generate', onPress: () => refresh() },
-        ],
-      );
+    if (fridgeEmpty) {
+      refresh();
       return;
     }
-    refresh();
+    setSelectedIds(new Set(fridgeItems.map((i) => i.id)));
+    setSelectorOpen(true);
+  };
+
+  const confirmGenerate = () => {
+    if (selectedIds.size === 0) return;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    setSelectorOpen(false);
+    refresh({ itemIds: Array.from(selectedIds) });
+  };
+
+  const toggleItem = (id: string) => {
+    Haptics.selectionAsync().catch(() => {});
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
   };
 
   return (
@@ -116,7 +130,7 @@ export default function RecipesTab() {
         <Text style={[typeScale.wordmark, styles.eyebrow]}>RECIPES</Text>
         <IconButton
           accessibilityLabel="regenerate recipes"
-          onPress={status === 'loading' ? () => {} : onRefresh}
+          onPress={status === 'loading' ? () => {} : openGenerate}
         >
           <Sparkle size={20} color={status === 'loading' ? colors.inkMuted : colors.amber} strokeWidth={1.8} />
         </IconButton>
@@ -191,10 +205,7 @@ export default function RecipesTab() {
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Generate recipes"
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
-                refresh();
-              }}
+              onPress={openGenerate}
               style={({ pressed }) => [styles.idleCta, { opacity: pressed ? 0.85 : 1 }]}
             >
               <SoftSurface variant="cushion" radius="full" innerStyle={styles.idleCtaInner}>
@@ -363,6 +374,55 @@ export default function RecipesTab() {
           ))}
         </View>
       </ScrollView>
+
+      {/* K7 — ingredient picker before generating. */}
+      <Modal visible={selectorOpen} transparent animationType="slide" onRequestClose={() => setSelectorOpen(false)}>
+        <View style={styles.sheetBackdropView}>
+          <Pressable style={StyleSheet.absoluteFill} onPress={() => setSelectorOpen(false)} accessibilityLabel="close" />
+          <View style={[styles.sheet, { paddingBottom: insets.bottom + spacing.lg }]}>
+            <View style={styles.sheetHandle} />
+            <Text style={[typeScale.titleLarge, styles.sheetTitle]}>Cook with what?</Text>
+            <Text style={[typeScale.bodySmall, styles.sheetSub]}>
+              Pick the items to build recipes from. We prioritise what expires soonest.
+            </Text>
+            <ScrollView style={styles.sheetList} contentContainerStyle={styles.sheetListContent} showsVerticalScrollIndicator={false}>
+              {fridgeItems.map((item) => {
+                const on = selectedIds.has(item.id);
+                return (
+                  <Pressable
+                    key={item.id}
+                    accessibilityRole="checkbox"
+                    accessibilityState={{ checked: on }}
+                    accessibilityLabel={item.name}
+                    onPress={() => toggleItem(item.id)}
+                    style={({ pressed }) => [styles.sheetRow, { opacity: pressed ? 0.7 : 1 }]}
+                  >
+                    <View style={[styles.checkbox, on && styles.checkboxOn]}>
+                      {on ? <Check size={14} color={colors.surfaceWhite} strokeWidth={3} /> : null}
+                    </View>
+                    <Text style={[typeScale.titleSmall, styles.sheetItemName]} numberOfLines={1}>{item.name}</Text>
+                    <Text style={[typeScale.labelSmall, styles.sheetItemDays]}>
+                      {item.daysLeft <= 0 ? 'today' : `${item.daysLeft}d`}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={`generate recipes from ${selectedIds.size} items`}
+              onPress={confirmGenerate}
+              disabled={selectedIds.size === 0}
+              style={({ pressed }) => [styles.sheetCta, { opacity: selectedIds.size === 0 ? 0.4 : pressed ? 0.85 : 1 }]}
+            >
+              <Sparkle size={20} color={colors.surfaceWhite} strokeWidth={2} />
+              <Text style={[typeScale.titleMedium, styles.sheetCtaText]}>
+                {`Generate from ${selectedIds.size} item${selectedIds.size === 1 ? '' : 's'}`}
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -489,4 +549,57 @@ const styles = StyleSheet.create({
     borderRadius: 999,
   },
   fridgeText: { color: colors.surfaceWhite, letterSpacing: 1.4 },
+  // K7 ingredient-picker sheet
+  sheetBackdropView: { flex: 1, justifyContent: 'flex-end', backgroundColor: colors.overlay },
+  sheet: {
+    backgroundColor: colors.canvas,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    paddingTop: spacing.sm,
+    paddingHorizontal: layout.screenPadding,
+    maxHeight: '80%',
+  },
+  sheetHandle: {
+    width: 40,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: colors.inkMuted,
+    alignSelf: 'center',
+    marginBottom: spacing.md,
+  },
+  sheetTitle: { color: colors.ink, textAlign: 'center' },
+  sheetSub: { color: colors.inkSecondary, textAlign: 'center', marginTop: 4, marginBottom: spacing.md, lineHeight: 18 },
+  sheetList: { flexGrow: 0 },
+  sheetListContent: { paddingVertical: spacing.xs },
+  sheetRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    paddingVertical: spacing.md,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.hairline,
+  },
+  checkbox: {
+    width: 24,
+    height: 24,
+    borderRadius: 7,
+    borderWidth: 2,
+    borderColor: colors.inkMuted,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkboxOn: { backgroundColor: colors.primary, borderColor: colors.primary },
+  sheetItemName: { flex: 1, color: colors.ink },
+  sheetItemDays: { color: colors.inkSecondary },
+  sheetCta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+    backgroundColor: colors.primary,
+    borderRadius: 999,
+    paddingVertical: spacing.lg,
+    marginTop: spacing.lg,
+  },
+  sheetCtaText: { color: colors.surfaceWhite },
 });

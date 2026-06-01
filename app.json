@@ -18,7 +18,6 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.gazetastreet.freshcheck",
       "buildNumber": "43",
-      "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "NSCameraUsageDescription": "FreshCheck uses the camera to check the freshness of your food.",
         "NSPhotoLibraryUsageDescription": "FreshCheck lets you pick a photo of your food from your library to check its freshness.",
@@ -29,7 +28,6 @@
     "android": {
       "package": "com.gazetastreet.freshcheck",
       "versionCode": 2,
-      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#15803d"
@@ -42,8 +40,6 @@
     "plugins": [
       "expo-router",
       "expo-image",
-      "@react-native-firebase/app",
-      "@react-native-firebase/crashlytics",
       [
         "expo-build-properties",
         {

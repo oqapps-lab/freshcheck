@@ -89,7 +89,9 @@ export function useRecipes() {
   }, []);
 
   const requestRef = React.useRef(0);
-  const generate = useCallback(async () => {
+  // opts.itemIds (K7): the fridge items the user ticked to cook with. Empty
+  // = use the whole fridge. Passed to the edge function as `item_ids`.
+  const generate = useCallback(async (opts?: { itemIds?: string[] }) => {
     if (!supabase) {
       setError('Backend not configured');
       setStatus('error');
@@ -104,7 +106,7 @@ export function useRecipes() {
         recipes?: Recipe[];
         error?: string;
         message?: string;
-      }>('generate-recipes', { body: { entitled: premium } });
+      }>('generate-recipes', { body: { entitled: premium, item_ids: opts?.itemIds ?? [] } });
       if (myReq !== requestRef.current) return; // superseded by newer request
       if (fnErr) {
         // supabase-js does NOT parse the response body into `data` on a

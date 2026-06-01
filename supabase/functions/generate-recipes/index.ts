@@ -107,16 +107,55 @@ serve(async (req) => {
   const user = userData?.user;
   if (!user) return json({ error: 'unauthenticated' }, 401);
 
-  // Rate limit: free users get 1 generation per 24h. Premium (Adapty) is
-  // unlimited — premium status is signalled by the client via an `entitled`
-  // bool in the request body (cheap; Adapty's own SDK already vouches for it
-  // and a free user spoofing it gains 1 free generation, low abuse risk).
-  const { entitled } = await req.json().catch(() => ({ entitled: false }));
+  // Body: `entitled` (premium signal from client), `item_ids` (K7 — the
+  // fridge items the user ticked to cook with; empty/absent = use all).
+  const body = await req.json().catch(() => ({}));
+  const entitled: boolean = !!body?.entitled;
+  const itemIds: string[] = Array.isArray(body?.item_ids) ? body.item_ids : [];
+
+  // Fetch user's fridge items (RLS-scoped).
+  const { data: items, error: fridgeErr } = await supabase
+    .from('fridge_items')
+    .select('id, name, category, days_left')
+    .order('days_left', { ascending: true })
+    .limit(50);
+  if (fridgeErr) return json({ error: `fridge fetch: ${fridgeErr.message}` }, 500);
+
+  let fridgeItems = items ?? [];
+  // K7: restrict to the user's selected items, if they chose a subset.
+  if (itemIds.length > 0) {
+    const sel = new Set(itemIds);
+    const filtered = fridgeItems.filter((i: { id: string }) => sel.has(i.id));
+    if (filtered.length > 0) fridgeItems = filtered;
+  }
+
+  // K8: signature of the (sorted, normalized) ingredient set. Same set →
+  // same cached batch, reused across ALL users for $0 + instantly.
+  const signature = sigOf(fridgeItems.map((i: { name: string }) => i.name));
+  const svc = createClient(url, serviceKey);
+  {
+    const { data: hit } = await svc
+      .from('recipes_cache')
+      .select('recipes')
+      .eq('signature', signature)
+      .maybeSingle();
+    if (hit?.recipes) {
+      // Cache hit is free — don't consume the free-tier daily quota or call
+      // OpenAI. Touch updated_at (fire-and-forget) to track recency.
+      void svc
+        .from('recipes_cache')
+        .update({ updated_at: new Date().toISOString() })
+        .eq('signature', signature)
+        .then(() => {});
+      return json({ recipes: hit.recipes, cached: true });
+    }
+  }
+
+  // Rate limit: free users get 1 GENERATION per 24h (cache hits above are
+  // free and don't count). Premium is unlimited.
   if (!entitled) {
-    // Use service role to read recipe_generations bypassing RLS
-    const sb = createClient(url, serviceKey);
     const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-    const { count, error: countErr } = await sb
+    const { count, error: countErr } = await svc
       .from('recipe_generations')
       .select('id', { count: 'exact', head: true })
       .eq('user_id', user.id)
@@ -131,20 +170,8 @@ serve(async (req) => {
         429,
       );
     }
-    // Defer the insert until the OpenAI call succeeds — see line ~ after
-    // the response check. Logging here would burn the free user's daily
-    // quota on a 502 / timeout they never saw recipes for.
+    // Defer the recipe_generations insert until OpenAI succeeds (below).
   }
-
-  // Fetch user's fridge items (RLS-scoped)
-  const { data: items, error: fridgeErr } = await supabase
-    .from('fridge_items')
-    .select('name, category, days_left')
-    .order('days_left', { ascending: true })
-    .limit(50);
-  if (fridgeErr) return json({ error: `fridge fetch: ${fridgeErr.message}` }, 500);
-
-  const fridgeItems = items ?? [];
   let userPrompt: string;
   if (fridgeItems.length === 0) {
     userPrompt = 'Fridge is empty. Suggest 3 simple starter recipes the user can buy ingredients for.';
@@ -270,8 +297,30 @@ serve(async (req) => {
     return { ...r, id };
   });
 
+  // K8: store this fresh batch in the shared cache so the next user with the
+  // same ingredient set gets it free + instantly. Upsert (fire-and-forget).
+  void svc
+    .from('recipes_cache')
+    .upsert({ signature, recipes: withIds, updated_at: new Date().toISOString() }, { onConflict: 'signature' })
+    .then(() => {});
+
   return json({ recipes: withIds });
 });
+
+// Normalized signature of an ingredient set: lowercase, trim, collapse
+// whitespace, dedupe, sort, join, then a stable 32-bit hash → hex. Same set
+// (regardless of order/expiry) → same key, so cached batches are reused
+// across users. Empty fridge → 'starter'.
+function sigOf(names: string[]): string {
+  const norm = Array.from(
+    new Set(names.map((n) => n.toLowerCase().trim().replace(/\s+/g, ' ')).filter(Boolean)),
+  ).sort();
+  if (norm.length === 0) return 'starter';
+  const s = norm.join('|');
+  let h = 5381;
+  for (let i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0;
+  return `v1_${h.toString(16)}_${norm.length}`;
+}
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
