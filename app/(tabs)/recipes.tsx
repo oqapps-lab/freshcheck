@@ -39,9 +39,14 @@ const DIFFICULTY_COLOR: Record<Recipe['difficulty'], string> = {
 export default function RecipesTab() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { status, error, recipes, refresh } = useRecipes();
-  const { items: fridgeItems } = useFridge();
+  const { status, error, recipes, hydrated, refresh } = useRecipes();
+  const { items: fridgeItems, loading: fridgeLoading } = useFridge();
   const fridgeEmpty = fridgeItems.length === 0;
+  // Don't render any contextual title or empty/idle state until BOTH the
+  // persisted recipes have hydrated AND the fridge has loaded — otherwise the
+  // screen flashes "Starter recipes"/"fridge empty" for a frame, then snaps
+  // to the real content (user-flagged G1 + G3).
+  const ready = hydrated && !fridgeLoading;
 
   const onOpen = (recipe: Recipe) => {
     Haptics.selectionAsync().catch(() => {});
@@ -89,16 +94,26 @@ export default function RecipesTab() {
       >
         <View style={styles.hero}>
           <Text style={[typeScale.displayLarge, { color: colors.ink }]}>
-            {fridgeEmpty ? 'Starter recipes' : 'Cook with what you have'}
+            {!ready ? 'Recipes' : fridgeEmpty ? 'Starter recipes' : 'Cook with what you have'}
           </Text>
           <Text style={[typeScale.label, styles.eyebrow2]}>
-            {fridgeEmpty
-              ? 'SCAN ITEMS FOR PERSONALIZED PICKS'
-              : 'AI-CRAFTED FROM YOUR FRIDGE'}
+            {!ready
+              ? 'LOADING YOUR RECIPES'
+              : fridgeEmpty
+                ? 'SCAN ITEMS FOR PERSONALIZED PICKS'
+                : 'AI-CRAFTED FROM YOUR FRIDGE'}
           </Text>
         </View>
 
-        {fridgeEmpty && recipes.length > 0 && (
+        {/* Settling state — wait for hydration + fridge load before deciding
+            between idle/empty/recipes, so nothing flashes. */}
+        {!ready && recipes.length === 0 && status !== 'loading' && (
+          <View style={styles.loadingState}>
+            <ActivityIndicator color={colors.primary} />
+          </View>
+        )}
+
+        {ready && fridgeEmpty && recipes.length > 0 && (
           <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.emptyBanner}>
             <Sparkle size={20} color={colors.amber} strokeWidth={1.6} />
             <Text style={[typeScale.bodySmall, styles.emptyBannerText]}>
@@ -107,7 +122,7 @@ export default function RecipesTab() {
           </SoftSurface>
         )}
 
-        {status === 'idle' && recipes.length === 0 && (
+        {ready && status === 'idle' && recipes.length === 0 && (
           <View style={styles.idleState}>
             <SoftSurface variant="cushion" radius="full" innerStyle={styles.idleIcon}>
               <Sparkle size={56} color={colors.amber} strokeWidth={1.6} />

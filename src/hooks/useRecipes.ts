@@ -63,12 +63,22 @@ export function useRecipes() {
   // store into local state via a subscription; the store is the single
   // source of truth for the recipe LIST (status/error stay local per-hook).
   const [recipes, setLocalRecipes] = useState<Recipe[]>(getRecipeList());
+  // True once the persisted batch has been read from disk. The screen waits
+  // for this before showing any empty/idle state, so a cold open doesn't
+  // flash "no recipes / fridge empty" for a frame before the saved batch
+  // streams in.
+  const [hydrated, setHydrated] = useState<boolean>(getRecipeList().length > 0);
   const premium = usePremium();
 
   useEffect(() => {
     let active = true;
-    void hydrateRecipes();
     setLocalRecipes(getRecipeList());
+    void hydrateRecipes().finally(() => {
+      if (active) {
+        setLocalRecipes(getRecipeList());
+        setHydrated(true);
+      }
+    });
     const unsub = subscribeRecipes(() => {
       if (active) setLocalRecipes(getRecipeList());
     });
@@ -154,5 +164,5 @@ export function useRecipes() {
   // The recipes screen now shows a "Generate Recipes" CTA that the user taps
   // explicitly.
 
-  return { status, error, recipes, refresh: generate };
+  return { status, error, recipes, hydrated, refresh: generate };
 }
