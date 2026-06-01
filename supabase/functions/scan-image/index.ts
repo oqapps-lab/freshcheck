@@ -32,6 +32,7 @@ type VerdictPayload = {
   verdict: 'fresh' | 'safe' | 'soon' | 'past';
   tone: 'fresh' | 'safe' | 'soon' | 'past' | 'neutral';
   confidence: number;
+  reasoning?: string;
   storage_note?: string;
   days_left?: number;
   total_days?: number;
@@ -45,6 +46,7 @@ Respond with VALID JSON that matches this exact schema (no markdown fence, no co
   "verdict": "fresh" | "safe" | "soon" | "past",
   "tone": same as verdict,
   "confidence": integer 0-100 (your certainty),
+  "reasoning": string (ONE short sentence, lowercase, explaining WHY you gave this verdict and day estimate — what you SEE in the photo and the item's typical shelf life. e.g. "skin looks taut with no spots, and whole eggs keep ~3 weeks refrigerated"),
   "storage_note": string (1-2 sentences, how to store, lowercase),
   "days_left": integer (estimated days before it spoils; 0 if past),
   "total_days": integer (typical total shelf-life for this item when fresh),
@@ -54,6 +56,7 @@ Respond with VALID JSON that matches this exact schema (no markdown fence, no co
     { "label": "Smell", "value": 0-100 }
   ]
 }
+Important: base days_left on what you can SEE plus typical shelf life ASSUMING the item is fresh/just-bought, since you don't know when it was purchased. The app lets the user refine this afterwards.
 Scoring guide:
 - "fresh" = looks great, long life ahead.
 - "safe" = eat it within a day or two.

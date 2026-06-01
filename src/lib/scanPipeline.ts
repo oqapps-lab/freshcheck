@@ -48,6 +48,7 @@ export async function scanImage(
     verdict: data.verdict ?? 'safe',
     tone: data.tone ?? data.verdict ?? 'safe',
     confidence: typeof data.confidence === 'number' ? data.confidence : 0,
+    reasoning: data.reasoning ?? null,
     storageNote: data.storage_note ?? null,
     daysLeft: data.days_left ?? null,
     totalDays: data.total_days ?? null,

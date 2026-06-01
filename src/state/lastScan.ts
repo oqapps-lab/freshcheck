@@ -18,6 +18,7 @@ export type LastScan = {
   verdict: 'fresh' | 'safe' | 'soon' | 'past';
   tone: Tone;
   confidence: number;
+  reasoning: string | null;
   storageNote: string | null;
   daysLeft: number | null;
   totalDays: number | null;

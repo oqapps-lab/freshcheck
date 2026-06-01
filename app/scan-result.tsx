@@ -1,5 +1,6 @@
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet, Image, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, ScrollView, Pressable, StyleSheet, Image, Alert } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { IconButton } from '@/components/ui/IconButton';
@@ -49,6 +50,19 @@ export default function ScanResultScreen() {
   const last = useLastScan();
   const { addItem, signedIn } = useFridge();
 
+  // E1 refinement: the AI estimates shelf life assuming the item is fresh /
+  // just-bought (it can't know when you bought it). Let the user say how many
+  // days ago they got it; we subtract that from the total shelf life for a
+  // realistic "days left". This is why an egg can read "2 days" raw but the
+  // user knows they bought it last week.
+  const [daysAgo, setDaysAgo] = useState(0);
+  const totalShelf = last?.totalDays ?? last?.daysLeft ?? null;
+  const rawDaysLeft = last?.daysLeft ?? null;
+  const effectiveDaysLeft =
+    daysAgo > 0 && totalShelf != null
+      ? Math.max(0, totalShelf - daysAgo)
+      : rawDaysLeft;
+
   const dismiss = () => {
     if (router.canGoBack()) router.back();
     else router.replace('/(tabs)');
@@ -64,14 +78,15 @@ export default function ScanResultScreen() {
       return;
     }
     const totalDays = last.totalDays ?? last.daysLeft ?? 7;
-    const daysLeft = last.daysLeft ?? totalDays;
+    // Persist the REFINED days-left (after the user's "bought N days ago").
+    const daysLeft = effectiveDaysLeft ?? last.daysLeft ?? totalDays;
     const result = await addItem({
       name: capitalize(last.product),
       location: 'fridge',
       tone: last.tone,
       days_left: daysLeft,
       total_days: totalDays,
-      expiry_text: expiryText(last.daysLeft),
+      expiry_text: expiryText(daysLeft),
       warn: last.tone === 'soon' || last.tone === 'past',
       thumbnail_path: last.imagePath,
       source_scan_id: last.scanId,
@@ -156,7 +171,53 @@ export default function ScanResultScreen() {
               iconColor={titleColor}
             />
           </View>
+          {/* Why — the AI's reasoning for this verdict (E1) */}
+          {last.reasoning ? (
+            <Text style={[typeScale.bodySmall, styles.reasoning]}>{capitalize(last.reasoning)}</Text>
+          ) : null}
         </SoftInset>
+
+        {/* Refine — the verdict assumes a just-bought item; let the user say
+            how long they've had it so days-left is realistic (E1). */}
+        {totalShelf != null ? (
+          <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.refineCard}>
+            <Text style={[typeScale.label, styles.refineLabel]}>HOW LONG HAVE YOU HAD IT?</Text>
+            <View style={styles.refineRow}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="fewer days"
+                onPress={() => {
+                  Haptics.selectionAsync().catch(() => {});
+                  setDaysAgo((d) => Math.max(0, d - 1));
+                }}
+                style={({ pressed }) => [styles.stepBtn, { opacity: pressed ? 0.6 : 1 }]}
+              >
+                <Text style={styles.stepGlyph}>−</Text>
+              </Pressable>
+              <View style={styles.refineMid}>
+                <Text style={[typeScale.titleMedium, styles.refineValue]}>
+                  {daysAgo === 0 ? 'Just got it' : daysAgo === 1 ? '1 day ago' : `${daysAgo} days ago`}
+                </Text>
+                {daysAgo > 0 && totalShelf != null ? (
+                  <Text style={[typeScale.bodySmall, styles.refineHint]}>
+                    {`Adjusted to ${Math.max(0, totalShelf - daysAgo)} day${Math.max(0, totalShelf - daysAgo) === 1 ? '' : 's'} left`}
+                  </Text>
+                ) : null}
+              </View>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="more days"
+                onPress={() => {
+                  Haptics.selectionAsync().catch(() => {});
+                  setDaysAgo((d) => Math.min(totalShelf ?? 30, d + 1));
+                }}
+                style={({ pressed }) => [styles.stepBtn, { opacity: pressed ? 0.6 : 1 }]}
+              >
+                <Text style={styles.stepGlyph}>+</Text>
+              </Pressable>
+            </View>
+          </SoftSurface>
+        ) : null}
 
         {/* Storage note — CUSHION raised */}
         {last.storageNote ? (
@@ -170,11 +231,11 @@ export default function ScanResultScreen() {
           </SoftSurface>
         ) : null}
 
-        {/* Days info */}
-        {last.daysLeft != null ? (
+        {/* Days info — reflects the refined estimate */}
+        {effectiveDaysLeft != null ? (
           <SoftInset radius="xxl" strength="medium" style={styles.daysWrap} contentStyle={styles.daysInner}>
-            <Text style={[typeScale.numberLarge, { color: titleColor }]}>{Math.max(0, last.daysLeft)}</Text>
-            <Text style={[typeScale.label, styles.daysLabel]}>{expiryText(last.daysLeft).toUpperCase()}</Text>
+            <Text style={[typeScale.numberLarge, { color: titleColor }]}>{Math.max(0, effectiveDaysLeft)}</Text>
+            <Text style={[typeScale.label, styles.daysLabel]}>{expiryText(effectiveDaysLeft).toUpperCase()}</Text>
           </SoftInset>
         ) : null}
 
@@ -258,6 +319,54 @@ const styles = StyleSheet.create({
   softnessRow: {
     marginTop: 16,
     alignItems: 'center',
+  },
+  reasoning: {
+    color: colors.inkSecondary,
+    textAlign: 'center',
+    lineHeight: 18,
+    marginTop: 14,
+    paddingHorizontal: spacing.sm,
+  },
+  refineCard: {
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.xl,
+    gap: spacing.md,
+  },
+  refineLabel: {
+    color: colors.inkSecondary,
+    textTransform: 'uppercase',
+    textAlign: 'center',
+  },
+  refineRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  refineMid: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  refineValue: {
+    color: colors.ink,
+  },
+  refineHint: {
+    color: colors.primary,
+    marginTop: 2,
+  },
+  stepBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: colors.canvas,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: colors.inkMuted,
+  },
+  stepGlyph: {
+    fontSize: 24,
+    lineHeight: 26,
+    color: colors.ink,
   },
   noteCard: {
     paddingVertical: spacing.xl,
