@@ -1,6 +1,7 @@
-import React from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet, Alert, Linking } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, ScrollView, Pressable, StyleSheet, Alert, Linking, Image } from 'react-native';
 import * as Haptics from 'expo-haptics';
+import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -11,6 +12,12 @@ import { useAuth } from '@/src/hooks/useAuth';
 import { usePremium } from '@/src/hooks/usePremium';
 import { restorePurchases, logoutAdaptyUser } from '@/src/lib/adapty';
 import { getSupabase } from '@/src/lib/supabase';
+import {
+  useLocalProfile,
+  setDisplayName,
+  setAvatarUri,
+  hydrateProfile,
+} from '@/src/state/profileStore';
 import { LEGAL } from '@/constants/legal';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
@@ -25,6 +32,55 @@ export default function ProfileScreen() {
   // (Rule 21 label vs underlying-state).
   const signedIn = !!user && !user.is_anonymous;
   const { premium: isPremium, resolved: premiumResolved } = usePremium();
+  const localProfile = useLocalProfile();
+
+  useEffect(() => {
+    void hydrateProfile();
+  }, []);
+
+  // Display name precedence: user-set name → email prefix (signed in) → Guest.
+  const shownName = localProfile.displayName ?? (signedIn ? user?.email?.split('@')[0] ?? 'You' : 'Guest');
+
+  const onPickAvatar = async () => {
+    Haptics.selectionAsync().catch(() => {});
+    const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!perm.granted) {
+      Alert.alert(
+        'Photo access needed',
+        perm.canAskAgain
+          ? 'Allow photo access to choose an avatar.'
+          : 'Enable photo access in Settings, then come back.',
+        perm.canAskAgain ? undefined : [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Open Settings', onPress: () => Linking.openSettings() },
+        ],
+      );
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.7,
+    });
+    if (!result.canceled && result.assets?.[0]?.uri) {
+      setAvatarUri(result.assets[0].uri);
+    }
+  };
+
+  const onEditName = () => {
+    Haptics.selectionAsync().catch(() => {});
+    Alert.prompt?.(
+      'Your name',
+      'How should we call you?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Save', onPress: (text?: string) => setDisplayName(text ?? null) },
+      ],
+      'plain-text',
+      localProfile.displayName ?? '',
+    );
+  };
 
   const onSignInOrOut = () => {
     Haptics.selectionAsync().catch(() => {});
@@ -128,14 +184,34 @@ export default function ProfileScreen() {
         ]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Hero — avatar + name */}
+        {/* Hero — tappable avatar + editable name (works for guests too) */}
         <View style={styles.hero}>
-          <SoftSurface variant="cushion" radius="full" innerStyle={styles.avatar}>
-            <User size={40} color={colors.primary} strokeWidth={1.6} />
-          </SoftSurface>
-          <Text style={[typeScale.displayMedium, styles.name]}>
-            {signedIn ? (user?.email?.split('@')[0] ?? 'You') : 'Guest'}
-          </Text>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="change avatar"
+            onPress={onPickAvatar}
+            style={({ pressed }) => ({ opacity: pressed ? 0.85 : 1 })}
+          >
+            <SoftSurface variant="cushion" radius="full" innerStyle={styles.avatar}>
+              {localProfile.avatarUri ? (
+                <Image source={{ uri: localProfile.avatarUri }} style={styles.avatarImg} />
+              ) : (
+                <User size={40} color={colors.primary} strokeWidth={1.6} />
+              )}
+            </SoftSurface>
+            <View style={styles.avatarEditBadge}>
+              <Text style={styles.avatarEditPlus}>+</Text>
+            </View>
+          </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="edit name"
+            onPress={onEditName}
+            style={({ pressed }) => [styles.nameRow, { opacity: pressed ? 0.7 : 1 }]}
+          >
+            <Text style={[typeScale.displayMedium, styles.name]}>{shownName}</Text>
+            <Text style={styles.namePencil}>✎</Text>
+          </Pressable>
           <Text style={[typeScale.label, styles.eyebrow]}>
             {signedIn ? 'SIGNED IN' : 'NOT SIGNED IN'}
           </Text>
@@ -293,11 +369,45 @@ const styles = StyleSheet.create({
     height: 96,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  avatarImg: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+  },
+  avatarEditBadge: {
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 3,
+    borderColor: colors.canvas,
+  },
+  avatarEditPlus: {
+    color: colors.surfaceWhite,
+    fontSize: 18,
+    lineHeight: 20,
+    fontWeight: '600',
+  },
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: spacing.sm,
   },
   name: {
     color: colors.ink,
     textAlign: 'center',
-    marginTop: spacing.sm,
+  },
+  namePencil: {
+    fontSize: 16,
+    color: colors.inkMuted,
   },
   eyebrow: {
     color: colors.inkSecondary,

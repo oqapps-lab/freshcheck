@@ -18,6 +18,14 @@ export const STORAGE_KEYS = {
   // user's recipes after they navigate away / restart, instead of resetting
   // to the empty "Generate" state (user-flagged "где история моих рецептов").
   recipes: 'freshcheck_recipes_v1',
+  // User profile (display name + local avatar uri). Local-first so it works
+  // for anonymous guests and offline (H2).
+  profile: 'freshcheck_profile_v1',
+  // Favorited recipes — survive regeneration, shown in "Saved" (G4).
+  favorites: 'freshcheck_favorites_v1',
+  // Local achievement counters for the Home hub (I1): scans, items saved,
+  // estimated $ saved.
+  achievements: 'freshcheck_achievements_v1',
 } as const;
 
 export const safeStorage = {
