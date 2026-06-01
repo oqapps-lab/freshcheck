@@ -43,16 +43,13 @@ export default function AuthScreen() {
   // empty stack — a plain `router.back()` would be a no-op and strand the
   // user on the auth screen after sign-in or after tapping the top-left
   // back button. Fall back to /(tabs) when there is nothing to pop to.
+  // Auth is reached only from Profile now (onboarding goes straight to the
+  // paywall — no forced account creation). So resolving auth just returns to
+  // where the user came from.
   const dismiss = () => {
     if (router.canGoBack()) router.back();
     else router.replace('/(tabs)');
   };
-
-  // After the user resolves auth (sign-in, sign-up, or continue-as-guest)
-  // we send them through the paywall once — this is the post-onboarding
-  // funnel step the user expected ("почему paywall не было после
-  // онбординга"). The paywall closes into /(tabs) on its own.
-  const proceed = () => router.replace('/paywall');
 
   // iOS keyboard with QuickType / Passwords accessory bar can occlude the
   // password input. Smoke-test 2026-04-28 caught taps at the field's
@@ -110,7 +107,7 @@ export default function AuthScreen() {
         Alert.alert('Sign in failed', error);
         return;
       }
-      proceed();
+      dismiss();
       return;
     }
     const { error, needsEmailConfirmation } = await signUpWithEmail(trimmedEmail, password);
@@ -134,7 +131,7 @@ export default function AuthScreen() {
     // conversion event. Without this the post-install funnel is invisible.
     void logSignUpEvent('email');
     afLogSignUp('email');
-    proceed();
+    dismiss();
   };
 
   return (
@@ -274,7 +271,7 @@ export default function AuthScreen() {
             </Text>
             .
           </Text>
-          <GhostText label="Continue as guest" onPress={proceed} />
+          <GhostText label="Continue as guest" onPress={dismiss} />
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

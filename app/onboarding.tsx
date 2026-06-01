@@ -94,7 +94,10 @@ export default function OnboardingScreen() {
   const goNext = async () => {
     if (isLast) {
       await markOnboardingDone();
-      router.replace('/auth');
+      // Straight to the paywall — NOT account creation. Sign-up lives only
+      // in Profile now (the app works fully as an anonymous guest). The
+      // paywall is the post-onboarding step (82% of trials start day 0).
+      router.replace('/paywall');
       return;
     }
     const target = (page + 1) * SCREEN_W;
@@ -103,7 +106,7 @@ export default function OnboardingScreen() {
 
   const skip = async () => {
     await markOnboardingDone();
-    router.replace('/(tabs)');
+    router.replace('/paywall');
   };
 
   return (
