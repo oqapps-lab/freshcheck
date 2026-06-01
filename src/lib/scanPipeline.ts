@@ -2,6 +2,7 @@ import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import { File } from 'expo-file-system';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { LastScan } from '@/src/state/lastScan';
+import { recordScan } from '@/src/state/achievementsStore';
 
 /**
  * Core scan pipeline, UI-free, so it can be driven from BOTH the single
@@ -39,6 +40,8 @@ export async function scanImage(
   });
   if (fnErr) throw new Error(fnErr.message);
   if (!data || data.error) throw new Error(data?.error ?? 'scan failed');
+
+  void recordScan(); // Home achievements counter (single + batch).
 
   return {
     scanId: data.scan_id ?? null,
