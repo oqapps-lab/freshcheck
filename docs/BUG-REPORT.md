@@ -8,6 +8,21 @@
 >
 > Source of this round: user device-test of TestFlight build #48 (2026-06-01).
 
+## Status — round of 2026-06-01
+
+**Done & committed (shipping in next build):** A1, B1, B2, C1, D1, D2, D3,
+F1, G1, G2, G3, H1, J1.
+
+**Queued — larger features for the next focused pass** (need DB/schema, new
+screens, or AI-flow changes; deserve careful design + verification, not a
+rushed cram):
+- **E1** scan clarifying questions / verdict reasoning (changes the scan-image
+  prompt + adds a refine UI).
+- **G4** recipe favorites + "My recipes" (wire the `saved_recipes` table).
+- **H2** profile avatar + rename (avatar storage + persistence).
+- **I1** Home discovery hub (recipe-of-day, tips, achievements, social proof —
+  a sizable Home redesign; break into I1a–I1d).
+
 ---
 
 ## A. Onboarding / Auth funnel
