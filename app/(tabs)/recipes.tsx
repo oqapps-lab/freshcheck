@@ -15,6 +15,7 @@ import { useRouter } from 'expo-router';
 import { IconButton } from '@/components/ui/IconButton';
 import { SoftSurface } from '@/components/ui/SoftSurface';
 import { SoftInset } from '@/components/ui/SoftInset';
+import { RecipeCookingLoader } from '@/components/ui/RecipeCookingLoader';
 import { Chevron, Sparkle } from '@/components/ui/Glyphs';
 import { useRecipes, type Recipe } from '@/src/hooks/useRecipes';
 import { useFridge } from '@/src/hooks/useFridge';
@@ -155,15 +156,7 @@ export default function RecipesTab() {
         )}
 
         {status === 'loading' && recipes.length === 0 && (
-          <View style={styles.loadingState}>
-            <ActivityIndicator size="large" color={colors.primary} />
-            <Text style={[typeScale.body, styles.loadingText]}>
-              Reading your fridge and dreaming up recipes…
-            </Text>
-            <Text style={[typeScale.bodySmall, styles.loadingSub]}>
-              Recipes appear in ~10 seconds. Photos load right after.
-            </Text>
-          </View>
+          <RecipeCookingLoader itemCount={fridgeItems.length} />
         )}
 
         {status === 'error' && (
