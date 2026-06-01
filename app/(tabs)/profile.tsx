@@ -17,14 +17,14 @@ import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { summary } = useFridge();
+  const { summary, loading: fridgeLoading } = useFridge();
   const { user, signOut } = useAuth();
   // Anonymous users from supabase.auth.signInAnonymously() have a non-null
   // `user` but no real account — they should see the "Guest" + "Sign in"
   // affordance, not the "SIGNED IN" badge + "Sign out" row of an email user
   // (Rule 21 label vs underlying-state).
   const signedIn = !!user && !user.is_anonymous;
-  const isPremium = usePremium();
+  const { premium: isPremium, resolved: premiumResolved } = usePremium();
 
   const onSignInOrOut = () => {
     Haptics.selectionAsync().catch(() => {});
@@ -144,7 +144,14 @@ export default function ProfileScreen() {
         {/* Stats card shows for anyone with items — anon (guest) users can
             still add to the fridge, so hiding their count while the Fridge
             tab visibly contains those items was a cross-surface mismatch. */}
-        {summary.total > 0 ? (
+        {fridgeLoading && summary.total === 0 ? (
+          // Reserve the stat card while the fridge count loads so it doesn't
+          // pop in a beat later (user-flagged flicker).
+          <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.statCard}>
+            <View style={styles.statSkeletonNum} />
+            <Text style={[typeScale.label, styles.statLabel]}>ITEMS IN FRIDGE</Text>
+          </SoftSurface>
+        ) : summary.total > 0 ? (
           <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.statCard}>
             <Text style={[typeScale.numberLarge, styles.statNum]}>{summary.total}</Text>
             <Text style={[typeScale.label, styles.statLabel]}>ITEMS IN FRIDGE</Text>
@@ -174,7 +181,11 @@ export default function ProfileScreen() {
             so we don't display "Upgrade" to a paying customer (Apple Review flag). */}
         <Text style={[typeScale.label, styles.sectionLabel]}>PRO</Text>
         <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cardStack}>
-          {isPremium ? (
+          {!premiumResolved ? (
+            // Hold a neutral placeholder until Adapty resolves, so we don't
+            // flash "Upgrade to Pro" and snap to "Active" (or vice-versa).
+            <RowStatic label="FreshCheck Pro" value="…" />
+          ) : isPremium ? (
             <>
               <RowStatic label="FreshCheck Pro" value="Active" />
               <Hairline />
@@ -299,6 +310,12 @@ const styles = StyleSheet.create({
   },
   statNum: {
     color: colors.primary,
+  },
+  statSkeletonNum: {
+    width: 44,
+    height: 34,
+    borderRadius: 8,
+    backgroundColor: colors.surfaceTint,
   },
   statLabel: {
     color: colors.inkSecondary,

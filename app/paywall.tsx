@@ -53,7 +53,7 @@ const FEATURES: { icon: React.ComponentType<{ size?: number; color?: string; str
 export default function PaywallScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const isPremium = usePremium();
+  const { premium: isPremium } = usePremium();
   const [plan, setPlan] = useState<Plan>('annual');
   const [busy, setBusy] = useState(false);
 

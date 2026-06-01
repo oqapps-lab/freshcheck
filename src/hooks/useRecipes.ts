@@ -68,7 +68,7 @@ export function useRecipes() {
   // flash "no recipes / fridge empty" for a frame before the saved batch
   // streams in.
   const [hydrated, setHydrated] = useState<boolean>(getRecipeList().length > 0);
-  const premium = usePremium();
+  const { premium } = usePremium();
 
   useEffect(() => {
     let active = true;

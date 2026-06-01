@@ -12,8 +12,17 @@
 import { useEffect, useState } from 'react';
 import { isPremium as fetchIsPremium } from '@/src/lib/adapty';
 
-export function usePremium(): boolean {
+export type PremiumState = { premium: boolean; resolved: boolean };
+
+/**
+ * Returns `{ premium, resolved }`. `resolved` flips true once the first
+ * Adapty check completes (success OR failure), so screens can hold a neutral
+ * placeholder until then instead of flashing the free-tier state and snapping
+ * to Pro a beat later (user-flagged Profile flicker).
+ */
+export function usePremium(): PremiumState {
   const [premium, setPremium] = useState(false);
+  const [resolved, setResolved] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -23,6 +32,8 @@ export function usePremium(): boolean {
         if (!cancelled) setPremium(v);
       } catch {
         // Adapty unavailable / Expo Go — default false.
+      } finally {
+        if (!cancelled) setResolved(true);
       }
     })();
 
@@ -35,6 +46,7 @@ export function usePremium(): boolean {
         const listener = adapty.addEventListener('onLatestProfileLoad', (profile: { accessLevels?: Record<string, { isActive?: boolean }> }) => {
           if (cancelled) return;
           setPremium(!!profile?.accessLevels?.['premium']?.isActive);
+          setResolved(true);
         });
         cleanup = () => {
           if (typeof listener === 'function') listener();
@@ -51,5 +63,5 @@ export function usePremium(): boolean {
     };
   }, []);
 
-  return premium;
+  return { premium, resolved };
 }
