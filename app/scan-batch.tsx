@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   StyleSheet,
   Alert,
+  type LayoutChangeEvent,
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -15,16 +16,19 @@ import { useRouter } from 'expo-router';
 import { IconButton } from '@/components/ui/IconButton';
 import { SoftSurface } from '@/components/ui/SoftSurface';
 import { PrimaryPillCTA } from '@/components/ui/PrimaryPillCTA';
-import { GhostText } from '@/components/ui/GhostText';
 import { Back, Check, Sparkle } from '@/components/ui/Glyphs';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 import {
   useScanQueue,
   clearQueue,
   markAddedToFridge,
+  retryQueued,
+  processQueue,
   type QueueItem,
 } from '@/src/state/scanQueue';
 import { useFridge } from '@/src/hooks/useFridge';
+import { useAuth } from '@/src/hooks/useAuth';
+import { getSupabase } from '@/src/lib/supabase';
 
 const VERDICT_TITLE: Record<string, string> = {
   fresh: 'Fresh & ripe',
@@ -59,10 +63,24 @@ export default function ScanBatchScreen() {
   const router = useRouter();
   const queue = useScanQueue();
   const { addItem, signedIn } = useFridge();
+  const { user } = useAuth();
+  const supabase = getSupabase();
+
+  // Measured footer height so the last card clears the floating action bar
+  // (it was being half-hidden behind it).
+  const [footerH, setFooterH] = useState(140);
+  const onFooterLayout = (e: LayoutChangeEvent) => setFooterH(e.nativeEvent.layout.height);
 
   const dismiss = () => {
     if (router.canGoBack()) router.back();
     else router.replace('/(tabs)');
+  };
+
+  const rescan = (id: string) => {
+    if (!supabase || !user) return;
+    Haptics.selectionAsync().catch(() => {});
+    retryQueued(id);
+    void processQueue(supabase, user.id);
   };
 
   const done = queue.filter((q) => q.status === 'done');
@@ -127,7 +145,7 @@ export default function ScanBatchScreen() {
       </View>
 
       <ScrollView
-        contentContainerStyle={[styles.scroll, { paddingBottom: insets.bottom + spacing.massive * 2 }]}
+        contentContainerStyle={[styles.scroll, { paddingBottom: footerH + spacing.lg }]}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.hero}>
@@ -216,6 +234,15 @@ export default function ScanBatchScreen() {
                           <Text style={[typeScale.labelSmall, styles.addBtnText]}>ADD</Text>
                         </Pressable>
                       )
+                    ) : item.status === 'error' ? (
+                      <Pressable
+                        accessibilityRole="button"
+                        accessibilityLabel="rescan this photo"
+                        onPress={() => rescan(item.id)}
+                        style={({ pressed }) => [styles.rescanBtn, { opacity: pressed ? 0.85 : 1 }]}
+                      >
+                        <Text style={[typeScale.labelSmall, styles.rescanBtnText]}>RESCAN</Text>
+                      </Pressable>
                     ) : null}
                   </View>
                 </SoftSurface>
@@ -227,11 +254,28 @@ export default function ScanBatchScreen() {
 
       {/* Floating actions */}
       {queue.length > 0 && (
-        <View style={[styles.footer, { paddingBottom: insets.bottom + spacing.lg }]}>
+        <View
+          style={[styles.footer, { paddingBottom: insets.bottom + spacing.lg }]}
+          onLayout={onFooterLayout}
+        >
           {addable.length > 0 && (
             <PrimaryPillCTA label={`Add ${addable.length} to fridge`} onPress={addAll} />
           )}
-          <GhostText label="Done" onPress={finish} />
+          {/* Done is a clear button (was a grey ghost-link that read as
+              disabled). When there's nothing to add, it's the primary action. */}
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="done"
+            onPress={() => {
+              Haptics.selectionAsync().catch(() => {});
+              finish();
+            }}
+            style={({ pressed }) => [styles.doneBtn, { opacity: pressed ? 0.85 : 1 }]}
+          >
+            <SoftSurface variant="pill" radius="full" innerStyle={styles.doneInner}>
+              <Text style={[typeScale.titleSmall, styles.doneText]}>Done</Text>
+            </SoftSurface>
+          </Pressable>
         </View>
       )}
     </View>
@@ -279,6 +323,21 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   addBtnText: { color: colors.surfaceWhite, letterSpacing: 1.4 },
+  rescanBtn: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: 10,
+    borderRadius: 999,
+    borderWidth: 1.5,
+    borderColor: colors.amber,
+  },
+  rescanBtnText: { color: colors.amberDeep, letterSpacing: 1.4 },
+  doneBtn: { alignSelf: 'stretch' },
+  doneInner: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+  },
+  doneText: { color: colors.ink },
   addedBadge: {
     width: 36,
     height: 36,

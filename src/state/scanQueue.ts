@@ -83,6 +83,11 @@ export function markAddedToFridge(id: string) {
   patch(id, { addedToFridge: true });
 }
 
+/** Reset a failed item back to pending so processQueue re-scans its photo. */
+export function retryQueued(id: string) {
+  patch(id, { status: 'pending', error: undefined, result: undefined });
+}
+
 /**
  * Drains all pending items sequentially. Safe to call on every enqueue —
  * the `running` guard means new photos added while a drain is in flight are
