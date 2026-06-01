@@ -118,20 +118,6 @@ export default function RecipeDetailScreen() {
             style={styles.headerScrim}
             pointerEvents="none"
           />
-          <View style={[styles.headerOverlay, { paddingTop: insets.top + 16 }]}>
-            <IconButton accessibilityLabel="back" onPress={() => router.back()}>
-              <Back size={20} color={colors.ink} />
-            </IconButton>
-            <IconButton
-              accessibilityLabel={isFav ? 'remove from saved' : 'save recipe'}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                toggleFavorite(recipe);
-              }}
-            >
-              <Star size={20} color={isFav ? colors.amber : colors.ink} filled={isFav} strokeWidth={2} />
-            </IconButton>
-          </View>
         </View>
 
         {/* Title block */}
@@ -249,6 +235,24 @@ export default function RecipeDetailScreen() {
           </View>
         </View>
       </ScrollView>
+
+      {/* Fixed header — stays pinned over the scroll so back + save don't
+          slide away when the user scrolls down (K5). Icon buttons are
+          neumorphic circles, legible over both the photo and white content. */}
+      <View style={[styles.fixedHeader, { paddingTop: insets.top + 16 }]} pointerEvents="box-none">
+        <IconButton accessibilityLabel="back" onPress={() => router.back()}>
+          <Back size={20} color={colors.ink} />
+        </IconButton>
+        <IconButton
+          accessibilityLabel={isFav ? 'remove from saved' : 'save recipe'}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+            toggleFavorite(recipe);
+          }}
+        >
+          <Star size={20} color={isFav ? colors.amber : colors.ink} filled={isFav} strokeWidth={2} />
+        </IconButton>
+      </View>
     </View>
   );
 }
@@ -262,15 +266,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: layout.screenPaddingHeader,
     paddingBottom: layout.headerPaddingBottom,
   },
-  headerOverlay: {
+  fixedHeader: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
+    zIndex: 10,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: layout.screenPaddingHeader,
+    paddingBottom: spacing.sm,
   },
   headerScrim: {
     position: 'absolute',

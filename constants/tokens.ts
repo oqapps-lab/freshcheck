@@ -154,18 +154,23 @@ export const typeScale = {
 // React Native shadowRadius is roughly = CSS blur / 2. v9: stronger drop
 // + visible highlight (canvas is now off-white so white shadow contrasts).
 export const shadows = {
+  // Reach ≈ |offset| + blur. Kept ≤ ~22px so a cushion card's shadow fits in
+  // the standard ~32px (spacing.xxl) gaps/padding around it and is NOT clipped
+  // by neighbouring opaque surfaces. See memory `neumorphic-shadow-clipping`:
+  // the user repeatedly caught shadows sliced on all four sides because the
+  // old 12/14 offset + 18 blur (~30px reach) overran tight gaps.
   cushionDrop: {
     shadowColor: '#94a3b8',     // slate-400 — slightly darker than CSS slate-300 to compensate for RN's softer rendering
-    shadowOffset: { width: 12, height: 14 },
-    shadowOpacity: 0.55,
-    shadowRadius: 18,
-    elevation: 10,
+    shadowOffset: { width: 7, height: 9 },
+    shadowOpacity: 0.5,
+    shadowRadius: 13,
+    elevation: 8,
   },
   cushionHighlight: {
     shadowColor: '#ffffff',
-    shadowOffset: { width: -10, height: -10 },
+    shadowOffset: { width: -7, height: -7 },
     shadowOpacity: 1,
-    shadowRadius: 18,
+    shadowRadius: 13,
     elevation: 0,
   },
   pillDrop: {

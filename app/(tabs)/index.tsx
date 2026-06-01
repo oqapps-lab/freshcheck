@@ -6,8 +6,6 @@ import { useRouter } from 'expo-router';
 import { SoftSurface } from '@/components/ui/SoftSurface';
 import { SoftInset } from '@/components/ui/SoftInset';
 import { BarcodeScanner, Bowl, Chevron, Sparkle } from '@/components/ui/Glyphs';
-import { useFridge } from '@/src/hooks/useFridge';
-import { useAchievements, hydrateAchievements } from '@/src/state/achievementsStore';
 import { useFavorites, hydrateFavorites } from '@/src/state/favoritesStore';
 import { getRecipeList, hydrateRecipes } from '@/src/state/recipeStore';
 import type { Recipe } from '@/src/hooks/useRecipes';
@@ -31,12 +29,9 @@ const TIPS: { title: string; body: string }[] = [
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { summary } = useFridge();
-  const achievements = useAchievements();
   const favorites = useFavorites();
 
   useEffect(() => {
-    void hydrateAchievements();
     void hydrateFavorites();
     void hydrateRecipes();
   }, []);
@@ -48,9 +43,6 @@ export default function HomeScreen() {
 
   // Recipe of the day: a favorite if any, else the latest generated batch.
   const recipeOfDay: Recipe | undefined = favorites[0] ?? getRecipeList()[0];
-
-  // ~$4.5 average value of a grocery item kept from the bin.
-  const moneySaved = Math.round(summary.total * 4.5);
 
   return (
     <View style={styles.root}>
@@ -80,13 +72,6 @@ export default function HomeScreen() {
           </SoftSurface>
         </Pressable>
         <Text style={[typeScale.label, styles.tapHint]}>TAP TO SCAN</Text>
-
-        {/* Achievements */}
-        <View style={styles.statsRow}>
-          <Stat value={String(achievements.scans)} label="SCANS" />
-          <Stat value={String(summary.total)} label="TRACKED" />
-          <Stat value={`$${moneySaved}`} label="SAVED" />
-        </View>
 
         {/* Recipe of the day */}
         <Text style={[typeScale.label, styles.sectionLabel]}>RECIPE OF THE DAY</Text>
@@ -156,15 +141,6 @@ export default function HomeScreen() {
   );
 }
 
-function Stat({ value, label }: { value: string; label: string }) {
-  return (
-    <SoftSurface variant="cushion" radius="xl" innerStyle={styles.statCard}>
-      <Text style={[typeScale.numberLarge, styles.statNum]}>{value}</Text>
-      <Text style={[typeScale.labelTiny, styles.statLabel]}>{label}</Text>
-    </SoftSurface>
-  );
-}
-
 const ORB_OUTER = 248;
 const ORB_CUP = 196;
 
@@ -199,19 +175,6 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
     textAlign: 'center',
   },
-  statsRow: {
-    flexDirection: 'row',
-    gap: spacing.md,
-    marginTop: spacing.enormous,
-  },
-  statCard: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: spacing.lg,
-    gap: 2,
-  },
-  statNum: { color: colors.primary },
-  statLabel: { color: colors.inkSecondary, letterSpacing: 1.4 },
   sectionLabel: {
     color: colors.inkSecondary,
     textTransform: 'uppercase',
@@ -243,10 +206,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
   },
   rotdEmptyText: { flex: 1, color: colors.ink },
-  tipsScroll: { paddingRight: spacing.xl, gap: spacing.md, paddingBottom: 8 },
+  // paddingVertical gives the cards' top+bottom shadows room inside the
+  // horizontal ScrollView (which clips to its frame height); paddingRight so
+  // the last card's right shadow isn't clipped. gap between cards.
+  tipsScroll: {
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.lg,
+    paddingRight: spacing.xl,
+    gap: spacing.md,
+  },
   tipCard: {
     width: 240,
-    marginRight: spacing.md,
     padding: spacing.lg,
     gap: spacing.sm,
   },

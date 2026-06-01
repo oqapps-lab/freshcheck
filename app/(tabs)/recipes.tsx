@@ -16,9 +16,11 @@ import { IconButton } from '@/components/ui/IconButton';
 import { SoftSurface } from '@/components/ui/SoftSurface';
 import { SoftInset } from '@/components/ui/SoftInset';
 import { RecipeCookingLoader } from '@/components/ui/RecipeCookingLoader';
-import { Chevron, Sparkle, Star } from '@/components/ui/Glyphs';
+import { Shimmer } from '@/components/ui/Shimmer';
+import { Chevron, Sparkle, Star, Trash } from '@/components/ui/Glyphs';
 import { useRecipes, type Recipe } from '@/src/hooks/useRecipes';
 import { useFridge } from '@/src/hooks/useFridge';
+import { clearRecipes } from '@/src/state/recipeStore';
 import {
   useFavorites,
   toggleFavorite,
@@ -70,6 +72,18 @@ export default function RecipesTab() {
     toggleFavorite(recipe);
   };
 
+  const onClear = () => {
+    Haptics.selectionAsync().catch(() => {});
+    Alert.alert(
+      'Clear these recipes?',
+      'Removes the current picks. Saved (★) recipes are kept. You can generate fresh ones anytime.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Clear', style: 'destructive', onPress: () => clearRecipes() },
+      ],
+    );
+  };
+
   const onRefresh = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
     // Confirm if we already have a batch — each regeneration calls the
@@ -92,7 +106,13 @@ export default function RecipesTab() {
   return (
     <View style={styles.root}>
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-        <View style={styles.headerSpacer} />
+        {recipes.length > 0 && status !== 'loading' ? (
+          <IconButton accessibilityLabel="clear recipes" onPress={onClear}>
+            <Trash size={20} color={colors.inkSecondary} strokeWidth={2} />
+          </IconButton>
+        ) : (
+          <View style={styles.headerSpacer} />
+        )}
         <Text style={[typeScale.wordmark, styles.eyebrow]}>RECIPES</Text>
         <IconButton
           accessibilityLabel="regenerate recipes"
@@ -110,23 +130,39 @@ export default function RecipesTab() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.hero}>
-          <Text style={[typeScale.displayLarge, { color: colors.ink }]}>
-            {!ready ? 'Recipes' : fridgeEmpty ? 'Starter recipes' : 'Cook with what you have'}
-          </Text>
-          <Text style={[typeScale.label, styles.eyebrow2]}>
-            {!ready
-              ? 'LOADING YOUR RECIPES'
-              : fridgeEmpty
-                ? 'SCAN ITEMS FOR PERSONALIZED PICKS'
-                : 'AI-CRAFTED FROM YOUR FRIDGE'}
-          </Text>
+          {ready ? (
+            <>
+              <Text style={[typeScale.displayLarge, { color: colors.ink }]}>
+                {fridgeEmpty ? 'Starter recipes' : 'Cook with what you have'}
+              </Text>
+              <Text style={[typeScale.label, styles.eyebrow2]}>
+                {fridgeEmpty ? 'SCAN ITEMS FOR PERSONALIZED PICKS' : 'AI-CRAFTED FROM YOUR FRIDGE'}
+              </Text>
+            </>
+          ) : (
+            // Shimmer the title instead of showing placeholder words that then
+            // swap to the real title (user-flagged jumping text).
+            <>
+              <Shimmer width="78%" height={40} radius={12} />
+              <Shimmer width="46%" height={12} radius={6} style={{ marginTop: 10 }} />
+            </>
+          )}
         </View>
 
         {/* Settling state — wait for hydration + fridge load before deciding
-            between idle/empty/recipes, so nothing flashes. */}
+            between idle/empty/recipes. Show shimmer recipe cards, not a bare
+            spinner, so it reads as content loading. */}
         {!ready && recipes.length === 0 && status !== 'loading' && (
-          <View style={styles.loadingState}>
-            <ActivityIndicator color={colors.primary} />
+          <View style={styles.list}>
+            {[0, 1].map((i) => (
+              <View key={i} style={styles.skeletonCard}>
+                <Shimmer width="100%" height={150} radius={0} />
+                <View style={styles.skeletonBody}>
+                  <Shimmer width="70%" height={18} radius={8} />
+                  <Shimmer width="90%" height={12} radius={6} style={{ marginTop: 8 }} />
+                </View>
+              </View>
+            ))}
           </View>
         )}
 
@@ -398,7 +434,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     marginBottom: spacing.sm,
   },
-  savedScroll: { paddingHorizontal: 8, paddingBottom: 8, gap: spacing.md },
+  savedScroll: { paddingHorizontal: 8, paddingTop: spacing.sm, paddingBottom: spacing.lg, gap: spacing.md },
   savedChip: { width: 128, marginRight: spacing.md },
   savedChipInner: { padding: 0, overflow: 'hidden' },
   savedThumbWrap: { width: '100%', aspectRatio: 16 / 10, backgroundColor: colors.surfaceTint },
@@ -416,7 +452,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  list: { gap: spacing.xl, paddingHorizontal: 8 },
+  list: { gap: spacing.xxl, paddingHorizontal: 8 },
+  skeletonCard: {
+    borderRadius: 40,
+    overflow: 'hidden',
+    backgroundColor: colors.surfaceWhite,
+  },
+  skeletonBody: { padding: spacing.lg },
   card: { padding: 0, overflow: 'hidden' },
   heroImageWrap: { width: '100%', aspectRatio: 16 / 10 },
   heroImage: { width: '100%', height: '100%' },
