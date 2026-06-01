@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet, Alert, Linking } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { View, Text, ScrollView, Pressable, StyleSheet, Alert, Linking, Animated, type LayoutChangeEvent } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -7,7 +7,6 @@ import { IconButton } from '@/components/ui/IconButton';
 import { SoftSurface } from '@/components/ui/SoftSurface';
 import { SoftInset } from '@/components/ui/SoftInset';
 import { PrimaryPillCTA } from '@/components/ui/PrimaryPillCTA';
-import { GhostText } from '@/components/ui/GhostText';
 import {
   Close,
   Sparkle,
@@ -57,6 +56,24 @@ export default function PaywallScreen() {
   const isPremium = usePremium();
   const [plan, setPlan] = useState<Plan>('annual');
   const [busy, setBusy] = useState(false);
+
+  // Delay the close (✕) ~3s so users engage with the offer instead of
+  // immediately dismissing — they tend to wait for and tap the ✕. The
+  // button still appears (App-Store safe), just not instantly.
+  const [closeVisible, setCloseVisible] = useState(false);
+  const closeFade = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setCloseVisible(true);
+      Animated.timing(closeFade, { toValue: 1, duration: 280, useNativeDriver: true }).start();
+    }, 3000);
+    return () => clearTimeout(t);
+  }, [closeFade]);
+
+  // Measured height of the fixed bottom CTA bar so the scroll content can
+  // clear it (the bar floats over the scroll, always visible).
+  const [barHeight, setBarHeight] = useState(220);
+  const onBarLayout = (e: LayoutChangeEvent) => setBarHeight(e.nativeEvent.layout.height);
 
   // The paywall is reached two ways: pushed from profile/recipes (back()
   // returns there) OR replaced into from the post-onboarding auth funnel
@@ -150,15 +167,21 @@ export default function PaywallScreen() {
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <View style={styles.headerSpacer} />
         <Text style={[typeScale.wordmark, styles.eyebrow]}>FRESHCHECK PRO</Text>
-        <IconButton accessibilityLabel="close" onPress={dismiss}>
-          <Close size={20} color={colors.ink} />
-        </IconButton>
+        {closeVisible ? (
+          <Animated.View style={{ opacity: closeFade }}>
+            <IconButton accessibilityLabel="close" onPress={dismiss}>
+              <Close size={20} color={colors.ink} />
+            </IconButton>
+          </Animated.View>
+        ) : (
+          <View style={styles.headerSpacer} />
+        )}
       </View>
 
       <ScrollView
         contentContainerStyle={[
           styles.scroll,
-          { paddingBottom: insets.bottom + spacing.huge },
+          { paddingBottom: barHeight + spacing.lg },
         ]}
         showsVerticalScrollIndicator={false}
       >
@@ -235,32 +258,36 @@ export default function PaywallScreen() {
           />
         </View>
 
-        {/* CTA */}
-        <View style={styles.ctaBlock}>
-          <PrimaryPillCTA
-            label={ctaLabel}
-            onPress={onStart}
-            iconLeft={<Zap size={22} color={colors.amber} strokeWidth={2.2} />}
-          />
-          {/* Reassurance — the #1 lever on trial-start conversion. */}
-          <Text style={[typeScale.bodySmall, styles.reassure]}>
-            No payment due now · Cancel anytime
-          </Text>
-          <GhostText label="Restore purchase" onPress={onRestore} />
-        </View>
+      </ScrollView>
 
-        {/* Apple 3.1.2(c) — actual price + period prominent, plus links */}
+      {/* Sticky bottom bar — always visible over the scroll. CTA on top,
+          full payment terms directly below it (Apple 3.1.2(c)), then the
+          small legal + restore links. Stays put while content scrolls so
+          the trial button is the obvious action, not the ✕. */}
+      <View
+        style={[styles.bottomBar, { paddingBottom: insets.bottom + spacing.md }]}
+        onLayout={onBarLayout}
+      >
+        <PrimaryPillCTA
+          label={ctaLabel}
+          onPress={onStart}
+          iconLeft={<Zap size={22} color={colors.amber} strokeWidth={2.2} />}
+        />
         <Text style={[typeScale.bodySmall, styles.fineprint]}>{fineprint}</Text>
         <View style={styles.legalRow}>
+          <Pressable onPress={onRestore} accessibilityRole="button">
+            <Text style={[typeScale.bodySmall, styles.legalLink]}>Restore</Text>
+          </Pressable>
+          <Text style={[typeScale.bodySmall, styles.legalDot]}>·</Text>
           <Pressable onPress={() => openUrl(LEGAL.termsOfUse)} accessibilityRole="link">
-            <Text style={[typeScale.bodySmall, styles.legalLink]}>Terms of Use</Text>
+            <Text style={[typeScale.bodySmall, styles.legalLink]}>Terms</Text>
           </Pressable>
           <Text style={[typeScale.bodySmall, styles.legalDot]}>·</Text>
           <Pressable onPress={() => openUrl(LEGAL.privacyPolicy)} accessibilityRole="link">
-            <Text style={[typeScale.bodySmall, styles.legalLink]}>Privacy Policy</Text>
+            <Text style={[typeScale.bodySmall, styles.legalLink]}>Privacy</Text>
           </Pressable>
         </View>
-      </ScrollView>
+      </View>
     </View>
   );
 }
@@ -368,6 +395,24 @@ const styles = StyleSheet.create({
   scroll: {
     paddingHorizontal: layout.screenPadding,
     paddingTop: spacing.lg,
+  },
+  bottomBar: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    paddingHorizontal: layout.screenPadding,
+    paddingTop: spacing.lg,
+    gap: spacing.sm,
+    backgroundColor: colors.canvas,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colors.hairline,
+    // Lift the bar off the scroll with a soft upward shadow.
+    shadowColor: '#94a3b8',
+    shadowOffset: { width: 0, height: -6 },
+    shadowOpacity: 0.16,
+    shadowRadius: 16,
+    elevation: 12,
   },
   hero: {
     alignItems: 'center',
@@ -523,16 +568,16 @@ const styles = StyleSheet.create({
   fineprint: {
     color: colors.inkMuted,
     textAlign: 'center',
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: spacing.sm,
     lineHeight: 18,
-    marginTop: spacing.lg,
+    marginTop: 0,
   },
   legalRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.xs,
-    marginTop: spacing.sm,
+    marginTop: 0,
   },
   legalLink: {
     color: colors.inkSecondary,
