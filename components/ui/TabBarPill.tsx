@@ -77,8 +77,8 @@ export function TabBarPill({ tabs, activeKey, onChange }: Props) {
   );
 }
 
-const ICON_INACTIVE = 38;
-const ICON_ACTIVE = 44;
+const ICON_INACTIVE = 42;
+const ICON_ACTIVE = 50;
 
 const styles = StyleSheet.create({
   wrap: {
@@ -101,8 +101,10 @@ const styles = StyleSheet.create({
     maxWidth: 460,
   },
   bar: {
+    // J1: taller, more comfortable bar (was paddingVertical 6 + 44 icon ≈
+    // 56px; now ~50 icon + 12×2 ≈ 74px).
     paddingHorizontal: spacing.lg,
-    paddingVertical: 6,
+    paddingVertical: 12,
   },
   row: {
     flexDirection: 'row',
