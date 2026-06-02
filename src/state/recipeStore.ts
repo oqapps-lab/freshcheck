@@ -60,6 +60,14 @@ export function clearRecipes() {
   emit();
 }
 
+/** Remove a single recipe from the current batch (L3 — per-recipe delete). */
+export function removeRecipe(id: string) {
+  list = list.filter((r) => r.id !== id);
+  reindex();
+  persist();
+  emit();
+}
+
 export function subscribeRecipes(fn: () => void): () => void {
   listeners.add(fn);
   return () => {

@@ -10,7 +10,7 @@ import { SoftInset } from '@/components/ui/SoftInset';
 import { PrimaryPillCTA } from '@/components/ui/PrimaryPillCTA';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Menu, Settings, BarcodeScanner, ShoppingBasket, Nutrition, Chevron } from '@/components/ui/Glyphs';
-import { colors, layout, spacing, typeScale } from '@/constants/tokens';
+import { colors, layout, spacing, typeScale, shadowReach } from '@/constants/tokens';
 import { useFridge } from '@/src/hooks/useFridge';
 
 type FilterValue = 'all' | 'produce' | 'dairy' | 'poultry' | 'meat' | 'fish' | 'bakery' | 'pantry';
@@ -308,14 +308,12 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   filterScroll: {
-    paddingHorizontal: 8,
-    // A horizontal ScrollView clips its content to its own frame height.
-    // The raised pills cast a drop shadow ~20px below + a white highlight
-    // ~18px above; with only paddingBottom:8 the bottom shadow was sliced
-    // off (user-flagged "тени режутся снизу"). Give vertical room so the
-    // full neumorphic shadow renders inside the scroll frame.
-    paddingTop: 10,
-    paddingBottom: 24,
+    // A horizontal ScrollView clips content to its frame. Pad ≥ the pill
+    // shadow reach on EVERY side (top was clipping — user-flagged) so the
+    // raised pills' shadows render fully inside the frame.
+    paddingHorizontal: shadowReach.pill,
+    paddingTop: shadowReach.pill,
+    paddingBottom: shadowReach.pill + 4,
   },
   filterFade: {
     position: 'absolute',

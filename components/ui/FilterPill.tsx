@@ -3,7 +3,7 @@ import { View, Text, Pressable, StyleSheet } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { SoftSurface } from './SoftSurface';
 import { SoftInset } from './SoftInset';
-import { colors, spacing, typeScale } from '@/constants/tokens';
+import { colors, spacing, typeScale, shadowReach } from '@/constants/tokens';
 
 type Option<T extends string> = { value: T; label: string };
 
@@ -70,7 +70,9 @@ export function FilterPillRow<T extends string>({ options, value, onChange }: Pr
 const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
-    gap: spacing.sm,
+    // gap ≥ pill shadow reach so adjacent pills don't clip each other's
+    // side shadows.
+    gap: shadowReach.pill,
   },
   pill: {
     paddingVertical: 10,

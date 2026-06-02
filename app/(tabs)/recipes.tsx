@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -7,27 +7,30 @@ import {
   StyleSheet,
   Image,
   ActivityIndicator,
-  Alert,
   Modal,
+  Animated,
+  Easing,
+  Dimensions,
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { IconButton } from '@/components/ui/IconButton';
 import { SoftSurface } from '@/components/ui/SoftSurface';
 import { SoftInset } from '@/components/ui/SoftInset';
+import { PrimaryPillCTA } from '@/components/ui/PrimaryPillCTA';
 import { RecipeCookingLoader } from '@/components/ui/RecipeCookingLoader';
 import { Shimmer } from '@/components/ui/Shimmer';
-import { Check, Chevron, Sparkle, Star, Trash } from '@/components/ui/Glyphs';
+import { FadeIn } from '@/components/ui/FadeIn';
+import { Check, Chevron, Close, Sparkle, Star } from '@/components/ui/Glyphs';
 import { useRecipes, type Recipe } from '@/src/hooks/useRecipes';
 import { useFridge } from '@/src/hooks/useFridge';
-import { clearRecipes } from '@/src/state/recipeStore';
+import { removeRecipe } from '@/src/state/recipeStore';
 import {
   useFavorites,
   toggleFavorite,
   hydrateFavorites,
 } from '@/src/state/favoritesStore';
-import { colors, layout, spacing, typeScale } from '@/constants/tokens';
+import { colors, layout, spacing, typeScale, shadowReach } from '@/constants/tokens';
 
 // Difficulty != freshness. `hard: red` overlapped with the `past`
 // (spoiled-food) verdict colour, so a recipe labelled HARD read as a
@@ -73,22 +76,43 @@ export default function RecipesTab() {
     toggleFavorite(recipe);
   };
 
-  const onClear = () => {
-    Haptics.selectionAsync().catch(() => {});
-    Alert.alert(
-      'Clear these recipes?',
-      'Removes the current picks. Saved (★) recipes are kept. You can generate fresh ones anytime.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Clear', style: 'destructive', onPress: () => clearRecipes() },
-      ],
-    );
+  const onDeleteRecipe = (id: string) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    removeRecipe(id); // L3 — per-recipe delete; favorites are kept separately.
   };
 
   // K7: ingredient picker. Empty fridge → straight to starter recipes;
   // otherwise let the user tick which items to cook with, then generate.
   const [selectorOpen, setSelectorOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
+  // L7: the backdrop dims the WHOLE screen at once (Modal has no animation);
+  // only the sheet slides up via this Animated value.
+  const screenH = Dimensions.get('window').height;
+  const sheetY = useRef(new Animated.Value(screenH)).current;
+  useEffect(() => {
+    if (selectorOpen) {
+      sheetY.setValue(screenH);
+      Animated.timing(sheetY, {
+        toValue: 0,
+        duration: 300,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [selectorOpen, screenH, sheetY]);
+
+  const closeSheet = (after?: () => void) => {
+    Animated.timing(sheetY, {
+      toValue: screenH,
+      duration: 220,
+      easing: Easing.in(Easing.cubic),
+      useNativeDriver: true,
+    }).start(() => {
+      setSelectorOpen(false);
+      after?.();
+    });
+  };
 
   const openGenerate = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
@@ -103,8 +127,8 @@ export default function RecipesTab() {
   const confirmGenerate = () => {
     if (selectedIds.size === 0) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
-    setSelectorOpen(false);
-    refresh({ itemIds: Array.from(selectedIds) });
+    const ids = Array.from(selectedIds);
+    closeSheet(() => refresh({ itemIds: ids }));
   };
 
   const toggleItem = (id: string) => {
@@ -120,20 +144,7 @@ export default function RecipesTab() {
   return (
     <View style={styles.root}>
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-        {recipes.length > 0 && status !== 'loading' ? (
-          <IconButton accessibilityLabel="clear recipes" onPress={onClear}>
-            <Trash size={20} color={colors.inkSecondary} strokeWidth={2} />
-          </IconButton>
-        ) : (
-          <View style={styles.headerSpacer} />
-        )}
         <Text style={[typeScale.wordmark, styles.eyebrow]}>RECIPES</Text>
-        <IconButton
-          accessibilityLabel="regenerate recipes"
-          onPress={status === 'loading' ? () => {} : openGenerate}
-        >
-          <Sparkle size={20} color={status === 'loading' ? colors.inkMuted : colors.amber} strokeWidth={1.8} />
-        </IconButton>
       </View>
 
       <ScrollView
@@ -163,6 +174,37 @@ export default function RecipesTab() {
           )}
         </View>
 
+        {/* L4 — the generate entry is a clear BLOCK right under the heading
+            (was a non-obvious top-right icon). Opens the ingredient picker
+            for a real fridge, or makes starter recipes for an empty one. */}
+        {ready && status !== 'loading' && (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={fridgeEmpty ? 'generate starter recipes' : 'choose ingredients and cook'}
+            onPress={openGenerate}
+            style={({ pressed }) => [styles.cookBlockWrap, { opacity: pressed ? 0.9 : 1 }]}
+          >
+            <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cookBlock}>
+              <View style={styles.cookIcon}>
+                <Sparkle size={22} color={colors.amber} strokeWidth={1.8} />
+              </View>
+              <View style={styles.cookText}>
+                <Text style={[typeScale.titleMedium, { color: colors.ink }]}>
+                  {fridgeEmpty
+                    ? 'Generate starter recipes'
+                    : recipes.length > 0
+                      ? 'Cook with different ingredients'
+                      : 'Choose ingredients & cook'}
+                </Text>
+                <Text style={[typeScale.bodySmall, styles.cookSub]}>
+                  {fridgeEmpty ? '3 simple ideas you can shop for' : 'Pick what to use → 3 fresh recipes'}
+                </Text>
+              </View>
+              <Chevron size={18} color={colors.inkMuted} />
+            </SoftSurface>
+          </Pressable>
+        )}
+
         {/* Settling state — wait for hydration + fridge load before deciding
             between idle/empty/recipes. Show shimmer recipe cards, not a bare
             spinner, so it reads as content loading. */}
@@ -187,35 +229,6 @@ export default function RecipesTab() {
               Your fridge is empty — these are generic starter ideas. Scan a few items first for recipes built around what you actually have.
             </Text>
           </SoftSurface>
-        )}
-
-        {ready && status === 'idle' && recipes.length === 0 && (
-          <View style={styles.idleState}>
-            <SoftSurface variant="cushion" radius="full" innerStyle={styles.idleIcon}>
-              <Sparkle size={56} color={colors.amber} strokeWidth={1.6} />
-            </SoftSurface>
-            <Text style={[typeScale.titleLarge, styles.idleTitle]}>
-              {fridgeEmpty ? 'Try AI starter recipes' : 'Pick a recipe in 10 seconds'}
-            </Text>
-            <Text style={[typeScale.bodySmall, styles.idleSub]}>
-              {fridgeEmpty
-                ? 'No fridge items yet — get 3 simple ideas you can shop for.'
-                : `We'll dream up 3 recipes from the ${fridgeItems.length} items in your fridge, prioritizing what expires soon.`}
-            </Text>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Generate recipes"
-              onPress={openGenerate}
-              style={({ pressed }) => [styles.idleCta, { opacity: pressed ? 0.85 : 1 }]}
-            >
-              <SoftSurface variant="cushion" radius="full" innerStyle={styles.idleCtaInner}>
-                <Sparkle size={20} color={colors.amber} strokeWidth={1.8} />
-                <Text style={[typeScale.titleMedium, styles.idleCtaText]}>
-                  Generate recipes
-                </Text>
-              </SoftSurface>
-            </Pressable>
-          </View>
         )}
 
         {status === 'loading' && recipes.length === 0 && (
@@ -257,6 +270,7 @@ export default function RecipesTab() {
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
+              style={styles.savedScrollOuter}
               contentContainerStyle={styles.savedScroll}
             >
               {favorites.map((recipe) => (
@@ -288,9 +302,9 @@ export default function RecipesTab() {
         )}
 
         <View style={styles.list}>
-          {recipes.map((recipe) => (
+          {recipes.map((recipe, idx) => (
+            <FadeIn key={recipe.id} delay={idx * 80}>
             <Pressable
-              key={recipe.id}
               accessibilityRole="button"
               accessibilityLabel={`${recipe.name}, ${recipe.minutes} minutes`}
               onPress={() => onOpen(recipe)}
@@ -325,6 +339,16 @@ export default function RecipesTab() {
                     hitSlop={8}
                   >
                     <Star size={20} color={favIds.has(recipe.id) ? colors.amber : colors.surfaceWhite} filled={favIds.has(recipe.id)} strokeWidth={2} />
+                  </Pressable>
+                  {/* L3 — remove this recipe from the batch (favorites kept). */}
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={`remove ${recipe.name}`}
+                    onPress={() => onDeleteRecipe(recipe.id)}
+                    style={styles.deleteBtn}
+                    hitSlop={8}
+                  >
+                    <Close size={18} color={colors.surfaceWhite} strokeWidth={2.4} />
                   </Pressable>
                 </View>
 
@@ -371,15 +395,18 @@ export default function RecipesTab() {
                 </View>
               </SoftSurface>
             </Pressable>
+            </FadeIn>
           ))}
         </View>
       </ScrollView>
 
       {/* K7 — ingredient picker before generating. */}
-      <Modal visible={selectorOpen} transparent animationType="slide" onRequestClose={() => setSelectorOpen(false)}>
+      {/* L7: animationType="none" → the dim backdrop appears instantly over
+          the whole screen; only the sheet slides up (sheetY). */}
+      <Modal visible={selectorOpen} transparent animationType="none" onRequestClose={() => closeSheet()}>
         <View style={styles.sheetBackdropView}>
-          <Pressable style={StyleSheet.absoluteFill} onPress={() => setSelectorOpen(false)} accessibilityLabel="close" />
-          <View style={[styles.sheet, { paddingBottom: insets.bottom + spacing.lg }]}>
+          <Pressable style={StyleSheet.absoluteFill} onPress={() => closeSheet()} accessibilityLabel="close" />
+          <Animated.View style={[styles.sheet, { paddingBottom: insets.bottom + spacing.lg, transform: [{ translateY: sheetY }] }]}>
             <View style={styles.sheetHandle} />
             <Text style={[typeScale.titleLarge, styles.sheetTitle]}>Cook with what?</Text>
             <Text style={[typeScale.bodySmall, styles.sheetSub]}>
@@ -408,19 +435,15 @@ export default function RecipesTab() {
                 );
               })}
             </ScrollView>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel={`generate recipes from ${selectedIds.size} items`}
-              onPress={confirmGenerate}
-              disabled={selectedIds.size === 0}
-              style={({ pressed }) => [styles.sheetCta, { opacity: selectedIds.size === 0 ? 0.4 : pressed ? 0.85 : 1 }]}
-            >
-              <Sparkle size={20} color={colors.surfaceWhite} strokeWidth={2} />
-              <Text style={[typeScale.titleMedium, styles.sheetCtaText]}>
-                {`Generate from ${selectedIds.size} item${selectedIds.size === 1 ? '' : 's'}`}
-              </Text>
-            </Pressable>
-          </View>
+            {/* L6: our standard pill CTA, not a flat green button. */}
+            <View style={[styles.sheetCtaWrap, { opacity: selectedIds.size === 0 ? 0.4 : 1 }]}>
+              <PrimaryPillCTA
+                label={`Generate from ${selectedIds.size} item${selectedIds.size === 1 ? '' : 's'}`}
+                onPress={confirmGenerate}
+                iconLeft={<Sparkle size={20} color={colors.amber} strokeWidth={2} />}
+              />
+            </View>
+          </Animated.View>
         </View>
       </Modal>
     </View>
@@ -487,6 +510,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xl,
   },
   idleCtaText: { color: colors.ink },
+  cookBlockWrap: { marginHorizontal: 8, marginBottom: spacing.xl },
+  cookBlock: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.lg,
+  },
+  cookIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: colors.canvas,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cookText: { flex: 1, gap: 2 },
+  cookSub: { color: colors.inkSecondary },
   savedSection: { marginBottom: spacing.xl },
   savedHeader: {
     color: colors.amber,
@@ -494,8 +535,13 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     marginBottom: spacing.sm,
   },
-  savedScroll: { paddingHorizontal: 8, paddingTop: spacing.sm, paddingBottom: spacing.lg, gap: spacing.md },
-  savedChip: { width: 128, marginRight: spacing.md },
+  savedScrollOuter: { marginHorizontal: -layout.screenPadding },
+  savedScroll: {
+    paddingHorizontal: layout.screenPadding,
+    paddingVertical: shadowReach.cushion,
+    gap: shadowReach.cushion,
+  },
+  savedChip: { width: 128 },
   savedChipInner: { padding: 0, overflow: 'hidden' },
   savedThumbWrap: { width: '100%', aspectRatio: 16 / 10, backgroundColor: colors.surfaceTint },
   savedThumb: { width: '100%', height: '100%' },
@@ -505,6 +551,17 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: spacing.sm,
     right: spacing.sm,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(15, 23, 42, 0.35)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  deleteBtn: {
+    position: 'absolute',
+    top: spacing.sm,
+    left: spacing.sm,
     width: 36,
     height: 36,
     borderRadius: 18,
@@ -591,15 +648,5 @@ const styles = StyleSheet.create({
   checkboxOn: { backgroundColor: colors.primary, borderColor: colors.primary },
   sheetItemName: { flex: 1, color: colors.ink },
   sheetItemDays: { color: colors.inkSecondary },
-  sheetCta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-    backgroundColor: colors.primary,
-    borderRadius: 999,
-    paddingVertical: spacing.lg,
-    marginTop: spacing.lg,
-  },
-  sheetCtaText: { color: colors.surfaceWhite },
+  sheetCtaWrap: { marginTop: spacing.lg },
 });

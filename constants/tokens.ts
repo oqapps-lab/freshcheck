@@ -159,32 +159,36 @@ export const shadows = {
   // by neighbouring opaque surfaces. See memory `neumorphic-shadow-clipping`:
   // the user repeatedly caught shadows sliced on all four sides because the
   // old 12/14 offset + 18 blur (~30px reach) overran tight gaps.
+  // reach ≈ |offset| + blur. Kept small (~16 cushion / ~12 pill) so a card's
+  // shadow fits inside normal gaps/padding and is NEVER clipped by neighbours
+  // or a ScrollView frame. SHADOW_REACH below documents the budget callers
+  // must leave around any SoftSurface. See memory neumorphic-shadow-clipping.
   cushionDrop: {
-    shadowColor: '#94a3b8',     // slate-400 — slightly darker than CSS slate-300 to compensate for RN's softer rendering
-    shadowOffset: { width: 7, height: 9 },
+    shadowColor: '#94a3b8',     // slate-400
+    shadowOffset: { width: 5, height: 6 },
     shadowOpacity: 0.5,
-    shadowRadius: 13,
+    shadowRadius: 10,
     elevation: 8,
   },
   cushionHighlight: {
     shadowColor: '#ffffff',
-    shadowOffset: { width: -7, height: -7 },
+    shadowOffset: { width: -5, height: -5 },
     shadowOpacity: 1,
-    shadowRadius: 13,
+    shadowRadius: 10,
     elevation: 0,
   },
   pillDrop: {
     shadowColor: '#94a3b8',
-    shadowOffset: { width: 6, height: 8 },
+    shadowOffset: { width: 4, height: 5 },
     shadowOpacity: 0.45,
-    shadowRadius: 12,
+    shadowRadius: 8,
     elevation: 6,
   },
   pillHighlight: {
     shadowColor: '#ffffff',
-    shadowOffset: { width: -6, height: -6 },
+    shadowOffset: { width: -4, height: -4 },
     shadowOpacity: 1,
-    shadowRadius: 12,
+    shadowRadius: 8,
     elevation: 0,
   },
   // Soft floating overlay (tab bar, modals)
@@ -202,6 +206,15 @@ export const shadows = {
     shadowRadius: 0,
     elevation: 0,
   },
+} as const;
+
+// Space a container MUST leave around a SoftSurface so its shadow isn't
+// clipped (by a sibling's opaque skin or a ScrollView frame). reach ≈
+// |offset| + blur, rounded up. Use as gap/padding around cushion/pill cards,
+// especially inside horizontal ScrollViews (which clip to their frame).
+export const shadowReach = {
+  cushion: 18,
+  pill: 14,
 } as const;
 
 // Inset rim widths (px) — for SoftInset overlays (RN has no native inset shadow)

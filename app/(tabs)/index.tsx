@@ -9,7 +9,7 @@ import { BarcodeScanner, Bowl, Chevron, Sparkle } from '@/components/ui/Glyphs';
 import { useFavorites, hydrateFavorites } from '@/src/state/favoritesStore';
 import { getRecipeList, hydrateRecipes } from '@/src/state/recipeStore';
 import type { Recipe } from '@/src/hooks/useRecipes';
-import { colors, typeScale, spacing, layout } from '@/constants/tokens';
+import { colors, typeScale, spacing, layout, shadowReach } from '@/constants/tokens';
 
 // Curated, honest food-safety mini-articles. Static (no backend) — these
 // give the user a reason to come back and learn, per the user's request.
@@ -124,6 +124,7 @@ export default function HomeScreen() {
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
+          style={styles.tipsScrollOuter}
           contentContainerStyle={styles.tipsScroll}
         >
           {TIPS.map((tip) => (
@@ -206,14 +207,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
   },
   rotdEmptyText: { flex: 1, color: colors.ink },
-  // paddingVertical gives the cards' top+bottom shadows room inside the
-  // horizontal ScrollView (which clips to its frame height); paddingRight so
-  // the last card's right shadow isn't clipped. gap between cards.
+  // The carousel breaks out of the screen's horizontal padding (negative
+  // margin) so its frame is full-width; the contentContainer then re-insets
+  // by screenPadding AND pads ≥ shadowReach on every side + uses a gap ≥
+  // reach between cards. Result: every card's shadow renders inside the
+  // full-width frame and never clips (top/bottom/left/right).
+  tipsScrollOuter: { marginHorizontal: -layout.screenPadding },
   tipsScroll: {
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.lg,
-    paddingRight: spacing.xl,
-    gap: spacing.md,
+    paddingHorizontal: layout.screenPadding,
+    paddingVertical: shadowReach.cushion,
+    gap: shadowReach.cushion,
   },
   tipCard: {
     width: 240,
