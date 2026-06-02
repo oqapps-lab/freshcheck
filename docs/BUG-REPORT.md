@@ -193,6 +193,48 @@ Flat green button → `PrimaryPillCTA` (neumorphic pill + sparkle). **Verified o
 Modal `animationType=none` → the dim backdrop covers the whole screen at once;
 only the sheet slides up (Animated translateY). **Verified on sim.**
 
+## M. Full screen QA pass (2026-06-02) — padding / shadows / content
+
+Visual walk (Home, Profile, Fridge, Capture, Recipes, Recipe detail, Paywall)
+on the iPhone 17 Pro sim + a code-level layout audit of every screen.
+
+### M1 — Food scan upload times out ("upload: Network request timed out") ✅ `613023e`
+HIGH. The scan upload used `new File(uri).arrayBuffer()` as the storage body.
+supabase-js's own source documents that React Native cannot serialize a
+Blob/File/FormData/fetch-derived ArrayBuffer upload body — it must be an
+ArrayBuffer decoded from the file's **base64**. Switched to
+`File.base64()` + `base64-arraybuffer` `decode()` (added the dep). Backend +
+`scans` bucket verified healthy/fast from the Mac (200 in 0.47s); anon auth +
+functions.invoke both work from the sim. **Not verifiable on the simulator** —
+the sim times out on the storage upload by EVERY method tried (File.arrayBuffer,
+fetch().arrayBuffer, base64+decode) while functions.invoke works, i.e. a sim
+transport quirk on storage uploads. **Must be verified on a real device (#53).**
+
+### M2 — Standard OS Alert used app-wide ✅ `8345ca2` `ea65b6a`
+MED (L5 app-wide). ~40 `Alert.alert` + 1 `Alert.prompt` across auth, profile,
+fridge, paywall, scan-result, scan-batch, capture, adapty. Added a custom
+neumorphic AlertHost + alertStore (`showAlert`/`showPrompt`, mounted at root)
+and migrated every site. **Verified on sim** — the scan-failed dialog now
+renders in our style.
+
+### M3 — Home "recipe of the day" stale (empty CTA despite recipes) ✅ `161cdaf`
+MED. Home read the list once at mount and never re-rendered after async
+hydration. Added `useRecipeList()` (useSyncExternalStore). **Verified on sim** —
+now shows the real recipe.
+
+### M4 — Paywall plan cards: shadow clip ✅ `6988f82`
+MED. `plansBlock` gap 16 < cushion reach 18 → 20.
+
+### M5 — Recipe step cards: shadow clip ✅ `6988f82`
+MED. `stepsList` gap 16 < cushion reach 18 → 20.
+
+### M6 — Recipe detail: content collides with status bar on scroll ⬜
+LOW (polish). On scroll the meta row / section titles pass under the status
+bar + floating back/star with no masking header background → brief text
+collision with the clock/wifi. Deferred — needs a blur/opaque sticky header or
+a top fade. Everything else (Profile, Fridge, Capture, scan-result, scan-batch,
+auth, onboarding) audited clean: safe-areas, bottom clearance, no clipping.
+
 ## Watch-list (not bugs)
 - Post-purchase transition to the next screen was slow on the user's device —
   likely StoreKit sandbox latency, not a code issue. Re-check on a real
