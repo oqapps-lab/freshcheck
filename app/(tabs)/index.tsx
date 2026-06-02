@@ -7,7 +7,7 @@ import { SoftSurface } from '@/components/ui/SoftSurface';
 import { SoftInset } from '@/components/ui/SoftInset';
 import { BarcodeScanner, Bowl, Chevron, Sparkle } from '@/components/ui/Glyphs';
 import { useFavorites, hydrateFavorites } from '@/src/state/favoritesStore';
-import { getRecipeList, hydrateRecipes } from '@/src/state/recipeStore';
+import { useRecipeList, hydrateRecipes } from '@/src/state/recipeStore';
 import type { Recipe } from '@/src/hooks/useRecipes';
 import { colors, typeScale, spacing, layout, shadowReach } from '@/constants/tokens';
 
@@ -30,6 +30,7 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const favorites = useFavorites();
+  const recipes = useRecipeList();
 
   useEffect(() => {
     void hydrateFavorites();
@@ -42,7 +43,7 @@ export default function HomeScreen() {
   };
 
   // Recipe of the day: a favorite if any, else the latest generated batch.
-  const recipeOfDay: Recipe | undefined = favorites[0] ?? getRecipeList()[0];
+  const recipeOfDay: Recipe | undefined = favorites[0] ?? recipes[0];
 
   return (
     <View style={styles.root}>

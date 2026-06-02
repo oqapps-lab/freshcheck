@@ -1,3 +1,4 @@
+import { useSyncExternalStore } from 'react';
 import type { Recipe } from '@/src/hooks/useRecipes';
 import { safeStorage, STORAGE_KEYS } from '@/src/lib/safeStorage';
 
@@ -66,6 +67,16 @@ export function removeRecipe(id: string) {
   reindex();
   persist();
   emit();
+}
+
+/**
+ * React hook over the recipe list. Subscribes so consumers re-render when
+ * recipes hydrate / change — Home's "recipe of the day" was stale (showed the
+ * empty "generate" CTA even with recipes present) because it read the list
+ * once at mount and never re-rendered after async hydrateRecipes() resolved.
+ */
+export function useRecipeList(): Recipe[] {
+  return useSyncExternalStore(subscribeRecipes, getRecipeList, getRecipeList);
 }
 
 export function subscribeRecipes(fn: () => void): () => void {
