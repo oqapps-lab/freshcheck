@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { View, Text, ScrollView, Pressable, StyleSheet, Linking, Image } from 'react-native';
-import { showAlert } from '@/src/state/alertStore';
+import { showAlert, showPrompt } from '@/src/state/alertStore';
 import * as Haptics from 'expo-haptics';
 import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
@@ -71,15 +71,14 @@ export default function ProfileScreen() {
 
   const onEditName = () => {
     Haptics.selectionAsync().catch(() => {});
-    Alert.prompt?.(
+    showPrompt(
       'Your name',
       'How should we call you?',
       [
         { text: 'Cancel', style: 'cancel' },
         { text: 'Save', onPress: (text?: string) => setDisplayName(text ?? null) },
       ],
-      'plain-text',
-      localProfile.displayName ?? '',
+      { defaultValue: localProfile.displayName ?? '' },
     );
   };
 

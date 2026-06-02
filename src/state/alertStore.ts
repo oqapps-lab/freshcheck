@@ -1,29 +1,55 @@
 /**
- * App-wide custom alert store. The user requires OUR neumorphic dialog
- * everywhere — never the standard OS Alert. `showAlert` mirrors the
- * React Native `Alert.alert(title, message, buttons)` signature so call
- * sites are a drop-in replacement. <AlertHost/> (mounted at root) renders it.
+ * App-wide custom alert/prompt store. The user requires OUR neumorphic dialog
+ * everywhere — never the standard OS Alert. `showAlert` mirrors React Native's
+ * `Alert.alert(title, message, buttons)` and `showPrompt` replaces the iOS-only
+ * `Alert.prompt` (a text field whose value is passed to the button's onPress).
+ * <AlertHost/> (mounted at root) renders both.
  */
 export type AlertButtonStyle = 'default' | 'cancel' | 'destructive';
-export type AlertButton = { text: string; onPress?: () => void; style?: AlertButtonStyle };
-type AlertState = { title: string; message?: string; buttons: AlertButton[] } | null;
+export type AlertButton = {
+  text: string;
+  onPress?: (value?: string) => void;
+  style?: AlertButtonStyle;
+};
+type AlertState = {
+  title: string;
+  message?: string;
+  buttons: AlertButton[];
+  prompt?: boolean;
+  defaultValue?: string;
+  placeholder?: string;
+} | null;
 
 let current: AlertState = null;
 const listeners = new Set<() => void>();
+const emit = () => listeners.forEach((l) => l());
 
 export function showAlert(title: string, message?: string, buttons?: AlertButton[]): void {
+  current = { title, message, buttons: buttons && buttons.length > 0 ? buttons : [{ text: 'OK' }] };
+  emit();
+}
+
+export function showPrompt(
+  title: string,
+  message?: string,
+  buttons?: AlertButton[],
+  opts?: { defaultValue?: string; placeholder?: string },
+): void {
   current = {
     title,
     message,
     buttons: buttons && buttons.length > 0 ? buttons : [{ text: 'OK' }],
+    prompt: true,
+    defaultValue: opts?.defaultValue,
+    placeholder: opts?.placeholder,
   };
-  listeners.forEach((l) => l());
+  emit();
 }
 
 export function dismissAlert(): void {
   if (current === null) return;
   current = null;
-  listeners.forEach((l) => l());
+  emit();
 }
 
 export function getAlert(): AlertState {
