@@ -1,4 +1,6 @@
 import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
+import { File } from 'expo-file-system';
+import { decode } from 'base64-arraybuffer';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { LastScan } from '@/src/state/lastScan';
 
@@ -24,11 +26,12 @@ async function compressAndUpload(
     [{ resize: { width: 1024 } }],
     { compress: 0.7, format: SaveFormat.JPEG },
   );
-  // RN: expo-file-system File.arrayBuffer() produces an upload body the RN
-  // network layer fails to serialize — the storage PUT stalls and surfaces as
-  // "Network request timed out". Fetching the local file:// URI and reading its
-  // arrayBuffer is the Supabase-documented React Native upload path.
-  const bytes = await fetch(resized.uri).then((r) => r.arrayBuffer());
+  // React Native cannot serialize a Blob / File / FormData / fetch-derived
+  // ArrayBuffer as a storage upload body — the PUT stalls and surfaces as
+  // "Network request timed out". Per supabase-js's own RN guidance, upload an
+  // ArrayBuffer decoded from the file's base64 string.
+  const base64 = await new File(resized.uri).base64();
+  const bytes = decode(base64);
   // Date.now() + a random suffix so two near-simultaneous uploads can't
   // collide on the same object key.
   const imagePath = `${userId}/scan_${Date.now()}_${Math.floor(Math.random() * 1e6)}.jpg`;
