@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet, Alert, Linking, Animated, type LayoutChangeEvent } from 'react-native';
+import { View, Text, ScrollView, Pressable, StyleSheet, Linking, Animated, type LayoutChangeEvent } from 'react-native';
+import { showAlert } from '@/src/state/alertStore';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -112,17 +113,17 @@ export default function PaywallScreen() {
         // optimise on trial-start events.
         void logTrialStartEvent(PRODUCT_BY_PLAN[plan]);
         afLogTrialStart(PRODUCT_BY_PLAN[plan], PRICE_USD[plan]);
-        Alert.alert('Welcome to Pro', 'Your free trial has started. Generate unlimited AI recipes from your fridge!');
+        showAlert('Welcome to Pro', 'Your free trial has started. Generate unlimited AI recipes from your fridge!');
         dismiss();
       } else if (r.error === 'cancelled') {
         // user-cancelled → no toast
       } else if (r.error === 'pending') {
-        Alert.alert('Awaiting approval', 'Your purchase is pending Apple ID approval.');
+        showAlert('Awaiting approval', 'Your purchase is pending Apple ID approval.');
       } else if (r.error === 'adapty-not-configured' || r.error === 'adapty-sdk-missing') {
         // SDK already shows its own alert
       } else {
         recordError(new Error(`startTrial: ${r.error ?? 'unknown'}`), 'paywall-start-trial');
-        Alert.alert('Purchase failed', r.error ?? 'Unknown error');
+        showAlert('Purchase failed', r.error ?? 'Unknown error');
       }
     } finally {
       setBusy(false);
@@ -136,14 +137,14 @@ export default function PaywallScreen() {
     try {
       const r = await restorePurchases();
       if (r.ok) {
-        Alert.alert('Restored', 'Your subscription is active again.');
+        showAlert('Restored', 'Your subscription is active again.');
         dismiss();
       } else if (r.error === 'no-active-subscription') {
-        Alert.alert('Nothing to restore', 'No active subscription was found on this Apple ID.');
+        showAlert('Nothing to restore', 'No active subscription was found on this Apple ID.');
       } else if (r.error === 'adapty-not-configured' || r.error === 'adapty-sdk-missing') {
         // SDK already shows its own alert
       } else {
-        Alert.alert('Restore failed', r.error ?? 'Unknown error');
+        showAlert('Restore failed', r.error ?? 'Unknown error');
       }
     } finally {
       setBusy(false);
@@ -152,7 +153,7 @@ export default function PaywallScreen() {
 
   const openUrl = (url: string) => {
     Haptics.selectionAsync().catch(() => {});
-    Linking.openURL(url).catch((e) => Alert.alert('Could not open link', String(e)));
+    Linking.openURL(url).catch((e) => showAlert('Could not open link', String(e)));
   };
 
   const ctaLabel = busy ? 'Processing…' : 'Start 3-day free trial';

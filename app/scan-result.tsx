@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet, Image, Alert } from 'react-native';
+import { View, Text, ScrollView, Pressable, StyleSheet, Image } from 'react-native';
+import { showAlert } from '@/src/state/alertStore';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -71,7 +72,7 @@ export default function ScanResultScreen() {
   const onAddToFridge = async () => {
     if (!last) return;
     if (!signedIn) {
-      Alert.alert('Sign in required', 'Sign in to save items to your fridge.', [
+      showAlert('Sign in required', 'Sign in to save items to your fridge.', [
         { text: 'Cancel', style: 'cancel' },
         { text: 'Sign in', onPress: () => router.push('/auth') },
       ]);
@@ -92,7 +93,7 @@ export default function ScanResultScreen() {
       source_scan_id: last.scanId,
     });
     if (result?.error) {
-      Alert.alert('Could not save', result.error);
+      showAlert('Could not save', result.error);
       return;
     }
     setLastScan(null);

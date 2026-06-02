@@ -4,6 +4,7 @@ import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { AlertHost } from '@/components/ui/AlertHost';
 import { StatusBar } from 'expo-status-bar';
 import { SoftSurface } from '@/components/ui/SoftSurface';
 import { PrimaryPillCTA } from '@/components/ui/PrimaryPillCTA';
@@ -187,6 +188,7 @@ export default function RootLayout() {
           <Stack.Screen name="recipe/[id]" options={{ presentation: 'card', headerShown: false }} />
           <Stack.Screen name="onboarding" options={{ presentation: 'card', animation: 'fade' }} />
         </Stack>
+        <AlertHost />
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

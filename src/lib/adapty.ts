@@ -20,7 +20,8 @@
 //                `com.gazetastreet.freshcheck.monthly`
 //                `com.gazetastreet.freshcheck.annual`
 
-import { Alert, Platform } from 'react-native';
+import { Platform } from 'react-native';
+import { showAlert } from '@/src/state/alertStore';
 import { env, isAdaptyConfigured } from './env';
 
 type Plan = 'weekly' | 'monthly' | 'annual';
@@ -113,7 +114,7 @@ export async function startTrial(params: {
   plan: Plan;
 }): Promise<{ ok: boolean; error?: string }> {
   if (!isAdaptyConfigured()) {
-    Alert.alert(
+    showAlert(
       'Stub purchase',
       `Adapty key is not set. Add EXPO_PUBLIC_ADAPTY_PUBLIC_KEY to .env then build a dev-client.`,
     );
@@ -121,7 +122,7 @@ export async function startTrial(params: {
   }
   const sdk = getSdk();
   if (!sdk) {
-    Alert.alert(
+    showAlert(
       'Dev-client required',
       `Real purchases need a dev-client build (${Platform.OS}). Run \`eas build --profile development --platform ${Platform.OS}\` and reinstall.`,
     );
@@ -155,7 +156,7 @@ export async function startTrial(params: {
 
 export async function restorePurchases(): Promise<{ ok: boolean; error?: string }> {
   if (!isAdaptyConfigured()) {
-    Alert.alert('No Adapty key', 'Set EXPO_PUBLIC_ADAPTY_PUBLIC_KEY then rebuild.');
+    showAlert('No Adapty key', 'Set EXPO_PUBLIC_ADAPTY_PUBLIC_KEY then rebuild.');
     return { ok: false, error: 'adapty-not-configured' };
   }
   const sdk = getSdk();

@@ -7,9 +7,9 @@ import {
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
-  Alert,
   Linking,
 } from 'react-native';
+import { showAlert } from '@/src/state/alertStore';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { IconButton } from '@/components/ui/IconButton';
@@ -86,14 +86,14 @@ export default function AuthScreen() {
     const trimmedEmail = email.trim();
     const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail);
     if (!emailOk || password.length < 6) {
-      Alert.alert(
+      showAlert(
         isSignIn ? 'Sign in failed' : 'Sign up failed',
         'Enter a valid email and a password of at least 6 characters.',
       );
       return;
     }
     if (!configured) {
-      Alert.alert(
+      showAlert(
         isSignIn ? 'Sign in' : 'Sign up',
         'Supabase is not configured in this build. Continue as guest to keep using the app locally.',
       );
@@ -104,7 +104,7 @@ export default function AuthScreen() {
       const { error } = await signInWithEmail(trimmedEmail, password);
       setSubmitting(false);
       if (error) {
-        Alert.alert('Sign in failed', error);
+        showAlert('Sign in failed', error);
         return;
       }
       dismiss();
@@ -113,13 +113,13 @@ export default function AuthScreen() {
     const { error, needsEmailConfirmation } = await signUpWithEmail(trimmedEmail, password);
     setSubmitting(false);
     if (error) {
-      Alert.alert('Sign up failed', error);
+      showAlert('Sign up failed', error);
       return;
     }
     if (needsEmailConfirmation) {
       // Supabase email-confirmation flow. Without this prompt the user
       // is dropped into the tabs as a guest with no idea why nothing works.
-      Alert.alert(
+      showAlert(
         'Check your email',
         `We sent a confirmation link to ${trimmedEmail}. Tap it, then come back and sign in.`,
         [{ text: 'OK', onPress: () => setMode('signin') }],

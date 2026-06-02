@@ -7,9 +7,9 @@ import {
   StyleSheet,
   Easing,
   Linking,
-  Alert,
   ActivityIndicator,
 } from 'react-native';
+import { showAlert } from '@/src/state/alertStore';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -106,7 +106,7 @@ export default function CaptureScreen() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
       const msg = err instanceof Error ? err.message : 'Scan failed.';
       recordError(err, 'scan-pipeline');
-      Alert.alert('Scan failed', msg);
+      showAlert('Scan failed', msg);
       setAnalyzing(false);
       setAnalyzingMsg('Analyzing…');
     }
@@ -119,7 +119,7 @@ export default function CaptureScreen() {
   const onScanTable = async () => {
     if (analyzing) return;
     if (!cameraRef.current || !supabase || !user) {
-      Alert.alert('Preparing scan', 'Please wait a moment and try again.');
+      showAlert('Preparing scan', 'Please wait a moment and try again.');
       return;
     }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
@@ -130,7 +130,7 @@ export default function CaptureScreen() {
       if (!shot?.uri) throw new Error('camera returned no image');
       const results = await scanMultiImage(supabase, user.id, shot.uri);
       if (results.length === 0) {
-        Alert.alert('No food found', 'Couldn’t spot any food items in that photo. Try getting closer or better light.');
+        showAlert('No food found', 'Couldn’t spot any food items in that photo. Try getting closer or better light.');
         setAnalyzing(false);
         setAnalyzingMsg('Analyzing…');
         return;
@@ -142,7 +142,7 @@ export default function CaptureScreen() {
     } catch (err) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
       recordError(err, 'scan-table');
-      Alert.alert('Scan failed', err instanceof Error ? err.message : 'Could not scan.');
+      showAlert('Scan failed', err instanceof Error ? err.message : 'Could not scan.');
       setAnalyzing(false);
       setAnalyzingMsg('Analyzing…');
     }
@@ -155,7 +155,7 @@ export default function CaptureScreen() {
   const onBatchShutter = async () => {
     if (capturing) return;
     if (!cameraRef.current || !supabase || !user) {
-      Alert.alert('Preparing scan', 'Please wait a moment and try again.');
+      showAlert('Preparing scan', 'Please wait a moment and try again.');
       return;
     }
     setCapturing(true);
@@ -177,7 +177,7 @@ export default function CaptureScreen() {
     if (batchMode) return onBatchShutter();
     if (analyzing) return;
     if (!cameraRef.current || !supabase || !user) {
-      Alert.alert('Preparing scan', 'Please wait a moment and try again.');
+      showAlert('Preparing scan', 'Please wait a moment and try again.');
       return;
     }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
@@ -191,7 +191,7 @@ export default function CaptureScreen() {
     } catch (err) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
       recordError(err, 'scan-capture');
-      Alert.alert('Scan failed', err instanceof Error ? err.message : 'Could not capture photo.');
+      showAlert('Scan failed', err instanceof Error ? err.message : 'Could not capture photo.');
       setAnalyzing(false);
       setAnalyzingMsg('Analyzing…');
     }
@@ -203,13 +203,13 @@ export default function CaptureScreen() {
   const onPickFromGallery = async () => {
     if (analyzing) return;
     if (!supabase || !user) {
-      Alert.alert('Preparing scan', 'Please wait a moment and try again.');
+      showAlert('Preparing scan', 'Please wait a moment and try again.');
       return;
     }
     Haptics.selectionAsync().catch(() => {});
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!perm.granted) {
-      Alert.alert(
+      showAlert(
         'Photo access needed',
         perm.canAskAgain
           ? 'Allow photo access to pick a food photo from your library.'

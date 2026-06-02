@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet, Alert, Linking, Image } from 'react-native';
+import { View, Text, ScrollView, Pressable, StyleSheet, Linking, Image } from 'react-native';
+import { showAlert } from '@/src/state/alertStore';
 import * as Haptics from 'expo-haptics';
 import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
@@ -45,7 +46,7 @@ export default function ProfileScreen() {
     Haptics.selectionAsync().catch(() => {});
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!perm.granted) {
-      Alert.alert(
+      showAlert(
         'Photo access needed',
         perm.canAskAgain
           ? 'Allow photo access to choose an avatar.'
@@ -85,7 +86,7 @@ export default function ProfileScreen() {
   const onSignInOrOut = () => {
     Haptics.selectionAsync().catch(() => {});
     if (signedIn) {
-      Alert.alert('Sign out', 'Sign out of FreshCheck?', [
+      showAlert('Sign out', 'Sign out of FreshCheck?', [
         { text: 'Cancel', style: 'cancel' },
         {
           text: 'Sign out',
@@ -106,26 +107,26 @@ export default function ProfileScreen() {
     Haptics.selectionAsync().catch(() => {});
     const r = await restorePurchases();
     if (r.ok) {
-      Alert.alert('Restored', 'Your subscription is active again.');
+      showAlert('Restored', 'Your subscription is active again.');
     } else if (r.error === 'no-active-subscription') {
-      Alert.alert('Nothing to restore', 'No active subscription was found on this Apple ID.');
+      showAlert('Nothing to restore', 'No active subscription was found on this Apple ID.');
     } else if (r.error === 'adapty-not-configured' || r.error === 'adapty-sdk-missing') {
       // SDK already shows its own alert
     } else {
-      Alert.alert('Restore failed', r.error ?? 'Unknown error');
+      showAlert('Restore failed', r.error ?? 'Unknown error');
     }
   };
 
   const openUrl = (url: string) => {
     Haptics.selectionAsync().catch(() => {});
     Linking.openURL(url).catch((e) => {
-      Alert.alert('Could not open link', String(e));
+      showAlert('Could not open link', String(e));
     });
   };
 
   const onDeleteAccount = () => {
     Haptics.selectionAsync().catch(() => {});
-    Alert.alert(
+    showAlert(
       'Delete account',
       'This permanently deletes your account, fridge items, and scan history. This cannot be undone.',
       [
@@ -135,7 +136,7 @@ export default function ProfileScreen() {
           style: 'destructive',
           onPress: () => {
             // Second confirmation — App Store reviewers expect a deliberate two-step flow.
-            Alert.alert(
+            showAlert(
               'Are you sure?',
               'This is your last chance to keep your data. Tap "Yes, delete" to permanently remove your account.',
               [
@@ -158,17 +159,17 @@ export default function ProfileScreen() {
   const runDelete = async () => {
     const supabase = getSupabase();
     if (!supabase) {
-      Alert.alert('Not signed in', 'Please sign in first.');
+      showAlert('Not signed in', 'Please sign in first.');
       return;
     }
     const { data, error } = await supabase.functions.invoke('delete-account', { body: {} });
     if (error || (data && data.ok === false)) {
-      Alert.alert('Deletion failed', error?.message ?? data?.error ?? 'Try again or contact support.');
+      showAlert('Deletion failed', error?.message ?? data?.error ?? 'Try again or contact support.');
       return;
     }
     await logoutAdaptyUser().catch(() => {});
     await signOut();
-    Alert.alert('Account deleted', 'Your account and data have been removed.');
+    showAlert('Account deleted', 'Your account and data have been removed.');
   };
 
   return (

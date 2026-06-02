@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { View, Text, ScrollView, RefreshControl, ActivityIndicator, Pressable, StyleSheet, Alert } from 'react-native';
+import { View, Text, ScrollView, RefreshControl, ActivityIndicator, Pressable, StyleSheet } from 'react-native';
+import { showAlert } from '@/src/state/alertStore';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { IconButton } from '@/components/ui/IconButton';
@@ -56,7 +57,7 @@ export default function FridgeScreen() {
     async (id: string) => {
       const r = await removeItem(id);
       if (r?.error) {
-        Alert.alert('Could not remove', r.error);
+        showAlert('Could not remove', r.error);
       }
     },
     [removeItem],
@@ -66,7 +67,7 @@ export default function FridgeScreen() {
   // an empty fridge while a network/RLS error happened reads as data loss.
   useEffect(() => {
     if (error) {
-      Alert.alert('Could not load fridge', error);
+      showAlert('Could not load fridge', error);
     }
   }, [error]);
   const [filter, setFilter] = useState<FilterValue>('all');

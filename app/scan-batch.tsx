@@ -7,9 +7,9 @@ import {
   Pressable,
   ActivityIndicator,
   StyleSheet,
-  Alert,
   type LayoutChangeEvent,
 } from 'react-native';
+import { showAlert } from '@/src/state/alertStore';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -91,7 +91,7 @@ export default function ScanBatchScreen() {
     async (item: QueueItem) => {
       if (!item.result) return;
       if (!signedIn) {
-        Alert.alert('Sign in required', 'Sign in to save items to your fridge.', [
+        showAlert('Sign in required', 'Sign in to save items to your fridge.', [
           { text: 'Cancel', style: 'cancel' },
           { text: 'Sign in', onPress: () => router.push('/auth') },
         ]);
@@ -112,7 +112,7 @@ export default function ScanBatchScreen() {
         source_scan_id: r.scanId,
       });
       if (res?.error) {
-        Alert.alert('Could not save', res.error);
+        showAlert('Could not save', res.error);
         return;
       }
       markAddedToFridge(item.id);
