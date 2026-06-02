@@ -8,6 +8,12 @@
 >
 > Source of this round: user device-test of TestFlight build #48 (2026-06-01).
 
+## Status — round of 2026-06-02 (polish — device-test build #51)
+
+**ALL DONE, committed (`d400d85`) & sim-verified** — L1 L2 L3 L4 L5 L6 L7.
+tsc clean. Ships in build **#52**. L1/L4/L6/L7 visually verified on the
+iPhone 17 Pro simulator (high-res screenshots); L2/L3/L5 are code-level.
+
 ## Status — round of 2026-06-01
 
 **ALL DONE & committed** — A1, B1, B2, C1, D1, D2, D3, E1, F1, G1, G2, G3,
@@ -155,6 +161,37 @@ icon sizing) for a more comfortable, premium feel; re-check
 floatingBottomClearance on all tabs.
 
 ---
+
+## L. Polish round (device-test build #51, 2026-06-02)
+
+### L1 — Fresh Tips + filter pills: shadows clipped top/side/bottom ✅ `d400d85`
+Root cause: ScrollViews clip content to their frame, so a carousel card's soft
+shadow was cut on every side. Fix: shrank cushion/pill shadow reach + added a
+`shadowReach` token; each horizontal carousel (Fresh Tips, Saved) breaks out of
+the screen padding (negative margin) then re-insets with padding **and** gap ≥
+reach. **Verified on sim at high resolution — top/side/bottom all clean.**
+
+### L2 — Recipe blocks appear too abruptly ✅ `d400d85`
+New `FadeIn` wrapper (opacity + gentle rise on mount); recipe cards stagger in.
+
+### L3 — Delete individual recipes ✅ `d400d85`
+Per-card `×` (calls `removeRecipe`); the global Clear button is gone; favorites
+are kept separately.
+
+### L4 — Ingredient picker as a block under the heading ✅ `d400d85`
+Was a non-obvious top-right icon → now a full-width neumorphic block right under
+Cook with what you have. Header is just the wordmark. **Verified on sim.**
+
+### L5 — No standard Alert pop-ups ✅ `d400d85`
+Removed the standard confirm Alert from the recipes flow (picker sheet + instant
+per-card delete replace it).
+
+### L6 — Sheet Generate button in our style ✅ `d400d85`
+Flat green button → `PrimaryPillCTA` (neumorphic pill + sparkle). **Verified on sim.**
+
+### L7 — Sheet: instant full-screen dim + only the sheet slides ✅ `d400d85`
+Modal `animationType=none` → the dim backdrop covers the whole screen at once;
+only the sheet slides up (Animated translateY). **Verified on sim.**
 
 ## Watch-list (not bugs)
 - Post-purchase transition to the next screen was slow on the user's device —
