@@ -366,7 +366,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
   },
   haveText: { color: colors.primary, letterSpacing: 1.4 },
-  stepsList: { gap: spacing.md },
+  stepsList: { gap: spacing.lg },
   stepCard: { padding: spacing.lg },
   stepRow: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.lg },
   stepIcon: { width: 44, height: 44 },

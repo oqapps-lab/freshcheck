@@ -496,7 +496,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.xxl,
   },
   plansBlock: {
-    gap: spacing.md,
+    gap: spacing.lg,
     marginTop: spacing.md,
   },
   reassure: {
