@@ -137,17 +137,34 @@ export function useRecipes() {
 
       // Kick off image fetch per recipe (don't block UI). updateRecipeImage
       // emits a store change → subscription re-renders the card with the photo.
-      data.recipes.forEach((r) => {
-        void supabase.functions
-          .invoke<{ url?: string; error?: string }>('recipe-image', {
-            body: { slug: r.id, prompt: r.hero_image_prompt },
-          })
-          .then(({ data: imgData }) => {
-            if (myReq !== requestRef.current) return; // stale, bail
-            if (imgData?.url) updateRecipeImage(r.id, imgData.url);
-          })
-          .catch(() => {});
-      });
+      // Fetch hero images SEQUENTIALLY with retry. The old parallel
+      // fire-and-forget left a recipe permanently imageless (infinite card
+      // spinner) whenever a single gpt-image-1 call timed out — and 3-way
+      // concurrency pushed each call's latency from ~15s to ~26s, making
+      // timeouts likely. One-at-a-time + 3x backoff is far more reliable;
+      // updateRecipeImage re-renders each card the moment its photo lands.
+      const batch = data.recipes;
+      void (async () => {
+        for (const r of batch) {
+          if (myReq !== requestRef.current) return; // superseded
+          let url: string | undefined;
+          for (let attempt = 1; attempt <= 3 && !url; attempt++) {
+            try {
+              const { data: imgData, error: imgErr } = await supabase.functions.invoke<{
+                url?: string;
+                error?: string;
+              }>('recipe-image', { body: { slug: r.id, prompt: r.hero_image_prompt } });
+              if (imgErr) throw imgErr;
+              url = imgData?.url;
+            } catch (imgErr) {
+              if (attempt === 3) recordError(imgErr, 'recipe-image');
+              else await new Promise((res) => setTimeout(res, attempt * 2500));
+            }
+          }
+          if (myReq !== requestRef.current) return; // superseded
+          if (url) updateRecipeImage(r.id, url);
+        }
+      })();
     } catch (e) {
       if (myReq !== requestRef.current) return;
       // Skip Crashlytics noise for the daily-limit 429 — that's expected
