@@ -22,7 +22,7 @@ import {
 import { startTrial, restorePurchases, PRODUCT_BY_PLAN } from '@/src/lib/adapty';
 import { usePremium } from '@/src/hooks/usePremium';
 import { logTrialStartEvent, logBeginCheckout, recordError } from '@/src/lib/firebase';
-import { logTrialStart as afLogTrialStart } from '@/src/lib/appsflyer';
+import { logTrialStart as afLogTrialStart, initAppsFlyerWithATT } from '@/src/lib/appsflyer';
 import { LEGAL } from '@/constants/legal';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
@@ -63,6 +63,13 @@ export default function PaywallScreen() {
   // button still appears (App-Store safe), just not instantly.
   const [closeVisible, setCloseVisible] = useState(false);
   const closeFade = useRef(new Animated.Value(0)).current;
+
+  // ATT (App Tracking Transparency) is requested HERE — post-onboarding, at the
+  // paywall — not at cold launch, per Apple Guideline 5.1.2 (prompt must follow
+  // a user-facing context). initAppsFlyerWithATT() is idempotent.
+  useEffect(() => {
+    void initAppsFlyerWithATT();
+  }, []);
   useEffect(() => {
     const t = setTimeout(() => {
       setCloseVisible(true);

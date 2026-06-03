@@ -12,7 +12,7 @@ import { Sparkle } from '@/components/ui/Glyphs';
 import { spacing, typeScale } from '@/constants/tokens';
 import { safeStorage, STORAGE_KEYS } from '@/src/lib/safeStorage';
 import { activateAdaptyIfNeeded, identifyAdaptyUser, logoutAdaptyUser } from '@/src/lib/adapty';
-import { initAppsFlyerWithATT, setAppsFlyerCustomerId } from '@/src/lib/appsflyer';
+import { setAppsFlyerCustomerId } from '@/src/lib/appsflyer';
 import { bootFirebase, setFirebaseUser, resetFirebaseUser, logScreenView } from '@/src/lib/firebase';
 import { useAuth } from '@/src/hooks/useAuth';
 import {
@@ -77,10 +77,9 @@ function VendorBoot() {
   useEffect(() => {
     void activateAdaptyIfNeeded();
     void bootFirebase();
-    const t = setTimeout(() => {
-      void initAppsFlyerWithATT();
-    }, 600);
-    return () => clearTimeout(t);
+    // NOTE: ATT (tracking prompt) is intentionally NOT requested here at cold
+    // launch — Apple rejects that (Guideline 5.1.2). It is requested at the
+    // paywall (post-onboarding, contextual). See app/paywall.tsx.
   }, []);
   useEffect(() => {
     if (user?.id) {
