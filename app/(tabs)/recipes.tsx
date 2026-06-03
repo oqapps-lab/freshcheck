@@ -11,6 +11,7 @@ import {
   Animated,
   Easing,
   Dimensions,
+  PanResponder,
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -113,6 +114,29 @@ export default function RecipesTab() {
       after?.();
     });
   };
+
+  // Swipe-down-to-dismiss on the sheet handle (the grey grabber). Attached to
+  // the header zone only so the ingredient ScrollView still scrolls freely.
+  const sheetPan = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: (_e, g) => g.dy > 6 && Math.abs(g.dy) > Math.abs(g.dx),
+      onPanResponderMove: (_e, g) => {
+        if (g.dy > 0) sheetY.setValue(g.dy);
+      },
+      onPanResponderRelease: (_e, g) => {
+        if (g.dy > 110 || g.vy > 0.6) {
+          Animated.timing(sheetY, {
+            toValue: screenH,
+            duration: 200,
+            easing: Easing.in(Easing.cubic),
+            useNativeDriver: true,
+          }).start(() => setSelectorOpen(false));
+        } else {
+          Animated.spring(sheetY, { toValue: 0, useNativeDriver: true, bounciness: 0 }).start();
+        }
+      },
+    }),
+  ).current;
 
   const openGenerate = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
@@ -407,7 +431,9 @@ export default function RecipesTab() {
         <View style={styles.sheetBackdropView}>
           <Pressable style={StyleSheet.absoluteFill} onPress={() => closeSheet()} accessibilityLabel="close" />
           <Animated.View style={[styles.sheet, { paddingBottom: insets.bottom + spacing.lg, transform: [{ translateY: sheetY }] }]}>
-            <View style={styles.sheetHandle} />
+            <View {...sheetPan.panHandlers} style={styles.sheetHandleZone}>
+              <View style={styles.sheetHandle} />
+            </View>
             <Text style={[typeScale.titleLarge, styles.sheetTitle]}>Cook with what?</Text>
             <Text style={[typeScale.bodySmall, styles.sheetSub]}>
               Pick the items to build recipes from. We prioritise what expires soonest.
@@ -615,6 +641,12 @@ const styles = StyleSheet.create({
     paddingTop: spacing.sm,
     paddingHorizontal: layout.screenPadding,
     maxHeight: '80%',
+  },
+  sheetHandleZone: {
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    paddingTop: spacing.xs,
+    paddingBottom: spacing.sm,
   },
   sheetHandle: {
     width: 40,
