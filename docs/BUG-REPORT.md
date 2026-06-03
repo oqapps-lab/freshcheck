@@ -235,6 +235,28 @@ collision with the clock/wifi. Deferred — needs a blur/opaque sticky header or
 a top fade. Everything else (Profile, Fridge, Capture, scan-result, scan-batch,
 auth, onboarding) audited clean: safe-areas, bottom clearance, no clipping.
 
+## M7 — Recipe hero images too large + storage egress stall (2026-06-03)
+
+### M7a — Recipe hero images were ~1.5MB PNGs ✅ `be4937d` (deployed)
+gpt-image-1 emitted 1024² PNGs (~1.4–1.5MB each). The recipe-image edge function
+now requests `output_format: webp` + `output_compression: 75` and stores `.webp` —
+verified a fresh generation is **94KB** (was ~1.5MB, 16× smaller). Deployed to
+`recipe-image`. Old `.png` slugs regenerate as `.webp` on next request.
+
+### M7b — Storage egress stalls at ~19KB on the test network (environmental, NOT app)
+Every Supabase **storage** transfer (download AND upload) from the Mac stalls at
+exactly **19,139 bytes** (~637 B/s then hang) — old PNG and new 94KB WebP alike,
+so it is NOT a size problem. Small storage ops (<19KB: HEAD, list, 7.5KB upload),
+`functions.invoke`, and a 14MB GitHub download all work — so it is a transport
+issue specific to the Mac↔Supabase-storage-CDN path right now, not general net,
+not Supabase down, not app code. **This is the single root cause of every
+sim-only failure this QA round:** scan upload timeout (M1), fridge swipe-delete
+false "Network request failed" (the row deleted server-side), and recipe images
+never loading. Real user devices use different network routes and won't share
+this path → these work on device. Action: re-verify scan + image loading on a
+real device (#53); if storage egress is slow there too, check the Supabase
+storage region/CDN. App-side mitigation already shipped: 94KB WebP images.
+
 ## Watch-list (not bugs)
 - Post-purchase transition to the next screen was slow on the user's device —
   likely StoreKit sandbox latency, not a code issue. Re-check on a real
