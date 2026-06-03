@@ -44,7 +44,7 @@ serve(async (req) => {
   // Service role client to bypass RLS (anyone can READ the cached image).
   const supabase = createClient(url, serviceKey);
 
-  const objectPath = `${slug}.png`;
+  const objectPath = `${slug}.webp`;
 
   // Check cache first — if image exists, return public URL immediately.
   const { data: head } = await supabase.storage.from(BUCKET).list('', {
@@ -69,6 +69,11 @@ serve(async (req) => {
       prompt,
       size: '1024x1024',
       quality: 'medium',
+      // ~150KB WebP instead of a ~1.5MB PNG — the PNGs were too large to load
+      // over storage egress (hero images never appeared). WebP keeps quality
+      // at a 10x smaller payload, and iOS RN <Image> renders it natively.
+      output_format: 'webp',
+      output_compression: 75,
       n: 1,
     }),
   });
@@ -85,7 +90,7 @@ serve(async (req) => {
   const { error: upErr } = await supabase.storage
     .from(BUCKET)
     .upload(objectPath, bytes, {
-      contentType: 'image/png',
+      contentType: 'image/webp',
       cacheControl: '31536000', // 1 year — recipe images are immutable
       upsert: false,
     });
