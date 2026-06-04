@@ -23,6 +23,8 @@ import { GhostText } from '@/components/ui/GhostText';
 import { Back, BarcodeScanner, Chevron, Gallery, Sparkle } from '@/components/ui/Glyphs';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 import { useAuth } from '@/src/hooks/useAuth';
+import { usePremium } from '@/src/hooks/usePremium';
+import { canScan, recordScan } from '@/src/lib/freeLimits';
 import { getSupabase } from '@/src/lib/supabase';
 import { setLastScan } from '@/src/state/lastScan';
 import { scanImage, scanMultiImage } from '@/src/lib/scanPipeline';
@@ -45,6 +47,7 @@ export default function CaptureScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { user, configured } = useAuth();
+  const { premium } = usePremium();
   const supabase = getSupabase();
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView>(null);
@@ -91,10 +94,12 @@ export default function CaptureScreen() {
   // supabase+user. (Batch scanning uses the same scanImage() via scanQueue.)
   const runScanPipeline = async (sourceUri: string) => {
     if (!supabase || !user) return;
+    if (!canScan(premium)) { router.push('/paywall' as never); return; }
     try {
       setAnalyzingMsg('Reading ripeness…');
       const result = await scanImage(supabase, user.id, sourceUri);
       setLastScan(result);
+      recordScan();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
       // AppsFlyer 'af_content_view' — primary in-app engagement signal that
       // ad networks can attribute installs against.
@@ -122,6 +127,7 @@ export default function CaptureScreen() {
       showAlert('Preparing scan', 'Please wait a moment and try again.');
       return;
     }
+    if (!canScan(premium)) { router.push('/paywall' as never); return; }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
     setAnalyzing(true);
     setAnalyzingMsg('Finding items…');
@@ -136,6 +142,7 @@ export default function CaptureScreen() {
         return;
       }
       addScannedItems(results);
+      recordScan();
       setAnalyzing(false);
       setAnalyzingMsg('Analyzing…');
       goToBatch();
@@ -158,12 +165,14 @@ export default function CaptureScreen() {
       showAlert('Preparing scan', 'Please wait a moment and try again.');
       return;
     }
+    if (!canScan(premium)) { router.push('/paywall' as never); return; }
     setCapturing(true);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     try {
       const shot = await cameraRef.current.takePictureAsync({ quality: 0.85, skipProcessing: false, exif: false });
       if (shot?.uri) {
         enqueueScans([shot.uri]);
+        recordScan();
         void processQueue(supabase, user.id);
       }
     } catch (err) {
