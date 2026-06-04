@@ -110,6 +110,39 @@ export const PRODUCT_BY_PLAN: Record<Plan, string> = {
   annual: 'com.gazetastreet.freshcheck.annual',
 };
 
+export type TierInfo = { localizedPrice: string; amount: number; currencyCode?: string };
+
+/**
+ * Live, store-localized prices for all three plans, so the paywall shows the
+ * user's real currency (and the exact price Apple will charge) instead of a
+ * hardcoded USD literal. Returns null when Adapty is unconfigured or the
+ * products can't be fetched yet (no Paid-Apps agreement / products not yet
+ * approved) — the paywall then falls back to its hardcoded USD prices.
+ */
+export async function getTiers(): Promise<Partial<Record<Plan, TierInfo>> | null> {
+  if (!isAdaptyConfigured()) return null;
+  const sdk = getSdk();
+  if (!sdk) return null;
+  try {
+    const paywall = await sdk.adapty.getPaywall(PLACEMENT_ID);
+    const products = await sdk.adapty.getPaywallProducts(paywall);
+    const out: Partial<Record<Plan, TierInfo>> = {};
+    (Object.keys(PRODUCT_BY_PLAN) as Plan[]).forEach((plan) => {
+      const p = products.find((x) => x.vendorProductId === PRODUCT_BY_PLAN[plan]);
+      if (!p) return;
+      const price = (p as { price?: { localizedString?: string; amount?: number; currencyCode?: string } }).price;
+      out[plan] = {
+        localizedPrice: price?.localizedString ?? '',
+        amount: price?.amount ?? 0,
+        currencyCode: price?.currencyCode,
+      };
+    });
+    return Object.keys(out).length ? out : null;
+  } catch {
+    return null;
+  }
+}
+
 export async function startTrial(params: {
   plan: Plan;
 }): Promise<{ ok: boolean; error?: string }> {

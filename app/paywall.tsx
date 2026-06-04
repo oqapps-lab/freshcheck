@@ -18,8 +18,9 @@ import {
   History,
   Check,
   Bowl,
+  ShoppingBasket,
 } from '@/components/ui/Glyphs';
-import { startTrial, restorePurchases, PRODUCT_BY_PLAN } from '@/src/lib/adapty';
+import { startTrial, restorePurchases, PRODUCT_BY_PLAN, getTiers, type TierInfo } from '@/src/lib/adapty';
 import { usePremium } from '@/src/hooks/usePremium';
 import { logTrialStartEvent, logBeginCheckout, recordError } from '@/src/lib/firebase';
 import { logTrialStart as afLogTrialStart, initAppsFlyerWithATT } from '@/src/lib/appsflyer';
@@ -36,16 +37,16 @@ const PRICE_USD: Record<Plan, number> = {
   annual: 39.99,
 };
 
-// Feature copy must match what Pro actually unlocks — free already gets
-// unlimited scans + ripeness analysis + cloud sync + reminders, so the
-// real differentiator is recipe generation cadence (free is capped at
-// 1 generation / 24h). Phrasing "Unlimited scans" + "Three recipes a
-// day" was misleading on both ends — could trigger Apple Review 3.1.2(c)
-// "subscription must offer genuine value" pushback and was confusing for
-// users who'd already noticed free wasn't actually capped on scans.
+// Feature copy must match what Pro actually unlocks. Free is capped on BOTH
+// scans (FREE_SCANS_PER_DAY/day — see src/lib/freeLimits.ts) and AI recipe
+// generation; Pro lifts both caps and adds one-tap barcode add-to-fridge,
+// ripeness analysis, cloud sync and reminders. Keep this list in sync with
+// the gates in capture.tsx (canScan / barcode Pro-gate) and useRecipes —
+// mismatched copy risks Apple Review 3.1.2(c) "genuine value" pushback.
 const FEATURES: { icon: React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>; title: string; body: string }[] = [
   { icon: Bowl,           title: 'Unlimited AI recipes', body: 'Generate fresh recipes from your fridge whenever you want, no daily cap.' },
   { icon: BarcodeScanner, title: 'Unlimited scans',     body: 'Scan as many items as you want, no daily cap.' },
+  { icon: ShoppingBasket, title: 'Barcode pantry add',  body: 'Scan a product barcode to drop it straight into your fridge.' },
   { icon: Nutrition,      title: 'AI ripeness analysis', body: 'Per-item softness, ripeness and best-by guidance.' },
   { icon: Cloud,          title: 'Cloud sync',          body: 'Your fridge follows you across iPhone and iPad.' },
   { icon: History,        title: 'Smart reminders',     body: 'Custom alerts before items go off — never waste again.' },
@@ -56,6 +57,9 @@ export default function PaywallScreen() {
   const router = useRouter();
   const { premium: isPremium } = usePremium();
   const [plan, setPlan] = useState<Plan>('annual');
+  // Live store-localized prices; falls back to the hardcoded USD literals
+  // until Adapty is fully configured (Paid-Apps agreement + approved IAPs).
+  const [tiers, setTiers] = useState<Partial<Record<Plan, TierInfo>> | null>(null);
   const [busy, setBusy] = useState(false);
 
   // Delay the close (✕) ~3s so users engage with the offer instead of
@@ -63,6 +67,13 @@ export default function PaywallScreen() {
   // button still appears (App-Store safe), just not instantly.
   const [closeVisible, setCloseVisible] = useState(false);
   const closeFade = useRef(new Animated.Value(0)).current;
+
+  // Pull live prices once on mount; ignore failures (keeps the USD fallback).
+  useEffect(() => {
+    void getTiers().then((t) => {
+      if (t) setTiers(t);
+    });
+  }, []);
 
   // ATT (App Tracking Transparency) is requested HERE — post-onboarding, at the
   // paywall — not at cold launch, per Apple Guideline 5.1.2 (prompt must follow
@@ -163,11 +174,12 @@ export default function PaywallScreen() {
     Linking.openURL(url).catch((e) => showAlert('Could not open link', String(e)));
   };
 
+  const priceStr = (p: Plan): string => tiers?.[p]?.localizedPrice || `$${PRICE_USD[p].toFixed(2)}`;
   const ctaLabel = busy ? 'Processing…' : 'Start 3-day free trial';
   const fineprint = (() => {
-    if (plan === 'annual') return 'First 3 days free, then $39.99 / year. Auto-renews unless cancelled at least 24 hours before period end.';
-    if (plan === 'monthly') return 'First 3 days free, then $14.99 / month. Auto-renews unless cancelled at least 24 hours before period end.';
-    return 'First 3 days free, then $6.99 / week. Auto-renews unless cancelled at least 24 hours before period end.';
+    if (plan === 'annual') return `First 3 days free, then ${priceStr('annual')} / year. Auto-renews unless cancelled at least 24 hours before period end.`;
+    if (plan === 'monthly') return `First 3 days free, then ${priceStr('monthly')} / month. Auto-renews unless cancelled at least 24 hours before period end.`;
+    return `First 3 days free, then ${priceStr('weekly')} / week. Auto-renews unless cancelled at least 24 hours before period end.`;
   })();
 
   return (
@@ -239,7 +251,7 @@ export default function PaywallScreen() {
           <PlanCard
             value="annual"
             label="Annual"
-            price="$39.99"
+            price={priceStr('annual')}
             unit="/ year"
             badge="SAVE 89%"
             sublabel="Just $0.77 / week, billed yearly"
@@ -249,7 +261,7 @@ export default function PaywallScreen() {
           <PlanCard
             value="monthly"
             label="Monthly"
-            price="$14.99"
+            price={priceStr('monthly')}
             unit="/ month"
             sublabel="Flexible — cancel anytime"
             active={plan === 'monthly'}
@@ -258,7 +270,7 @@ export default function PaywallScreen() {
           <PlanCard
             value="weekly"
             label="Weekly"
-            price="$6.99"
+            price={priceStr('weekly')}
             unit="/ week"
             sublabel="Just trying it out"
             active={plan === 'weekly'}
