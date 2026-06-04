@@ -13,6 +13,8 @@ import { spacing, typeScale } from '@/constants/tokens';
 import { safeStorage, STORAGE_KEYS } from '@/src/lib/safeStorage';
 import { activateAdaptyIfNeeded, identifyAdaptyUser, logoutAdaptyUser } from '@/src/lib/adapty';
 import { setAppsFlyerCustomerId } from '@/src/lib/appsflyer';
+import { hydrateUsage } from '@/src/lib/freeLimits';
+import { hydrateOnboardingAnswers } from '@/src/state/onboardingStore';
 import { bootFirebase, setFirebaseUser, resetFirebaseUser, logScreenView } from '@/src/lib/firebase';
 import { useAuth } from '@/src/hooks/useAuth';
 import {
@@ -77,6 +79,8 @@ function VendorBoot() {
   useEffect(() => {
     void activateAdaptyIfNeeded();
     void bootFirebase();
+    void hydrateUsage();
+    void hydrateOnboardingAnswers();
     // NOTE: ATT (tracking prompt) is intentionally NOT requested here at cold
     // launch — Apple rejects that (Guideline 5.1.2). It is requested at the
     // paywall (post-onboarding, contextual). See app/paywall.tsx.
