@@ -97,7 +97,7 @@ export default function PersonalizeScreen() {
 
   const onContinue = () => {
     if (isLast) {
-      router.replace('/paywall' as never);
+      router.replace('/building' as never);
       return;
     }
     setStep((s) => s + 1);
