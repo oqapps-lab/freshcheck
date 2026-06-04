@@ -2,79 +2,73 @@ import React, { useRef, useState } from 'react';
 import {
   View,
   Text,
+  Image,
   ScrollView,
+  Animated,
   StyleSheet,
   Dimensions,
+  type ImageSourcePropType,
   type NativeScrollEvent,
   type NativeSyntheticEvent,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { safeStorage, STORAGE_KEYS } from '@/src/lib/safeStorage';
 import { SoftSurface } from '@/components/ui/SoftSurface';
-import { SoftInset } from '@/components/ui/SoftInset';
 import { PrimaryPillCTA } from '@/components/ui/PrimaryPillCTA';
 import { GhostText } from '@/components/ui/GhostText';
-import {
-  BarcodeScanner,
-  History,
-  Cloud,
-  Sparkle,
-  Bowl,
-} from '@/components/ui/Glyphs';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
 type Slide = {
   id: string;
+  image: ImageSourcePropType;
   title: string;
   body: string;
-  Icon: React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>;
-  iconColor: string;
+  proof?: string;
 };
 
+// Reordered to lead with the emotional waste/money hook, then the core scan
+// fear, then the system, recipes, and the new barcode teaser. Each slide pairs
+// an appetizing food photo with the value prop.
 const SLIDES: Slide[] = [
   {
-    id: 'welcome',
-    title: 'Never waste food again',
-    body: 'FreshCheck reads ripeness and tracks your fridge so nothing slips past its best-by date.',
-    Icon: Sparkle,
-    iconColor: colors.amber,
+    id: 'waste',
+    image: require('../assets/onboarding/waste-saved.webp'),
+    title: 'Never throw away good food again',
+    body: 'FreshCheck tells you what is still good and nudges you before it spoils.',
+    proof: 'Families save about $2,913 a year',
   },
   {
     id: 'scan',
-    title: 'Scan in 3 seconds',
-    body: 'Point the camera at any item — instant ripeness verdict, softness score, and a friendly tip.',
-    Icon: BarcodeScanner,
-    iconColor: colors.primary,
+    image: require('../assets/onboarding/scan-verdict.webp'),
+    title: 'Is this still safe? Know in 3 seconds',
+    body: 'Point your camera at any food for an instant verdict — safe, caution, or toss it.',
   },
   {
-    id: 'track',
-    title: 'Always know what to eat',
-    body: 'Your fridge gets a colour-coded timeline. Items closest to expiry float to the top automatically.',
-    Icon: History,
-    iconColor: colors.primary,
+    id: 'timeline',
+    image: require('../assets/onboarding/fridge-timeline.webp'),
+    title: 'Your whole fridge, on a freshness timeline',
+    body: 'Everything you own, sorted by what expires next. Nothing forgotten in the back again.',
   },
   {
     id: 'recipes',
-    title: 'Recipes from your fridge',
-    body: 'One tap turns what you already have into 3 AI recipes — built around the items expiring soonest, so nothing goes to waste.',
-    Icon: Bowl,
-    iconColor: colors.amber,
+    image: require('../assets/onboarding/plated-dish.webp'),
+    title: 'Tonight\'s dinner, from what you already have',
+    body: 'One tap turns your soon-to-expire ingredients into 3 fresh AI recipes.',
   },
   {
-    id: 'sync',
-    title: 'Synced across devices',
-    body: 'Your fridge follows you between iPhone and iPad. Sign in to sync, or skip to keep it local.',
-    Icon: Cloud,
-    iconColor: colors.primary,
+    id: 'barcode',
+    image: require('../assets/onboarding/pantry-barcode.webp'),
+    title: 'Scan the barcode, we track the rest',
+    body: 'Add packaged groceries in a second — just scan the barcode and we log it.',
   },
 ];
 
 const SCREEN_W = Dimensions.get('window').width;
+const CARD = Math.min(SCREEN_W - spacing.xl * 2, 340);
 
 async function markOnboardingDone() {
-  // safeStorage tries AsyncStorage first, falls back to in-memory Map
-  // (Expo Go SDK 55 sometimes ships without the native module).
   await safeStorage.setItem(STORAGE_KEYS.onboardingDone, '1');
 }
 
@@ -82,6 +76,7 @@ export default function OnboardingScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const scrollRef = useRef<ScrollView>(null);
+  const scrollX = useRef(new Animated.Value(0)).current;
   const [page, setPage] = useState(0);
 
   const isLast = page === SLIDES.length - 1;
@@ -91,163 +86,109 @@ export default function OnboardingScreen() {
     if (next !== page) setPage(next);
   };
 
-  const goNext = async () => {
-    if (isLast) {
-      await markOnboardingDone();
-      // Straight to the paywall — NOT account creation. Sign-up lives only
-      // in Profile now (the app works fully as an anonymous guest). The
-      // paywall is the post-onboarding step (82% of trials start day 0).
-      router.replace('/paywall');
-      return;
-    }
-    const target = (page + 1) * SCREEN_W;
-    scrollRef.current?.scrollTo({ x: target, animated: true });
+  const finish = async (dest: '/personalize' | '/paywall') => {
+    await markOnboardingDone();
+    router.replace(dest as never);
   };
 
-  const skip = async () => {
-    await markOnboardingDone();
-    router.replace('/paywall');
+  const goNext = () => {
+    if (isLast) {
+      void finish('/personalize');
+      return;
+    }
+    scrollRef.current?.scrollTo({ x: (page + 1) * SCREEN_W, animated: true });
   };
 
   return (
     <View style={styles.root}>
       <View style={[styles.skipRow, { paddingTop: insets.top + 16 }]}>
         <View />
-        <GhostText
-          label="Skip"
-          onPress={skip}
-          accessibilityLabel="skip onboarding"
-        />
+        <GhostText label="Skip" onPress={() => void finish('/personalize')} accessibilityLabel="skip onboarding" />
       </View>
 
-      <ScrollView
+      <Animated.ScrollView
         ref={scrollRef}
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         onMomentumScrollEnd={onMomentumEnd}
+        scrollEventThrottle={16}
+        onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], { useNativeDriver: true })}
         style={styles.pager}
       >
-        {SLIDES.map((slide) => (
-          <View key={slide.id} style={[styles.slide, { width: SCREEN_W }]}>
-            <SoftSurface
-              variant="cushion"
-              radius="full"
-              innerStyle={styles.iconOuter}
-            >
-              <SoftInset
-                radius="full"
-                strength="thick"
-                style={styles.iconCup}
-                contentStyle={styles.iconCupInner}
-              >
-                <slide.Icon size={72} color={slide.iconColor} strokeWidth={1.5} />
-              </SoftInset>
-            </SoftSurface>
+        {SLIDES.map((slide, i) => {
+          const inputRange = [(i - 1) * SCREEN_W, i * SCREEN_W, (i + 1) * SCREEN_W];
+          const scale = scrollX.interpolate({ inputRange, outputRange: [0.86, 1, 0.86], extrapolate: 'clamp' });
+          const opacity = scrollX.interpolate({ inputRange, outputRange: [0.4, 1, 0.4], extrapolate: 'clamp' });
+          const translateY = scrollX.interpolate({ inputRange, outputRange: [24, 0, 24], extrapolate: 'clamp' });
+          return (
+            <View key={slide.id} style={[styles.slide, { width: SCREEN_W }]}>
+              <Animated.View style={{ transform: [{ scale }], opacity }}>
+                <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.imageCard}>
+                  <LinearGradient
+                    colors={[colors.amber, colors.primary]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.ring}
+                  >
+                    <Image source={slide.image} style={styles.image} resizeMode="cover" />
+                  </LinearGradient>
+                </SoftSurface>
+              </Animated.View>
+              <Animated.View style={[styles.copy, { opacity, transform: [{ translateY }] }]}>
+                {slide.proof ? (
+                  <View style={styles.proofPill}>
+                    <Text style={[typeScale.labelSmall, styles.proofText]}>{slide.proof}</Text>
+                  </View>
+                ) : null}
+                <Text style={[typeScale.displayMedium, styles.title]}>{slide.title}</Text>
+                <Text style={[typeScale.bodyLarge, styles.body]}>{slide.body}</Text>
+              </Animated.View>
+            </View>
+          );
+        })}
+      </Animated.ScrollView>
 
-            <Text style={[typeScale.displayMedium, styles.slideTitle]}>{slide.title}</Text>
-            <Text style={[typeScale.body, styles.slideBody]}>{slide.body}</Text>
-          </View>
-        ))}
-      </ScrollView>
-
-      {/* Page dots */}
       <View style={styles.dots}>
-        {SLIDES.map((_, i) => (
-          <View
-            key={i}
-            style={[
-              styles.dot,
-              i === page && styles.dotActive,
-            ]}
-          />
+        {SLIDES.map((s, i) => (
+          <View key={s.id} style={[styles.dot, i === page ? styles.dotActive : null]} />
         ))}
       </View>
 
-      {/* CTA */}
-      <View style={[styles.ctaBlock, { paddingBottom: insets.bottom + spacing.lg }]}>
-        <PrimaryPillCTA
-          label={isLast ? 'Get started' : 'Continue'}
-          onPress={goNext}
-        />
+      <View style={[styles.cta, { paddingBottom: insets.bottom + spacing.lg }]}>
+        <PrimaryPillCTA label={isLast ? 'Get started' : 'Continue'} onPress={goNext} />
       </View>
     </View>
   );
 }
 
-const ICON_OUTER = 220;
-const ICON_CUP = 176;
-
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: colors.canvas,
-  },
+  root: { flex: 1, backgroundColor: colors.canvas },
   skipRow: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: layout.screenPaddingHeader,
-    paddingBottom: layout.headerPaddingBottom,
-  },
-  pager: {
-    flex: 1,
-  },
-  slide: {
-    paddingHorizontal: spacing.huge,
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.lg,
-    paddingVertical: spacing.xxl,
-  },
-  iconOuter: {
-    width: ICON_OUTER,
-    height: ICON_OUTER,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  iconCup: {
-    width: ICON_CUP,
-    height: ICON_CUP,
-  },
-  iconCupInner: {
-    width: ICON_CUP,
-    height: ICON_CUP,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  slideTitle: {
-    color: colors.ink,
-    textAlign: 'center',
-    marginTop: spacing.xl,
-  },
-  slideBody: {
-    color: colors.inkSecondary,
-    textAlign: 'center',
-    lineHeight: 22,
-    paddingHorizontal: spacing.md,
-  },
-  dots: {
-    flexDirection: 'row',
-    gap: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: spacing.lg,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: colors.inkMuted,
-    opacity: 0.4,
-  },
-  dotActive: {
-    opacity: 1,
-    backgroundColor: colors.primary,
-    width: 24,
-  },
-  ctaBlock: {
     paddingHorizontal: layout.screenPadding,
-    gap: spacing.md,
+    paddingBottom: spacing.sm,
   },
+  pager: { flex: 1 },
+  slide: { alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing.xl, gap: spacing.huge },
+  imageCard: { padding: spacing.xs, borderRadius: 999 },
+  ring: { padding: 4, borderRadius: 28 },
+  image: { width: CARD, height: CARD, borderRadius: 24 },
+  copy: { alignItems: 'center', paddingHorizontal: spacing.sm },
+  proofPill: {
+    backgroundColor: colors.surfaceTint,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 6,
+    borderRadius: 100,
+    marginBottom: spacing.md,
+  },
+  proofText: { color: colors.primary, textTransform: 'uppercase', letterSpacing: 1 },
+  title: { color: colors.ink, textAlign: 'center', marginBottom: spacing.sm },
+  body: { color: colors.inkSecondary, textAlign: 'center', lineHeight: 24 },
+  dots: { flexDirection: 'row', justifyContent: 'center', gap: spacing.sm, paddingVertical: spacing.lg },
+  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.inkMuted },
+  dotActive: { width: 26, backgroundColor: colors.primary },
+  cta: { paddingHorizontal: layout.screenPadding, paddingTop: spacing.sm },
 });
