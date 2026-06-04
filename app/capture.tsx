@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -25,6 +25,8 @@ import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 import { useAuth } from '@/src/hooks/useAuth';
 import { usePremium } from '@/src/hooks/usePremium';
 import { canScan, recordScan } from '@/src/lib/freeLimits';
+import { lookupBarcode } from '@/src/lib/openFoodFacts';
+import { useFridge } from '@/src/hooks/useFridge';
 import { getSupabase } from '@/src/lib/supabase';
 import { setLastScan } from '@/src/state/lastScan';
 import { scanImage, scanMultiImage } from '@/src/lib/scanPipeline';
@@ -56,9 +58,47 @@ export default function CaptureScreen() {
   // Batch mode: rapid-fire capture that enqueues each shot for background
   // scanning instead of blocking on each one. `capturing` debounces the
   // shutter between quick shots.
-  const [batchMode, setBatchMode] = useState(false);
+  const [scanMode, setScanMode] = useState<'single' | 'batch' | 'barcode'>('single');
+  const batchMode = scanMode === 'batch';
+  const barcodeMode = scanMode === 'barcode';
   const [capturing, setCapturing] = useState(false);
   const queue = useScanQueue();
+  const { addItem } = useFridge();
+  // Debounce the continuous barcode stream: ignore the same code seen
+  // again within 4s so one physical scan = one fridge add.
+  const lastBarcodeRef = useRef<{ code: string; at: number }>({ code: '', at: 0 });
+  const onBarcode = useCallback(
+    async ({ data }: { data: string }) => {
+      if (analyzing || !data) return;
+      const now = Date.now();
+      if (lastBarcodeRef.current.code === data && now - lastBarcodeRef.current.at < 4000) return;
+      lastBarcodeRef.current = { code: data, at: now };
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+      // Barcode lookup is a Pro feature (unlimited scans + recipes + barcode).
+      if (!premium) { router.push('/paywall' as never); return; }
+      setAnalyzingMsg('Looking up product…');
+      setAnalyzing(true);
+      const product = await lookupBarcode(data);
+      if (!product) {
+        setAnalyzing(false);
+        setAnalyzingMsg('Analyzing…');
+        showAlert('Product not found', 'No match for that barcode yet. Try the photo scan instead.');
+        return;
+      }
+      const res = await addItem({
+        name: product.name,
+        tone: 'fresh',
+        days_left: product.shelfLifeDays,
+        total_days: product.shelfLifeDays,
+        expiry_text: `~${product.shelfLifeDays} days left`,
+      });
+      setAnalyzing(false);
+      setAnalyzingMsg('Analyzing…');
+      if (res?.error) { showAlert('Could not add', res.error); return; }
+      showAlert('Added to your fridge', `${product.name} · keep ~${product.shelfLifeDays} days`);
+    },
+    [analyzing, premium, addItem, router],
+  );
   const pulse = useRef(new Animated.Value(0)).current;
 
   // Reachable via router.replace('/capture') from the empty-scan tab and
@@ -303,7 +343,16 @@ export default function CaptureScreen() {
     }
     return (
       <>
-        <CameraView ref={cameraRef} style={styles.cameraFill} facing="back" mode="picture" />
+        <CameraView
+          ref={cameraRef}
+          style={styles.cameraFill}
+          facing="back"
+          mode="picture"
+          barcodeScannerSettings={{
+            barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e', 'code128', 'code39', 'itf14', 'codabar'],
+          }}
+          onBarcodeScanned={barcodeMode && !analyzing ? onBarcode : undefined}
+        />
         {analyzing ? (
           <View style={styles.analyzingOverlay}>
             <Sparkle size={56} color={colors.amber} strokeWidth={1.6} />
@@ -348,8 +397,8 @@ export default function CaptureScreen() {
             the background. */}
         {showShutter && (
           <SoftInset radius="full" strength="thin" contentStyle={styles.modeToggle}>
-            {(['single', 'batch'] as const).map((m) => {
-              const on = (m === 'batch') === batchMode;
+            {(['single', 'batch', 'barcode'] as const).map((m) => {
+              const on = scanMode === m;
               return (
                 <Pressable
                   key={m}
@@ -357,12 +406,12 @@ export default function CaptureScreen() {
                   accessibilityState={{ selected: on }}
                   onPress={() => {
                     Haptics.selectionAsync().catch(() => {});
-                    setBatchMode(m === 'batch');
+                    setScanMode(m);
                   }}
                   style={[styles.modeOption, on && styles.modeOptionOn]}
                 >
                   <Text style={[typeScale.labelSmall, { color: on ? colors.surfaceWhite : colors.inkSecondary }]}>
-                    {m === 'single' ? 'SINGLE' : 'BATCH'}
+                    {m === 'single' ? 'SINGLE' : m === 'batch' ? 'BATCH' : 'BARCODE'}
                   </Text>
                 </Pressable>
               );
@@ -374,14 +423,16 @@ export default function CaptureScreen() {
           {analyzing
             ? ''
             : showShutter
-              ? batchMode
-                ? 'TAP TO ADD · SCANS RUN IN BACKGROUND'
-                : 'POINT AT FOOD · TAP TO CAPTURE'
+              ? barcodeMode
+                ? 'POINT AT A BARCODE'
+                : batchMode
+                  ? 'TAP TO ADD · SCANS RUN IN BACKGROUND'
+                  : 'POINT AT FOOD · TAP TO CAPTURE'
               : ''}
         </Text>
 
         {/* K9 — one photo, every item on the table at once. */}
-        {showShutter && !analyzing && (
+        {showShutter && !analyzing && !barcodeMode && (
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="scan the whole table"
@@ -396,6 +447,7 @@ export default function CaptureScreen() {
       <View style={[styles.shutterBlock, { paddingBottom: insets.bottom + spacing.xxl }]}>
         {showShutter ? (
           <>
+            {!barcodeMode && (
             <View style={styles.shutterRow}>
               {/* Gallery picker — left of the shutter (mirrors the iOS camera
                   app's library shortcut). Runs the same scan pipeline. */}
@@ -439,6 +491,7 @@ export default function CaptureScreen() {
               {/* Symmetry spacer so the shutter stays centred. */}
               <View style={styles.galleryBtn} />
             </View>
+            )}
 
             {/* Batch: a clear, labelled Review button below the row (a bare
                 count pill read as non-tappable to the user). */}
