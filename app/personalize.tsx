@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TextInput, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, TextInput, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { IconButton } from '@/components/ui/IconButton';
@@ -118,7 +118,7 @@ export default function PersonalizeScreen() {
     q.kind === 'multi' ? answers.topWaste.includes(value as WasteItem) : answers[q.key as 'household'] === value;
 
   return (
-    <View style={styles.root}>
+    <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
         <IconButton accessibilityLabel="back" onPress={onBack}>
           <Back size={22} color={colors.ink} strokeWidth={2} />
@@ -148,6 +148,7 @@ export default function PersonalizeScreen() {
               placeholderTextColor={colors.inkMuted}
               autoFocus
               returnKeyType="done"
+              onSubmitEditing={onContinue}
               selectionColor={colors.primary}
             />
           </SoftInset>
@@ -171,7 +172,7 @@ export default function PersonalizeScreen() {
           <PrimaryPillCTA label={isLast ? 'Build my plan' : 'Continue'} onPress={answered ? onContinue : () => {}} />
         </View>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
