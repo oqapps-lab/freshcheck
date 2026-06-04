@@ -94,7 +94,7 @@ export default function CaptureScreen() {
   // supabase+user. (Batch scanning uses the same scanImage() via scanQueue.)
   const runScanPipeline = async (sourceUri: string) => {
     if (!supabase || !user) return;
-    if (!canScan(premium)) { router.push('/paywall' as never); return; }
+    if (!canScan(premium)) { setAnalyzing(false); setAnalyzingMsg('Analyzing…'); router.push('/paywall' as never); return; }
     try {
       setAnalyzingMsg('Reading ripeness…');
       const result = await scanImage(supabase, user.id, sourceUri);
