@@ -23,3 +23,7 @@ supabase/.temp/
 
 expo-env.d.ts
 # @end expo-cli
+# build artifacts + os cruft
+*.ipa
+*.tar.gz
+.DS_Store
