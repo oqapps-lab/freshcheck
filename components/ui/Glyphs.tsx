@@ -115,6 +115,27 @@ export function Check(p: Props) {
   );
 }
 
+export function Home(p: Props) {
+  const { size, color, strokeWidth } = stroke(p);
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M3 10.5 11.3 3.3a1 1 0 0 1 1.4 0L21 10.5" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M9.5 21v-6h5v6" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
+export function Edit(p: Props) {
+  const { size, color, strokeWidth } = stroke(p);
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M12 20h9" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
+      <Path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
 export function User(p: Props) {
   const { size, color, strokeWidth } = stroke(p);
   return (

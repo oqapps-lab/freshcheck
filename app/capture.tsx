@@ -399,6 +399,7 @@ export default function CaptureScreen() {
           <SoftInset radius="full" strength="thin" contentStyle={styles.modeToggle}>
             {(['single', 'batch', 'barcode'] as const).map((m) => {
               const on = scanMode === m;
+              const label = m === 'single' ? 'SINGLE' : m === 'batch' ? 'BATCH' : 'BARCODE';
               return (
                 <Pressable
                   key={m}
@@ -408,11 +409,16 @@ export default function CaptureScreen() {
                     Haptics.selectionAsync().catch(() => {});
                     setScanMode(m);
                   }}
-                  style={[styles.modeOption, on && styles.modeOptionOn]}
                 >
-                  <Text style={[typeScale.labelSmall, { color: on ? colors.surfaceWhite : colors.inkSecondary }]}>
-                    {m === 'single' ? 'SINGLE' : m === 'batch' ? 'BATCH' : 'BARCODE'}
-                  </Text>
+                  {on ? (
+                    <SoftSurface variant="pill" radius="full" background={colors.primary} innerStyle={styles.modeOptionOn}>
+                      <Text style={[typeScale.labelSmall, { color: colors.surfaceWhite }]}>{label}</Text>
+                    </SoftSurface>
+                  ) : (
+                    <View style={styles.modeOption}>
+                      <Text style={[typeScale.labelSmall, { color: colors.inkSecondary }]}>{label}</Text>
+                    </View>
+                  )}
                 </Pressable>
               );
             })}
@@ -654,16 +660,21 @@ const styles = StyleSheet.create({
   },
   modeToggle: {
     flexDirection: 'row',
-    padding: 4,
-    gap: 4,
+    padding: 8,
+    gap: 6,
   },
   modeOption: {
     paddingHorizontal: spacing.lg,
-    paddingVertical: 8,
+    paddingVertical: 9,
     borderRadius: 999,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   modeOptionOn: {
-    backgroundColor: colors.primary,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   tableBtn: {
     marginTop: spacing.md,

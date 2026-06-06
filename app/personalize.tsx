@@ -17,7 +17,7 @@ import {
   type Forgotten,
   type DinnerStyle,
 } from '@/src/state/onboardingStore';
-import { colors, layout, spacing, typeScale } from '@/constants/tokens';
+import { colors, fonts, layout, spacing, typeScale } from '@/constants/tokens';
 
 type Opt = { value: string; label: string; emoji: string };
 type Q =
@@ -91,8 +91,10 @@ export default function PersonalizeScreen() {
         : Boolean(answers[q.key]);
 
   const onBack = () => {
-    if (step === 0) router.back();
-    else setStep((s) => s - 1);
+    if (step === 0) {
+      if (router.canGoBack()) router.back();
+      else router.replace('/onboarding' as never);
+    } else setStep((s) => s - 1);
   };
 
   const onContinue = () => {
@@ -141,7 +143,7 @@ export default function PersonalizeScreen() {
         {q.kind === 'text' ? (
           <SoftInset radius="lg" strength="thin" contentStyle={styles.inputWrap}>
             <TextInput
-              style={[typeScale.titleMedium, styles.input]}
+              style={styles.input}
               value={answers.name ?? ''}
               onChangeText={(t) => setAnswer('name', t)}
               placeholder="Your name"
@@ -193,7 +195,7 @@ const styles = StyleSheet.create({
   q: { color: colors.ink, marginBottom: spacing.sm },
   qSub: { color: colors.inkSecondary, marginBottom: spacing.xl },
   options: { gap: spacing.md, marginTop: spacing.lg },
-  inputWrap: { paddingHorizontal: spacing.lg, marginTop: spacing.lg },
-  input: { color: colors.ink, paddingVertical: spacing.md },
+  inputWrap: { paddingHorizontal: spacing.lg, marginTop: spacing.lg, justifyContent: 'center' },
+  input: { color: colors.ink, fontFamily: fonts.semibold, fontSize: 16, letterSpacing: -0.1, height: 52, paddingVertical: 0, textAlignVertical: 'center' },
   cta: { paddingHorizontal: layout.screenPadding, paddingTop: spacing.sm },
 });

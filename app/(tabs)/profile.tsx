@@ -7,7 +7,7 @@ import Constants from 'expo-constants';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { SoftSurface } from '@/components/ui/SoftSurface';
-import { Chevron, User } from '@/components/ui/Glyphs';
+import { Chevron, Edit, User } from '@/components/ui/Glyphs';
 import { useFridge } from '@/src/hooks/useFridge';
 import { useAuth } from '@/src/hooks/useAuth';
 import { usePremium } from '@/src/hooks/usePremium';
@@ -42,8 +42,7 @@ export default function ProfileScreen() {
   // Display name precedence: user-set name → email prefix (signed in) → Guest.
   const shownName = localProfile.displayName ?? (signedIn ? user?.email?.split('@')[0] ?? 'You' : 'Guest');
 
-  const onPickAvatar = async () => {
-    Haptics.selectionAsync().catch(() => {});
+  const pickFromLibrary = async () => {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!perm.granted) {
       showAlert(
@@ -69,6 +68,39 @@ export default function ProfileScreen() {
     }
   };
 
+  const takePhoto = async () => {
+    const perm = await ImagePicker.requestCameraPermissionsAsync();
+    if (!perm.granted) {
+      showAlert(
+        'Camera access needed',
+        perm.canAskAgain
+          ? 'Allow camera access to take a photo.'
+          : 'Enable camera access in Settings, then come back.',
+        perm.canAskAgain ? undefined : [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Open Settings', onPress: () => Linking.openSettings() },
+        ],
+      );
+      return;
+    }
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.7,
+    });
+    if (!result.canceled && result.assets?.[0]?.uri) {
+      setAvatarUri(result.assets[0].uri);
+    }
+  };
+
+  const onPickAvatar = () => {
+    Haptics.selectionAsync().catch(() => {});
+    showAlert('Change photo', 'Choose a new profile photo', [
+      { text: 'Take Photo', onPress: () => void takePhoto() },
+      { text: 'Choose from Library', onPress: () => void pickFromLibrary() },
+      { text: 'Cancel', style: 'cancel' },
+    ]);
+  };
   const onEditName = () => {
     Haptics.selectionAsync().catch(() => {});
     showPrompt(
@@ -210,7 +242,9 @@ export default function ProfileScreen() {
             style={({ pressed }) => [styles.nameRow, { opacity: pressed ? 0.7 : 1 }]}
           >
             <Text style={[typeScale.displayMedium, styles.name]}>{shownName}</Text>
-            <Text style={styles.namePencil}>✎</Text>
+            <View style={styles.namePencilBadge}>
+              <Edit size={15} color={colors.inkSecondary} strokeWidth={2} />
+            </View>
           </Pressable>
           <Text style={[typeScale.label, styles.eyebrow]}>
             {signedIn ? 'SIGNED IN' : 'NOT SIGNED IN'}
@@ -405,9 +439,13 @@ const styles = StyleSheet.create({
     color: colors.ink,
     textAlign: 'center',
   },
-  namePencil: {
-    fontSize: 16,
-    color: colors.inkMuted,
+  namePencilBadge: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: colors.surfaceTint,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   eyebrow: {
     color: colors.inkSecondary,

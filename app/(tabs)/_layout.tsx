@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Slot, useRouter, useSegments } from 'expo-router';
 import { TabBarPill } from '@/components/ui/TabBarPill';
-import { Eco, Bowl, History, User } from '@/components/ui/Glyphs';
+import { Home, Bowl, History, User } from '@/components/ui/Glyphs';
 import { colors } from '@/constants/tokens';
 
 // Home (scan orb) / Fridge / Recipes / Profile. The old "scan" tab
@@ -18,7 +18,7 @@ const TABS = [
     key: 'index',
     label: 'home',
     icon: (active: boolean) => (
-      <Eco size={26} color={active ? colors.ink : colors.inkSecondary} strokeWidth={2} />
+      <Home size={26} color={active ? colors.ink : colors.inkSecondary} strokeWidth={2} />
     ),
   },
   {

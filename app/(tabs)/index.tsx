@@ -66,9 +66,12 @@ export default function HomeScreen() {
           onPress={onScan}
           style={styles.orbWrap}
         >
+          <View style={styles.orbGlow} />
           <SoftSurface variant="cushion" radius="full" innerStyle={styles.orbOuter}>
             <SoftInset radius="full" strength="thick" style={styles.orbCup} contentStyle={styles.orbCupInner}>
-              <BarcodeScanner size={88} color={colors.primary} strokeWidth={1.5} />
+              <View style={styles.orbRing}>
+                <BarcodeScanner size={84} color={colors.primary} strokeWidth={1.5} />
+              </View>
             </SoftInset>
           </SoftSurface>
         </Pressable>
@@ -170,6 +173,27 @@ const styles = StyleSheet.create({
   orbOuter: { width: ORB_OUTER, height: ORB_OUTER, alignItems: 'center', justifyContent: 'center' },
   orbCup: { width: ORB_CUP, height: ORB_CUP },
   orbCupInner: { width: ORB_CUP, height: ORB_CUP, alignItems: 'center', justifyContent: 'center' },
+  orbGlow: {
+    position: 'absolute',
+    width: ORB_OUTER,
+    height: ORB_OUTER,
+    borderRadius: ORB_OUTER / 2,
+    backgroundColor: colors.canvas,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.28,
+    shadowRadius: 20,
+    elevation: 0,
+  },
+  orbRing: {
+    width: ORB_CUP - 48,
+    height: ORB_CUP - 48,
+    borderRadius: (ORB_CUP - 48) / 2,
+    borderWidth: 1.5,
+    borderColor: colors.hairline,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   tapHint: {
     color: colors.inkSecondary,
     textTransform: 'uppercase',

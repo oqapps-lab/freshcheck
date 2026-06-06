@@ -6,7 +6,6 @@ import {
   Pressable,
   StyleSheet,
   Image,
-  ActivityIndicator,
   Modal,
   Animated,
   Easing,
@@ -20,6 +19,7 @@ import { SoftSurface } from '@/components/ui/SoftSurface';
 import { SoftInset } from '@/components/ui/SoftInset';
 import { PrimaryPillCTA } from '@/components/ui/PrimaryPillCTA';
 import { RecipeCookingLoader } from '@/components/ui/RecipeCookingLoader';
+import { RecipeImageLoading } from '@/components/ui/RecipeImageLoading';
 import { Shimmer } from '@/components/ui/Shimmer';
 import { FadeIn } from '@/components/ui/FadeIn';
 import { Check, Chevron, Close, Sparkle, Star } from '@/components/ui/Glyphs';
@@ -348,7 +348,7 @@ export default function RecipesTab() {
                       style={styles.heroSkeleton}
                       contentStyle={styles.heroSkeletonInner}
                     >
-                      <ActivityIndicator size="small" color={colors.inkMuted} />
+                      <RecipeImageLoading />
                     </SoftInset>
                   )}
                   {/* Favorite toggle — tapping the star saves the recipe so it
@@ -595,7 +595,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  list: { gap: spacing.xxl, paddingHorizontal: 8 },
+  list: { gap: spacing.xxl },
   skeletonCard: {
     borderRadius: 40,
     overflow: 'hidden',

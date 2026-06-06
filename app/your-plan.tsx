@@ -5,7 +5,6 @@ import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { SoftSurface } from '@/components/ui/SoftSurface';
 import { PrimaryPillCTA } from '@/components/ui/PrimaryPillCTA';
-import { GhostText } from '@/components/ui/GhostText';
 import { Sparkle, History, Bowl, Check } from '@/components/ui/Glyphs';
 import {
   useOnboardingAnswers,
@@ -52,12 +51,9 @@ export default function YourPlanScreen() {
 
   return (
     <View style={styles.root}>
-      <View style={[styles.skipRow, { paddingTop: insets.top + 12 }]}>
-        <View />
-        <GhostText label="Skip" onPress={onContinue} accessibilityLabel="skip to plan" />
-      </View>
+      <View style={{ paddingTop: insets.top + spacing.sm }} />
       <ScrollView
-        contentContainerStyle={[styles.scroll, { paddingBottom: insets.bottom + 120 }]}
+        contentContainerStyle={[styles.scroll, { paddingBottom: insets.bottom + spacing.lg }]}
         showsVerticalScrollIndicator={false}
       >
         <Image source={require('../assets/onboarding/fresh-abundance.webp')} style={styles.hero} resizeMode="cover" />
@@ -108,11 +104,11 @@ export default function YourPlanScreen() {
         </View>
 
         <Text style={[typeScale.bodySmall, styles.social]}>Join families saving about $2,913 a year with FreshCheck.</Text>
-      </ScrollView>
 
-      <View style={[styles.cta, { paddingBottom: insets.bottom + spacing.lg }]}>
-        <PrimaryPillCTA label="See my plan" onPress={onContinue} iconLeft={<Sparkle size={20} color={colors.amber} strokeWidth={2} />} />
-      </View>
+        <View style={styles.ctaInline}>
+          <PrimaryPillCTA label="See my plan" onPress={onContinue} iconLeft={<Sparkle size={20} color={colors.amber} strokeWidth={2} />} />
+        </View>
+      </ScrollView>
     </View>
   );
 }
@@ -143,5 +139,5 @@ const styles = StyleSheet.create({
   tileText: { color: colors.ink, flex: 1 },
   tileLockedText: { color: colors.inkSecondary, flex: 1 },
   social: { color: colors.inkMuted, textAlign: 'center', marginTop: spacing.sm },
-  cta: { paddingHorizontal: layout.screenPadding, paddingTop: spacing.sm },
+  ctaInline: { marginTop: spacing.xl },
 });

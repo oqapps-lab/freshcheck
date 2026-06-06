@@ -334,13 +334,14 @@ const styles = StyleSheet.create({
   inputInner: {
     paddingHorizontal: spacing.lg,
     paddingVertical: 14,
+    justifyContent: 'center',
   },
   input: {
     fontFamily: 'Quicksand_500Medium',
     fontSize: 16,
-    lineHeight: 22,
     color: colors.ink,
     paddingVertical: 0,
+    textAlignVertical: 'center',
   },
   ctaBlock: {
     gap: spacing.md,

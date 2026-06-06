@@ -6,7 +6,7 @@ import {
   ScrollView,
   Animated,
   StyleSheet,
-  Dimensions,
+  useWindowDimensions,
   type ImageSourcePropType,
   type NativeScrollEvent,
   type NativeSyntheticEvent,
@@ -17,7 +17,6 @@ import { useRouter } from 'expo-router';
 import { safeStorage, STORAGE_KEYS } from '@/src/lib/safeStorage';
 import { SoftSurface } from '@/components/ui/SoftSurface';
 import { PrimaryPillCTA } from '@/components/ui/PrimaryPillCTA';
-import { GhostText } from '@/components/ui/GhostText';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
 type Slide = {
@@ -65,8 +64,6 @@ const SLIDES: Slide[] = [
   },
 ];
 
-const SCREEN_W = Dimensions.get('window').width;
-const CARD = Math.min(SCREEN_W - spacing.xl * 2, 340);
 
 async function markOnboardingDone() {
   await safeStorage.setItem(STORAGE_KEYS.onboardingDone, '1');
@@ -78,6 +75,9 @@ export default function OnboardingScreen() {
   const scrollRef = useRef<ScrollView>(null);
   const scrollX = useRef(new Animated.Value(0)).current;
   const [page, setPage] = useState(0);
+  const { width: SCREEN_W, height: SCREEN_H } = useWindowDimensions();
+  const CARD = Math.min(SCREEN_W - spacing.xl * 2, 340, Math.round(SCREEN_H * 0.34));
+  const slideGap = SCREEN_H < 760 ? spacing.lg : spacing.huge;
 
   const isLast = page === SLIDES.length - 1;
 
@@ -101,10 +101,7 @@ export default function OnboardingScreen() {
 
   return (
     <View style={styles.root}>
-      <View style={[styles.skipRow, { paddingTop: insets.top + 16 }]}>
-        <View />
-        <GhostText label="Skip" onPress={() => void finish('/personalize')} accessibilityLabel="skip onboarding" />
-      </View>
+      <View style={{ paddingTop: insets.top + spacing.sm }} />
 
       <Animated.ScrollView
         ref={scrollRef}
@@ -122,7 +119,7 @@ export default function OnboardingScreen() {
           const opacity = scrollX.interpolate({ inputRange, outputRange: [0.4, 1, 0.4], extrapolate: 'clamp' });
           const translateY = scrollX.interpolate({ inputRange, outputRange: [24, 0, 24], extrapolate: 'clamp' });
           return (
-            <View key={slide.id} style={[styles.slide, { width: SCREEN_W }]}>
+            <View key={slide.id} style={[styles.slide, { width: SCREEN_W, gap: slideGap }]}>
               <Animated.View style={{ transform: [{ scale }], opacity }}>
                 <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.imageCard}>
                   <LinearGradient
@@ -131,7 +128,7 @@ export default function OnboardingScreen() {
                     end={{ x: 1, y: 1 }}
                     style={styles.ring}
                   >
-                    <Image source={slide.image} style={styles.image} resizeMode="cover" />
+                    <Image source={slide.image} style={[styles.image, { width: CARD, height: CARD }]} resizeMode="cover" />
                   </LinearGradient>
                 </SoftSurface>
               </Animated.View>
@@ -172,10 +169,10 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.sm,
   },
   pager: { flex: 1 },
-  slide: { alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing.xl, gap: spacing.huge },
+  slide: { alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing.xl },
   imageCard: { padding: spacing.xs, borderRadius: 999 },
   ring: { padding: 4, borderRadius: 28 },
-  image: { width: CARD, height: CARD, borderRadius: 24 },
+  image: { borderRadius: 24 },
   copy: { alignItems: 'center', paddingHorizontal: spacing.sm },
   proofPill: {
     backgroundColor: colors.surfaceTint,
