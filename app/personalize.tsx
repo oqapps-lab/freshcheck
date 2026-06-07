@@ -141,7 +141,7 @@ export default function PersonalizeScreen() {
         {q.sub ? <Text style={[typeScale.bodyLarge, styles.qSub]}>{q.sub}</Text> : null}
 
         {q.kind === 'text' ? (
-          <SoftInset radius="lg" strength="thin" contentStyle={styles.inputWrap}>
+          <SoftInset radius="lg" strength="thin" style={styles.inputBox} contentStyle={styles.inputWrap}>
             <TextInput
               style={styles.input}
               value={answers.name ?? ''}
@@ -195,7 +195,8 @@ const styles = StyleSheet.create({
   q: { color: colors.ink, marginBottom: spacing.sm },
   qSub: { color: colors.inkSecondary, marginBottom: spacing.xl },
   options: { gap: spacing.md, marginTop: spacing.lg },
-  inputWrap: { paddingHorizontal: spacing.lg, marginTop: spacing.lg, justifyContent: 'center' },
+  inputBox: { marginTop: spacing.lg },
+  inputWrap: { paddingHorizontal: spacing.lg, justifyContent: 'center' },
   input: { color: colors.ink, fontFamily: fonts.semibold, fontSize: 16, letterSpacing: -0.1, height: 52, paddingVertical: 0, textAlignVertical: 'center' },
   cta: { paddingHorizontal: layout.screenPadding, paddingTop: spacing.sm },
 });

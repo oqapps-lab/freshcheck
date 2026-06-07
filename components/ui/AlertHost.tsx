@@ -43,7 +43,7 @@ export function AlertHost() {
                 <Text style={[typeScale.bodySmall, styles.message]}>{state.message}</Text>
               ) : null}
               {state.prompt ? (
-                <SoftInset radius="lg" strength="thin" contentStyle={styles.inputWrap}>
+                <SoftInset radius="lg" strength="thin" style={styles.inputWrapOuter} contentStyle={styles.inputWrap}>
                   <TextInput
                     style={[typeScale.body, styles.input]}
                     value={text}
@@ -99,7 +99,8 @@ const styles = StyleSheet.create({
   card: { width: '100%', maxWidth: 340, padding: spacing.xl, gap: spacing.sm },
   title: { color: colors.ink, textAlign: 'center' },
   message: { color: colors.inkSecondary, textAlign: 'center', lineHeight: 20 },
-  inputWrap: { paddingHorizontal: spacing.md, paddingVertical: 4, marginTop: spacing.sm },
+  inputWrapOuter: { marginTop: spacing.sm },
+  inputWrap: { paddingHorizontal: spacing.md, paddingVertical: 4 },
   input: { color: colors.ink, paddingVertical: 10 },
   buttons: { marginTop: spacing.md, gap: spacing.sm },
   btn: { paddingVertical: 14, alignItems: 'center', justifyContent: 'center' },

@@ -247,7 +247,7 @@ export default function RecipesTab() {
         )}
 
         {ready && fridgeEmpty && recipes.length > 0 && (
-          <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.emptyBanner}>
+          <SoftSurface variant="cushion" radius="xxl" style={styles.emptyBannerOuter} innerStyle={styles.emptyBanner}>
             <Sparkle size={20} color={colors.amber} strokeWidth={1.6} />
             <Text style={[typeScale.bodySmall, styles.emptyBannerText]}>
               Your fridge is empty — these are generic starter ideas. Scan a few items first for recipes built around what you actually have.
@@ -502,13 +502,12 @@ const styles = StyleSheet.create({
   },
   loadingText: { color: colors.ink, textAlign: 'center' },
   loadingSub: { color: colors.inkSecondary, textAlign: 'center' },
+  emptyBannerOuter: { marginHorizontal: 8, marginBottom: spacing.lg },
   emptyBanner: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
     padding: spacing.lg,
-    marginHorizontal: 8,
-    marginBottom: spacing.lg,
   },
   emptyBannerText: { color: colors.inkSecondary, flex: 1, lineHeight: 18 },
   idleState: {

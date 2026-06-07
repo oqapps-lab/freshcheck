@@ -418,7 +418,6 @@ const styles = StyleSheet.create({
     height: 96,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: spacing.lg,
   },
   emptyTitle: {
     color: colors.ink,

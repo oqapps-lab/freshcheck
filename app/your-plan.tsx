@@ -62,7 +62,7 @@ export default function YourPlanScreen() {
         <Text style={[typeScale.bodyLarge, styles.promise]}>{fearPromise(answers)}</Text>
 
         {watch.length > 0 ? (
-          <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.watchCard}>
+          <SoftSurface variant="cushion" radius="xxl" style={styles.watchCardOuter} innerStyle={styles.watchCard}>
             <Text style={[typeScale.label, styles.watchLabel]}>WE WILL KEEP AN EYE ON</Text>
             {watch.map((w) => (
               <View key={w} style={styles.watchRow}>
@@ -121,7 +121,8 @@ const styles = StyleSheet.create({
   eyebrow: { color: colors.inkSecondary, letterSpacing: 1.6, marginLeft: 2, marginBottom: spacing.xs },
   headline: { color: colors.ink, marginBottom: spacing.sm },
   promise: { color: colors.inkSecondary, lineHeight: 24, marginBottom: spacing.xl },
-  watchCard: { padding: spacing.lg, gap: spacing.sm, marginBottom: spacing.xl },
+  watchCardOuter: { marginBottom: spacing.xl },
+  watchCard: { padding: spacing.lg, gap: spacing.sm },
   watchLabel: { color: colors.inkSecondary, letterSpacing: 1.4, marginBottom: spacing.xs },
   watchRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   watchDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.primary },

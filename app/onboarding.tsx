@@ -1,10 +1,11 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
   Image,
   ScrollView,
   Animated,
+  Easing,
   StyleSheet,
   useWindowDimensions,
   type ImageSourcePropType,
@@ -78,6 +79,15 @@ export default function OnboardingScreen() {
   const { width: SCREEN_W, height: SCREEN_H } = useWindowDimensions();
   const CARD = Math.min(SCREEN_W - spacing.xl * 2, 340, Math.round(SCREEN_H * 0.34));
   const slideGap = SCREEN_H < 760 ? spacing.lg : spacing.huge;
+  const ringSpin = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.timing(ringSpin, { toValue: 1, duration: 7000, easing: Easing.linear, useNativeDriver: true }),
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [ringSpin]);
+  const ringRotate = ringSpin.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
 
   const isLast = page === SLIDES.length - 1;
 
@@ -122,14 +132,19 @@ export default function OnboardingScreen() {
             <View key={slide.id} style={[styles.slide, { width: SCREEN_W, gap: slideGap }]}>
               <Animated.View style={{ transform: [{ scale }], opacity }}>
                 <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.imageCard}>
-                  <LinearGradient
-                    colors={[colors.amber, colors.primary]}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.ring}
-                  >
+                  <View style={[styles.ring, { width: CARD + 8, height: CARD + 8 }]}>
+                    <Animated.View
+                      style={[styles.ringSpin, { width: (CARD + 8) * 1.5, height: (CARD + 8) * 1.5, transform: [{ rotate: ringRotate }] }]}
+                    >
+                      <LinearGradient
+                        colors={[colors.amber, colors.primary, colors.amberLight, colors.amber]}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={StyleSheet.absoluteFill}
+                      />
+                    </Animated.View>
                     <Image source={slide.image} style={[styles.image, { width: CARD, height: CARD }]} resizeMode="cover" />
-                  </LinearGradient>
+                  </View>
                 </SoftSurface>
               </Animated.View>
               <Animated.View style={[styles.copy, { opacity, transform: [{ translateY }] }]}>
@@ -171,7 +186,8 @@ const styles = StyleSheet.create({
   pager: { flex: 1 },
   slide: { alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing.xl },
   imageCard: { padding: spacing.xs, borderRadius: 999 },
-  ring: { padding: 4, borderRadius: 28 },
+  ring: { borderRadius: 28, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
+  ringSpin: { position: 'absolute' },
   image: { borderRadius: 24 },
   copy: { alignItems: 'center', paddingHorizontal: spacing.sm },
   proofPill: {
