@@ -22,7 +22,8 @@ const TIMES: { label: string; v: number | null }[] = [
   { label: "<=60 min", v: 60 },
 ];
 
-type Ing = { name: string; amount: string };
+type Ing = { name: string; amount: string; unit: string };
+const UNITS = ["g", "pcs", "cups", "tbsp", "tsp", "ml"];
 
 export default function RecipeBuilderScreen() {
   const insets = useSafeAreaInsets();
@@ -32,16 +33,17 @@ export default function RecipeBuilderScreen() {
   const [ingredients, setIngredients] = useState<Ing[]>([]);
   const [draftName, setDraftName] = useState("");
   const [draftAmount, setDraftAmount] = useState("");
+  const [unit, setUnit] = useState("g");
   const [method, setMethod] = useState("Any");
   const [maxMin, setMaxMin] = useState<number | null>(null);
-  const [onlyThese, setOnlyThese] = useState(true);
+  const [onlyThese, setOnlyThese] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const addIngredient = () => {
     const name = draftName.trim();
     if (!name) return;
     Haptics.selectionAsync().catch(() => {});
-    setIngredients((prev) => [...prev, { name, amount: draftAmount.trim() }]);
+    setIngredients((prev) => [...prev, { name, amount: draftAmount.trim(), unit }]);
     setDraftName("");
     setDraftAmount("");
   };
@@ -58,15 +60,20 @@ export default function RecipeBuilderScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
     setBusy(true);
     try {
-      await generate({
+      const r = await generate({
         custom: {
-          ingredients: ingredients.map((i) => (i.amount ? `${i.amount} ${i.name}` : i.name)),
+          ingredients: ingredients.map((i) => (i.amount ? `${i.amount} ${i.unit} ${i.name}` : i.name)),
           method: method === "Any" ? undefined : method,
           maxMinutes: maxMin,
           onlyThese,
         },
       });
-      router.replace("/(tabs)/recipes" as never);
+      if (r?.ok) {
+        router.replace("/(tabs)/recipes" as never);
+      } else {
+        setBusy(false);
+        showAlert("Could not generate", r?.error ?? "Please try again in a moment.");
+      }
     } catch {
       setBusy(false);
       showAlert("Could not generate", "Please try again in a moment.");
@@ -98,7 +105,7 @@ export default function RecipeBuilderScreen() {
         <Text style={[typeScale.label, styles.section]}>ADD INGREDIENTS</Text>
         <View style={styles.addRow}>
           <SoftInset radius="lg" strength="thin" style={styles.amountBox} contentStyle={styles.inputWrap}>
-            <TextInput style={styles.input} value={draftAmount} onChangeText={setDraftAmount} placeholder="200g" placeholderTextColor={colors.inkMuted} returnKeyType="next" selectionColor={colors.primary} />
+            <TextInput style={styles.input} value={draftAmount} onChangeText={setDraftAmount} placeholder="200" placeholderTextColor={colors.inkMuted} returnKeyType="next" selectionColor={colors.primary} />
           </SoftInset>
           <SoftInset radius="lg" strength="thin" style={styles.nameBox} contentStyle={styles.inputWrap}>
             <TextInput style={styles.input} value={draftName} onChangeText={setDraftName} placeholder="Chicken breast" placeholderTextColor={colors.inkMuted} returnKeyType="done" onSubmitEditing={addIngredient} selectionColor={colors.primary} />
@@ -109,12 +116,22 @@ export default function RecipeBuilderScreen() {
             </SoftSurface>
           </Pressable>
         </View>
+        <View style={styles.units}>
+          {UNITS.map((u) => {
+            const on = unit === u;
+            return (
+              <Pressable key={u} onPress={() => { Haptics.selectionAsync().catch(() => {}); setUnit(u); }} style={[styles.unitChip, on && styles.unitChipOn]}>
+                <Text style={[typeScale.labelSmall, on ? styles.pickTextOn : styles.pickText]}>{u.toUpperCase()}</Text>
+              </Pressable>
+            );
+          })}
+        </View>
 
         {ingredients.length > 0 ? (
           <View style={styles.chips}>
             {ingredients.map((it, i) => (
               <Pressable key={`${it.name}-${i}`} onPress={() => removeIngredient(i)} style={styles.chip}>
-                <Text style={[typeScale.titleSmall, styles.chipText]}>{it.amount ? `${it.amount} ${it.name}` : it.name}</Text>
+                <Text style={[typeScale.titleSmall, styles.chipText]}>{it.amount ? `${it.amount} ${it.unit} ${it.name}` : it.name}</Text>
                 <Close size={14} color={colors.inkSecondary} strokeWidth={2.4} />
               </Pressable>
             ))}
@@ -181,6 +198,9 @@ const styles = StyleSheet.create({
   addBtnWrap: {},
   addBtn: { width: 48, height: 48, alignItems: "center", justifyContent: "center" },
   addBtnPlus: { color: colors.surfaceWhite, fontSize: 26, lineHeight: 30, fontFamily: fonts.bold },
+  units: { flexDirection: "row", flexWrap: "wrap", gap: spacing.xs, marginTop: spacing.sm },
+  unitChip: { backgroundColor: colors.surfaceTint, borderRadius: 999, paddingVertical: 6, paddingHorizontal: spacing.md },
+  unitChipOn: { backgroundColor: colors.primary },
   chips: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginTop: spacing.xs },
   chip: { flexDirection: "row", alignItems: "center", gap: 6, backgroundColor: colors.surfaceWhite, borderRadius: 999, paddingVertical: 8, paddingHorizontal: spacing.md },
   chipText: { color: colors.ink },

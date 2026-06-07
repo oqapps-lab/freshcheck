@@ -96,7 +96,7 @@ export function useRecipes() {
     if (!supabase) {
       setError('Backend not configured');
       setStatus('error');
-      return;
+      return { ok: false as const, error: 'Backend not configured' };
     }
     const myReq = ++requestRef.current;
     setStatus('loading');
@@ -167,6 +167,7 @@ export function useRecipes() {
           if (url) updateRecipeImage(r.id, url);
         }
       })();
+      return { ok: true as const, count: batch.length };
     } catch (e) {
       if (myReq !== requestRef.current) return;
       // Skip Crashlytics noise for the daily-limit 429 — that's expected
@@ -177,6 +178,7 @@ export function useRecipes() {
       }
       setError(msg);
       setStatus('error');
+      return { ok: false as const, error: msg };
     }
   }, [supabase, premium]);
 

@@ -155,7 +155,6 @@ export default function HomeScreen() {
               <Text style={[typeScale.bodySmall, styles.tipBody]}>{it.store}</Text>
               <View style={styles.storeMeta}>
                 <Text style={[typeScale.labelSmall, styles.storeMetaText]}>{it.life}</Text>
-                <Text style={[typeScale.labelSmall, styles.storeMetaDot]}>+</Text>
                 <Text style={[typeScale.labelSmall, styles.storeMetaText]}>{it.temp}</Text>
               </View>
             </SoftSurface>
@@ -309,7 +308,7 @@ const styles = StyleSheet.create({
   tipBody: { color: colors.inkSecondary, lineHeight: 18 },
   storeCard: { width: 210, padding: spacing.lg, gap: spacing.xs },
   storeEmoji: { fontSize: 28 },
-  storeMeta: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 4 },
+  storeMeta: { flexDirection: "column", gap: 2, marginTop: 6, alignSelf: "stretch" },
   storeMetaText: { color: colors.primary, letterSpacing: 0.6 },
   storeMetaDot: { color: colors.inkMuted },
   chefCard: { width: 250, padding: spacing.lg, gap: spacing.md, justifyContent: "space-between" },
