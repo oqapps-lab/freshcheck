@@ -195,8 +195,7 @@ serve(async (req) => {
       'Mark every user-provided ingredient as from_fridge:true. Generate the 3-recipe JSON object now.',
     ]
       .filter((l) => l !== '')
-      .join('
-');
+      .join('\n');
   } else if (fridgeItems.length === 0) {
     userPrompt = 'Fridge is empty. Suggest 3 simple starter recipes the user can buy ingredients for.';
   } else {
