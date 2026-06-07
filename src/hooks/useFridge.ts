@@ -19,6 +19,7 @@ function categoryFor(name: string): Row['category'] {
   return 'produce';
 }
 import { refreshExpiryReminders } from '@/src/lib/notifications';
+import { recordFridgeAch } from '@/src/state/achievementsStore';
 import type { Tone } from '@/constants/tokens';
 
 type Row = Database['public']['Tables']['fridge_items']['Row'];
@@ -152,6 +153,7 @@ export function useFridge() {
       const { error: err } = await supabase.from('fridge_items').insert(payload as never);
       if (err) return { error: err.message };
       await refresh();
+      recordFridgeAch();
       return { error: null };
     },
     [supabase, user, refresh],

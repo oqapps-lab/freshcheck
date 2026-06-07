@@ -10,6 +10,8 @@ import { useFavorites, hydrateFavorites } from '@/src/state/favoritesStore';
 import { useRecipeList, hydrateRecipes } from '@/src/state/recipeStore';
 import type { Recipe } from '@/src/hooks/useRecipes';
 import { colors, typeScale, spacing, layout, shadowReach } from '@/constants/tokens';
+import { STORAGE_GUIDE, CHEF_TIPS } from '@/constants/homeContent';
+import { useAchievements, ACHIEVEMENTS } from '@/src/state/achievementsStore';
 
 // Curated, honest food-safety mini-articles. Static (no backend) — these
 // give the user a reason to come back and learn, per the user's request.
@@ -31,6 +33,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const favorites = useFavorites();
   const recipes = useRecipeList();
+  const ach = useAchievements();
 
   useEffect(() => {
     void hydrateFavorites();
@@ -140,6 +143,52 @@ export default function HomeScreen() {
               <Text style={[typeScale.bodySmall, styles.tipBody]}>{tip.body}</Text>
             </SoftSurface>
           ))}
+        </ScrollView>
+
+        {/* Storage guide */}
+        <Text style={[typeScale.label, styles.sectionLabel]}>STORAGE GUIDE</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tipsScrollOuter} contentContainerStyle={styles.tipsScroll}>
+          {STORAGE_GUIDE.map((it) => (
+            <SoftSurface key={it.food} variant="cushion" radius="xxl" innerStyle={styles.storeCard}>
+              <Text style={styles.storeEmoji}>{it.emoji}</Text>
+              <Text style={[typeScale.titleSmall, styles.tipTitle]}>{it.food}</Text>
+              <Text style={[typeScale.bodySmall, styles.tipBody]}>{it.store}</Text>
+              <View style={styles.storeMeta}>
+                <Text style={[typeScale.labelSmall, styles.storeMetaText]}>{it.life}</Text>
+                <Text style={[typeScale.labelSmall, styles.storeMetaDot]}>+</Text>
+                <Text style={[typeScale.labelSmall, styles.storeMetaText]}>{it.temp}</Text>
+              </View>
+            </SoftSurface>
+          ))}
+        </ScrollView>
+
+        {/* Chef tips */}
+        <Text style={[typeScale.label, styles.sectionLabel]}>CHEF TIPS</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tipsScrollOuter} contentContainerStyle={styles.tipsScroll}>
+          {CHEF_TIPS.map((c) => (
+            <SoftSurface key={c.chef} variant="cushion" radius="xxl" innerStyle={styles.chefCard}>
+              <Text style={[typeScale.body, styles.chefTip]}>{c.tip}</Text>
+              <View style={styles.chefWho}>
+                <Text style={[typeScale.titleSmall, styles.tipTitle]}>{c.chef}</Text>
+                <Text style={[typeScale.labelSmall, styles.chefRole]}>{c.role}</Text>
+              </View>
+            </SoftSurface>
+          ))}
+        </ScrollView>
+
+        {/* Achievements */}
+        <Text style={[typeScale.label, styles.sectionLabel]}>YOUR BADGES</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tipsScrollOuter} contentContainerStyle={styles.tipsScroll}>
+          {ACHIEVEMENTS.map((a) => {
+            const earned = ach.earned.includes(a.id);
+            return (
+              <SoftSurface key={a.id} variant="cushion" radius="xxl" innerStyle={[styles.badgeCard, earned ? null : styles.badgeLocked]}>
+                <Text style={styles.badgeEmoji}>{a.emoji}</Text>
+                <Text style={[typeScale.labelSmall, styles.badgeTitle]}>{a.title}</Text>
+                <Text style={[typeScale.bodySmall, styles.badgeDesc]}>{earned ? "Unlocked" : a.desc}</Text>
+              </SoftSurface>
+            );
+          })}
         </ScrollView>
       </ScrollView>
     </View>
@@ -258,4 +307,18 @@ const styles = StyleSheet.create({
   },
   tipTitle: { color: colors.ink },
   tipBody: { color: colors.inkSecondary, lineHeight: 18 },
+  storeCard: { width: 210, padding: spacing.lg, gap: spacing.xs },
+  storeEmoji: { fontSize: 28 },
+  storeMeta: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 4 },
+  storeMetaText: { color: colors.primary, letterSpacing: 0.6 },
+  storeMetaDot: { color: colors.inkMuted },
+  chefCard: { width: 250, padding: spacing.lg, gap: spacing.md, justifyContent: "space-between" },
+  chefTip: { color: colors.ink, lineHeight: 22 },
+  chefWho: { gap: 1 },
+  chefRole: { color: colors.inkMuted, letterSpacing: 0.6 },
+  badgeCard: { width: 132, padding: spacing.lg, gap: spacing.xs, alignItems: "center" },
+  badgeLocked: { opacity: 0.5 },
+  badgeEmoji: { fontSize: 32 },
+  badgeTitle: { color: colors.ink, textAlign: "center" },
+  badgeDesc: { color: colors.inkSecondary, textAlign: "center", fontSize: 11, lineHeight: 14 },
 });

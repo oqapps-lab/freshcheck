@@ -5,6 +5,7 @@ import { Stack, useRouter, useSegments } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AlertHost } from '@/components/ui/AlertHost';
+import { AchievementHost } from '@/components/ui/AchievementHost';
 import { StatusBar } from 'expo-status-bar';
 import { SoftSurface } from '@/components/ui/SoftSurface';
 import { PrimaryPillCTA } from '@/components/ui/PrimaryPillCTA';
@@ -15,6 +16,7 @@ import { activateAdaptyIfNeeded, identifyAdaptyUser, logoutAdaptyUser } from '@/
 import { setAppsFlyerCustomerId } from '@/src/lib/appsflyer';
 import { hydrateUsage } from '@/src/lib/freeLimits';
 import { hydrateOnboardingAnswers } from '@/src/state/onboardingStore';
+import { hydrateAchievements } from '@/src/state/achievementsStore';
 import { bootFirebase, setFirebaseUser, resetFirebaseUser, logScreenView } from '@/src/lib/firebase';
 import { useAuth } from '@/src/hooks/useAuth';
 import {
@@ -81,6 +83,7 @@ function VendorBoot() {
     void bootFirebase();
     void hydrateUsage();
     void hydrateOnboardingAnswers();
+    void hydrateAchievements();
     // NOTE: ATT (tracking prompt) is intentionally NOT requested here at cold
     // launch — Apple rejects that (Guideline 5.1.2). It is requested at the
     // paywall (post-onboarding, contextual). See app/paywall.tsx.
@@ -195,6 +198,7 @@ export default function RootLayout() {
           <Stack.Screen name="your-plan" options={{ presentation: 'card', animation: 'slide_from_right', gestureEnabled: false }} />
         </Stack>
         <AlertHost />
+        <AchievementHost />
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

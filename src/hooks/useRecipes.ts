@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { getSupabase } from '@/src/lib/supabase';
+import { recordRecipeAch } from '@/src/state/achievementsStore';
 import {
   setRecipes as setRecipesCache,
   updateRecipeImage,
@@ -133,6 +134,7 @@ export function useRecipes() {
       // Write to the store — our subscription mirrors it into local state
       // and persists it so the batch survives navigation / restart.
       setRecipesCache(data.recipes);
+      recordRecipeAch(data.recipes.length);
       setStatus('ready');
 
       // Kick off image fetch per recipe (don't block UI). updateRecipeImage

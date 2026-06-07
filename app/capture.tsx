@@ -25,6 +25,7 @@ import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 import { useAuth } from '@/src/hooks/useAuth';
 import { usePremium } from '@/src/hooks/usePremium';
 import { canScan, recordScan } from '@/src/lib/freeLimits';
+import { recordScanAch } from '@/src/state/achievementsStore';
 import { lookupBarcode } from '@/src/lib/openFoodFacts';
 import { useFridge } from '@/src/hooks/useFridge';
 import { getSupabase } from '@/src/lib/supabase';
@@ -139,7 +140,7 @@ export default function CaptureScreen() {
       setAnalyzingMsg('Reading ripeness…');
       const result = await scanImage(supabase, user.id, sourceUri);
       setLastScan(result);
-      recordScan();
+      recordScan(); recordScanAch();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
       // AppsFlyer 'af_content_view' — primary in-app engagement signal that
       // ad networks can attribute installs against.
@@ -182,7 +183,7 @@ export default function CaptureScreen() {
         return;
       }
       addScannedItems(results);
-      recordScan();
+      recordScan(); recordScanAch();
       setAnalyzing(false);
       setAnalyzingMsg('Analyzing…');
       goToBatch();
@@ -212,7 +213,7 @@ export default function CaptureScreen() {
       const shot = await cameraRef.current.takePictureAsync({ quality: 0.85, skipProcessing: false, exif: false });
       if (shot?.uri) {
         enqueueScans([shot.uri]);
-        recordScan();
+        recordScan(); recordScanAch();
         void processQueue(supabase, user.id);
       }
     } catch (err) {
