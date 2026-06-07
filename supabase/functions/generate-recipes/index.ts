@@ -112,6 +112,15 @@ serve(async (req) => {
   const body = await req.json().catch(() => ({}));
   const entitled: boolean = !!body?.entitled;
   const itemIds: string[] = Array.isArray(body?.item_ids) ? body.item_ids : [];
+  const custom =
+    body?.custom && Array.isArray(body.custom.ingredients) && body.custom.ingredients.length
+      ? {
+          ingredients: body.custom.ingredients.map((s: unknown) => String(s)).slice(0, 30),
+          method: typeof body.custom.method === 'string' ? body.custom.method : null,
+          maxMinutes: typeof body.custom.maxMinutes === 'number' ? body.custom.maxMinutes : null,
+          onlyThese: !!body.custom.onlyThese,
+        }
+      : null;
 
   // Fetch user's fridge items (RLS-scoped).
   const { data: items, error: fridgeErr } = await supabase
@@ -131,7 +140,9 @@ serve(async (req) => {
 
   // K8: signature of the (sorted, normalized) ingredient set. Same set →
   // same cached batch, reused across ALL users for $0 + instantly.
-  const signature = sigOf(fridgeItems.map((i: { name: string }) => i.name));
+  const signature = custom
+    ? sigOf([...custom.ingredients, 'm:' + (custom.method ?? ''), 't:' + (custom.maxMinutes ?? ''), 'o:' + custom.onlyThese])
+    : sigOf(fridgeItems.map((i: { name: string }) => i.name));
   const svc = createClient(url, serviceKey);
   {
     const { data: hit } = await svc
@@ -173,7 +184,20 @@ serve(async (req) => {
     // Defer the recipe_generations insert until OpenAI succeeds (below).
   }
   let userPrompt: string;
-  if (fridgeItems.length === 0) {
+  if (custom) {
+    userPrompt = [
+      `Build exactly 3 recipes from THESE ingredients the user has: ${custom.ingredients.join(', ')}.`,
+      custom.onlyThese
+        ? 'Use ONLY these ingredients (plus water, salt, pepper and oil). Do not require anything the user did not list.'
+        : 'You may add a few common pantry extras (oil, spices, basics) where needed, but lean on the listed ingredients.',
+      custom.method ? `Preferred cooking method: ${custom.method}.` : '',
+      custom.maxMinutes ? `Each recipe must take at most ${custom.maxMinutes} minutes (set the minutes field accordingly).` : '',
+      'Mark every user-provided ingredient as from_fridge:true. Generate the 3-recipe JSON object now.',
+    ]
+      .filter((l) => l !== '')
+      .join('
+');
+  } else if (fridgeItems.length === 0) {
     userPrompt = 'Fridge is empty. Suggest 3 simple starter recipes the user can buy ingredients for.';
   } else {
     const sorted = [...fridgeItems].sort(

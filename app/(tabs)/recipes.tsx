@@ -198,6 +198,26 @@ export default function RecipesTab() {
           )}
         </View>
 
+        {ready && status !== 'loading' && (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="build a custom recipe"
+            onPress={() => { Haptics.selectionAsync().catch(() => {}); router.push('/recipe-builder' as never); }}
+            style={({ pressed }) => [styles.cookBlockWrap, { opacity: pressed ? 0.9 : 1 }]}
+          >
+            <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cookBlock}>
+              <View style={styles.cookIcon}>
+                <Sparkle size={22} color={colors.primary} strokeWidth={1.8} />
+              </View>
+              <View style={styles.cookText}>
+                <Text style={[typeScale.titleMedium, { color: colors.ink }]}>Build your own recipe</Text>
+                <Text style={[typeScale.bodySmall, styles.cookSub]}>Pick ingredients, method & time</Text>
+              </View>
+              <Chevron size={18} color={colors.inkMuted} />
+            </SoftSurface>
+          </Pressable>
+        )}
+
         {/* L4 — the generate entry is a clear BLOCK right under the heading
             (was a non-obvious top-right icon). Opens the ingredient picker
             for a real fridge, or makes starter recipes for an empty one. */}

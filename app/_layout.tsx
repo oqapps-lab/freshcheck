@@ -196,6 +196,7 @@ export default function RootLayout() {
           <Stack.Screen name="personalize" options={{ presentation: 'card', animation: 'slide_from_right' }} />
           <Stack.Screen name="building" options={{ presentation: 'card', animation: 'fade', gestureEnabled: false }} />
           <Stack.Screen name="your-plan" options={{ presentation: 'card', animation: 'slide_from_right', gestureEnabled: false }} />
+          <Stack.Screen name="recipe-builder" options={{ presentation: 'card', animation: 'slide_from_right' }} />
         </Stack>
         <AlertHost />
         <AchievementHost />
