@@ -179,15 +179,31 @@ serve(async (req) => {
     }
   }
 
-  // Rate limit (cache hits above are free + uncounted). Free: 1 generation/24h.
-  // Entitled (trial OR paid): capped at 10/24h to BOUND OpenAI cost — closes the
-  // "start trial -> mass-generate -> cancel = pure cost" leak (entitled was
-  // previously unlimited). NOTE: `entitled` still comes from the client here;
-  // server-side verification (Adapty webhook -> subscriptions table) is the
-  // planned follow-up — but this hard cap bounds worst-case cost even if a
-  // request spoofs entitled:true.
+  // Resolve tier SERVER-SIDE from the Adapty-webhook-maintained subscriptions
+  // table (not the client `entitled` flag). Fall back to the client flag only
+  // until the webhook has populated a row (capped conservatively).
+  let tier: 'free' | 'trial' | 'paid' | 'entitled_unverified' = 'free';
+  let tierSince: string | null = null;
   {
-    const dailyLimit = entitled ? 10 : 1;
+    const { data: sub } = await svc
+      .from('subscriptions')
+      .select('tier, expires_at, tier_since')
+      .eq('user_id', user.id)
+      .maybeSingle();
+    const active = !!(sub && sub.expires_at && new Date(sub.expires_at).getTime() > Date.now());
+    if (active) {
+      tier = sub.tier as 'free' | 'trial' | 'paid';
+      tierSince = (sub.tier_since as string) ?? null;
+    } else {
+      tier = entitled ? 'entitled_unverified' : 'free';
+    }
+  }
+
+  // Per-tier caps (cache hits above are free + uncounted): free 1/24h,
+  // trial 2/24h + 4 per trial lifetime, paid 25/24h, unverified-entitled 10/24h
+  // (interim, until the webhook confirms the real tier).
+  {
+    const dailyLimit = tier === 'paid' ? 25 : tier === 'trial' ? 2 : tier === 'entitled_unverified' ? 10 : 1;
     const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     const { count, error: countErr } = await svc
       .from('recipe_generations')
@@ -199,12 +215,30 @@ serve(async (req) => {
       return json(
         {
           error: 'daily_limit_reached',
-          message: entitled
-            ? 'You have generated a lot of recipes today — please come back tomorrow.'
-            : 'Free plan: 1 recipe generation per day. Upgrade to FreshCheck Pro for unlimited.',
+          message:
+            tier === 'free'
+              ? 'Free plan: 1 recipe generation per day. Upgrade to FreshCheck Pro for unlimited.'
+              : 'You have generated a lot of recipes today — please come back tomorrow.',
         },
         429,
       );
+    }
+    if (tier === 'trial') {
+      const tsince = tierSince ?? since;
+      const { count: lifeCount } = await svc
+        .from('recipe_generations')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .gte('created_at', tsince);
+      if ((lifeCount ?? 0) >= 4) {
+        return json(
+          {
+            error: 'trial_limit_reached',
+            message: 'You have used all your trial recipe generations. Subscribe to keep generating.',
+          },
+          429,
+        );
+      }
     }
     // Defer the recipe_generations insert until OpenAI succeeds (below).
   }
