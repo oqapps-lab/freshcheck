@@ -13,7 +13,7 @@ import { Sparkle } from '@/components/ui/Glyphs';
 import { spacing, typeScale } from '@/constants/tokens';
 import { safeStorage, STORAGE_KEYS } from '@/src/lib/safeStorage';
 import { activateAdaptyIfNeeded, identifyAdaptyUser, logoutAdaptyUser } from '@/src/lib/adapty';
-import { setAppsFlyerCustomerId } from '@/src/lib/appsflyer';
+import { setAppsFlyerCustomerId, initAppsFlyer } from '@/src/lib/appsflyer';
 import { hydrateUsage } from '@/src/lib/freeLimits';
 import { hydrateOnboardingAnswers } from '@/src/state/onboardingStore';
 import { hydrateAchievements } from '@/src/state/achievementsStore';
@@ -73,9 +73,9 @@ function ScreenViewTracker() {
 // Activates Adapty + AppsFlyer once at root mount and keeps the
 // customerUserId in sync with the Supabase session. Renders nothing.
 //
-// AppsFlyer init is deferred ~600ms so the first screen renders before
-// iOS shows the ATT prompt — Apple wants the prompt to come after a
-// user-facing context, not at cold launch.
+// AppsFlyer initialises here at cold launch (NO ATT prompt) so every install
+// is attributed. The ATT prompt is shown later on the onboarding priming
+// screen (app/att-priming.tsx, post-value, pre-paywall).
 function VendorBoot() {
   const { user } = useAuth();
   useEffect(() => {
@@ -84,9 +84,13 @@ function VendorBoot() {
     void hydrateUsage();
     void hydrateOnboardingAnswers();
     void hydrateAchievements();
-    // NOTE: ATT (tracking prompt) is intentionally NOT requested here at cold
-    // launch — Apple rejects that (Guideline 5.1.2). It is requested at the
-    // paywall (post-onboarding, contextual). See app/paywall.tsx.
+    // Init AppsFlyer at cold launch for EVERY install (no ATT here). The ATT
+    // prompt is shown later on the onboarding priming screen (att-priming.tsx,
+    // post-value, pre-paywall) — Apple wants a contextual prompt, and
+    // decoupling init from ATT means we still attribute every install even if
+    // the user declines. initSdk holds the install payload
+    // (timeToWaitForATTUserAuthorization) until ATT resolves.
+    void initAppsFlyer();
   }, []);
   useEffect(() => {
     if (user?.id) {
@@ -195,6 +199,7 @@ export default function RootLayout() {
           <Stack.Screen name="onboarding" options={{ presentation: 'card', animation: 'fade' }} />
           <Stack.Screen name="personalize" options={{ presentation: 'card', animation: 'slide_from_right' }} />
           <Stack.Screen name="building" options={{ presentation: 'card', animation: 'fade', gestureEnabled: false }} />
+          <Stack.Screen name="att-priming" options={{ presentation: 'card', animation: 'fade', gestureEnabled: false }} />
           <Stack.Screen name="your-plan" options={{ presentation: 'card', animation: 'slide_from_right', gestureEnabled: false }} />
           <Stack.Screen name="recipe-builder" options={{ presentation: 'card', animation: 'slide_from_right' }} />
         </Stack>

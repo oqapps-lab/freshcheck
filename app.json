@@ -21,8 +21,12 @@
       "infoPlist": {
         "NSCameraUsageDescription": "FreshCheck uses the camera to check the freshness of your food.",
         "NSPhotoLibraryUsageDescription": "FreshCheck lets you pick a photo of your food from your library to check its freshness.",
-        "NSUserTrackingUsageDescription": "FreshCheck uses your device identifier to measure ad performance and improve our recommendations.",
+        "NSUserTrackingUsageDescription": "FreshCheck uses your device identifier to measure which app features reach families like you and to help keep FreshCheck free. We never sell your personal data.",
         "ITSAppUsesNonExemptEncryption": false
+      },
+      "privacyManifests": {
+        "NSPrivacyTracking": true,
+        "NSPrivacyTrackingDomains": ["appsflyersdk.com"]
       }
     },
     "android": {
@@ -72,7 +76,7 @@
       [
         "expo-tracking-transparency",
         {
-          "userTrackingPermission": "FreshCheck uses your device identifier to measure ad performance and improve our recommendations."
+          "userTrackingPermission": "FreshCheck uses your device identifier to measure which app features reach families like you and to help keep FreshCheck free. We never sell your personal data."
         }
       ],
       [
@@ -84,7 +88,7 @@
       [
         "react-native-appsflyer",
         {
-          "shouldUseStrictMode": true
+          "shouldUseStrictMode": false
         }
       ],
       "./plugins/with-modular-headers-fix.js"

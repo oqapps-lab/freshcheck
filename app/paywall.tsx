@@ -23,7 +23,7 @@ import {
 import { startTrial, restorePurchases, PRODUCT_BY_PLAN, getTiers, type TierInfo } from '@/src/lib/adapty';
 import { usePremium } from '@/src/hooks/usePremium';
 import { logTrialStartEvent, logBeginCheckout, recordError } from '@/src/lib/firebase';
-import { logTrialStart as afLogTrialStart, initAppsFlyerWithATT } from '@/src/lib/appsflyer';
+import { logTrialStart as afLogTrialStart } from '@/src/lib/appsflyer';
 import { LEGAL } from '@/constants/legal';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
@@ -75,12 +75,9 @@ export default function PaywallScreen() {
     });
   }, []);
 
-  // ATT (App Tracking Transparency) is requested HERE — post-onboarding, at the
-  // paywall — not at cold launch, per Apple Guideline 5.1.2 (prompt must follow
-  // a user-facing context). initAppsFlyerWithATT() is idempotent.
-  useEffect(() => {
-    void initAppsFlyerWithATT();
-  }, []);
+  // ATT is requested earlier, on the onboarding priming screen
+  // (app/att-priming.tsx) — not here. AppsFlyer is already initialised at cold
+  // launch (VendorBoot). The paywall only logs trial/purchase events.
   useEffect(() => {
     const t = setTimeout(() => {
       setCloseVisible(true);

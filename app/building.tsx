@@ -63,7 +63,7 @@ export default function BuildingScreen() {
     const pctTimer = setInterval(() => setPct((p) => Math.min(99, p + Math.floor(Math.random() * 7) + 2)), 220);
     const done = setTimeout(() => {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-      router.replace('/your-plan' as never);
+      router.replace('/att-priming' as never);
     }, total + 200);
     return () => {
       stageTimers.forEach(clearTimeout);
