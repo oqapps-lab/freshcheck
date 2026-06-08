@@ -11,6 +11,7 @@ import { RecipeCookingLoader } from "@/components/ui/RecipeCookingLoader";
 import { Back, Close } from "@/components/ui/Glyphs";
 import { useRecipes } from "@/src/hooks/useRecipes";
 import { showAlert } from "@/src/state/alertStore";
+import { isLikelyFood } from "@/constants/foods";
 import { colors, fonts, layout, spacing, typeScale } from "@/constants/tokens";
 
 const METHODS = ["Any", "Bake", "Fry", "Boil", "Grill", "Steam", "No-cook", "Slow cook"];
@@ -33,6 +34,7 @@ export default function RecipeBuilderScreen() {
   const [ingredients, setIngredients] = useState<Ing[]>([]);
   const [draftName, setDraftName] = useState("");
   const [draftAmount, setDraftAmount] = useState("");
+  const [nameErr, setNameErr] = useState<string | null>(null);
   const [unit, setUnit] = useState("g");
   const [method, setMethod] = useState("Any");
   const [maxMin, setMaxMin] = useState<number | null>(null);
@@ -42,10 +44,19 @@ export default function RecipeBuilderScreen() {
   const addIngredient = () => {
     const name = draftName.trim();
     if (!name) return;
+    // Reject gibberish / non-food at the source (instant UX; the edge function
+    // re-validates server-side as the authoritative gate).
+    const v = isLikelyFood(name);
+    if (!v.ok) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+      setNameErr(v.reason ?? "Enter a real ingredient");
+      return;
+    }
     Haptics.selectionAsync().catch(() => {});
     setIngredients((prev) => [...prev, { name, amount: draftAmount.trim(), unit }]);
     setDraftName("");
     setDraftAmount("");
+    setNameErr(null);
   };
   const removeIngredient = (i: number) => {
     Haptics.selectionAsync().catch(() => {});
@@ -108,7 +119,7 @@ export default function RecipeBuilderScreen() {
             <TextInput style={styles.input} value={draftAmount} onChangeText={setDraftAmount} placeholder="200" placeholderTextColor={colors.inkMuted} returnKeyType="next" selectionColor={colors.primary} />
           </SoftInset>
           <SoftInset radius="lg" strength="thin" style={styles.nameBox} contentStyle={styles.inputWrap}>
-            <TextInput style={styles.input} value={draftName} onChangeText={setDraftName} placeholder="Chicken breast" placeholderTextColor={colors.inkMuted} returnKeyType="done" onSubmitEditing={addIngredient} selectionColor={colors.primary} />
+            <TextInput style={styles.input} value={draftName} onChangeText={(t) => { setDraftName(t); if (nameErr) setNameErr(null); }} placeholder="Chicken breast" placeholderTextColor={colors.inkMuted} returnKeyType="done" onSubmitEditing={addIngredient} selectionColor={colors.primary} />
           </SoftInset>
           <Pressable accessibilityLabel="add ingredient" onPress={addIngredient} style={({ pressed }) => [styles.addBtnWrap, { opacity: pressed ? 0.8 : 1 }]}>
             <SoftSurface variant="pill" radius="full" background={colors.primary} innerStyle={styles.addBtn}>
@@ -116,6 +127,7 @@ export default function RecipeBuilderScreen() {
             </SoftSurface>
           </Pressable>
         </View>
+        {nameErr ? <Text style={[typeScale.bodySmall, styles.nameErr]}>{nameErr}</Text> : null}
         <View style={styles.units}>
           {UNITS.map((u) => {
             const on = unit === u;
@@ -198,6 +210,7 @@ const styles = StyleSheet.create({
   addBtnWrap: {},
   addBtn: { width: 48, height: 48, alignItems: "center", justifyContent: "center" },
   addBtnPlus: { color: colors.surfaceWhite, fontSize: 26, lineHeight: 30, fontFamily: fonts.bold },
+  nameErr: { color: colors.red, marginTop: spacing.xs, marginLeft: 2 },
   units: { flexDirection: "row", flexWrap: "wrap", gap: spacing.xs, marginTop: spacing.sm },
   unitChip: { backgroundColor: colors.surfaceTint, borderRadius: 999, paddingVertical: 6, paddingHorizontal: spacing.md },
   unitChipOn: { backgroundColor: colors.primary },

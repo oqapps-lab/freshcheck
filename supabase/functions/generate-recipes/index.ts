@@ -44,7 +44,9 @@ type Recipe = {
   hero_image_prompt: string;
 };
 
-const SYSTEM_PROMPT = `You are a creative chef. Given a list of items in a user's fridge (with days_left until they spoil), generate exactly 3 recipes.
+const SYSTEM_PROMPT = `IMPORTANT VALIDATION: If the provided ingredients are not real, edible foods (e.g. random letters, gibberish, or non-food objects, or you cannot identify a single genuine ingredient), DO NOT invent recipes. Output exactly this and nothing else: {"error":"invalid_ingredients"}
+
+You are a creative chef. Given a list of items in a user's fridge (with days_left until they spoil), generate exactly 3 recipes.
 
 Rules:
 - CRITICAL: Identify the SINGLE fastest-expiring item in the fridge (lowest days_left). Recipe #1 MUST feature this item as its PRIMARY ingredient (name it in the recipe title if possible). Recipe #2 should also use this item. Recipe #3 may use it OR another expiring-soon item.
@@ -122,6 +124,21 @@ serve(async (req) => {
         }
       : null;
 
+  // Reject gibberish / non-food custom ingredients BEFORE any OpenAI spend
+  // (authoritative gate; the client validates too for instant UX).
+  if (custom) {
+    const bad = custom.ingredients.filter((s: string) => !isLikelyFood(stripAmount(s)).ok);
+    if (bad.length > 0) {
+      return json(
+        {
+          error: 'invalid_ingredients',
+          message: `Not recognized as food: ${bad.slice(0, 5).join(', ')}. Try real ingredients you have.`,
+        },
+        422,
+      );
+    }
+  }
+
   // Fetch user's fridge items (RLS-scoped).
   const { data: items, error: fridgeErr } = await supabase
     .from('fridge_items')
@@ -162,9 +179,15 @@ serve(async (req) => {
     }
   }
 
-  // Rate limit: free users get 1 GENERATION per 24h (cache hits above are
-  // free and don't count). Premium is unlimited.
-  if (!entitled) {
+  // Rate limit (cache hits above are free + uncounted). Free: 1 generation/24h.
+  // Entitled (trial OR paid): capped at 10/24h to BOUND OpenAI cost — closes the
+  // "start trial -> mass-generate -> cancel = pure cost" leak (entitled was
+  // previously unlimited). NOTE: `entitled` still comes from the client here;
+  // server-side verification (Adapty webhook -> subscriptions table) is the
+  // planned follow-up — but this hard cap bounds worst-case cost even if a
+  // request spoofs entitled:true.
+  {
+    const dailyLimit = entitled ? 10 : 1;
     const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     const { count, error: countErr } = await svc
       .from('recipe_generations')
@@ -172,11 +195,13 @@ serve(async (req) => {
       .eq('user_id', user.id)
       .gte('created_at', since);
     if (countErr) return json({ error: `rate check: ${countErr.message}` }, 500);
-    if ((count ?? 0) >= 1) {
+    if ((count ?? 0) >= dailyLimit) {
       return json(
         {
           error: 'daily_limit_reached',
-          message: 'Free plan: 1 recipe generation per day. Upgrade to FreshCheck Pro for unlimited.',
+          message: entitled
+            ? 'You have generated a lot of recipes today — please come back tomorrow.'
+            : 'Free plan: 1 recipe generation per day. Upgrade to FreshCheck Pro for unlimited.',
         },
         429,
       );
@@ -261,6 +286,16 @@ serve(async (req) => {
     return json({ error: 'openai returned non-JSON', raw }, 502);
   }
 
+  // Server-side semantic backstop: the model returns this when the inputs are
+  // not real foods (catches "real word but not edible" that heuristics miss).
+  // Do NOT count it against quota and do NOT cache.
+  if (!Array.isArray(parsed) && (parsed as { error?: string }).error === 'invalid_ingredients') {
+    return json(
+      { error: 'invalid_ingredients', message: 'Those do not look like real ingredients. Try again with foods you have.' },
+      422,
+    );
+  }
+
   // OpenAI may wrap in {recipes:[...]} or return array directly
   const recipes: Recipe[] = Array.isArray(parsed)
     ? parsed
@@ -274,10 +309,9 @@ serve(async (req) => {
   // Inserting earlier would burn the user's only daily attempt on an OpenAI
   // 502 / timeout (since the row gets counted in the next 24h-window check
   // even though the user never got recipes).
-  if (!entitled) {
-    const sb = createClient(url, serviceKey);
-    await sb.from('recipe_generations').insert({ user_id: user.id });
-  }
+  // Count this successful generation for EVERY tier (free + entitled) so the
+  // daily caps above are enforced uniformly.
+  await svc.from('recipe_generations').insert({ user_id: user.id });
 
   // Post-validation: if there's a mandatory item, ensure Recipe #1 names it
   // (cheap correctness check vs trusting the LLM completely).
@@ -329,6 +363,40 @@ serve(async (req) => {
 
   return json({ recipes: withIds });
 });
+
+// Authoritative gibberish / non-food gate — mirrors constants/foods.ts.
+const AF_VOWELS = /[aeiouyàâäéèêëïîôùûüáíóúñ]/;
+const AF_ALLOWED = /^[a-zA-ZÀ-ÿ][a-zA-ZÀ-ÿ '.\-]*$/;
+const AF_KB_FWD = 'qwertyuiopasdfghjklzxcvbnm';
+const AF_KB_REV = 'mnbvcxzlkjhgfdsapoiuytrewq';
+const AF_HINTS = new Set([
+  'egg', 'eggs', 'milk', 'rye', 'oat', 'oats', 'soy', 'ham', 'cod', 'fig', 'tea', 'jam', 'rice', 'beef', 'pork', 'lamb', 'fish', 'tofu', 'corn', 'kale', 'lime', 'pear', 'plum', 'dill', 'chicken', 'tomato', 'potato', 'onion', 'garlic', 'carrot', 'spinach', 'broccoli', 'celery', 'cheese', 'butter', 'yogurt', 'cream', 'bread', 'flour', 'sugar', 'salt', 'pepper', 'honey', 'apple', 'banana', 'orange', 'lemon', 'berry', 'grape', 'mango', 'avocado', 'peach', 'pasta', 'noodle', 'bean', 'beans', 'lentil', 'pea', 'peas', 'salmon', 'tuna', 'shrimp', 'bacon', 'sausage', 'turkey', 'mushroom', 'chili', 'ginger', 'cucumber', 'lettuce', 'cabbage', 'zucchini', 'eggplant', 'pumpkin', 'squash', 'beet', 'leek',
+]);
+function afRun(t: string): number {
+  let m = 0, c = 0;
+  for (const ch of t) {
+    if (/[a-zà-ÿ]/.test(ch) && !AF_VOWELS.test(ch)) { c++; if (c > m) m = c; } else c = 0;
+  }
+  return m;
+}
+function isLikelyFood(raw: string): { ok: boolean; reason?: string } {
+  const trimmed = raw.trim();
+  const n = trimmed.toLowerCase();
+  if (n.length < 2 || n.length > 40) return { ok: false, reason: 'length' };
+  if (!AF_ALLOWED.test(trimmed)) return { ok: false, reason: 'chars' };
+  const tokens = n.split(/\s+/).filter(Boolean);
+  for (const t of tokens) if (AF_HINTS.has(t)) return { ok: true };
+  for (const t of tokens) {
+    if (t.length >= 3 && !AF_VOWELS.test(t)) return { ok: false };
+    if (afRun(t) >= 6) return { ok: false };
+    if (t.length >= 5 && (AF_KB_FWD.includes(t) || AF_KB_REV.includes(t))) return { ok: false };
+  }
+  return { ok: true };
+}
+function stripAmount(s: string): string {
+  const r = s.replace(/^\s*[\d.,/]+\s*(g|kg|ml|l|pcs|cup|cups|tbsp|tsp|oz|lb)?\s*/i, '').trim();
+  return r || s.trim();
+}
 
 // Normalized signature of an ingredient set: lowercase, trim, collapse
 // whitespace, dedupe, sort, join, then a stable 32-bit hash → hex. Same set
