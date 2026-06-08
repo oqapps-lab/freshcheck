@@ -1,0 +1,34 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Brand-aligned green: Tailwind green-600 (#16a34a) → green-800 (#166534).
+         Matches the in-app primary token. -->
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#22c55e"/>
+      <stop offset="1" stop-color="#15803d"/>
+    </linearGradient>
+    <radialGradient id="topGlow" cx="0.5" cy="0.32" r="0.55">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="bottomShade" cx="0.5" cy="1.05" r="0.7">
+      <stop offset="0" stop-color="#0c4423" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#0c4423" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Full-bleed brand canvas with subtle top highlight + bottom shade
+       so the icon reads as a soft 3D dome at small launcher sizes. -->
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <rect width="1024" height="1024" fill="url(#topGlow)"/>
+  <rect width="1024" height="1024" fill="url(#bottomShade)"/>
+
+  <!-- Sprig — kept from the original brand mark. White stroke at
+       thicker weight (1.6 vs 1.35) so the silhouette stays legible
+       at the 60×60 settings-icon size. -->
+  <g transform="translate(512,512) scale(32)" fill="none" stroke="#ffffff"
+     stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M0 9C0 9 -8 5 -8 -3C-8 -5 -7 -8 -6 -8C-5 -8 -4 -6 -2 -5C0 -4 1 -2 1 0"/>
+    <path d="M0 9C0 9 8 5 8 -3C8 -5 7 -8 6 -8C5 -8 4 -6 2 -5C0 -4 -1 -2 -1 0"/>
+    <path d="M0 0V9"/>
+  </g>
+</svg>

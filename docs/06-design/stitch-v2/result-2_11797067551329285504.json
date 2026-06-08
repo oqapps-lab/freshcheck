@@ -1,0 +1,21 @@
+{
+  "screenshot": {
+    "name": "projects/14305402830196585993/files/11797067551329284191",
+    "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0ujRNDKmSpZ6rWF1wk9_fJJ3a2IEtg0aRCk09pYQx3H25p3UXRT230xEHV-MuUfL1fkZc4--zOALkvxBHGgEtjMqyV1MpPwUufQQDbgUV-D03N1SzvKlukeE5IybY2lCkUdJ00K4Yv8kmge2-f_-hLZufcE6J440uAxn4GWIC8-7SoIGnZ-ZPMpNmfG0tLqS3iF9WEM7gbJMrz8lmjrk-Y1idb1zw7b9YvUm2AkhWTsOf76hhuB2Tf8nOw"
+  },
+  "id": "11797067551329285504",
+  "generatedBy": "image_space_edit_agent",
+  "width": "640",
+  "height": "1608",
+  "title": "Scan Result: SAFE",
+  "prompt": "Title: Industrial Light Result 1\nContext: A produce scanning app for ripeness analysis, presented in various light themes.\nEdit request: Light theme variant 1 of 3: 'Modern Industrial Light'. Convert the screen to a light theme inspired by industrial design. Use a cool off-white background (#F0F2F5). The neumorphic containers should have crisp, slightly darker slate-grey shadows (#CBD5E0) and white highlights. Change the main text 'Perfectly Ripe' to a bold charcoal grey (#2D3748). Keep the primary button text and icons in a vibrant mustard yellow (#D69E2E) for high contrast and a professional look. Maintain all layout, images, and fonts. variant 1 of 3\nPlatform: ios\nForm factor: phone",
+  "name": "projects/14305402830196585993/screens/11797067551329285504",
+  "theme": {},
+  "deviceType": "MOBILE",
+  "screenType": "DESIGN",
+  "isCreatedByClient": true,
+  "screenMetadata": {
+    "agentType": "IMAGE_PRO_AGENT",
+    "status": "COMPLETE"
+  }
+}

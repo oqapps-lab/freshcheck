@@ -1,0 +1,21 @@
+{
+  "screenshot": {
+    "name": "projects/14305402830196585993/files/5694441298095851130",
+    "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0uh_-3LRZT-ggl_nnX8W4wMSxtvU_9-oyOHP2M8nOMhu7GtsAU_p_ckYtnlSZmprdHV7y8BZWVIIcASziun2GLaLIZUVJulDWRW8ZsqrsQcve-LEmjhxqa5W1bvJH80Y9Z0M540g1tk0tljk5kLDjsyfbscFhS4JwwrPJSR3qRi0ZmmG8gyNeWPFh2WHc8zCZnoKQOWaDg8hgFFHvONSJc-DLKR-cDmRGewUkjDrt0AihkTq5ERybFmH2x8"
+  },
+  "id": "5694441298095852937",
+  "generatedBy": "image_space_edit_agent",
+  "width": "640",
+  "height": "1608",
+  "title": "Scan Result: SAFE",
+  "prompt": "Title: Minimalist Studio Result 2\nContext: A produce scanning app for ripeness analysis, presented in various light themes.\nEdit request: Light theme variant 2 of 3: 'Minimalist Studio'. A very bright and clean version. Background is pure white (#FFFFFF). Use extremely soft and subtle light grey shadows for the neumorphic cards to make them feel integrated into the background. The text 'Perfectly Ripe' and 'ANALYSIS' should be in a solid dark slate (#1A202C). The primary action button 'Add to Fridge' should feature a bold mustard yellow text and icon on a soft grey recessed button. Keep the original layout and images. variant 2 of 3\nPlatform: ios\nForm factor: phone",
+  "name": "projects/14305402830196585993/screens/5694441298095852937",
+  "theme": {},
+  "deviceType": "MOBILE",
+  "screenType": "DESIGN",
+  "isCreatedByClient": true,
+  "screenMetadata": {
+    "agentType": "IMAGE_PRO_AGENT",
+    "status": "COMPLETE"
+  }
+}

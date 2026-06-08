@@ -16,7 +16,7 @@ AI-powered food safety app. Photo of food → instant freshness assessment (safe
 - Meal preppers who need to know what's still good
 
 ## Current Stage
-Research (Stage 3)
+Product Definition (Stage 2 complete → ready for UX Design Stage 3)
 
 ## Rules
 - useWindowDimensions() for responsive
@@ -42,3 +42,4 @@ Each screen has three layers:
 - /constants/ — colors, fonts, layout
 - /docs/ — all documentation
 - /docs/01-research/ — market research + product brief
+- /docs/02-product/ — product definition (audience, PSF, features, monetization, vision)
