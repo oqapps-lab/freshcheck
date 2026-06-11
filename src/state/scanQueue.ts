@@ -110,7 +110,7 @@ export function retryQueued(id: string) {
  * the `running` guard means new photos added while a drain is in flight are
  * picked up by the same loop, and a second concurrent drain never starts.
  */
-export async function processQueue(supabase: SupabaseClient, userId: string) {
+export async function processQueue(supabase: SupabaseClient, userId: string, entitled = false) {
   if (running) return;
   running = true;
   try {
@@ -120,7 +120,7 @@ export async function processQueue(supabase: SupabaseClient, userId: string) {
       if (!next) break;
       patch(next.id, { status: 'scanning' });
       try {
-        const result = await scanImage(supabase, userId, next.uri);
+        const result = await scanImage(supabase, userId, next.uri, entitled);
         patch(next.id, { status: 'done', result });
       } catch (e) {
         recordError(e, 'scan-queue');

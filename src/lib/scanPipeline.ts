@@ -68,10 +68,11 @@ export async function scanImage(
   supabase: SupabaseClient,
   userId: string,
   sourceUri: string,
+  entitled = false,
 ): Promise<LastScan> {
   const { imagePath, imageUri } = await compressAndUpload(supabase, userId, sourceUri);
   const { data, error: fnErr } = await supabase.functions.invoke('scan-image', {
-    body: { image_path: imagePath },
+    body: { image_path: imagePath, entitled },
   });
   if (fnErr) throw new Error(fnErr.message);
   if (!data || data.error) throw new Error(data?.error ?? 'scan failed');
@@ -86,10 +87,11 @@ export async function scanMultiImage(
   supabase: SupabaseClient,
   userId: string,
   sourceUri: string,
+  entitled = false,
 ): Promise<LastScan[]> {
   const { imagePath, imageUri } = await compressAndUpload(supabase, userId, sourceUri);
   const { data, error: fnErr } = await supabase.functions.invoke('scan-image', {
-    body: { image_path: imagePath, multi: true },
+    body: { image_path: imagePath, multi: true, entitled },
   });
   if (fnErr) throw new Error(fnErr.message);
   if (!data || data.error) throw new Error(data?.error ?? 'scan failed');

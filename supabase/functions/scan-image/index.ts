@@ -125,11 +125,12 @@ serve(async (req) => {
     return json({ error: 'method not allowed' }, 405);
   }
 
-  const { image_path, multi } = await req.json().catch(() => ({}));
+  const { image_path, multi, entitled } = await req.json().catch(() => ({}));
   if (!image_path || typeof image_path !== 'string') {
     return json({ error: 'image_path required' }, 400);
   }
   const isMulti = multi === true;
+  const claimsEntitled = entitled === true;
 
   const authHeader = req.headers.get('authorization') ?? '';
   const token = authHeader.replace(/^Bearer\s+/i, '');
@@ -153,6 +154,50 @@ serve(async (req) => {
   if (!user) return json({ error: 'unauthenticated' }, 401);
   if (!image_path.startsWith(`${user.id}/`)) {
     return json({ error: 'forbidden: image_path must start with your user id' }, 403);
+  }
+
+  // Server-side rate limit (mirrors generate-recipes) — the client-side 3/day
+  // cap is bypassable (reinstall, direct calls), and vision is the app's most
+  // expensive endpoint. Tier comes from the Adapty-webhook-maintained
+  // subscriptions table; the client `entitled` flag only selects an interim
+  // capped tier until the webhook has populated a row. Free is 6 per rolling
+  // 24h (2x the client's calendar-day 3 so honest users never hit it first).
+  // @ts-expect-error Deno.env
+  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  if (!serviceKey) return json({ error: 'service key missing' }, 500);
+  const svc = createClient(url, serviceKey);
+  {
+    let tier: 'free' | 'trial' | 'paid' | 'entitled_unverified' = 'free';
+    const { data: sub } = await svc
+      .from('subscriptions')
+      .select('tier, expires_at')
+      .eq('user_id', user.id)
+      .maybeSingle();
+    if (sub && sub.expires_at && new Date(sub.expires_at).getTime() > Date.now()) {
+      tier = sub.tier as 'trial' | 'paid';
+    } else if (claimsEntitled) {
+      tier = 'entitled_unverified';
+    }
+    const dailyLimit = tier === 'paid' ? 150 : tier === 'entitled_unverified' ? 60 : tier === 'trial' ? 30 : 6;
+    const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const { count, error: countErr } = await svc
+      .from('scan_attempts')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .gte('created_at', since);
+    if (countErr) return json({ error: `rate check: ${countErr.message}` }, 500);
+    if ((count ?? 0) >= dailyLimit) {
+      return json(
+        {
+          error: 'daily_limit_reached',
+          message:
+            tier === 'free'
+              ? 'You have reached today’s free scans. Upgrade to FreshCheck Pro for unlimited scanning.'
+              : 'You have scanned a lot today — please come back tomorrow.',
+        },
+        429,
+      );
+    }
   }
 
   // Short-lived signed URL so OpenAI's fetcher can read the upload.
@@ -188,8 +233,19 @@ serve(async (req) => {
 
   if (!openaiRes.ok) {
     const msg = await openaiRes.text();
-    return json({ error: `openai ${openaiRes.status}: ${msg.slice(0, 400)}` }, 502);
+    // Friendly message — the client surfaces it directly in the scan alert.
+    return json(
+      {
+        error: `openai ${openaiRes.status}: ${msg.slice(0, 400)}`,
+        message: 'Scanning is briefly unavailable. Please try again in a few minutes.',
+      },
+      502,
+    );
   }
+
+  // The OpenAI call succeeded — count it against the rolling 24h quota
+  // (failures above are free, mirroring generate-recipes).
+  await svc.from('scan_attempts').insert({ user_id: user.id, multi: isMulti });
 
   const openaiJson = await openaiRes.json();
   const raw = openaiJson?.choices?.[0]?.message?.content;
