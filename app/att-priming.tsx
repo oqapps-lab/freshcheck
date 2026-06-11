@@ -29,26 +29,32 @@ export default function AttPrimingScreen() {
   const onContinue = async () => {
     if (busy) return;
     setBusy(true);
-    // Apple native ATT dialog. Resolves regardless of the choice; either way
-    // we proceed to the plan / paywall - we never gate on the answer.
-    await promptATT();
-    router.replace('/your-plan' as never);
+    // Apple native ATT dialog. Whatever happens — granted, denied, or the
+    // module throwing — the user MUST move on: this screen has no other exit
+    // (gestureEnabled: false), so a stranded busy state would dead-end the
+    // entire onboarding funnel.
+    try {
+      await promptATT();
+    } catch {
+      /* never block the funnel on a tracking prompt */
+    } finally {
+      router.replace('/your-plan' as never);
+    }
   };
 
   return (
     <View style={[styles.root, { paddingTop: insets.top + spacing.xl }]}>
       <View style={styles.center}>
-        <SoftSurface variant="cushion" radius="full" innerStyle={styles.icon}>
+        <SoftSurface variant="cushion" radius="full" style={styles.iconGap} innerStyle={styles.icon}>
           <Sparkle size={40} color={colors.amber} strokeWidth={1.6} />
         </SoftSurface>
 
         <Text style={[typeScale.displayMedium, styles.headline]}>
-          Help keep FreshCheck free for families
+          Make FreshCheck better for families
         </Text>
         <Text style={[typeScale.bodyLarge, styles.body]}>
-          FreshCheck stays free thanks to a few trusted partners. With your
-          permission, we measure which features actually reach parents like you,
-          so we can keep improving the app and keep the scanner free.
+          With your permission, we measure which features actually help parents
+          like you — so we can keep improving the parts that matter.
         </Text>
         <Text style={[typeScale.bodyLarge, styles.body]}>
           We never sell your personal data, and your scans always stay private.
@@ -73,7 +79,10 @@ export default function AttPrimingScreen() {
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.canvas },
   center: { flex: 1, justifyContent: 'center', paddingHorizontal: layout.screenPadding, gap: spacing.lg },
-  icon: { width: 96, height: 96, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.sm },
+  // marginBottom lives on the OUTER style — putting it in innerStyle inflates
+  // the outer card (documented SoftSurface margin bug class).
+  iconGap: { marginBottom: spacing.sm },
+  icon: { width: 96, height: 96, alignItems: 'center', justifyContent: 'center' },
   headline: { color: colors.ink },
   body: { color: colors.inkSecondary, lineHeight: 24 },
   bottom: { paddingHorizontal: layout.screenPadding, gap: spacing.md },
