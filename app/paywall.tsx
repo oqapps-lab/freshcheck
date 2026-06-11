@@ -3,7 +3,7 @@ import { View, Text, ScrollView, Pressable, StyleSheet, Linking, Animated, type 
 import { showAlert } from '@/src/state/alertStore';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { IconButton } from '@/components/ui/IconButton';
 import { SoftSurface } from '@/components/ui/SoftSurface';
 import { SoftInset } from '@/components/ui/SoftInset';
@@ -44,17 +44,39 @@ const PRICE_USD: Record<Plan, number> = {
 // the gates in capture.tsx (canScan / barcode Pro-gate) and useRecipes —
 // mismatched copy risks Apple Review 3.1.2(c) "genuine value" pushback.
 const FEATURES: { icon: React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>; title: string; body: string }[] = [
-  { icon: Bowl,           title: 'Unlimited AI recipes', body: 'Generate fresh recipes from your fridge whenever you want, no daily cap.' },
-  { icon: BarcodeScanner, title: 'Unlimited scans',     body: 'Scan as many items as you want, no daily cap.' },
-  { icon: ShoppingBasket, title: 'Barcode pantry add',  body: 'Scan a product barcode to drop it straight into your fridge.' },
-  { icon: Nutrition,      title: 'AI ripeness analysis', body: 'Per-item softness, ripeness and best-by guidance.' },
-  { icon: Cloud,          title: 'Cloud sync',          body: 'Your fridge follows you across iPhone and iPad.' },
-  { icon: History,        title: 'Smart reminders',     body: 'Custom alerts before items go off — never waste again.' },
+  { icon: BarcodeScanner, title: 'Unlimited scans',       body: 'Scan as many items as you want, no daily cap.' },
+  { icon: Bowl,           title: 'Unlimited AI recipes',  body: 'Generate fresh recipes from your fridge whenever you want, no daily cap.' },
+  { icon: ShoppingBasket, title: 'Barcode pantry add',    body: 'Scan a product barcode to drop it straight into your fridge.' },
+  { icon: Nutrition,      title: 'Whole-table scanning',  body: 'One photo, every item on the table — as often as you like.' },
+  { icon: Zap,            title: 'Rapid batch scanning',  body: 'Fire off your whole grocery haul back-to-back, no limits.' },
 ];
+
+// Contextual hero copy — the limit-hit moment is the highest-intent paywall
+// impression; a generic "Unlock Pro" there reads like a bug, not an offer.
+const SRC_COPY: Record<string, { title: string; subtitle: string }> = {
+  'scan-limit': {
+    title: "You've used today's free scans",
+    subtitle: 'Go unlimited — scan everything in your kitchen, whenever you want.',
+  },
+  barcode: {
+    title: 'Barcode scanning is a Pro feature',
+    subtitle: 'Scan any product barcode and drop it straight into your fridge.',
+  },
+  'recipe-limit': {
+    title: "You've used today's free recipe generation",
+    subtitle: 'Unlimited AI recipes from whatever is in your fridge — every day.',
+  },
+  default: {
+    title: 'Unlock FreshCheck Pro',
+    subtitle: "Turn what's in your fridge into recipes, and never throw away food again.",
+  },
+};
 
 export default function PaywallScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { src } = useLocalSearchParams<{ src?: string }>();
+  const srcCopy = SRC_COPY[typeof src === 'string' ? src : 'default'] ?? SRC_COPY.default;
   const { premium: isPremium } = usePremium();
   const [plan, setPlan] = useState<Plan>('annual');
   // Live store-localized prices; falls back to the hardcoded USD literals
@@ -208,10 +230,10 @@ export default function PaywallScreen() {
             <Sparkle size={44} color={colors.amber} strokeWidth={1.6} />
           </SoftSurface>
           <Text style={[typeScale.displayMedium, styles.title]}>
-            Unlock FreshCheck Pro
+            {srcCopy.title}
           </Text>
           <Text style={[typeScale.body, styles.subtitle]}>
-            Turn what's in your fridge into recipes, and never throw away food again.
+            {srcCopy.subtitle}
           </Text>
           {/* Trust signal — families save ~$2,913/yr (the product thesis). */}
           <View style={styles.trustPill}>

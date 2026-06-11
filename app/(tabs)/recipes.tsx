@@ -292,7 +292,7 @@ export default function RecipesTab() {
                 accessibilityLabel="Upgrade to FreshCheck Pro"
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
-                  router.push('/paywall' as never);
+                  router.push('/paywall?src=recipe-limit' as never);
                 }}
                 style={({ pressed }) => [styles.idleCta, { opacity: pressed ? 0.85 : 1 }]}
               >
