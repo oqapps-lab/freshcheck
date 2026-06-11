@@ -8,6 +8,7 @@ import {
   Easing,
   Linking,
   ActivityIndicator,
+  useWindowDimensions,
 } from 'react-native';
 import { showAlert } from '@/src/state/alertStore';
 import * as Haptics from 'expo-haptics';
@@ -24,7 +25,7 @@ import { Back, BarcodeScanner, Chevron, Gallery, Sparkle } from '@/components/ui
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 import { useAuth } from '@/src/hooks/useAuth';
 import { usePremium } from '@/src/hooks/usePremium';
-import { canScan, recordScan } from '@/src/lib/freeLimits';
+import { canScan, recordScan, scansLeft, useScansLeft } from '@/src/lib/freeLimits';
 import { recordScanAch } from '@/src/state/achievementsStore';
 import { lookupBarcode } from '@/src/lib/openFoodFacts';
 import { useFridge } from '@/src/hooks/useFridge';
@@ -49,8 +50,13 @@ import { recordError } from '@/src/lib/firebase';
 export default function CaptureScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { width: winW, height: winH } = useWindowDimensions();
   const { user, configured } = useAuth();
-  const { premium } = usePremium();
+  const { premium, resolved: premiumResolved } = usePremium();
+  // Until Adapty resolves (cold-start round-trip), do NOT bounce to the
+  // paywall — a paying user must never see it because of a slow check.
+  const gatePremium = premiumResolved ? premium : true;
+  const freeScansLeft = useScansLeft(gatePremium);
   const supabase = getSupabase();
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView>(null);
@@ -68,15 +74,25 @@ export default function CaptureScreen() {
   // Debounce the continuous barcode stream: ignore the same code seen
   // again within 4s so one physical scan = one fridge add.
   const lastBarcodeRef = useRef<{ code: string; at: number }>({ code: '', at: 0 });
+  // One paywall push per visit — the camera keeps streaming barcodes under
+  // the modal, and without this every 4s re-scan pushed ANOTHER paywall.
+  const paywallPushedRef = useRef(false);
   const onBarcode = useCallback(
     async ({ data }: { data: string }) => {
       if (analyzing || !data) return;
       const now = Date.now();
       if (lastBarcodeRef.current.code === data && now - lastBarcodeRef.current.at < 4000) return;
       lastBarcodeRef.current = { code: data, at: now };
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
       // Barcode lookup is a Pro feature (unlimited scans + recipes + barcode).
-      if (!premium) { router.push('/paywall' as never); return; }
+      if (!premiumResolved) return; // Adapty still resolving — don't misgate.
+      if (!premium) {
+        if (!paywallPushedRef.current) {
+          paywallPushedRef.current = true;
+          router.push('/paywall?src=barcode' as never);
+        }
+        return;
+      }
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
       setAnalyzingMsg('Looking up product…');
       setAnalyzing(true);
       const product = await lookupBarcode(data);
@@ -98,8 +114,12 @@ export default function CaptureScreen() {
       if (res?.error) { showAlert('Could not add', res.error); return; }
       showAlert('Added to your fridge', `${product.name} · keep ~${product.shelfLifeDays} days`);
     },
-    [analyzing, premium, addItem, router],
+    [analyzing, premium, premiumResolved, addItem, router],
   );
+  // New mode / new visit → allow the paywall to be offered again.
+  useEffect(() => {
+    paywallPushedRef.current = false;
+  }, [scanMode]);
   const pulse = useRef(new Animated.Value(0)).current;
 
   // Reachable via router.replace('/capture') from the empty-scan tab and
@@ -135,10 +155,10 @@ export default function CaptureScreen() {
   // supabase+user. (Batch scanning uses the same scanImage() via scanQueue.)
   const runScanPipeline = async (sourceUri: string) => {
     if (!supabase || !user) return;
-    if (!canScan(premium)) { setAnalyzing(false); setAnalyzingMsg('Analyzing…'); router.push('/paywall' as never); return; }
+    if (!canScan(gatePremium)) { setAnalyzing(false); setAnalyzingMsg('Analyzing…'); router.push('/paywall?src=scan-limit' as never); return; }
     try {
       setAnalyzingMsg('Reading ripeness…');
-      const result = await scanImage(supabase, user.id, sourceUri);
+      const result = await scanImage(supabase, user.id, sourceUri, premium);
       setLastScan(result);
       recordScan(); recordScanAch();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
@@ -168,14 +188,14 @@ export default function CaptureScreen() {
       showAlert('Preparing scan', 'Please wait a moment and try again.');
       return;
     }
-    if (!canScan(premium)) { router.push('/paywall' as never); return; }
+    if (!canScan(gatePremium)) { router.push('/paywall?src=scan-limit' as never); return; }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
     setAnalyzing(true);
     setAnalyzingMsg('Finding items…');
     try {
       const shot = await cameraRef.current.takePictureAsync({ quality: 0.85, skipProcessing: false, exif: false });
       if (!shot?.uri) throw new Error('camera returned no image');
-      const results = await scanMultiImage(supabase, user.id, shot.uri);
+      const results = await scanMultiImage(supabase, user.id, shot.uri, premium);
       if (results.length === 0) {
         showAlert('No food found', 'Couldn’t spot any food items in that photo. Try getting closer or better light.');
         setAnalyzing(false);
@@ -206,7 +226,7 @@ export default function CaptureScreen() {
       showAlert('Preparing scan', 'Please wait a moment and try again.');
       return;
     }
-    if (!canScan(premium)) { router.push('/paywall' as never); return; }
+    if (!canScan(gatePremium)) { router.push('/paywall?src=scan-limit' as never); return; }
     setCapturing(true);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     try {
@@ -214,7 +234,7 @@ export default function CaptureScreen() {
       if (shot?.uri) {
         enqueueScans([shot.uri]);
         recordScan(); recordScanAch();
-        void processQueue(supabase, user.id);
+        void processQueue(supabase, user.id, premium);
       }
     } catch (err) {
       recordError(err, 'scan-batch-capture');
@@ -230,6 +250,9 @@ export default function CaptureScreen() {
       showAlert('Preparing scan', 'Please wait a moment and try again.');
       return;
     }
+    // Gate BEFORE taking the photo (matches batch/table modes) — no point
+    // capturing an image we will refuse to scan.
+    if (!canScan(gatePremium)) { router.push('/paywall?src=scan-limit' as never); return; }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
     setAnalyzing(true);
     setAnalyzingMsg('Capturing…');
@@ -285,9 +308,22 @@ export default function CaptureScreen() {
     if (batchMode) {
       const uris = result.assets.map((a) => a.uri).filter(Boolean);
       if (uris.length === 0) return;
+      // This was the free-cap bypass: multi-picking N photos enqueued N
+      // unmetered vision calls. Gate + clamp to today's remaining scans and
+      // count each enqueued photo exactly like a shutter press.
+      if (!canScan(gatePremium)) { router.push('/paywall?src=scan-limit' as never); return; }
+      const left = scansLeft(gatePremium);
+      const allowed = uris.length <= left ? uris : uris.slice(0, left);
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
-      enqueueScans(uris);
-      void processQueue(supabase, user.id);
+      enqueueScans(allowed);
+      allowed.forEach(() => { recordScan(); recordScanAch(); });
+      if (allowed.length < uris.length) {
+        showAlert(
+          'Daily scan limit',
+          `Added ${allowed.length} of ${uris.length} photos — that's today's free scans. Upgrade to Pro for unlimited.`,
+        );
+      }
+      void processQueue(supabase, user.id, premium);
       goToBatch();
       return;
     }
@@ -300,6 +336,13 @@ export default function CaptureScreen() {
 
   const ringScale = pulse.interpolate({ inputRange: [0, 1], outputRange: [1, 1.06] });
   const ringOpacity = pulse.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1] });
+
+  // Size the viewfinder from the HEIGHT budget too — a width-only square
+  // overflowed iPhone SE (667pt) by ~80pt, tucking under the header and
+  // colliding with the shutter row. ~420pt covers header + toggle + hint +
+  // table button + shutter block.
+  const finderSize = Math.max(200, Math.min(winW - layout.screenPadding * 2, 360, winH - 420));
+  const compact = winH < 700;
 
   const renderViewfinderBody = () => {
     // Backend not configured — early-out with a friendly card.
@@ -383,11 +426,11 @@ export default function CaptureScreen() {
         <View style={styles.headerSpacer} />
       </View>
 
-      <View style={styles.viewfinderWrap}>
+      <View style={[styles.viewfinderWrap, compact && { gap: spacing.md }]}>
         <SoftInset
           radius="xxl"
           strength="thick"
-          style={styles.viewfinder}
+          style={[styles.viewfinder, { width: finderSize, height: finderSize }]}
           contentStyle={styles.viewfinderInner}
         >
           {renderViewfinderBody()}
@@ -437,6 +480,14 @@ export default function CaptureScreen() {
                   : 'POINT AT FOOD · TAP TO CAPTURE'
               : ''}
         </Text>
+
+        {/* Free-tier visibility: show the remaining daily scans so the limit
+            reads as a plan feature, not a surprise paywall. Infinity = Pro. */}
+        {showShutter && !analyzing && !barcodeMode && freeScansLeft !== Infinity ? (
+          <Text style={[typeScale.labelSmall, styles.scansLeft]}>
+            {`${freeScansLeft} FREE ${freeScansLeft === 1 ? 'SCAN' : 'SCANS'} LEFT TODAY`}
+          </Text>
+        ) : null}
 
         {/* K9 — one photo, every item on the table at once. */}
         {showShutter && !analyzing && !barcodeMode && (
@@ -582,9 +633,8 @@ const styles = StyleSheet.create({
     gap: spacing.xl,
   },
   viewfinder: {
-    width: '100%',
-    aspectRatio: 1,
-    maxWidth: 360,
+    // width/height are computed per-device in the component (finderSize) so
+    // the square fits the HEIGHT budget on small phones (iPhone SE).
     overflow: 'hidden',
   },
   viewfinderInner: {
@@ -594,6 +644,11 @@ const styles = StyleSheet.create({
   },
   cameraFill: {
     ...StyleSheet.absoluteFillObject,
+  },
+  scansLeft: {
+    color: colors.inkMuted,
+    letterSpacing: 1.2,
+    marginTop: -spacing.sm,
   },
   ring: {
     width: 180,

@@ -28,6 +28,7 @@ import {
 } from '@/src/state/scanQueue';
 import { useFridge } from '@/src/hooks/useFridge';
 import { useAuth } from '@/src/hooks/useAuth';
+import { usePremium } from '@/src/hooks/usePremium';
 import { getSupabase } from '@/src/lib/supabase';
 
 const VERDICT_TITLE: Record<string, string> = {
@@ -64,6 +65,7 @@ export default function ScanBatchScreen() {
   const queue = useScanQueue();
   const { addItem, signedIn } = useFridge();
   const { user } = useAuth();
+  const { premium } = usePremium();
   const supabase = getSupabase();
 
   // Measured footer height so the last card clears the floating action bar
@@ -80,7 +82,7 @@ export default function ScanBatchScreen() {
     if (!supabase || !user) return;
     Haptics.selectionAsync().catch(() => {});
     retryQueued(id);
-    void processQueue(supabase, user.id);
+    void processQueue(supabase, user.id, premium);
   };
 
   const done = queue.filter((q) => q.status === 'done');
