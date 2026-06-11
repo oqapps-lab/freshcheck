@@ -62,8 +62,11 @@ Scoring guide:
 - "safe" = eat it within a day or two.
 - "soon" = use within 24h, noticeable decline.
 - "past" = don't eat.
+SAFETY RULES (override everything above):
+- RAW POULTRY or RAW GROUND MEAT: verdict may be AT MOST "soon" — never "fresh" or "safe" (pathogens are invisible). storage_note MUST begin with "cook to 165°F / 74°C before eating."
+- Visual inspection cannot detect bacteria. When in doubt, choose the MORE cautious verdict.
 If unclear, lower confidence. Never invent a product; if you cannot tell,
-return { "product": "unknown", "verdict": "safe", "confidence": 30, "analysis": [] }.`;
+return { "product": "unknown", "verdict": "soon", "confidence": 25, "reasoning": "could not identify the item confidently — treat with caution", "analysis": [] }.`;
 
 // Multi-item mode (K9): the photo may contain SEVERAL distinct food items
 // (e.g. groceries on a table). Detect each and return an array.
@@ -87,7 +90,31 @@ Respond with VALID JSON (no markdown fence, no commentary) of this exact shape:
 }
 Base days_left on what you SEE + typical shelf life ASSUMING just-bought (you don't know purchase date).
 Scoring: fresh = great/long life; safe = eat within a day or two; soon = use within 24h; past = don't eat.
+SAFETY RULES (override everything above): raw poultry or raw ground meat may be AT MOST "soon" — never "fresh"/"safe" — and its storage_note MUST begin with "cook to 165°F / 74°C before eating." Visual inspection cannot detect bacteria — when in doubt pick the MORE cautious verdict.
 If you genuinely see no food, return { "items": [] }.`;
+
+// Server-side safety backstop — never trust the model alone with food safety.
+// (1) Low-confidence verdicts may not claim fresh/safe. (2) Raw poultry /
+// ground meat can never read as eat-as-is and always carries a cook-to-165°F
+// note. Mirrors the SAFETY RULES in the prompts; this is the hard guarantee.
+const RAW_RISK = /(chicken|poultry|turkey|duck|mince|ground)/i;
+const COOKED_MARKERS = /(cooked|grilled|roasted|fried|baked|rotisserie|smoked|soup|stew|salad|curry|nugget|deli|leftover)/i;
+function applySafetyRails<T extends Pick<VerdictPayload, 'product' | 'verdict' | 'tone' | 'confidence' | 'storage_note'>>(v: T): T {
+  let verdict = v.verdict;
+  if (v.confidence < 60 && verdict === 'fresh') verdict = 'safe';
+  if (v.confidence < 40 && (verdict === 'fresh' || verdict === 'safe')) verdict = 'soon';
+  const name = v.product || '';
+  if (RAW_RISK.test(name) && !COOKED_MARKERS.test(name)) {
+    if (verdict === 'fresh' || verdict === 'safe') verdict = 'soon';
+    const note = v.storage_note ?? '';
+    if (!/165|74\s*°?\s*c/i.test(note)) {
+      v.storage_note = `cook to 165°F / 74°C before eating. ${note}`.trim();
+    }
+  }
+  v.verdict = verdict;
+  v.tone = verdict;
+  return v;
+}
 
 // @ts-expect-error Deno.serve is available at runtime.
 serve(async (req) => {
@@ -188,7 +215,7 @@ serve(async (req) => {
       days_left: it.days_left != null ? Math.max(0, Math.floor(it.days_left)) : null,
       total_days: it.total_days != null ? Math.max(1, Math.floor(it.total_days)) : null,
       analysis: Array.isArray(it.analysis) ? it.analysis : [],
-    }));
+    })).map(applySafetyRails);
     return json({ items, image_path });
   }
 
@@ -203,6 +230,7 @@ serve(async (req) => {
   parsed.confidence = Math.max(0, Math.min(100, Number(parsed.confidence) || 0));
   if (parsed.days_left != null) parsed.days_left = Math.max(0, Math.floor(parsed.days_left));
   if (parsed.total_days != null) parsed.total_days = Math.max(1, Math.floor(parsed.total_days));
+  parsed = applySafetyRails(parsed);
 
   // Persist the verdict so the user has a scan history (and so /scan can
   // re-read by id if it's revisited later).

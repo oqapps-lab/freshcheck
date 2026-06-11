@@ -178,6 +178,12 @@ export default function ScanResultScreen() {
           ) : null}
         </SoftInset>
 
+        {/* Safety disclaimer — permanent, on every verdict. Visual AI cannot
+            detect pathogens; this is the documented legal/safety prerequisite. */}
+        <Text style={[typeScale.bodySmall, styles.safetyNote]}>
+          Visual estimate only — does not detect bacteria. When in doubt, throw it out.
+        </Text>
+
         {/* Refine — the verdict assumes a just-bought item; let the user say
             how long they've had it so days-left is realistic (E1). */}
         {totalShelf != null ? (
@@ -320,6 +326,13 @@ const styles = StyleSheet.create({
   softnessRow: {
     marginTop: 16,
     alignItems: 'center',
+  },
+  safetyNote: {
+    color: colors.inkMuted,
+    textAlign: 'center',
+    lineHeight: 16,
+    marginTop: spacing.sm,
+    paddingHorizontal: spacing.lg,
   },
   reasoning: {
     color: colors.inkSecondary,
