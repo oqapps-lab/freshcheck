@@ -22,7 +22,7 @@
 
 1. **Yuka-прецедент:** $7.3M ARR, 80M пользователей, 98% revenue от подписок, zero рекламы
 2. **ROI очевиден пользователю:** подписка $4.99/мес при экономии $56/неделю на еде = окупается в первый день
-3. **Free tier как top-of-funnel:** 5 сканов/день достаточно для "aha-moment", но мало для daily use
+3. **Free tier как top-of-funnel:** 3 скана/день достаточно для "aha-moment", но мало для daily use
 4. **Recurring revenue:** AI-модели требуют постоянного улучшения, cloud infrastructure costs
 5. **Бенчмарк категории:** Health & Fitness apps — median subscription $6.99/мес (RevenueCat 2025)
 
@@ -32,7 +32,7 @@
 
 | Tier | Цена | Что включено | Ограничения бесплатного |
 |------|------|-------------|------------------------|
-| **Free** | $0 | 5 сканов/день, базовый My Fridge (10 items), USDA Storage Guide (полный), in-app alerts (без push) | 5 сканов/день, 10 продуктов в My Fridge, нет push, нет рецептов, нет doneness/ripeness |
+| **Free** | $0 | 3 скана/день, базовый My Fridge (10 items), USDA Storage Guide (полный), in-app alerts (без push) | 3 скана/день, 10 продуктов в My Fridge, нет push, нет рецептов, нет doneness/ripeness |
 | **Plus** | **$4.99/мес** / **$39.99/год** | Unlimited сканы, unlimited My Fridge, push-уведомления, Recipe Engine, Meat Doneness (v1.1), Ripeness Checker (v1.1), Scan History, Weekly Report, no ads | — |
 | **Family** | **$7.99/мес** / **$64.99/год** | Всё из Plus + shared household My Fridge (до 5 членов), family meal planning, priority support | — |
 

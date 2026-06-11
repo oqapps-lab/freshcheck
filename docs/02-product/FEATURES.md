@@ -23,7 +23,7 @@
 |  | - [ ] Raw poultry → НИКОГДА "SAFE". Всегда: "Cook to 165°F regardless of appearance" |
 |  | - [ ] Low confidence (<70%) → default to CAUTION |
 |  | - [ ] Feedback: "Этот результат был полезен? Да/Нет" |
-|  | - [ ] Free tier: 5 сканов/день |
+|  | - [ ] Free tier: 3 скана/день |
 | **Экран** | Scan Screen (главный экран, центральная кнопка камеры) → Result Screen |
 | **Приоритет** | P0 — блокер запуска (core value proposition) |
 | **Сложность** | XL — AI-модель, камера, inference, UI результата |
@@ -151,7 +151,7 @@
 |------|----------|
 | **Название** | Subscription Paywall |
 | **User Story** | Как пользователь бесплатного tier, я хочу видеть, что даёт Plus-подписка, чтобы принять решение |
-| **Acceptance Criteria** | - [ ] Paywall появляется при превышении лимита (>5 сканов/день, >10 продуктов) |
+| **Acceptance Criteria** | - [ ] Paywall появляется при превышении лимита (>3 сканов/день, >10 продуктов) |
 |  | - [ ] Список преимуществ Plus: unlimited scans, fridge, push, recipes |
 |  | - [ ] Два варианта: $4.99/мес и $39.99/год (экономия 33%) |
 |  | - [ ] Free trial: 7 дней (опционально, A/B-тестировать) |
