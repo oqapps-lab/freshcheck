@@ -46,9 +46,10 @@ type Recipe = {
 
 const SYSTEM_PROMPT = `IMPORTANT VALIDATION: If the provided ingredients are not real, edible foods (e.g. random letters, gibberish, or non-food objects, or you cannot identify a single genuine ingredient), DO NOT invent recipes. Output exactly this and nothing else: {"error":"invalid_ingredients"}
 
-You are a creative chef. Given a list of items in a user's fridge (with days_left until they spoil), generate exactly 3 recipes.
+You are a practical home chef. Given a list of items in a user's fridge (with days_left until they spoil), generate exactly 3 recipes.
 
 Rules:
+- REALISTIC DISHES ONLY: every recipe must be a well-known, recognizable dish a home cook has heard of (omelette, frittata, stir-fry, fried rice, pasta, soup, salad, tacos, sandwich, casserole, pancakes...). Use its COMMON name. Do NOT invent fanciful or experimental dish names ("Waffle Bread Pudding Cups", "Deconstructed X") — if an ingredient is unusual, fit it into a classic dish rather than inventing a new one.
 - CRITICAL: Identify the SINGLE fastest-expiring item in the fridge (lowest days_left). Recipe #1 MUST feature this item as its PRIMARY ingredient (name it in the recipe title if possible). Recipe #2 should also use this item. Recipe #3 may use it OR another expiring-soon item.
 - All 3 recipes COMBINED must use every item that has days_left <= 3.
 - Each recipe must use AT LEAST 1 ingredient from the fridge marked from_fridge:true.
@@ -306,7 +307,15 @@ serve(async (req) => {
 
   if (!openaiRes.ok) {
     const msg = await openaiRes.text();
-    return json({ error: `openai ${openaiRes.status}: ${msg.slice(0, 400)}` }, 502);
+    // Don't leak raw OpenAI errors to the UI — the hook surfaces `message`
+    // directly to the user (same path as the 429 daily-limit copy).
+    return json(
+      {
+        error: `openai ${openaiRes.status}: ${msg.slice(0, 400)}`,
+        message: 'Recipe kitchen is briefly unavailable. Please try again in a few minutes.',
+      },
+      502,
+    );
   }
 
   const openaiJson = await openaiRes.json();
