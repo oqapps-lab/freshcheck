@@ -46,14 +46,19 @@ serve(async (req) => {
   if (!uid) return json({ ok: true, skipped: 'no customer_user_id' });
 
   const type = typeof ev.event_type === 'string' ? ev.event_type : '';
-  const expiresAt = typeof ev.subscription_expires_at === 'string' ? ev.subscription_expires_at : null;
-  const introType = typeof ev.active_introductory_offer_type === 'string' ? ev.active_introductory_offer_type : null;
-  const isTrial = type.startsWith('trial_') || introType === 'free_trial';
-
-  let tier: 'free' | 'trial' | 'paid';
-  if (EXPIRY_EVENTS.has(type)) tier = 'free';
-  else if (isTrial) tier = 'trial';
-  else tier = 'paid';
+  // Real Adapty payloads carry the subscription data inside event_properties
+  // (verified against stored raw_event rows) — top-level fields exist only on
+  // some event types. Read both.
+  const props = (ev.event_properties && typeof ev.event_properties === 'object'
+    ? ev.event_properties
+    : {}) as Record<string, unknown>;
+  const expiresAt =
+    (typeof ev.subscription_expires_at === 'string' ? ev.subscription_expires_at : null) ??
+    (typeof props.subscription_expires_at === 'string' ? props.subscription_expires_at : null) ??
+    (typeof props.expires_at === 'string' ? props.expires_at : null);
+  const introType =
+    (typeof ev.active_introductory_offer_type === 'string' ? ev.active_introductory_offer_type : null) ??
+    (typeof props.active_introductory_offer_type === 'string' ? props.active_introductory_offer_type : null);
 
   const svc = createClient(url, serviceKey);
   const { data: prev } = await svc
@@ -61,6 +66,21 @@ serve(async (req) => {
     .select('tier, tier_since')
     .eq('user_id', uid)
     .maybeSingle();
+
+  let tier: 'free' | 'trial' | 'paid';
+  if (EXPIRY_EVENTS.has(type) || props.is_active === false || props.is_refund === true) {
+    tier = 'free';
+  } else if ((type.startsWith('trial_') && type !== 'trial_converted') || introType === 'free_trial') {
+    // trial_converted means the trial BECAME a paid subscription — paid.
+    tier = 'trial';
+  } else if (type === 'access_level_updated') {
+    // access_level_updated fires for both trial and paid periods and carries
+    // no trial marker — preserve the tier set by the explicit trial_*/
+    // subscription_* events instead of clobbering trial → paid.
+    tier = prev && (prev.tier === 'trial' || prev.tier === 'paid') ? (prev.tier as 'trial' | 'paid') : 'paid';
+  } else {
+    tier = 'paid';
+  }
   const tierSince =
     prev && prev.tier === tier && typeof prev.tier_since === 'string'
       ? prev.tier_since
