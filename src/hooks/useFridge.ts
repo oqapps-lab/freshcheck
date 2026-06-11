@@ -134,13 +134,16 @@ export function useFridge() {
     void refresh();
   }, [refresh]);
 
-  // Keep local notifications in sync with the fridge contents.
+  // Keep local notifications in sync with the fridge contents. The empty
+  // list MUST flow through too — deleting/consuming the last item has to
+  // cancel its scheduled "expires soon" pushes, otherwise they fire forever.
+  // Only skip while the initial load is still in flight (transient []).
   useEffect(() => {
-    if (items.length === 0) return;
+    if (loading) return;
     void refreshExpiryReminders(
       items.map((i) => ({ id: i.id, name: i.name, daysLeft: i.daysLeft })),
     );
-  }, [items]);
+  }, [items, loading]);
 
   const addItem = useCallback(
     async (draft: Omit<Insert, 'user_id' | 'category'> & { name: string }) => {

@@ -86,6 +86,24 @@ export async function ensureNotificationPermission(): Promise<boolean> {
 export async function refreshExpiryReminders(items: NotifItem[]): Promise<number> {
   const N = loadNotif();
   if (!N) return 0;
+  // Empty fridge = cancel-only sync: clear stale "expires soon" pushes but
+  // NEVER trigger the permission request for a no-op — a fresh install would
+  // otherwise see an un-primed system prompt on first load.
+  if (items.length === 0) {
+    try {
+      const settings = await N.getPermissionsAsync();
+      if (!settings.granted) return 0;
+      const existing = await N.getAllScheduledNotificationsAsync();
+      await Promise.all(
+        existing
+          .filter((n) => n.content.data && (n.content.data as Record<string, unknown>).kind === 'expiry')
+          .map((n) => N.cancelScheduledNotificationAsync(n.identifier)),
+      );
+    } catch {
+      /* notifications module unavailable — nothing to cancel */
+    }
+    return 0;
+  }
   const allowed = await ensureNotificationPermission();
   if (!allowed) return 0;
 
