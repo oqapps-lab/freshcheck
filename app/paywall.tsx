@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/Glyphs';
 import { startTrial, restorePurchases, PRODUCT_BY_PLAN, getTiers, type TierInfo } from '@/src/lib/adapty';
 import { usePremium } from '@/src/hooks/usePremium';
+import { useOnboardingAnswers } from '@/src/state/onboardingStore';
 import { logTrialStartEvent, logBeginCheckout, recordError } from '@/src/lib/firebase';
 import { logTrialStart as afLogTrialStart } from '@/src/lib/appsflyer';
 import { LEGAL } from '@/constants/legal';
@@ -78,6 +79,7 @@ export default function PaywallScreen() {
   const { src } = useLocalSearchParams<{ src?: string }>();
   const srcCopy = SRC_COPY[typeof src === 'string' ? src : 'default'] ?? SRC_COPY.default;
   const { premium: isPremium } = usePremium();
+  const family = useOnboardingAnswers().household === 'family';
   const [plan, setPlan] = useState<Plan>('annual');
   // Live store-localized prices; falls back to the hardcoded USD literals
   // until Adapty is fully configured (Paid-Apps agreement + approved IAPs).
@@ -239,7 +241,7 @@ export default function PaywallScreen() {
           <View style={styles.trustPill}>
             <Sparkle size={14} color={colors.primary} strokeWidth={2} />
             <Text style={[typeScale.labelSmall, styles.trustPillText]}>
-              SAVES THE AVERAGE FAMILY $2,913 / YEAR
+              {family ? 'SAVES THE AVERAGE FAMILY $2,913 / YEAR' : 'THE AVERAGE HOUSEHOLD SAVES $2,913 / YEAR'}
             </Text>
           </View>
         </View>

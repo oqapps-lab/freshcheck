@@ -122,7 +122,7 @@ export default function FridgeScreen() {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scroll}
+        contentContainerStyle={[styles.scroll, { paddingBottom: insets.bottom + layout.floatingBottomClearance }]}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -264,7 +264,8 @@ const styles = StyleSheet.create({
   scroll: {
     paddingHorizontal: layout.screenPadding,
     paddingTop: spacing.xxl,
-    paddingBottom: layout.floatingBottomClearance,
+    // paddingBottom is applied inline (insets.bottom + floatingBottomClearance)
+    // so notch devices clear the floating tab bar too.
   },
   hero: {
     paddingHorizontal: 8,

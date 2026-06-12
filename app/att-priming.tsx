@@ -6,6 +6,7 @@ import { SoftSurface } from '@/components/ui/SoftSurface';
 import { PrimaryPillCTA } from '@/components/ui/PrimaryPillCTA';
 import { Sparkle } from '@/components/ui/Glyphs';
 import { promptATT } from '@/src/lib/appsflyer';
+import { useOnboardingAnswers } from '@/src/state/onboardingStore';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
 // Pre-permission ('priming') screen shown at the END of onboarding, right
@@ -25,6 +26,9 @@ export default function AttPrimingScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const [busy, setBusy] = useState(false);
+  // B01 (students QA): "families/parents" copy read wrong for a "Just me"
+  // household — personalize from the quiz answer.
+  const family = useOnboardingAnswers().household === 'family';
 
   const onContinue = async () => {
     if (busy) return;
@@ -50,11 +54,12 @@ export default function AttPrimingScreen() {
         </SoftSurface>
 
         <Text style={[typeScale.displayMedium, styles.headline]}>
-          Make FreshCheck better for families
+          {family ? 'Make FreshCheck better for families' : 'Make FreshCheck better for you'}
         </Text>
         <Text style={[typeScale.bodyLarge, styles.body]}>
-          With your permission, we measure which features actually help parents
-          like you — so we can keep improving the parts that matter.
+          {family
+            ? 'With your permission, we measure which features actually help parents like you — so we can keep improving the parts that matter.'
+            : 'With your permission, we measure which features actually help people like you — so we can keep improving the parts that matter.'}
         </Text>
         <Text style={[typeScale.bodyLarge, styles.body]}>
           We never sell your personal data, and your scans always stay private.

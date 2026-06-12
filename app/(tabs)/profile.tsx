@@ -19,6 +19,7 @@ import {
   setAvatarUri,
   hydrateProfile,
 } from '@/src/state/profileStore';
+import { useOnboardingAnswers } from '@/src/state/onboardingStore';
 import { LEGAL } from '@/constants/legal';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
@@ -34,13 +35,18 @@ export default function ProfileScreen() {
   const signedIn = !!user && !user.is_anonymous;
   const { premium: isPremium, resolved: premiumResolved } = usePremium();
   const localProfile = useLocalProfile();
+  const onboarding = useOnboardingAnswers();
 
   useEffect(() => {
     void hydrateProfile();
   }, []);
 
-  // Display name precedence: user-set name → email prefix (signed in) → Guest.
-  const shownName = localProfile.displayName ?? (signedIn ? user?.email?.split('@')[0] ?? 'You' : 'Guest');
+  // Display name precedence: user-set name → onboarding quiz name ("what
+  // should we call you?") → email prefix (signed in) → Guest. Students'
+  // QA flagged the quiz name being ignored here (B05, 2026-06-11).
+  const quizName = onboarding.name?.trim() || null;
+  const shownName =
+    localProfile.displayName ?? quizName ?? (signedIn ? user?.email?.split('@')[0] ?? 'You' : 'Guest');
 
   const pickFromLibrary = async () => {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();

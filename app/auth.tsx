@@ -210,7 +210,7 @@ export default function AuthScreen() {
             ref={passwordRef}
             value={password}
             onChangeText={setPassword}
-            placeholder={isSignIn ? '••••••••' : 'Min. 6 characters'}
+            placeholder={isSignIn ? 'Your password' : 'Min. 6 characters'}
             placeholderTextColor={colors.inkMuted}
             secureTextEntry
             autoCapitalize="none"
