@@ -62,6 +62,9 @@ export default function CaptureScreen() {
   const cameraRef = useRef<CameraView>(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [analyzingMsg, setAnalyzingMsg] = useState('Analyzing…');
+  // Elapsed seconds during a scan — shown on the overlay so a slow (10s+) model
+  // call never reads as a silent hang ("how long do I wait?").
+  const [elapsedS, setElapsedS] = useState(0);
   // Batch mode: rapid-fire capture that enqueues each shot for background
   // scanning instead of blocking on each one. `capturing` debounces the
   // shutter between quick shots.
@@ -149,6 +152,13 @@ export default function CaptureScreen() {
     }
   }, [permission, requestPermission]);
 
+  // Tick the elapsed-seconds counter while a scan is running; reset when idle.
+  useEffect(() => {
+    if (!analyzing) { setElapsedS(0); return; }
+    const id = setInterval(() => setElapsedS((s) => s + 1), 1000);
+    return () => clearInterval(id);
+  }, [analyzing]);
+
   // Single scan: run the shared pipeline (src/lib/scanPipeline) then stage
   // the result + navigate. Fed by BOTH the camera shutter and the gallery
   // picker. Assumes the caller already set analyzing=true and verified
@@ -159,6 +169,31 @@ export default function CaptureScreen() {
     try {
       setAnalyzingMsg('Reading ripeness…');
       const result = await scanImage(supabase, user.id, sourceUri, premium);
+      // People often photograph the WHOLE TABLE in Single mode. If the model
+      // flagged several distinct items, offer to enumerate them all instead of
+      // returning one verdict / "unknown". Works for camera AND gallery photos.
+      if (result.multipleItems) {
+        setAnalyzing(false);
+        setAnalyzingMsg('Analyzing…');
+        showAlert(
+          'Several items detected',
+          'This photo looks like it has multiple foods. Scan them all, or just the main one?',
+          [
+            {
+              text: 'Just the main one',
+              style: 'cancel',
+              onPress: () => {
+                setLastScan(result);
+                recordScan(); recordScanAch();
+                afLogScan(result.product);
+                router.replace('/scan-result' as never);
+              },
+            },
+            { text: 'Scan all items', onPress: () => { void runTableScanFromUri(sourceUri); } },
+          ],
+        );
+        return;
+      }
       setLastScan(result);
       recordScan(); recordScanAch();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
@@ -180,22 +215,18 @@ export default function CaptureScreen() {
 
   const goToBatch = () => router.push('/scan-batch' as never);
 
-  // K9 — "Scan the whole table": one photo, detect EVERY food item in it, and
-  // drop them all on the batch-results screen ready to add to the fridge.
-  const onScanTable = async () => {
-    if (analyzing) return;
-    if (!cameraRef.current || !supabase || !user) {
-      showAlert('Preparing scan', 'Please wait a moment and try again.');
-      return;
-    }
-    if (!canScan(gatePremium)) { router.push('/paywall?src=scan-limit' as never); return; }
+  // Multi-detect from a given image URI: one photo → every food item, dropped
+  // on the batch-results screen ready to add to the fridge. Shared by the
+  // "whole table" button AND the Single-mode "several items detected → scan
+  // them all" offer, so a GALLERY-picked whole-table photo can enumerate too
+  // (not only the camera). Assumes the caller verified supabase+user+canScan.
+  const runTableScanFromUri = async (sourceUri: string) => {
+    if (!supabase || !user) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
     setAnalyzing(true);
     setAnalyzingMsg('Finding items…');
     try {
-      const shot = await cameraRef.current.takePictureAsync({ quality: 0.85, skipProcessing: false, exif: false });
-      if (!shot?.uri) throw new Error('camera returned no image');
-      const results = await scanMultiImage(supabase, user.id, shot.uri, premium);
+      const results = await scanMultiImage(supabase, user.id, sourceUri, premium);
       if (results.length === 0) {
         showAlert('No food found', 'Couldn’t spot any food items in that photo. Try getting closer or better light.');
         setAnalyzing(false);
@@ -207,6 +238,27 @@ export default function CaptureScreen() {
       setAnalyzing(false);
       setAnalyzingMsg('Analyzing…');
       goToBatch();
+    } catch (err) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
+      recordError(err, 'scan-table');
+      showAlert('Scan failed', err instanceof Error ? err.message : 'Could not scan.');
+      setAnalyzing(false);
+      setAnalyzingMsg('Analyzing…');
+    }
+  };
+
+  // K9 — "Scan the whole table" button: one CAMERA photo → runTableScanFromUri.
+  const onScanTable = async () => {
+    if (analyzing) return;
+    if (!cameraRef.current || !supabase || !user) {
+      showAlert('Preparing scan', 'Please wait a moment and try again.');
+      return;
+    }
+    if (!canScan(gatePremium)) { router.push('/paywall?src=scan-limit' as never); return; }
+    try {
+      const shot = await cameraRef.current.takePictureAsync({ quality: 0.85, skipProcessing: false, exif: false });
+      if (!shot?.uri) throw new Error('camera returned no image');
+      await runTableScanFromUri(shot.uri);
     } catch (err) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
       recordError(err, 'scan-table');
@@ -401,6 +453,9 @@ export default function CaptureScreen() {
           <View style={styles.analyzingOverlay}>
             <Sparkle size={56} color={colors.amber} strokeWidth={1.6} />
             <Text style={[typeScale.titleMedium, styles.analyzingText]}>{analyzingMsg}</Text>
+            <Text style={[typeScale.bodySmall, styles.analyzingSub]}>
+              {elapsedS >= 4 ? `Still working… ${elapsedS}s` : 'This can take a few seconds'}
+            </Text>
           </View>
         ) : (
           <Animated.View style={[styles.ring, { transform: [{ scale: ringScale }], opacity: ringOpacity }]}>
@@ -689,6 +744,10 @@ const styles = StyleSheet.create({
   },
   analyzingText: {
     color: colors.ink,
+    textAlign: 'center',
+  },
+  analyzingSub: {
+    color: colors.inkSecondary,
     textAlign: 'center',
   },
 

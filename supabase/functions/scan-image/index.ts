@@ -37,9 +37,12 @@ type VerdictPayload = {
   days_left?: number;
   total_days?: number;
   analysis?: { label: string; value: number }[];
+  // Single-mode hint: the photo clearly contains several distinct items, so the
+  // app can offer "scan them all" instead of returning one verdict.
+  multiple_items?: boolean;
 };
 
-const SYSTEM_PROMPT = `You are a food-safety assistant. A user photographed a single food item.
+const SYSTEM_PROMPT = `You are a food-safety assistant. A user photographed food — usually a SINGLE item, but the photo sometimes contains SEVERAL distinct items (e.g. a counter or table of groceries).
 Respond with VALID JSON that matches this exact schema (no markdown fence, no commentary):
 {
   "product": string (short human name, lowercase),
@@ -50,6 +53,7 @@ Respond with VALID JSON that matches this exact schema (no markdown fence, no co
   "storage_note": string (1-2 sentences, how to store, lowercase),
   "days_left": integer (estimated days before it spoils; 0 if past),
   "total_days": integer (typical total shelf-life for this item when fresh),
+  "multiple_items": boolean (true ONLY if the photo clearly shows SEVERAL distinct food products rather than one item),
   "analysis": [
     { "label": "Color", "value": 0-100 },
     { "label": "Texture", "value": 0-100 },
@@ -65,13 +69,14 @@ Scoring guide:
 SAFETY RULES (override everything above):
 - RAW POULTRY or RAW GROUND MEAT: verdict may be AT MOST "soon" — never "fresh" or "safe" (pathogens are invisible). storage_note MUST begin with "cook to 165°F / 74°C before eating."
 - Visual inspection cannot detect bacteria. When in doubt, choose the MORE cautious verdict.
-If unclear, lower confidence. Never invent a product; if you cannot tell,
-return { "product": "unknown", "verdict": "soon", "confidence": 25, "reasoning": "could not identify the item confidently — treat with caution", "analysis": [] }.`;
+If SEVERAL items are present: still return your best verdict for the SINGLE most prominent food item AND set "multiple_items": true. Do NOT return "unknown" merely because there are several items.
+If unclear, lower confidence. Never invent a product; if you genuinely cannot identify any food,
+return { "product": "unknown", "verdict": "soon", "confidence": 25, "reasoning": "could not identify the item confidently — treat with caution", "multiple_items": false, "analysis": [] }.`;
 
 // Multi-item mode (K9): the photo may contain SEVERAL distinct food items
 // (e.g. groceries on a table). Detect each and return an array.
-const MULTI_SYSTEM_PROMPT = `You are a food-safety assistant. A user photographed SEVERAL food items at once (e.g. groceries on a table).
-Identify each DISTINCT food item you can see (up to 8; ignore packaging clutter, hands, background). For EACH, assess freshness.
+const MULTI_SYSTEM_PROMPT = `You are a food-safety assistant. A user photographed SEVERAL food items at once (e.g. a checkout belt or a table of groceries).
+Identify each DISTINCT food product you can see (up to 18). INCLUDE packaged, boxed, bagged, jarred and canned grocery products (e.g. pasta, milk carton, cheese, juice, crackers) — name them by what they contain. Ignore only hands, price tags, shelves and background fixtures. For EACH, assess freshness (for sealed shelf-stable packaged goods, "fresh" with a long shelf life is correct unless visibly damaged/expired).
 Respond with VALID JSON (no markdown fence, no commentary) of this exact shape:
 {
   "items": [
@@ -208,28 +213,52 @@ serve(async (req) => {
     return json({ error: `signed url failed: ${signErr?.message ?? 'no url'}` }, 500);
   }
 
-  const openaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-      authorization: `Bearer ${openaiKey}`,
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      response_format: { type: 'json_object' },
-      
-      messages: [
-        { role: 'system', content: isMulti ? MULTI_SYSTEM_PROMPT : SYSTEM_PROMPT },
-        {
-          role: 'user',
-          content: [
-            { type: 'text', text: isMulti ? 'Detect every food item and return the JSON.' : 'Assess this food and return the JSON.' },
-            { type: 'image_url', image_url: { url: signed.signedUrl } },
-          ],
-        },
-      ],
-    }),
-  });
+  // gpt-5.5 is a reasoning model — with no bound it can run long on a busy
+  // photo and the function blocks until the 120s signed URL expires or the
+  // platform wall-clock limit, surfacing on the device as a dead hang. Bound it
+  // with an AbortController, and cap output tokens so reasoning can't run away.
+  // The cap must be generous: reasoning tokens are billed against this budget,
+  // so a too-small value returns empty content (finish_reason "length").
+  const OPENAI_TIMEOUT_MS = 28_000;
+  const ctrl = new AbortController();
+  const abortTimer = setTimeout(() => ctrl.abort(), OPENAI_TIMEOUT_MS);
+  let openaiRes: Response;
+  try {
+    openaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      signal: ctrl.signal,
+      headers: {
+        'content-type': 'application/json',
+        authorization: `Bearer ${openaiKey}`,
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        response_format: { type: 'json_object' },
+        max_completion_tokens: isMulti ? 6000 : 2000,
+        messages: [
+          { role: 'system', content: isMulti ? MULTI_SYSTEM_PROMPT : SYSTEM_PROMPT },
+          {
+            role: 'user',
+            content: [
+              { type: 'text', text: isMulti ? 'Detect every food item and return the JSON.' : 'Assess this food and return the JSON.' },
+              { type: 'image_url', image_url: { url: signed.signedUrl } },
+            ],
+          },
+        ],
+      }),
+    });
+  } catch (e) {
+    clearTimeout(abortTimer);
+    const aborted = (e as { name?: string })?.name === 'AbortError';
+    return json(
+      {
+        error: aborted ? 'openai timeout' : `openai fetch failed: ${String(e).slice(0, 200)}`,
+        message: 'Scanning is taking longer than usual right now. Please try again in a moment.',
+      },
+      504,
+    );
+  }
+  clearTimeout(abortTimer);
 
   if (!openaiRes.ok) {
     const msg = await openaiRes.text();
@@ -286,6 +315,7 @@ serve(async (req) => {
   parsed.confidence = Math.max(0, Math.min(100, Number(parsed.confidence) || 0));
   if (parsed.days_left != null) parsed.days_left = Math.max(0, Math.floor(parsed.days_left));
   if (parsed.total_days != null) parsed.total_days = Math.max(1, Math.floor(parsed.total_days));
+  parsed.multiple_items = parsed.multiple_items === true;
   parsed = applySafetyRails(parsed);
 
   // Persist the verdict so the user has a scan history (and so /scan can

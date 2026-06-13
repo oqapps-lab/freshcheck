@@ -23,6 +23,9 @@ export type LastScan = {
   daysLeft: number | null;
   totalDays: number | null;
   analysis: { label: string; value: number }[];
+  // Single-mode hint from the edge fn: the photo clearly holds several distinct
+  // food items (so /capture can offer "scan them all" instead of one verdict).
+  multipleItems?: boolean;
 };
 
 let current: LastScan | null = null;
