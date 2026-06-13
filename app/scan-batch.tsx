@@ -9,7 +9,7 @@ import {
   StyleSheet,
   type LayoutChangeEvent,
 } from 'react-native';
-import { showAlert } from '@/src/state/alertStore';
+import { showAlert, showPrompt } from '@/src/state/alertStore';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -24,6 +24,7 @@ import {
   markAddedToFridge,
   retryQueued,
   processQueue,
+  updateResult,
   type QueueItem,
 } from '@/src/state/scanQueue';
 import { useFridge } from '@/src/hooks/useFridge';
@@ -43,6 +44,7 @@ const VERDICT_COLOR: Record<string, string> = {
   soon: colors.amber,
   past: colors.red,
 };
+const VERDICTS = ['fresh', 'safe', 'soon', 'past'] as const;
 
 function capitalize(s: string): string {
   return s.length > 0 ? s.charAt(0).toUpperCase() + s.slice(1) : s;
@@ -83,6 +85,36 @@ export default function ScanBatchScreen() {
     Haptics.selectionAsync().catch(() => {});
     retryQueued(id);
     void processQueue(supabase, user.id, premium);
+  };
+
+  // Whole-table detection isn't perfect — let the user fix a mis-read name or
+  // bump the verdict on the results list before adding to the fridge.
+  const renameItem = (item: QueueItem) => {
+    if (!item.result) return;
+    Haptics.selectionAsync().catch(() => {});
+    showPrompt(
+      'Edit item',
+      'Correct the detected name.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Save',
+          onPress: (v) => {
+            const name = v?.trim();
+            if (name) updateResult(item.id, { product: name.toLowerCase() });
+          },
+        },
+      ],
+      { defaultValue: capitalize(item.result.product || ''), placeholder: 'e.g. chicken breast' },
+    );
+  };
+
+  const cycleVerdict = (item: QueueItem) => {
+    if (!item.result) return;
+    Haptics.selectionAsync().catch(() => {});
+    const idx = VERDICTS.indexOf(item.result.verdict as (typeof VERDICTS)[number]);
+    const next = VERDICTS[(idx + 1) % VERDICTS.length];
+    updateResult(item.id, { verdict: next, tone: next });
   };
 
   const done = queue.filter((q) => q.status === 'done');
@@ -194,15 +226,30 @@ export default function ScanBatchScreen() {
                     <View style={styles.cardBody}>
                       {item.status === 'done' && r ? (
                         <>
-                          <Text style={[typeScale.titleMedium, { color: colors.ink }]} numberOfLines={1}>
-                            {capitalize(r.product || 'Item')}
-                          </Text>
-                          <Text style={[typeScale.labelSmall, { color: titleColor, marginTop: 2 }]}>
-                            {(VERDICT_TITLE[r.verdict] ?? r.verdict).toUpperCase()}
-                          </Text>
+                          <Pressable
+                            accessibilityRole="button"
+                            accessibilityLabel={`edit name, currently ${r.product}`}
+                            onPress={() => renameItem(item)}
+                            hitSlop={6}
+                          >
+                            <Text style={[typeScale.titleMedium, { color: colors.ink }]} numberOfLines={1}>
+                              {capitalize(r.product || 'Item')}
+                            </Text>
+                          </Pressable>
+                          <Pressable
+                            accessibilityRole="button"
+                            accessibilityLabel="change freshness verdict"
+                            onPress={() => cycleVerdict(item)}
+                            hitSlop={6}
+                          >
+                            <Text style={[typeScale.labelSmall, { color: titleColor, marginTop: 2 }]}>
+                              {(VERDICT_TITLE[r.verdict] ?? r.verdict).toUpperCase()}
+                            </Text>
+                          </Pressable>
                           <Text style={[typeScale.bodySmall, styles.sub]}>
                             {expiryText(r.daysLeft)}
                           </Text>
+                          <Text style={[typeScale.labelSmall, styles.editHint]}>TAP NAME OR STATUS TO EDIT</Text>
                         </>
                       ) : item.status === 'error' ? (
                         <>
@@ -318,6 +365,7 @@ const styles = StyleSheet.create({
   },
   cardBody: { flex: 1, gap: 2 },
   sub: { color: colors.inkSecondary, marginTop: 2 },
+  editHint: { color: colors.inkMuted, marginTop: 6, letterSpacing: 1 },
   addBtn: {
     paddingHorizontal: spacing.lg,
     paddingVertical: 10,

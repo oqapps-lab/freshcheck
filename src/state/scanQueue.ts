@@ -106,6 +106,18 @@ export function retryQueued(id: string) {
 }
 
 /**
+ * User correction on the batch-results list: edit a detected item's verdict
+ * fields (e.g. fix a mis-read product name or bump the verdict) before it's
+ * added to the fridge.
+ */
+export function updateResult(id: string, next: Partial<LastScan>) {
+  items = items.map((it) =>
+    it.id === id && it.result ? { ...it, result: { ...it.result, ...next } } : it,
+  );
+  for (const l of listeners) l();
+}
+
+/**
  * Drains all pending items sequentially. Safe to call on every enqueue —
  * the `running` guard means new photos added while a drain is in flight are
  * picked up by the same loop, and a second concurrent drain never starts.
