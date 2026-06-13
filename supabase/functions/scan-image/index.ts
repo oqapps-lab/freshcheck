@@ -234,7 +234,16 @@ serve(async (req) => {
       body: JSON.stringify({
         model: MODEL,
         response_format: { type: 'json_object' },
-        max_completion_tokens: isMulti ? 6000 : 2000,
+        // A safe/caution/danger freshness verdict is a PERCEPTUAL call (mold,
+        // discolouration, slime are SEEN, not deduced) — it needs almost no
+        // chain-of-thought. The default 'medium' reasoning effort spends hidden
+        // thinking tokens that drove the 10s+ latency (the timeout cause) AND
+        // most of the per-scan cost. 'low' cuts both with no loss of visual
+        // accuracy. Reasoning tokens bill against this completion budget, so
+        // keep generous caps so a long reason never truncates to an empty
+        // finish_reason:"length" response.
+        reasoning_effort: 'low',
+        max_completion_tokens: isMulti ? 4000 : 1200,
         messages: [
           { role: 'system', content: isMulti ? MULTI_SYSTEM_PROMPT : SYSTEM_PROMPT },
           {
