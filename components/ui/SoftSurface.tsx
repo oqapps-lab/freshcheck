@@ -64,6 +64,15 @@ export function SoftSurface({
   if (flatInner?.width != null) dimensionForward.width = flatInner.width;
   if (flatInner?.height != null) dimensionForward.height = flatInner.height;
   if (flatInner?.aspectRatio != null) dimensionForward.aspectRatio = flatInner.aspectRatio;
+  // v14 — also mirror max/min width+height. Without this, a capped inner card
+  // (e.g. AlertHost's `{ width:'100%', maxWidth:340 }`) leaves the OUTER view at
+  // full backdrop width while the inner card caps at 340 and, with the outer's
+  // default 'stretch', the narrower card hugs the LEFT — the mis-aligned
+  // alert / "Welcome to Pro" modal bug (empty gap on the right). Forwarding
+  // maxWidth caps the outer too, so the backdrop's alignItems:'center' centers it.
+  if (flatInner?.maxWidth != null) dimensionForward.maxWidth = flatInner.maxWidth;
+  if (flatInner?.minWidth != null) dimensionForward.minWidth = flatInner.minWidth;
+  if (flatInner?.maxHeight != null) dimensionForward.maxHeight = flatInner.maxHeight;
 
   return (
     <View
