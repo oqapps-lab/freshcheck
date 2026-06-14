@@ -205,8 +205,18 @@ const styles = StyleSheet.create({
   },
   swipeContainer: {
     borderRadius: radii.xxl,
+    // Never clip the card's neumorphic cushion shadow (reach ~18px).
+    // ReanimatedSwipeable hard-codes overflow:'hidden' on its container, which
+    // sliced the shadow asymmetrically during a swipe and read as a crooked /
+    // broken shadow. overflow:'visible' lets it render fully (the red Delete
+    // action sits BEHIND the full-width card, so it can't leak when closed).
+    overflow: 'visible',
   },
   deleteAction: {
+    // Fill the full row height so the red slab is as tall as the card (was
+    // collapsing to ~60pt content height — a small narrow button). The
+    // rightActions panel is already full height; stretch into it.
+    alignSelf: 'stretch',
     justifyContent: 'center',
     alignItems: 'flex-end',
     // Pull left under the card's rounded right edge so the red fills flush
