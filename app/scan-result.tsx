@@ -16,7 +16,7 @@ import { useLastScan, setLastScan } from '@/src/state/lastScan';
 import { useFridge } from '@/src/hooks/useFridge';
 
 const VERDICT_TITLE: Record<string, string> = {
-  fresh: 'Fresh & ripe',
+  fresh: 'Looks fresh',
   safe: 'Safe to eat',
   soon: 'Use it soon',
   past: 'Past its prime',

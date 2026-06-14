@@ -33,7 +33,7 @@ import { usePremium } from '@/src/hooks/usePremium';
 import { getSupabase } from '@/src/lib/supabase';
 
 const VERDICT_TITLE: Record<string, string> = {
-  fresh: 'Fresh & ripe',
+  fresh: 'Looks fresh',
   safe: 'Safe to eat',
   soon: 'Use it soon',
   past: 'Past its prime',
@@ -249,7 +249,7 @@ export default function ScanBatchScreen() {
                           <Text style={[typeScale.bodySmall, styles.sub]}>
                             {expiryText(r.daysLeft)}
                           </Text>
-                          <Text style={[typeScale.labelSmall, styles.editHint]}>TAP NAME OR STATUS TO EDIT</Text>
+                          <Text style={[typeScale.labelSmall, styles.editHint]}>TAP NAME OR VERDICT TO EDIT</Text>
                         </>
                       ) : item.status === 'error' ? (
                         <>
@@ -260,7 +260,7 @@ export default function ScanBatchScreen() {
                         </>
                       ) : (
                         <Text style={[typeScale.bodySmall, styles.sub]}>
-                          {item.status === 'scanning' ? 'Reading ripeness…' : 'Waiting…'}
+                          {item.status === 'scanning' ? 'Reading freshness…' : 'Waiting…'}
                         </Text>
                       )}
                     </View>

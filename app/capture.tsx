@@ -167,7 +167,7 @@ export default function CaptureScreen() {
     if (!supabase || !user) return;
     if (!canScan(gatePremium)) { setAnalyzing(false); setAnalyzingMsg('Analyzing…'); router.push('/paywall?src=scan-limit' as never); return; }
     try {
-      setAnalyzingMsg('Reading ripeness…');
+      setAnalyzingMsg('Reading freshness…');
       const result = await scanImage(supabase, user.id, sourceUri, premium);
       // People often photograph the WHOLE TABLE in Single mode. If the model
       // flagged several distinct items, offer to enumerate them all instead of
@@ -402,8 +402,8 @@ export default function CaptureScreen() {
       return (
         <View style={styles.gateBody}>
           <Sparkle size={48} color={colors.amber} strokeWidth={1.6} />
-          <Text style={[typeScale.titleMedium, styles.gateTitle]}>Backend unavailable</Text>
-          <Text style={[typeScale.bodySmall, styles.gateSub]}>Scan needs a configured Supabase project.</Text>
+          <Text style={[typeScale.titleMedium, styles.gateTitle]}>Service unavailable</Text>
+          <Text style={[typeScale.bodySmall, styles.gateSub]}>Scanning is temporarily unavailable. Please try again in a moment.</Text>
         </View>
       );
     }
