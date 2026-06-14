@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -7,11 +7,10 @@ import {
   StyleSheet,
   Image,
   Modal,
-  Animated,
-  Easing,
   Dimensions,
-  PanResponder,
 } from 'react-native';
+import { GestureHandlerRootView, Gesture, GestureDetector } from 'react-native-gesture-handler';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming, runOnJS } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -87,56 +86,45 @@ export default function RecipesTab() {
   const [selectorOpen, setSelectorOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
-  // L7: the backdrop dims the WHOLE screen at once (Modal has no animation);
-  // only the sheet slides up via this Animated value.
+  // The sheet slides up over an instantly-dimmed backdrop, driven by a
+  // reanimated shared value so the grey grabber can be DRAGGED to dismiss. The
+  // old PanResponder never fired because RN <Modal> renders outside the app's
+  // GestureHandlerRootView — so the Modal subtree gets its own root view below.
   const screenH = Dimensions.get('window').height;
-  const sheetY = useRef(new Animated.Value(screenH)).current;
+  const ty = useSharedValue(screenH);
   useEffect(() => {
     if (selectorOpen) {
-      sheetY.setValue(screenH);
-      Animated.timing(sheetY, {
-        toValue: 0,
-        duration: 300,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }).start();
+      ty.value = screenH;
+      ty.value = withTiming(0, { duration: 300 });
     }
-  }, [selectorOpen, screenH, sheetY]);
+  }, [selectorOpen, screenH, ty]);
 
   const closeSheet = (after?: () => void) => {
-    Animated.timing(sheetY, {
-      toValue: screenH,
-      duration: 220,
-      easing: Easing.in(Easing.cubic),
-      useNativeDriver: true,
-    }).start(() => {
-      setSelectorOpen(false);
-      after?.();
+    ty.value = withTiming(screenH, { duration: 220 }, (finished) => {
+      if (finished) {
+        runOnJS(setSelectorOpen)(false);
+        if (after) runOnJS(after)();
+      }
     });
   };
 
-  // Swipe-down-to-dismiss on the sheet handle (the grey grabber). Attached to
-  // the header zone only so the ingredient ScrollView still scrolls freely.
-  const sheetPan = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: (_e, g) => g.dy > 6 && Math.abs(g.dy) > Math.abs(g.dx),
-      onPanResponderMove: (_e, g) => {
-        if (g.dy > 0) sheetY.setValue(g.dy);
-      },
-      onPanResponderRelease: (_e, g) => {
-        if (g.dy > 110 || g.vy > 0.6) {
-          Animated.timing(sheetY, {
-            toValue: screenH,
-            duration: 200,
-            easing: Easing.in(Easing.cubic),
-            useNativeDriver: true,
-          }).start(() => setSelectorOpen(false));
-        } else {
-          Animated.spring(sheetY, { toValue: 0, useNativeDriver: true, bounciness: 0 }).start();
-        }
-      },
-    }),
-  ).current;
+  // Drag-down-to-dismiss on the grey grabber only (so the ingredient list still
+  // scrolls). Past dy>110 or a fast flick → close; otherwise snap back up.
+  const sheetPan = Gesture.Pan()
+    .onUpdate((e) => {
+      if (e.translationY > 0) ty.value = e.translationY;
+    })
+    .onEnd((e) => {
+      if (e.translationY > 110 || e.velocityY > 0.6) {
+        ty.value = withTiming(screenH, { duration: 200 }, (finished) => {
+          if (finished) runOnJS(setSelectorOpen)(false);
+        });
+      } else {
+        ty.value = withTiming(0, { duration: 180 });
+      }
+    });
+
+  const sheetAnimStyle = useAnimatedStyle(() => ({ transform: [{ translateY: ty.value }] }));
 
   const openGenerate = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
@@ -198,6 +186,35 @@ export default function RecipesTab() {
           )}
         </View>
 
+        {/* PRIMARY action — cook from what's already in the fridge. Fulfils the
+            hero heading, so it must be the FIRST thing under it. Opens the
+            ingredient picker for a real fridge, or makes starter recipes for an
+            empty one. (One stable name in the populated state — no 3-way label.) */}
+        {ready && status !== 'loading' && (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={fridgeEmpty ? 'generate starter recipes' : 'cook with what you have'}
+            onPress={openGenerate}
+            style={({ pressed }) => [styles.cookBlockWrap, { opacity: pressed ? 0.9 : 1 }]}
+          >
+            <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cookBlock}>
+              <View style={styles.cookIcon}>
+                <Sparkle size={22} color={colors.amber} strokeWidth={1.8} />
+              </View>
+              <View style={styles.cookText}>
+                <Text style={[typeScale.titleMedium, { color: colors.ink }]}>
+                  {fridgeEmpty ? 'Generate starter recipes' : 'Cook with what you have'}
+                </Text>
+                <Text style={[typeScale.bodySmall, styles.cookSub]}>
+                  {fridgeEmpty ? '3 simple ideas you can shop for' : 'Pick fridge items → 3 fresh recipes'}
+                </Text>
+              </View>
+              <Chevron size={18} color={colors.inkMuted} />
+            </SoftSurface>
+          </Pressable>
+        )}
+
+        {/* SECONDARY — manual builder (type your own ingredients; ignores fridge). */}
         {ready && status !== 'loading' && (
           <Pressable
             accessibilityRole="button"
@@ -211,38 +228,7 @@ export default function RecipesTab() {
               </View>
               <View style={styles.cookText}>
                 <Text style={[typeScale.titleMedium, { color: colors.ink }]}>Build your own recipe</Text>
-                <Text style={[typeScale.bodySmall, styles.cookSub]}>Pick ingredients, method & time</Text>
-              </View>
-              <Chevron size={18} color={colors.inkMuted} />
-            </SoftSurface>
-          </Pressable>
-        )}
-
-        {/* L4 — the generate entry is a clear BLOCK right under the heading
-            (was a non-obvious top-right icon). Opens the ingredient picker
-            for a real fridge, or makes starter recipes for an empty one. */}
-        {ready && status !== 'loading' && (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={fridgeEmpty ? 'generate starter recipes' : 'choose ingredients and cook'}
-            onPress={openGenerate}
-            style={({ pressed }) => [styles.cookBlockWrap, { opacity: pressed ? 0.9 : 1 }]}
-          >
-            <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cookBlock}>
-              <View style={styles.cookIcon}>
-                <Sparkle size={22} color={colors.amber} strokeWidth={1.8} />
-              </View>
-              <View style={styles.cookText}>
-                <Text style={[typeScale.titleMedium, { color: colors.ink }]}>
-                  {fridgeEmpty
-                    ? 'Generate starter recipes'
-                    : recipes.length > 0
-                      ? 'Cook with different ingredients'
-                      : 'Choose ingredients & cook'}
-                </Text>
-                <Text style={[typeScale.bodySmall, styles.cookSub]}>
-                  {fridgeEmpty ? '3 simple ideas you can shop for' : 'Pick what to use → 3 fresh recipes'}
-                </Text>
+                <Text style={[typeScale.bodySmall, styles.cookSub]}>Type ingredients, method & time</Text>
               </View>
               <Chevron size={18} color={colors.inkMuted} />
             </SoftSurface>
@@ -448,13 +434,15 @@ export default function RecipesTab() {
       {/* L7: animationType="none" → the dim backdrop appears instantly over
           the whole screen; only the sheet slides up (sheetY). */}
       <Modal visible={selectorOpen} transparent animationType="none" onRequestClose={() => closeSheet()}>
-        <View style={styles.sheetBackdropView}>
+        <GestureHandlerRootView style={styles.sheetBackdropView}>
           <Pressable style={StyleSheet.absoluteFill} onPress={() => closeSheet()} accessibilityLabel="close" />
-          <Animated.View style={[styles.sheet, { paddingBottom: insets.bottom + spacing.lg, transform: [{ translateY: sheetY }] }]}>
-            <View {...sheetPan.panHandlers} style={styles.sheetHandleZone}>
-              <View style={styles.sheetHandle} />
-            </View>
-            <Text style={[typeScale.titleLarge, styles.sheetTitle]}>Cook with what?</Text>
+          <Animated.View style={[styles.sheet, { paddingBottom: insets.bottom + spacing.lg }, sheetAnimStyle]}>
+            <GestureDetector gesture={sheetPan}>
+              <View style={styles.sheetHandleZone}>
+                <View style={styles.sheetHandle} />
+              </View>
+            </GestureDetector>
+            <Text style={[typeScale.titleLarge, styles.sheetTitle]}>Cook with what you have</Text>
             <Text style={[typeScale.bodySmall, styles.sheetSub]}>
               Pick the items to build recipes from. We prioritise what expires soonest.
             </Text>
@@ -490,7 +478,7 @@ export default function RecipesTab() {
               />
             </View>
           </Animated.View>
-        </View>
+        </GestureHandlerRootView>
       </Modal>
     </View>
   );
