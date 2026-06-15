@@ -18,6 +18,8 @@
 import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
 // @ts-expect-error Deno import map resolves at runtime.
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
+// @ts-expect-error Deno std import resolves at runtime.
+import { encodeBase64 } from 'https://deno.land/std@0.224.0/encoding/base64.ts';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -205,21 +207,25 @@ serve(async (req) => {
     }
   }
 
-  // Short-lived signed URL so OpenAI's fetcher can read the upload.
-  const { data: signed, error: signErr } = await supabase.storage
-    .from('scans')
-    .createSignedUrl(image_path, 120);
-  if (signErr || !signed?.signedUrl) {
-    return json({ error: `signed url failed: ${signErr?.message ?? 'no url'}` }, 500);
+  // Fetch the uploaded image and inline it as a base64 data URL. We USED to
+  // hand OpenAI a signed URL and let ITS fetcher pull the file from Supabase
+  // storage — that cross-service fetch intermittently stalled and blew the
+  // AbortController as a "Scan failed / taking longer" 504, even though the
+  // model itself answers in ~5s. Inlining removes that flaky dependency (and
+  // the 120s signed-URL expiry) entirely.
+  const { data: imgBlob, error: dlErr } = await svc.storage.from('scans').download(image_path);
+  if (dlErr || !imgBlob) {
+    return json({ error: `image download failed: ${dlErr?.message ?? 'no file'}` }, 500);
   }
+  const dataUrl = `data:image/jpeg;base64,${encodeBase64(await imgBlob.arrayBuffer())}`;
 
-  // gpt-5.5 is a reasoning model — with no bound it can run long on a busy
-  // photo and the function blocks until the 120s signed URL expires or the
-  // platform wall-clock limit, surfacing on the device as a dead hang. Bound it
-  // with an AbortController, and cap output tokens so reasoning can't run away.
-  // The cap must be generous: reasoning tokens are billed against this budget,
-  // so a too-small value returns empty content (finish_reason "length").
-  const OPENAI_TIMEOUT_MS = 28_000;
+  // Bound the OpenAI call with an AbortController so a rare slow response can't
+  // hang the function; cap output tokens so reasoning can't run away (the cap
+  // must be generous — reasoning tokens bill against it, and too small returns
+  // empty content, finish_reason "length"). 40s leaves wide margin: with
+  // reasoning_effort 'low' + the inlined image the call is ~5s, so this only
+  // ever trips on a genuine OpenAI stall, not normal latency.
+  const OPENAI_TIMEOUT_MS = 40_000;
   const ctrl = new AbortController();
   const abortTimer = setTimeout(() => ctrl.abort(), OPENAI_TIMEOUT_MS);
   let openaiRes: Response;
@@ -250,7 +256,7 @@ serve(async (req) => {
             role: 'user',
             content: [
               { type: 'text', text: isMulti ? 'Detect every food item and return the JSON.' : 'Assess this food and return the JSON.' },
-              { type: 'image_url', image_url: { url: signed.signedUrl } },
+              { type: 'image_url', image_url: { url: dataUrl } },
             ],
           },
         ],
