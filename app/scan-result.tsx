@@ -216,7 +216,11 @@ export default function ScanResultScreen() {
                 accessibilityLabel="more days"
                 onPress={() => {
                   Haptics.selectionAsync().catch(() => {});
-                  setDaysAgo((d) => Math.min(totalShelf ?? 30, d + 1));
+                  // Cap at the shelf life but never below ~30, so a short-shelf
+                  // item (e.g. total_days 1-2) doesn't dead-stop the stepper at
+                  // "1 day ago" (looks broken). effectiveDaysLeft already floors
+                  // at 0, so going past the shelf life just reads "0 days left".
+                  setDaysAgo((d) => Math.min(Math.max(totalShelf ?? 30, 30), d + 1));
                 }}
                 style={({ pressed }) => [styles.stepBtn, { opacity: pressed ? 0.6 : 1 }]}
               >
