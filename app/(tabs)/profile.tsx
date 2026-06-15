@@ -290,6 +290,19 @@ export default function ProfileScreen() {
                 tone="destructive"
               />
             </>
+          ) : user ? (
+            // Anonymous guest: still offer in-app data deletion. App Review
+            // 5.1.1(v) discoverability (a reviewer testing as a guest must be
+            // able to find deletion) + privacy. Same delete-account flow — it
+            // removes the anon auth user + their scans/fridge/recipes/storage.
+            <>
+              <Hairline />
+              <Row
+                label="Delete my data"
+                onPress={onDeleteAccount}
+                tone="destructive"
+              />
+            </>
           ) : null}
         </SoftSurface>
 
