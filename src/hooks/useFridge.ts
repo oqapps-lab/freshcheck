@@ -95,7 +95,7 @@ function fromMock(m: MockItem): FridgeItem {
 }
 
 export function useFridge() {
-  const { user, configured } = useAuth();
+  const { user, configured, loading: authLoading } = useAuth();
   const supabase = getSupabase();
   const [items, setItems] = useState<FridgeItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -103,11 +103,25 @@ export function useFridge() {
 
   const refresh = useCallback(async () => {
     setError(null);
-    if (!supabase || !user) {
-      // Signed-out / unconfigured: real users see an empty fridge with the
-      // sign-in CTA. Mock data was masking actual state and would have shipped
-      // 6 phantom items to App Reviewers viewing a guest session.
-      setItems(__DEV__ && !supabase ? mockFridge.map(fromMock) : []);
+    // Backend not configured: dev shows mock fixtures, prod shows empty.
+    if (!supabase) {
+      setItems(__DEV__ ? mockFridge.map(fromMock) : []);
+      setLoading(false);
+      return;
+    }
+    // Auth is still restoring the (anonymous) session on this launch — `user`
+    // is transiently null. Do NOT finalize to an empty fridge here: that
+    // renders the "Fridge is empty" state and reads as "all my data was wiped"
+    // (the user-reported "сбросило всё"). Stay in the loading state; this
+    // effect re-runs when user/authLoading settle, then fetches the real rows.
+    if (!user) {
+      if (authLoading) {
+        setLoading(true);
+        return;
+      }
+      // Auth resolved with NO user (e.g. anonymous sign-in failed at a cold,
+      // offline start) — genuinely nothing to show.
+      setItems([]);
       setLoading(false);
       return;
     }
@@ -128,7 +142,7 @@ export function useFridge() {
       setItems((data ?? []).map(fromRow));
     }
     setLoading(false);
-  }, [supabase, user]);
+  }, [supabase, user, authLoading]);
 
   useEffect(() => {
     void refresh();
