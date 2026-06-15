@@ -26,6 +26,9 @@ export const STORAGE_KEYS = {
   // Local achievement counters for the Home hub (I1): scans, items saved,
   // estimated $ saved.
   achievements: 'freshcheck_achievements_v1',
+  // Push prefs: expiry-reminder on/off + how many days before to warn. Global
+  // (not per-product) — see GROWTH-STRATEGY: one digest, ≤4/week, no per-item.
+  notifSettings: 'freshcheck_notif_settings_v1',
 } as const;
 
 export const safeStorage = {

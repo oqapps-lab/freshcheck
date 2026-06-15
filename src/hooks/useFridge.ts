@@ -19,6 +19,7 @@ function categoryFor(name: string): Row['category'] {
   return 'produce';
 }
 import { refreshExpiryReminders } from '@/src/lib/notifications';
+import { useNotificationSettings } from '@/src/state/notificationSettings';
 import { recordFridgeAch } from '@/src/state/achievementsStore';
 import type { Tone } from '@/constants/tokens';
 
@@ -97,6 +98,8 @@ function fromMock(m: MockItem): FridgeItem {
 export function useFridge() {
   const { user, configured, loading: authLoading } = useAuth();
   const supabase = getSupabase();
+  // Re-sync reminders when the user flips the toggle / lead-time in Profile.
+  const notifSettings = useNotificationSettings();
   const [items, setItems] = useState<FridgeItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -157,7 +160,7 @@ export function useFridge() {
     void refreshExpiryReminders(
       items.map((i) => ({ id: i.id, name: i.name, daysLeft: i.daysLeft })),
     );
-  }, [items, loading]);
+  }, [items, loading, notifSettings.expiryEnabled, notifSettings.leadDays]);
 
   const addItem = useCallback(
     async (draft: Omit<Insert, 'user_id' | 'category'> & { name: string }) => {

@@ -1,5 +1,6 @@
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
+import { loadNotificationSettings } from '@/src/state/notificationSettings';
 
 export type NotifItem = {
   id: string;
@@ -83,58 +84,88 @@ export async function ensureNotificationPermission(): Promise<boolean> {
   }
 }
 
+// Cancel every previously-scheduled expiry push (idempotent re-sync). Never
+// triggers the permission prompt — safe to call for a no-op.
+async function cancelExpiry(N: NotifModule): Promise<void> {
+  try {
+    if (!(await N.getPermissionsAsync()).granted) return;
+    const existing = await N.getAllScheduledNotificationsAsync();
+    await Promise.all(
+      existing
+        .filter((n) => (n.content.data as Record<string, unknown> | undefined)?.kind === 'expiry')
+        .map((n) => N.cancelScheduledNotificationAsync(n.identifier)),
+    );
+  } catch {
+    /* notifications module unavailable — nothing to cancel */
+  }
+}
+
 export async function refreshExpiryReminders(items: NotifItem[]): Promise<number> {
   const N = loadNotif();
   if (!N) return 0;
-  // Empty fridge = cancel-only sync: clear stale "expires soon" pushes but
-  // NEVER trigger the permission request for a no-op — a fresh install would
-  // otherwise see an un-primed system prompt on first load.
-  if (items.length === 0) {
-    try {
-      const settings = await N.getPermissionsAsync();
-      if (!settings.granted) return 0;
-      const existing = await N.getAllScheduledNotificationsAsync();
-      await Promise.all(
-        existing
-          .filter((n) => n.content.data && (n.content.data as Record<string, unknown>).kind === 'expiry')
-          .map((n) => N.cancelScheduledNotificationAsync(n.identifier)),
-      );
-    } catch {
-      /* notifications module unavailable — nothing to cancel */
-    }
+  const settings = await loadNotificationSettings();
+
+  // Cancel-only sync when there is nothing to remind about OR the user turned
+  // expiry reminders OFF — clear stale "expires soon" pushes but never trigger
+  // the permission request for a no-op (a fresh install would otherwise see an
+  // un-primed system prompt on first load).
+  if (items.length === 0 || !settings.expiryEnabled) {
+    await cancelExpiry(N);
     return 0;
   }
+
   const allowed = await ensureNotificationPermission();
   if (!allowed) return 0;
 
   try {
-    const existing = await N.getAllScheduledNotificationsAsync();
-    await Promise.all(
-      existing
-        .filter((n) => n.content.data && (n.content.data as Record<string, unknown>).kind === 'expiry')
-        .map((n) => N.cancelScheduledNotificationAsync(n.identifier)),
-    );
+    await cancelExpiry(N);
 
-    const urgent = items.filter((i) => i.daysLeft >= 0 && i.daysLeft <= 2);
-    let scheduled = 0;
+    // Items the user wants warning about, per the global lead-time setting.
+    const urgent = items.filter((i) => i.daysLeft >= 0 && i.daysLeft <= settings.leadDays);
+
+    // Batch into ONE digest per fire-DATE (was one push PER item — a fridge of
+    // 8 expiring items fired 8 separate pushes). Cap the number of digests so we
+    // never exceed ~4 notifications in a week even with a huge fridge. Expiry is
+    // the only category today and is fully rescheduled each run, so an in-run cap
+    // suffices; a shared cross-category ledger comes with remote pushes.
+    const WEEKLY_CAP = 4;
+    const byDate = new Map<string, { fireAt: Date; names: string[] }>();
     for (const item of urgent) {
       const fireAt = new Date();
       fireAt.setDate(fireAt.getDate() + Math.max(0, item.daysLeft - 1));
       fireAt.setHours(9, 0, 0, 0);
-      if (fireAt.getTime() <= Date.now()) {
-        fireAt.setTime(Date.now() + 15 * 60 * 1000);
+      if (fireAt.getTime() <= Date.now()) fireAt.setTime(Date.now() + 15 * 60 * 1000);
+      const key = `${fireAt.getFullYear()}-${fireAt.getMonth() + 1}-${fireAt.getDate()}`;
+      const bucket = byDate.get(key);
+      if (bucket) bucket.names.push(item.name);
+      else byDate.set(key, { fireAt, names: [item.name] });
+    }
+
+    let scheduled = 0;
+    for (const key of [...byDate.keys()].sort()) {
+      if (scheduled >= WEEKLY_CAP) break;
+      const bucket = byDate.get(key)!;
+      const lower = bucket.names.map((s) => s.toLowerCase());
+      let title: string;
+      let body: string;
+      if (lower.length === 1) {
+        title = `your ${lower[0]} expires soon`;
+        body = 'tap to see what’s worth cooking before it goes.';
+      } else if (lower.length === 2) {
+        title = `${lower[0]} & ${lower[1]} expire soon`;
+        body = 'tap to see what to cook before they’re wasted.';
+      } else {
+        title = `${lower.length} items in your fridge expire soon`;
+        body = `${lower[0]}, ${lower[1]} +${lower.length - 2} more — tap to see what to cook.`;
       }
       await N.scheduleNotificationAsync({
         content: {
-          title:
-            item.daysLeft <= 1
-              ? `your ${item.name.toLowerCase()} expires soon`
-              : `${item.name.toLowerCase()} \u2014 2 days left`,
-          body: 'tap to see what\u2019s worth cooking before it goes.',
+          title,
+          body,
           sound: Platform.OS === 'ios' ? 'default' : undefined,
-          data: { kind: 'expiry', itemId: item.id },
+          data: { kind: 'expiry', date: key },
         },
-        trigger: { type: 'date', date: fireAt } as unknown as Parameters<
+        trigger: { type: 'date', date: bucket.fireAt } as unknown as Parameters<
           NotifModule['scheduleNotificationAsync']
         >[0]['trigger'],
       });

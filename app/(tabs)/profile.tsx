@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet, Linking, Image } from 'react-native';
+import { View, Text, ScrollView, Pressable, StyleSheet, Linking, Image, Switch } from 'react-native';
 import { showAlert, showPrompt } from '@/src/state/alertStore';
 import * as Haptics from 'expo-haptics';
 import * as ImagePicker from 'expo-image-picker';
@@ -20,6 +20,11 @@ import {
   hydrateProfile,
 } from '@/src/state/profileStore';
 import { useOnboardingAnswers } from '@/src/state/onboardingStore';
+import {
+  useNotificationSettings,
+  setExpiryEnabled,
+  setLeadDays,
+} from '@/src/state/notificationSettings';
 import { LEGAL } from '@/constants/legal';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
@@ -36,6 +41,7 @@ export default function ProfileScreen() {
   const { premium: isPremium, resolved: premiumResolved } = usePremium();
   const localProfile = useLocalProfile();
   const onboarding = useOnboardingAnswers();
+  const notif = useNotificationSettings();
 
   useEffect(() => {
     void hydrateProfile();
@@ -334,9 +340,51 @@ export default function ProfileScreen() {
           )}
         </SoftSurface>
 
-        {/* ABOUT section — Notifications/Expiry warnings rows removed; the
-            features ARE wired (refreshExpiryReminders runs from useFridge) but
-            the rows said "Coming soon" which contradicted real behaviour. */}
+        {/* NOTIFICATIONS — one global expiry-reminder toggle + lead-time.
+            Deliberately NOT per-product (fights the batched ≤4/week digest). */}
+        <Text style={[typeScale.label, styles.sectionLabel]}>NOTIFICATIONS</Text>
+        <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cardStack}>
+          <RowSwitch
+            label="Food expiry reminders"
+            value={notif.expiryEnabled}
+            onValueChange={(v) => {
+              Haptics.selectionAsync().catch(() => {});
+              setExpiryEnabled(v);
+            }}
+          />
+          {notif.expiryEnabled ? (
+            <>
+              <Hairline />
+              <View style={styles.row}>
+                <Text style={[typeScale.titleMedium, { color: colors.ink }]}>Warn me before</Text>
+                <View style={styles.segment}>
+                  {[1, 2, 3].map((d) => {
+                    const on = notif.leadDays === d;
+                    return (
+                      <Pressable
+                        key={d}
+                        accessibilityRole="button"
+                        accessibilityState={{ selected: on }}
+                        accessibilityLabel={`${d} ${d === 1 ? 'day' : 'days'} before`}
+                        onPress={() => {
+                          Haptics.selectionAsync().catch(() => {});
+                          setLeadDays(d);
+                        }}
+                        style={[styles.segmentPill, on && styles.segmentPillOn]}
+                      >
+                        <Text style={[typeScale.labelSmall, on ? styles.segmentTextOn : styles.segmentText]}>
+                          {`${d}d`}
+                        </Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              </View>
+            </>
+          ) : null}
+        </SoftSurface>
+
+        {/* ABOUT section */}
         <Text style={[typeScale.label, styles.sectionLabel]}>ABOUT</Text>
         <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cardStack}>
           <Row label="Privacy policy" onPress={() => openUrl(LEGAL.privacyPolicy)} />
@@ -386,6 +434,28 @@ function RowStatic({ label, value }: { label: string; value: string }) {
     <View style={styles.row}>
       <Text style={[typeScale.titleMedium, { color: colors.ink }]}>{label}</Text>
       <Text style={[typeScale.body, { color: colors.inkSecondary }]}>{value}</Text>
+    </View>
+  );
+}
+
+function RowSwitch({
+  label,
+  value,
+  onValueChange,
+}: {
+  label: string;
+  value: boolean;
+  onValueChange: (v: boolean) => void;
+}) {
+  return (
+    <View style={styles.row}>
+      <Text style={[typeScale.titleMedium, { color: colors.ink }]}>{label}</Text>
+      <Switch
+        value={value}
+        onValueChange={onValueChange}
+        trackColor={{ true: colors.primary, false: colors.surfaceTint }}
+        ios_backgroundColor={colors.surfaceTint}
+      />
     </View>
   );
 }
@@ -493,6 +563,25 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     marginTop: spacing.lg,
     marginLeft: spacing.md,
+  },
+  segment: {
+    flexDirection: 'row',
+    gap: 6,
+  },
+  segmentPill: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: colors.surfaceTint,
+  },
+  segmentPillOn: {
+    backgroundColor: colors.primary,
+  },
+  segmentText: {
+    color: colors.inkSecondary,
+  },
+  segmentTextOn: {
+    color: colors.surfaceWhite,
   },
   cardStack: {
     paddingVertical: spacing.xs,
