@@ -33,7 +33,7 @@ import { getSupabase } from '@/src/lib/supabase';
 import { setLastScan } from '@/src/state/lastScan';
 import { scanImage, scanMultiImage } from '@/src/lib/scanPipeline';
 import { enqueueScans, processQueue, useScanQueue, addScannedItems } from '@/src/state/scanQueue';
-import { logScan as afLogScan } from '@/src/lib/appsflyer';
+import { track } from '@/src/lib/analytics';
 import { recordError } from '@/src/lib/firebase';
 
 /**
@@ -91,6 +91,7 @@ export default function CaptureScreen() {
       if (!premium) {
         if (!paywallPushedRef.current) {
           paywallPushedRef.current = true;
+          track('rate_limit_hit', { feature: 'barcode' });
           router.push('/paywall?src=barcode' as never);
         }
         return;
@@ -99,6 +100,7 @@ export default function CaptureScreen() {
       setAnalyzingMsg('Looking up product…');
       setAnalyzing(true);
       const product = await lookupBarcode(data);
+      track('barcode_scanned', { found: !!product });
       if (!product) {
         setAnalyzing(false);
         setAnalyzingMsg('Analyzing…');
@@ -115,6 +117,7 @@ export default function CaptureScreen() {
       setAnalyzing(false);
       setAnalyzingMsg('Analyzing…');
       if (res?.error) { showAlert('Could not add', res.error); return; }
+      track('fridge_item_added', { source: 'barcode' });
       showAlert('Added to your fridge', `${product.name} · keep ~${product.shelfLifeDays} days`);
     },
     [analyzing, premium, premiumResolved, addItem, router],
@@ -165,7 +168,7 @@ export default function CaptureScreen() {
   // supabase+user. (Batch scanning uses the same scanImage() via scanQueue.)
   const runScanPipeline = async (sourceUri: string) => {
     if (!supabase || !user) return;
-    if (!canScan(gatePremium)) { setAnalyzing(false); setAnalyzingMsg('Analyzing…'); router.push('/paywall?src=scan-limit' as never); return; }
+    if (!canScan(gatePremium)) { track('rate_limit_hit', { feature: 'scan' }); setAnalyzing(false); setAnalyzingMsg('Analyzing…'); router.push('/paywall?src=scan-limit' as never); return; }
     try {
       setAnalyzingMsg('Reading freshness…');
       const result = await scanImage(supabase, user.id, sourceUri, premium);
@@ -185,7 +188,7 @@ export default function CaptureScreen() {
               onPress: () => {
                 setLastScan(result);
                 recordScan(); recordScanAch();
-                afLogScan(result.product);
+                track('scan_completed', { verdict: result.verdict, mode: 'single' });
                 router.replace('/scan-result' as never);
               },
             },
@@ -197,9 +200,9 @@ export default function CaptureScreen() {
       setLastScan(result);
       recordScan(); recordScanAch();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-      // AppsFlyer 'af_content_view' — primary in-app engagement signal that
-      // ad networks can attribute installs against.
-      afLogScan(result.product);
+      // scan_completed → first-party app_events + AppsFlyer af_content_view with
+      // an ENUM verdict (never the free-text product label — PII/taxonomy).
+      track('scan_completed', { verdict: result.verdict, mode: 'single' });
       // as never: typedRoutes regenerates the route union at prebuild; the
       // string is correct, the generated types just lag in a bare tsc.
       router.replace('/scan-result' as never);
@@ -234,6 +237,7 @@ export default function CaptureScreen() {
         return;
       }
       addScannedItems(results);
+      track('whole_table_scanned', { item_count: results.length });
       recordScan(); recordScanAch();
       setAnalyzing(false);
       setAnalyzingMsg('Analyzing…');
@@ -254,7 +258,7 @@ export default function CaptureScreen() {
       showAlert('Preparing scan', 'Please wait a moment and try again.');
       return;
     }
-    if (!canScan(gatePremium)) { router.push('/paywall?src=scan-limit' as never); return; }
+    if (!canScan(gatePremium)) { track('rate_limit_hit', { feature: 'scan' }); router.push('/paywall?src=scan-limit' as never); return; }
     try {
       const shot = await cameraRef.current.takePictureAsync({ quality: 0.85, skipProcessing: false, exif: false });
       if (!shot?.uri) throw new Error('camera returned no image');
@@ -278,7 +282,7 @@ export default function CaptureScreen() {
       showAlert('Preparing scan', 'Please wait a moment and try again.');
       return;
     }
-    if (!canScan(gatePremium)) { router.push('/paywall?src=scan-limit' as never); return; }
+    if (!canScan(gatePremium)) { track('rate_limit_hit', { feature: 'scan' }); router.push('/paywall?src=scan-limit' as never); return; }
     setCapturing(true);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     try {
@@ -304,7 +308,7 @@ export default function CaptureScreen() {
     }
     // Gate BEFORE taking the photo (matches batch/table modes) — no point
     // capturing an image we will refuse to scan.
-    if (!canScan(gatePremium)) { router.push('/paywall?src=scan-limit' as never); return; }
+    if (!canScan(gatePremium)) { track('rate_limit_hit', { feature: 'scan' }); router.push('/paywall?src=scan-limit' as never); return; }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
     setAnalyzing(true);
     setAnalyzingMsg('Capturing…');
@@ -363,7 +367,7 @@ export default function CaptureScreen() {
       // This was the free-cap bypass: multi-picking N photos enqueued N
       // unmetered vision calls. Gate + clamp to today's remaining scans and
       // count each enqueued photo exactly like a shutter press.
-      if (!canScan(gatePremium)) { router.push('/paywall?src=scan-limit' as never); return; }
+      if (!canScan(gatePremium)) { track('rate_limit_hit', { feature: 'scan' }); router.push('/paywall?src=scan-limit' as never); return; }
       const left = scansLeft(gatePremium);
       const allowed = uris.length <= left ? uris : uris.slice(0, left);
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});

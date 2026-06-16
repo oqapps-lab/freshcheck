@@ -24,7 +24,7 @@ import { startTrial, restorePurchases, PRODUCT_BY_PLAN, getTiers, type TierInfo 
 import { usePremium } from '@/src/hooks/usePremium';
 import { useOnboardingAnswers } from '@/src/state/onboardingStore';
 import { logTrialStartEvent, logBeginCheckout, recordError } from '@/src/lib/firebase';
-import { logTrialStart as afLogTrialStart } from '@/src/lib/appsflyer';
+import { track } from '@/src/lib/analytics';
 import { LEGAL } from '@/constants/legal';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
@@ -119,10 +119,19 @@ export default function PaywallScreen() {
   // returns there) OR replaced into from the post-onboarding auth funnel
   // (empty stack — back() is a no-op that would strand the user on the
   // paywall). Fall through to the tabs when there's nothing to pop to.
+  const origin = typeof src === 'string' ? src : 'default';
+
   const dismiss = () => {
+    track('paywall_dismiss', { origin });
     if (router.canGoBack()) router.back();
     else router.replace('/(tabs)');
   };
+
+  // The limit-hit impression is the highest-intent paywall view — log it by
+  // origin so view→trial conversion can be computed per trigger.
+  useEffect(() => {
+    track('paywall_view', { origin });
+  }, [origin]);
 
   // Pre-mount short-circuit: an already-Pro user reaching this screen via
   // a deep link or stale push would otherwise see "Start 3-day free trial"
@@ -139,19 +148,19 @@ export default function PaywallScreen() {
     if (busy) return;
     Haptics.selectionAsync().catch(() => {});
     setBusy(true);
-    // Begin-checkout fires whether or not the user completes — this is
-    // the funnel step ad networks optimise on (init-purchase vs purchase).
+    // Begin-checkout fires whether or not the user completes — the funnel step
+    // ad networks optimise on. paywall_continue is its first-party twin.
     void logBeginCheckout(PRODUCT_BY_PLAN[plan], PRICE_USD[plan]);
+    track('paywall_continue', { plan, origin });
     try {
       const r = await startTrial({ plan });
       if (r.ok) {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-        // Fire to both Firebase (GA4 / UAC bidding) and AppsFlyer
-        // (attribution + Apple Search Ads). Without these neither
-        // dashboard sees the conversion and paid acquisition can't
-        // optimise on trial-start events.
+        // GA4 (no-op until RNFB) + first-party + AppsFlyer (via track →
+        // af_start_trial). purchase/conversion is logged server-side from the
+        // adapty webhook, so we don't double-count revenue here.
         void logTrialStartEvent(PRODUCT_BY_PLAN[plan]);
-        afLogTrialStart(PRODUCT_BY_PLAN[plan], PRICE_USD[plan]);
+        track('trial_start', { plan, revenue: PRICE_USD[plan] });
         showAlert('Welcome to Pro', 'Your free trial has started. Generate unlimited AI recipes from your fridge!');
         dismiss();
       } else if (r.error === 'cancelled') {

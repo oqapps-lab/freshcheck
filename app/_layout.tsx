@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import React, { useEffect } from 'react';
-import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, ActivityIndicator, StyleSheet, AppState } from 'react-native';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -18,6 +18,7 @@ import { hydrateUsage } from '@/src/lib/freeLimits';
 import { hydrateOnboardingAnswers } from '@/src/state/onboardingStore';
 import { hydrateAchievements } from '@/src/state/achievementsStore';
 import { bootFirebase, setFirebaseUser, resetFirebaseUser, logScreenView } from '@/src/lib/firebase';
+import { track, flush } from '@/src/lib/analytics';
 import { useAuth } from '@/src/hooks/useAuth';
 import {
   useFonts,
@@ -56,6 +57,24 @@ function FirstRunRedirect() {
 // navigators, but expo-router's Stack works through a different layer).
 // Without it the GA4 funnel is install → blank → purchase, no per-screen
 // drop-off visibility.
+// KEY screens only (skill: never every route — and never raw '[id]'). Maps the
+// last route segment to a stable analytics name; unlisted routes are skipped.
+const KEY_SCREENS: Record<string, string> = {
+  '(tabs)': 'home',
+  index: 'home',
+  fridge: 'fridge',
+  recipes: 'recipes',
+  profile: 'profile',
+  capture: 'scan',
+  'scan-result': 'scan-result',
+  'scan-batch': 'scan-batch',
+  paywall: 'paywall',
+  onboarding: 'onboarding',
+  personalize: 'quiz',
+  'recipe-builder': 'recipe-builder',
+  '[id]': 'recipe',
+};
+
 function ScreenViewTracker() {
   // Cast to string[] — typedRoutes types useSegments() as a fixed-length
   // tuple, which makes the defensive `length === 0` guard a TS2367 "no
@@ -65,8 +84,29 @@ function ScreenViewTracker() {
     if (!segments || segments.length === 0) return;
     // ['(tabs)', 'fridge'] → 'fridge'; ['paywall'] → 'paywall'; etc.
     const last = segments[segments.length - 1];
-    if (last) void logScreenView(String(last));
+    if (!last) return;
+    void logScreenView(String(last)); // GA4 hook (no-op until RNFB wired)
+    const screen = KEY_SCREENS[last];
+    if (screen) track('screen_view', { screen });
   }, [segments]);
+  return null;
+}
+
+// App lifecycle → app_open (cold + warm) / app_background, and flush the
+// analytics buffer when the app backgrounds (the architecture's flush trigger).
+function AppLifecycle() {
+  useEffect(() => {
+    track('app_open', { cold: true });
+    const sub = AppState.addEventListener('change', (state) => {
+      if (state === 'active') {
+        track('app_open', { cold: false });
+      } else if (state === 'background' || state === 'inactive') {
+        track('app_background');
+        void flush();
+      }
+    });
+    return () => sub.remove();
+  }, []);
   return null;
 }
 
@@ -181,6 +221,7 @@ export default function RootLayout() {
         <StatusBar style="dark" />
         <FirstRunRedirect />
         <VendorBoot />
+        <AppLifecycle />
         <ScreenViewTracker />
         <Stack
           screenOptions={{

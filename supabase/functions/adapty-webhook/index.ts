@@ -102,6 +102,42 @@ serve(async (req) => {
     if ((error as { code?: string }).code === '23503') return json({ ok: true, skipped: 'unknown user' });
     return new Response('db error: ' + error.message, { status: 500 });
   }
+
+  // Log the conversion to first-party analytics — this webhook is the SOURCE OF
+  // TRUTH for revenue, so the client never logs `purchase` (avoids double count).
+  // Only on explicit revenue events that resolved to paid.
+  const PURCHASE_KIND: Record<string, string> = {
+    trial_converted: 'trial_converted',
+    subscription_renewed: 'renewal',
+    subscription_started: 'direct',
+    subscription_initial_purchase: 'direct',
+    non_subscription_purchase: 'direct',
+  };
+  const kind = PURCHASE_KIND[type];
+  if (kind && tier === 'paid') {
+    const revenue =
+      Number(props.price_usd ?? props.revenue_usd ?? props.price ?? ev.price_usd ?? 0) || null;
+    const currency =
+      (typeof props.currency === 'string' && props.currency) ||
+      (typeof props.price_currency === 'string' && props.price_currency) ||
+      'USD';
+    const plan =
+      (typeof props.vendor_product_id === 'string' ? props.vendor_product_id : null) ??
+      (typeof ev.vendor_product_id === 'string' ? ev.vendor_product_id : null);
+    try {
+      await svc.from('app_events').insert({
+        project: 'freshcheck',
+        event: 'purchase',
+        session_id: 'server',
+        user_id: uid,
+        props: { kind, revenue, currency, plan },
+        platform: 'server',
+        client_ts: new Date().toISOString(),
+      });
+    } catch {
+      /* never fail the webhook on an analytics insert */
+    }
+  }
   return json({ ok: true, tier });
 });
 

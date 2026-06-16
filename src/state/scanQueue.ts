@@ -3,6 +3,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { scanImage } from '@/src/lib/scanPipeline';
 import type { LastScan } from '@/src/state/lastScan';
 import { recordError } from '@/src/lib/firebase';
+import { track } from '@/src/lib/analytics';
 
 /**
  * Batch-scan queue. Lets the user fire off many photos ("чик-чик-чик")
@@ -134,6 +135,7 @@ export async function processQueue(supabase: SupabaseClient, userId: string, ent
       try {
         const result = await scanImage(supabase, userId, next.uri, entitled);
         patch(next.id, { status: 'done', result });
+        track('scan_completed', { verdict: result.verdict, mode: 'batch' });
       } catch (e) {
         recordError(e, 'scan-queue');
         patch(next.id, {
