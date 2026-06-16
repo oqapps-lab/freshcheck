@@ -29,6 +29,7 @@ import {
 } from '@/src/state/scanQueue';
 import { useFridge } from '@/src/hooks/useFridge';
 import { useAuth } from '@/src/hooks/useAuth';
+import { track } from '@/src/lib/analytics';
 import { usePremium } from '@/src/hooks/usePremium';
 import { getSupabase } from '@/src/lib/supabase';
 
@@ -150,6 +151,7 @@ export default function ScanBatchScreen() {
         return;
       }
       markAddedToFridge(item.id);
+      track('fridge_item_added', { source: 'batch' });
     },
     [addItem, signedIn, router],
   );

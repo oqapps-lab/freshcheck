@@ -14,6 +14,7 @@ import { Back, Cloud, ShoppingBasket, Sparkle } from '@/components/ui/Glyphs';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 import { useLastScan, setLastScan } from '@/src/state/lastScan';
 import { useFridge } from '@/src/hooks/useFridge';
+import { track } from '@/src/lib/analytics';
 
 const VERDICT_TITLE: Record<string, string> = {
   fresh: 'Looks fresh',
@@ -96,6 +97,7 @@ export default function ScanResultScreen() {
       showAlert('Could not save', result.error);
       return;
     }
+    track('fridge_item_added', { source: 'scan' });
     setLastScan(null);
     router.replace('/(tabs)/fridge');
   };

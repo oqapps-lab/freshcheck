@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { getSupabase } from '@/src/lib/supabase';
 import { recordRecipeAch } from '@/src/state/achievementsStore';
+import { track } from '@/src/lib/analytics';
 import {
   setRecipes as setRecipesCache,
   updateRecipeImage,
@@ -135,6 +136,7 @@ export function useRecipes() {
       // and persists it so the batch survives navigation / restart.
       setRecipesCache(data.recipes);
       recordRecipeAch(data.recipes.length);
+      track('recipe_generated', { ingredient_count: opts?.itemIds?.length ?? 0, count: data.recipes.length });
       setStatus('ready');
 
       // Kick off image fetch per recipe (don't block UI). updateRecipeImage

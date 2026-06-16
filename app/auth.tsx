@@ -19,7 +19,7 @@ import { GhostText } from '@/components/ui/GhostText';
 import { Back, User } from '@/components/ui/Glyphs';
 import { useAuth } from '@/src/hooks/useAuth';
 import { logSignUpEvent } from '@/src/lib/firebase';
-import { logSignUp as afLogSignUp } from '@/src/lib/appsflyer';
+import { track } from '@/src/lib/analytics';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 import { LEGAL } from '@/constants/legal';
 
@@ -130,7 +130,7 @@ export default function AuthScreen() {
     // so UAC and Apple Search Ads can optimise on registration as a
     // conversion event. Without this the post-install funnel is invisible.
     void logSignUpEvent('email');
-    afLogSignUp('email');
+    track('sign_up', { method: 'email' });
     dismiss();
   };
 

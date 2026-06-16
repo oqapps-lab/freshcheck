@@ -16,6 +16,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { safeStorage, STORAGE_KEYS } from '@/src/lib/safeStorage';
+import { track } from '@/src/lib/analytics';
 import { SoftSurface } from '@/components/ui/SoftSurface';
 import { PrimaryPillCTA } from '@/components/ui/PrimaryPillCTA';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
@@ -87,16 +88,22 @@ export default function OnboardingScreen() {
     loop.start();
     return () => loop.stop();
   }, [ringSpin]);
+  // First slide impression (onMomentumEnd only fires on scroll, not on mount).
+  useEffect(() => { track('onboarding_step_view', { step: 0 }); }, []);
   const ringRotate = ringSpin.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
 
   const isLast = page === SLIDES.length - 1;
 
   const onMomentumEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const next = Math.round(e.nativeEvent.contentOffset.x / SCREEN_W);
-    if (next !== page) setPage(next);
+    if (next !== page) {
+      setPage(next);
+      track('onboarding_step_view', { step: next });
+    }
   };
 
   const finish = async (dest: '/personalize' | '/paywall') => {
+    track('tutorial_complete');
     await markOnboardingDone();
     router.replace(dest as never);
   };

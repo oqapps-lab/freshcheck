@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { track } from '@/src/lib/analytics';
 import { View, Text, ScrollView, TextInput, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -83,6 +84,8 @@ export default function PersonalizeScreen() {
   const q = QUESTIONS[step];
   const isLast = step === QUESTIONS.length - 1;
 
+  useEffect(() => { track('quiz_start'); }, []);
+
   const answered =
     q.kind === 'text'
       ? true
@@ -99,6 +102,7 @@ export default function PersonalizeScreen() {
 
   const onContinue = () => {
     if (isLast) {
+      track('quiz_complete', { household: answers.household, worry: answers.worry, dinner: answers.dinner });
       router.replace('/building' as never);
       return;
     }
