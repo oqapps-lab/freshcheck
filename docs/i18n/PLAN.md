@@ -42,8 +42,15 @@ in `src/i18n/index.ts`, provider + await-ready in `app/_layout.tsx`.
   delta-translate + app.json 15 ios-locales) · W4 DONE 85b1810 (recipes lazy translate+cache,
   scans in-locale; MIGRATION applied + BOTH edge fns DEPLOYED to fxggqnlicjuvzfqzbqfm).
 - Validator /home/claude/fc_validate.py → ALL GOOD (647/647 keys, 19 plurals, placeholders ok).
-- W5 (sim QA) + W6 (build + screenshots) NEXT — needs a NATIVE build (expo-localization is native;
-  Expo Go can't load it). Use eas.json `development-simulator` profile on a dedicated FreshCheck sim.
+- W5 in-app LANGUAGE PICKER DONE (commit after 460a494): app/language.tsx + Profile→Language row,
+  15-locale autonym list, live switch, RTL-restart notice; picker keys translated to all 14.
+- W5 STATIC QA DONE (build-free): /home/claude/fc_keycheck.py → 690 keys, 0 missing static t() keys;
+  all dynamic-key enums verified (verdict×4, difficulty×3, stepLabel×5, plan/waste/benefits/tiles,
+  achievements×8 = store ids, paywall features/hero/plans, storageGuide/chefTips/foodFacts ids).
+  Overflow watch-list: /home/claude/fc_overflow.py (11 strings).
+- W5 VISUAL QA + W6 build/screenshots BLOCKED: Mac has NO outbound internet (github/npm/api.supabase
+  HTTP 000) → native build can't pod-install expo-localization. Loop re-checks Mac net each tick;
+  resume `eas build --profile development-simulator` on sim 8E03808C when Mac is back online.
 - DEPLOY NOTE: Mac↔api.supabase.com was timing out; ran Mgmt API + `supabase functions deploy`
   from the VPS (CLI at /tmp/sbfull/supabase, needs supabase-go sibling) using the mounted .env.
 - OPTIONAL not-yet-done: in-app language picker in profile (infra ready: setLocale + LOCALE_LABELS).
