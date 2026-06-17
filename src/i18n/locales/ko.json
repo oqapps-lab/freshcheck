@@ -716,7 +716,8 @@
       "account": "계정",
       "pro": "PRO",
       "notifications": "알림",
-      "about": "정보"
+      "about": "정보",
+      "language": "언어"
     },
     "stats": {
       "itemsInFridge": "냉장고 품목"
@@ -735,7 +736,8 @@
       "privacyPolicy": "개인정보 처리방침",
       "termsOfService": "서비스 약관",
       "support": "지원",
-      "version": "버전"
+      "version": "버전",
+      "language": "언어"
     },
     "labels": {
       "warnMeBefore": "미리 알림",
@@ -1149,6 +1151,13 @@
       "bodyOne": "버리기 전에 무엇을 요리하면 좋을지 눌러서 확인해 보세요.",
       "bodyTwo": "낭비하기 전에 무엇을 요리할지 눌러서 확인해 보세요.",
       "bodyMany": "{{first}}, {{second}} 외 {{more}}개 — 무엇을 요리할지 눌러서 확인해 보세요."
+    }
+  },
+  "language": {
+    "title": "언어",
+    "rtlRestart": {
+      "title": "다시 시작하여 적용",
+      "message": "FreshCheck를 닫았다가 다시 열어 레이아웃을 오른쪽에서 왼쪽으로 전환하세요."
     }
   }
 }

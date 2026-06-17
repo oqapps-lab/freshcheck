@@ -27,6 +27,7 @@ import {
   setLeadDays,
 } from '@/src/state/notificationSettings';
 import { LEGAL } from '@/constants/legal';
+import { currentLocale, LOCALE_LABELS } from '@/src/i18n';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
 export default function ProfileScreen() {
@@ -386,6 +387,26 @@ export default function ProfileScreen() {
           ) : null}
         </SoftSurface>
 
+        {/* LANGUAGE — in-app override; app otherwise follows the device locale. */}
+        <Text style={[typeScale.label, styles.sectionLabel]}>{t('profile.sections.language')}</Text>
+        <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cardStack}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('profile.rows.language')}
+            onPress={() => {
+              Haptics.selectionAsync().catch(() => {});
+              router.push('/language' as never);
+            }}
+            style={({ pressed }) => [styles.row, { opacity: pressed ? 0.7 : 1 }]}
+          >
+            <Text style={[typeScale.titleMedium, { color: colors.ink }]}>{t('profile.rows.language')}</Text>
+            <View style={styles.rowValue}>
+              <Text style={[typeScale.body, { color: colors.inkSecondary }]}>{LOCALE_LABELS[currentLocale()]}</Text>
+              <Chevron size={18} color={colors.inkMuted} />
+            </View>
+          </Pressable>
+        </SoftSurface>
+
         {/* ABOUT section */}
         <Text style={[typeScale.label, styles.sectionLabel]}>{t('profile.sections.about')}</Text>
         <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cardStack}>
@@ -594,6 +615,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: spacing.md,
+  },
+  rowValue: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   hairline: {
     height: 1,

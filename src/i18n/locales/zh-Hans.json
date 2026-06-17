@@ -716,7 +716,8 @@
       "account": "账户",
       "pro": "PRO",
       "notifications": "通知",
-      "about": "关于"
+      "about": "关于",
+      "language": "语言"
     },
     "stats": {
       "itemsInFridge": "冰箱内食材"
@@ -735,7 +736,8 @@
       "privacyPolicy": "隐私政策",
       "termsOfService": "服务条款",
       "support": "支持",
-      "version": "版本"
+      "version": "版本",
+      "language": "语言"
     },
     "labels": {
       "warnMeBefore": "提前提醒我",
@@ -1149,6 +1151,13 @@
       "bodyOne": "点击看看趁新鲜还能做点什么。",
       "bodyTwo": "点击看看趁还没浪费做点什么。",
       "bodyMany": "{{first}}、{{second}} 等还有 {{more}} 样 — 点击看看能做什么。"
+    }
+  },
+  "language": {
+    "title": "语言",
+    "rtlRestart": {
+      "title": "重启以应用",
+      "message": "关闭并重新打开 FreshCheck，将布局切换为从右到左。"
     }
   }
 }

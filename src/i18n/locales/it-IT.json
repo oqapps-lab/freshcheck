@@ -725,7 +725,8 @@
       "account": "ACCOUNT",
       "pro": "PRO",
       "notifications": "NOTIFICHE",
-      "about": "INFORMAZIONI"
+      "about": "INFORMAZIONI",
+      "language": "Lingua"
     },
     "stats": {
       "itemsInFridge": "ALIMENTI NEL FRIGO"
@@ -744,7 +745,8 @@
       "privacyPolicy": "Informativa sulla privacy",
       "termsOfService": "Termini di servizio",
       "support": "Assistenza",
-      "version": "Versione"
+      "version": "Versione",
+      "language": "Lingua"
     },
     "labels": {
       "warnMeBefore": "Avvisami con anticipo di",
@@ -1168,6 +1170,13 @@
       "bodyOne": "tocca per scoprire cosa vale la pena cucinare prima che si rovini.",
       "bodyTwo": "tocca per scoprire cosa cucinare prima che vadano sprecati.",
       "bodyMany": "{{first}}, {{second}} +{{more}} altri — tocca per scoprire cosa cucinare."
+    }
+  },
+  "language": {
+    "title": "Lingua",
+    "rtlRestart": {
+      "title": "Riavvia per applicare",
+      "message": "Chiudi e riapri FreshCheck per impostare il layout da destra a sinistra."
     }
   }
 }

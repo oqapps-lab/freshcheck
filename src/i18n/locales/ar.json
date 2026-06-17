@@ -757,7 +757,8 @@
       "account": "الحساب",
       "pro": "PRO",
       "notifications": "الإشعارات",
-      "about": "حول"
+      "about": "حول",
+      "language": "اللغة"
     },
     "stats": {
       "itemsInFridge": "أصناف في الثلاجة"
@@ -776,7 +777,8 @@
       "privacyPolicy": "سياسة الخصوصية",
       "termsOfService": "شروط الخدمة",
       "support": "الدعم",
-      "version": "الإصدار"
+      "version": "الإصدار",
+      "language": "اللغة"
     },
     "labels": {
       "warnMeBefore": "نبّهني قبل",
@@ -1240,6 +1242,13 @@
       "bodyOne": "اضغط لمعرفة ما يستحق الطهي قبل أن يفسد.",
       "bodyTwo": "اضغط لمعرفة ما يمكن طهيه قبل أن يضيع.",
       "bodyMany": "{{first}}، {{second}} و{{more}} أخرى — اضغط لمعرفة ما يمكن طهيه."
+    }
+  },
+  "language": {
+    "title": "اللغة",
+    "rtlRestart": {
+      "title": "أعد التشغيل للتطبيق",
+      "message": "أغلق FreshCheck ثم أعد فتحه لتبديل التخطيط إلى الاتجاه من اليمين إلى اليسار."
     }
   }
 }

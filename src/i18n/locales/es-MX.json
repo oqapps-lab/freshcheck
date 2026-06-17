@@ -725,7 +725,8 @@
       "account": "CUENTA",
       "pro": "PRO",
       "notifications": "NOTIFICACIONES",
-      "about": "ACERCA DE"
+      "about": "ACERCA DE",
+      "language": "Idioma"
     },
     "stats": {
       "itemsInFridge": "PRODUCTOS EN EL REFRI"
@@ -744,7 +745,8 @@
       "privacyPolicy": "Política de privacidad",
       "termsOfService": "Términos del servicio",
       "support": "Soporte",
-      "version": "Versión"
+      "version": "Versión",
+      "language": "Idioma"
     },
     "labels": {
       "warnMeBefore": "Avísame con",
@@ -1168,6 +1170,13 @@
       "bodyOne": "toca para ver qué vale la pena cocinar antes de que se eche a perder.",
       "bodyTwo": "toca para ver qué cocinar antes de que se desperdicien.",
       "bodyMany": "{{first}}, {{second}} +{{more}} más: toca para ver qué cocinar."
+    }
+  },
+  "language": {
+    "title": "Idioma",
+    "rtlRestart": {
+      "title": "Reinicia para aplicar",
+      "message": "Cierra y vuelve a abrir FreshCheck para cambiar el diseño a derecha a izquierda."
     }
   }
 }

@@ -725,7 +725,8 @@
       "account": "ACCOUNT",
       "pro": "PRO",
       "notifications": "MELDINGEN",
-      "about": "OVER"
+      "about": "OVER",
+      "language": "Taal"
     },
     "stats": {
       "itemsInFridge": "PRODUCTEN IN KOELKAST"
@@ -744,7 +745,8 @@
       "privacyPolicy": "Privacybeleid",
       "termsOfService": "Servicevoorwaarden",
       "support": "Support",
-      "version": "Versie"
+      "version": "Versie",
+      "language": "Taal"
     },
     "labels": {
       "warnMeBefore": "Waarschuw me",
@@ -1168,6 +1170,13 @@
       "bodyOne": "tik om te zien wat de moeite waard is om te koken voordat het bederft.",
       "bodyTwo": "tik om te zien wat je kunt koken voordat ze verspild worden.",
       "bodyMany": "{{first}}, {{second}} +{{more}} meer — tik om te zien wat je kunt koken."
+    }
+  },
+  "language": {
+    "title": "Taal",
+    "rtlRestart": {
+      "title": "Herstart om toe te passen",
+      "message": "Sluit FreshCheck en open het opnieuw om de lay-out naar rechts-naar-links te wijzigen."
     }
   }
 }

@@ -725,7 +725,8 @@
       "account": "COMPTE",
       "pro": "PRO",
       "notifications": "NOTIFICATIONS",
-      "about": "À PROPOS"
+      "about": "À PROPOS",
+      "language": "Langue"
     },
     "stats": {
       "itemsInFridge": "PRODUITS AU FRIGO"
@@ -744,7 +745,8 @@
       "privacyPolicy": "Politique de confidentialité",
       "termsOfService": "Conditions d'utilisation",
       "support": "Assistance",
-      "version": "Version"
+      "version": "Version",
+      "language": "Langue"
     },
     "labels": {
       "warnMeBefore": "Me prévenir",
@@ -1168,6 +1170,13 @@
       "bodyOne": "touchez pour voir quoi cuisiner avant qu'il ne soit perdu.",
       "bodyTwo": "touchez pour voir quoi cuisiner avant qu'ils ne soient gaspillés.",
       "bodyMany": "{{first}}, {{second}} +{{more}} de plus — touchez pour voir quoi cuisiner."
+    }
+  },
+  "language": {
+    "title": "Langue",
+    "rtlRestart": {
+      "title": "Redémarrer pour appliquer",
+      "message": "Fermez et rouvrez FreshCheck pour passer à une disposition de droite à gauche."
     }
   }
 }

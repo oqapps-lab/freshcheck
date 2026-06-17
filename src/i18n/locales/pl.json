@@ -743,7 +743,8 @@
       "account": "KONTO",
       "pro": "PRO",
       "notifications": "POWIADOMIENIA",
-      "about": "O APLIKACJI"
+      "about": "O APLIKACJI",
+      "language": "Język"
     },
     "stats": {
       "itemsInFridge": "PRODUKTY W LODÓWCE"
@@ -762,7 +763,8 @@
       "privacyPolicy": "Polityka prywatności",
       "termsOfService": "Warunki korzystania",
       "support": "Pomoc",
-      "version": "Wersja"
+      "version": "Wersja",
+      "language": "Język"
     },
     "labels": {
       "warnMeBefore": "Ostrzeż mnie z wyprzedzeniem",
@@ -1206,6 +1208,13 @@
       "bodyOne": "stuknij, aby zobaczyć, co warto ugotować, zanim się zmarnuje.",
       "bodyTwo": "stuknij, aby zobaczyć, co ugotować, zanim się zmarnują.",
       "bodyMany": "{{first}}, {{second}} i jeszcze {{more}} — stuknij, aby zobaczyć, co ugotować."
+    }
+  },
+  "language": {
+    "title": "Język",
+    "rtlRestart": {
+      "title": "Uruchom ponownie, aby zastosować",
+      "message": "Zamknij i otwórz ponownie aplikację FreshCheck, aby przełączyć układ na pisany od prawej do lewej."
     }
   }
 }

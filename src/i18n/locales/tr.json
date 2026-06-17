@@ -725,7 +725,8 @@
       "account": "HESAP",
       "pro": "PRO",
       "notifications": "BİLDİRİMLER",
-      "about": "HAKKINDA"
+      "about": "HAKKINDA",
+      "language": "Dil"
     },
     "stats": {
       "itemsInFridge": "BUZDOLABINDAKİ ÜRÜNLER"
@@ -744,7 +745,8 @@
       "privacyPolicy": "Gizlilik politikası",
       "termsOfService": "Hizmet koşulları",
       "support": "Destek",
-      "version": "Sürüm"
+      "version": "Sürüm",
+      "language": "Dil"
     },
     "labels": {
       "warnMeBefore": "Beni şu kadar önce uyar",
@@ -1168,6 +1170,13 @@
       "bodyOne": "İsraf olmadan önce neler pişirilebileceğini görmek için dokunun.",
       "bodyTwo": "İsraf olmadan önce ne pişireceğinizi görmek için dokunun.",
       "bodyMany": "{{first}}, {{second}} +{{more}} ürün daha — ne pişireceğinizi görmek için dokunun."
+    }
+  },
+  "language": {
+    "title": "Dil",
+    "rtlRestart": {
+      "title": "Uygulamak için yeniden başlat",
+      "message": "Düzeni sağdan sola geçirmek için FreshCheck'i kapatıp yeniden açın."
     }
   }
 }

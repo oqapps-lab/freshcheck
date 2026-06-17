@@ -725,7 +725,8 @@
       "account": "CONTA",
       "pro": "PRO",
       "notifications": "NOTIFICAÇÕES",
-      "about": "SOBRE"
+      "about": "SOBRE",
+      "language": "Idioma"
     },
     "stats": {
       "itemsInFridge": "ITENS NA GELADEIRA"
@@ -744,7 +745,8 @@
       "privacyPolicy": "Política de privacidade",
       "termsOfService": "Termos de serviço",
       "support": "Suporte",
-      "version": "Versão"
+      "version": "Versão",
+      "language": "Idioma"
     },
     "labels": {
       "warnMeBefore": "Avise-me com antecedência de",
@@ -1168,6 +1170,13 @@
       "bodyOne": "toque para ver o que vale a pena cozinhar antes que estrague.",
       "bodyTwo": "toque para ver o que cozinhar antes que sejam desperdiçados.",
       "bodyMany": "{{first}}, {{second}} +{{more}} mais — toque para ver o que cozinhar."
+    }
+  },
+  "language": {
+    "title": "Idioma",
+    "rtlRestart": {
+      "title": "Reinicie para aplicar",
+      "message": "Feche e reabra o FreshCheck para mudar o layout para da direita para a esquerda."
     }
   }
 }

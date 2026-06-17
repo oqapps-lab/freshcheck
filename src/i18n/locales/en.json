@@ -725,7 +725,8 @@
       "account": "ACCOUNT",
       "pro": "PRO",
       "notifications": "NOTIFICATIONS",
-      "about": "ABOUT"
+      "about": "ABOUT",
+      "language": "LANGUAGE"
     },
     "stats": {
       "itemsInFridge": "ITEMS IN FRIDGE"
@@ -744,7 +745,8 @@
       "privacyPolicy": "Privacy policy",
       "termsOfService": "Terms of service",
       "support": "Support",
-      "version": "Version"
+      "version": "Version",
+      "language": "Language"
     },
     "labels": {
       "warnMeBefore": "Warn me before",
@@ -1168,6 +1170,13 @@
       "bodyOne": "tap to see what’s worth cooking before it goes.",
       "bodyTwo": "tap to see what to cook before they’re wasted.",
       "bodyMany": "{{first}}, {{second}} +{{more}} more — tap to see what to cook."
+    }
+  },
+  "language": {
+    "title": "Language",
+    "rtlRestart": {
+      "title": "Restart to apply",
+      "message": "Close and reopen FreshCheck to switch the layout to right-to-left."
     }
   }
 }

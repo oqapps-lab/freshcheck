@@ -725,7 +725,8 @@
       "account": "KONTO",
       "pro": "PRO",
       "notifications": "BENACHRICHTIGUNGEN",
-      "about": "ÜBER"
+      "about": "ÜBER",
+      "language": "Sprache"
     },
     "stats": {
       "itemsInFridge": "ARTIKEL IM KÜHLSCHRANK"
@@ -744,7 +745,8 @@
       "privacyPolicy": "Datenschutzerklärung",
       "termsOfService": "Nutzungsbedingungen",
       "support": "Support",
-      "version": "Version"
+      "version": "Version",
+      "language": "Sprache"
     },
     "labels": {
       "warnMeBefore": "Warne mich vorher",
@@ -1168,6 +1170,13 @@
       "bodyOne": "Tippe, um zu sehen, was sich noch zu kochen lohnt, bevor es schlecht wird.",
       "bodyTwo": "Tippe, um zu sehen, was du kochen kannst, bevor es verdirbt.",
       "bodyMany": "{{first}}, {{second}} +{{more}} weitere – tippe, um zu sehen, was du kochen kannst."
+    }
+  },
+  "language": {
+    "title": "Sprache",
+    "rtlRestart": {
+      "title": "Neu starten zum Anwenden",
+      "message": "Schließe FreshCheck und öffne es erneut, um das Layout auf Rechts-nach-links umzustellen."
     }
   }
 }

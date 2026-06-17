@@ -716,7 +716,8 @@
       "account": "アカウント",
       "pro": "PRO",
       "notifications": "通知",
-      "about": "アプリ情報"
+      "about": "アプリ情報",
+      "language": "言語"
     },
     "stats": {
       "itemsInFridge": "冷蔵庫の食材数"
@@ -735,7 +736,8 @@
       "privacyPolicy": "プライバシーポリシー",
       "termsOfService": "利用規約",
       "support": "サポート",
-      "version": "バージョン"
+      "version": "バージョン",
+      "language": "言語"
     },
     "labels": {
       "warnMeBefore": "通知のタイミング",
@@ -1149,6 +1151,13 @@
       "bodyOne": "ダメになる前に作れる料理をチェックしましょう。",
       "bodyTwo": "ムダにする前に作れる料理をチェックしましょう。",
       "bodyMany": "{{first}}、{{second}} 他{{more}}品 — 作れる料理をチェックしましょう。"
+    }
+  },
+  "language": {
+    "title": "言語",
+    "rtlRestart": {
+      "title": "再起動して適用",
+      "message": "FreshCheckを終了して再度開くと、レイアウトが右から左に切り替わります。"
     }
   }
 }
