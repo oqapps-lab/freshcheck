@@ -1,0 +1,20 @@
+{
+  "common": {
+    "appName": "FreshCheck",
+    "continue": "Continue",
+    "getStarted": "Get started",
+    "back": "Back",
+    "cancel": "Cancel",
+    "save": "Save",
+    "done": "Done",
+    "tryAgain": "Try again",
+    "next": "Next",
+    "skip": "Skip",
+    "ok": "OK"
+  },
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "message": "An unexpected error occurred. Try again, or restart the app if the problem persists.",
+    "retry": "Try again"
+  }
+}

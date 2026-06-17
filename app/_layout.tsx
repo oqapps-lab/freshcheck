@@ -1,5 +1,7 @@
 import 'react-native-gesture-handler';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { initI18n } from '@/src/i18n';
 import { View, Text, ActivityIndicator, StyleSheet, AppState } from 'react-native';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -151,17 +153,18 @@ function VendorBoot() {
  * it the user gets the bright-red dev RedBox in production.
  */
 export function ErrorBoundary({ error, retry }: { error: Error; retry: () => void }) {
+  const { t } = useTranslation();
   return (
     <View style={errorStyles.root}>
       <SoftSurface variant="cushion" radius="full" innerStyle={errorStyles.icon}>
         <Sparkle size={40} color={colors.amber} strokeWidth={1.6} />
       </SoftSurface>
-      <Text style={[typeScale.displayMedium, errorStyles.title]}>Something went wrong</Text>
+      <Text style={[typeScale.displayMedium, errorStyles.title]}>{t('errorBoundary.title')}</Text>
       <Text style={[typeScale.body, errorStyles.message]}>
-        {error?.message ?? 'An unexpected error occurred. Try again, or restart the app if the problem persists.'}
+        {error?.message ?? t('errorBoundary.message')}
       </Text>
       <View style={errorStyles.cta}>
-        <PrimaryPillCTA label="Try again" onPress={retry} />
+        <PrimaryPillCTA label={t('errorBoundary.retry')} onPress={retry} />
       </View>
     </View>
   );
@@ -207,7 +210,20 @@ export default function RootLayout() {
     Quicksand_700Bold,
   });
 
-  if (!fontsLoaded) {
+  // Resolve + load the active locale before the first frame so there's no
+  // English flash on launch. RTL direction is applied inside initI18n().
+  const [i18nReady, setI18nReady] = useState(false);
+  useEffect(() => {
+    let active = true;
+    void initI18n().finally(() => {
+      if (active) setI18nReady(true);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  if (!fontsLoaded || !i18nReady) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.canvas }}>
         <ActivityIndicator color={colors.primary} />

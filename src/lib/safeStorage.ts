@@ -29,6 +29,9 @@ export const STORAGE_KEYS = {
   // Push prefs: expiry-reminder on/off + how many days before to warn. Global
   // (not per-product) — see GROWTH-STRATEGY: one digest, ≤4/week, no per-item.
   notifSettings: 'freshcheck_notif_settings_v1',
+  // User's explicit language override (BCP-47 tag, e.g. 'fr-FR'). Unset = follow
+  // the device locale. Set from the in-app language picker (profile).
+  locale: 'freshcheck_locale_v1',
 } as const;
 
 export const safeStorage = {

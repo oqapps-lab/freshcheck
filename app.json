@@ -26,7 +26,9 @@
       },
       "privacyManifests": {
         "NSPrivacyTracking": true,
-        "NSPrivacyTrackingDomains": ["appsflyersdk.com"]
+        "NSPrivacyTrackingDomains": [
+          "appsflyersdk.com"
+        ]
       }
     },
     "android": {
@@ -91,7 +93,8 @@
           "shouldUseStrictMode": false
         }
       ],
-      "./plugins/with-modular-headers-fix.js"
+      "./plugins/with-modular-headers-fix.js",
+      "expo-localization"
     ],
     "experiments": {
       "typedRoutes": true
