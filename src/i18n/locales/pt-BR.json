@@ -56,6 +56,15 @@
           "desc": "Use o FreshCheck por 7 dias"
         }
       }
+    },
+    "relative": {
+      "today": "hoje",
+      "yesterday": "ontem",
+      "tomorrow": "amanhã",
+      "daysAgo_one": "há {{count}} dia",
+      "daysAgo_other": "há {{count}} dias",
+      "inDays_one": "em {{count}} dia",
+      "inDays_other": "em {{count}} dias"
     }
   },
   "errorBoundary": {
@@ -1149,6 +1158,16 @@
     "alerts": {
       "removeFailedTitle": "Não foi possível remover",
       "loadFailedTitle": "Não foi possível carregar a geladeira"
+    }
+  },
+  "notifications": {
+    "expiry": {
+      "titleOne": "seu {{name}} vence em breve",
+      "titleTwo": "{{a}} e {{b}} vencem em breve",
+      "titleMany": "{{count}} itens da sua geladeira vencem em breve",
+      "bodyOne": "toque para ver o que vale a pena cozinhar antes que estrague.",
+      "bodyTwo": "toque para ver o que cozinhar antes que sejam desperdiçados.",
+      "bodyMany": "{{first}}, {{second}} +{{more}} mais — toque para ver o que cozinhar."
     }
   }
 }

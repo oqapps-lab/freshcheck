@@ -60,6 +60,19 @@
           "desc": "Пользуйтесь FreshCheck 7 дней"
         }
       }
+    },
+    "relative": {
+      "today": "сегодня",
+      "yesterday": "вчера",
+      "tomorrow": "завтра",
+      "daysAgo_one": "{{count}} день назад",
+      "daysAgo_few": "{{count}} дня назад",
+      "daysAgo_many": "{{count}} дней назад",
+      "daysAgo_other": "{{count}} дня назад",
+      "inDays_one": "через {{count}} день",
+      "inDays_few": "через {{count}} дня",
+      "inDays_many": "через {{count}} дней",
+      "inDays_other": "через {{count}} дня"
     }
   },
   "errorBoundary": {
@@ -1183,6 +1196,16 @@
     "alerts": {
       "removeFailedTitle": "Не удалось удалить",
       "loadFailedTitle": "Не удалось загрузить холодильник"
+    }
+  },
+  "notifications": {
+    "expiry": {
+      "titleOne": "срок годности {{name}} скоро истекает",
+      "titleTwo": "{{a}} и {{b}} скоро испортятся",
+      "titleMany": "{{count}} продуктов в холодильнике скоро испортятся",
+      "bodyOne": "нажмите, чтобы узнать, что приготовить, пока продукт не испортился.",
+      "bodyTwo": "нажмите, чтобы узнать, что приготовить, пока продукты не пропали.",
+      "bodyMany": "{{first}}, {{second}} и ещё {{more}} — нажмите, чтобы узнать, что приготовить."
     }
   }
 }

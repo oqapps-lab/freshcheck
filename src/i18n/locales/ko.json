@@ -54,6 +54,13 @@
           "desc": "FreshCheck를 7일 사용하세요"
         }
       }
+    },
+    "relative": {
+      "today": "오늘",
+      "yesterday": "어제",
+      "tomorrow": "내일",
+      "daysAgo_other": "{{count}}일 전",
+      "inDays_other": "{{count}}일 후"
     }
   },
   "errorBoundary": {
@@ -1132,6 +1139,16 @@
     "alerts": {
       "removeFailedTitle": "제거할 수 없음",
       "loadFailedTitle": "냉장고를 불러올 수 없음"
+    }
+  },
+  "notifications": {
+    "expiry": {
+      "titleOne": "{{name}}의 유통기한이 곧 만료돼요",
+      "titleTwo": "{{a}} & {{b}}의 유통기한이 곧 만료돼요",
+      "titleMany": "냉장고 속 {{count}}개 식품의 유통기한이 곧 만료돼요",
+      "bodyOne": "버리기 전에 무엇을 요리하면 좋을지 눌러서 확인해 보세요.",
+      "bodyTwo": "낭비하기 전에 무엇을 요리할지 눌러서 확인해 보세요.",
+      "bodyMany": "{{first}}, {{second}} 외 {{more}}개 — 무엇을 요리할지 눌러서 확인해 보세요."
     }
   }
 }

@@ -56,6 +56,15 @@
           "desc": "Nutze FreshCheck 7 Tage lang"
         }
       }
+    },
+    "relative": {
+      "today": "heute",
+      "yesterday": "gestern",
+      "tomorrow": "morgen",
+      "daysAgo_one": "vor {{count}} Tag",
+      "daysAgo_other": "vor {{count}} Tagen",
+      "inDays_one": "in {{count}} Tag",
+      "inDays_other": "in {{count}} Tagen"
     }
   },
   "errorBoundary": {
@@ -1149,6 +1158,16 @@
     "alerts": {
       "removeFailedTitle": "Konnte nicht entfernt werden",
       "loadFailedTitle": "Kühlschrank konnte nicht geladen werden"
+    }
+  },
+  "notifications": {
+    "expiry": {
+      "titleOne": "Dein {{name}} läuft bald ab",
+      "titleTwo": "{{a}} & {{b}} laufen bald ab",
+      "titleMany": "{{count}} Lebensmittel in deinem Kühlschrank laufen bald ab",
+      "bodyOne": "Tippe, um zu sehen, was sich noch zu kochen lohnt, bevor es schlecht wird.",
+      "bodyTwo": "Tippe, um zu sehen, was du kochen kannst, bevor es verdirbt.",
+      "bodyMany": "{{first}}, {{second}} +{{more}} weitere – tippe, um zu sehen, was du kochen kannst."
     }
   }
 }

@@ -1,0 +1,5 @@
+{
+  "NSCameraUsageDescription": "FreshCheck 使用相机来检测你食物的新鲜度。",
+  "NSPhotoLibraryUsageDescription": "FreshCheck 让你从相册中选择食物照片来检测它的新鲜度。",
+  "NSUserTrackingUsageDescription": "FreshCheck 使用你的设备标识符来衡量哪些功能对像你这样的家庭最有帮助，并帮助 FreshCheck 保持免费。我们绝不会出售你的个人数据。"
+}

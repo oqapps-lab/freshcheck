@@ -56,6 +56,15 @@
           "desc": "FreshCheck'i 7 gün kullan"
         }
       }
+    },
+    "relative": {
+      "today": "bugün",
+      "yesterday": "dün",
+      "tomorrow": "yarın",
+      "daysAgo_one": "{{count}} gün önce",
+      "daysAgo_other": "{{count}} gün önce",
+      "inDays_one": "{{count}} gün sonra",
+      "inDays_other": "{{count}} gün sonra"
     }
   },
   "errorBoundary": {
@@ -1149,6 +1158,16 @@
     "alerts": {
       "removeFailedTitle": "Kaldırılamadı",
       "loadFailedTitle": "Buzdolabı yüklenemedi"
+    }
+  },
+  "notifications": {
+    "expiry": {
+      "titleOne": "{{name}} ürününüzün son kullanma tarihi yaklaşıyor",
+      "titleTwo": "{{a}} ve {{b}} ürünlerinin son kullanma tarihi yaklaşıyor",
+      "titleMany": "Buzdolabınızdaki {{count}} ürünün son kullanma tarihi yaklaşıyor",
+      "bodyOne": "İsraf olmadan önce neler pişirilebileceğini görmek için dokunun.",
+      "bodyTwo": "İsraf olmadan önce ne pişireceğinizi görmek için dokunun.",
+      "bodyMany": "{{first}}, {{second}} +{{more}} ürün daha — ne pişireceğinizi görmek için dokunun."
     }
   }
 }

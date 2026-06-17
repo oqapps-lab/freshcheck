@@ -1,0 +1,5 @@
+{
+  "NSCameraUsageDescription": "FreshCheck używa aparatu, aby sprawdzić świeżość Twojego jedzenia.",
+  "NSPhotoLibraryUsageDescription": "FreshCheck pozwala wybrać zdjęcie jedzenia z Twojej biblioteki, aby sprawdzić jego świeżość.",
+  "NSUserTrackingUsageDescription": "FreshCheck używa identyfikatora Twojego urządzenia, aby mierzyć, które funkcje aplikacji docierają do rodzin takich jak Twoja, i pomóc utrzymać FreshCheck za darmo. Nigdy nie sprzedajemy Twoich danych osobowych."
+}

@@ -54,6 +54,13 @@
           "desc": "连续使用 FreshCheck 7 天"
         }
       }
+    },
+    "relative": {
+      "today": "今天",
+      "yesterday": "昨天",
+      "tomorrow": "明天",
+      "daysAgo_other": "{{count}} 天前",
+      "inDays_other": "{{count}} 天后"
     }
   },
   "errorBoundary": {
@@ -1132,6 +1139,16 @@
     "alerts": {
       "removeFailedTitle": "无法移除",
       "loadFailedTitle": "无法加载冰箱"
+    }
+  },
+  "notifications": {
+    "expiry": {
+      "titleOne": "你的{{name}}快要过期了",
+      "titleTwo": "{{a}}和{{b}}快要过期了",
+      "titleMany": "冰箱里有 {{count}} 样食材快要过期了",
+      "bodyOne": "点击看看趁新鲜还能做点什么。",
+      "bodyTwo": "点击看看趁还没浪费做点什么。",
+      "bodyMany": "{{first}}、{{second}} 等还有 {{more}} 样 — 点击看看能做什么。"
     }
   }
 }

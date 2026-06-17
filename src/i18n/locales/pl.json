@@ -60,6 +60,19 @@
           "desc": "Korzystaj z FreshCheck 7 dni"
         }
       }
+    },
+    "relative": {
+      "today": "dzisiaj",
+      "yesterday": "wczoraj",
+      "tomorrow": "jutro",
+      "daysAgo_one": "{{count}} dzień temu",
+      "daysAgo_few": "{{count}} dni temu",
+      "daysAgo_many": "{{count}} dni temu",
+      "daysAgo_other": "{{count}} dnia temu",
+      "inDays_one": "za {{count}} dzień",
+      "inDays_few": "za {{count}} dni",
+      "inDays_many": "za {{count}} dni",
+      "inDays_other": "za {{count}} dnia"
     }
   },
   "errorBoundary": {
@@ -1183,6 +1196,16 @@
     "alerts": {
       "removeFailedTitle": "Nie udało się usunąć",
       "loadFailedTitle": "Nie udało się wczytać lodówki"
+    }
+  },
+  "notifications": {
+    "expiry": {
+      "titleOne": "Twój produkt {{name}} wkrótce się zepsuje",
+      "titleTwo": "{{a}} i {{b}} wkrótce się zepsują",
+      "titleMany": "{{count}} produktów w lodówce wkrótce się zepsuje",
+      "bodyOne": "stuknij, aby zobaczyć, co warto ugotować, zanim się zmarnuje.",
+      "bodyTwo": "stuknij, aby zobaczyć, co ugotować, zanim się zmarnują.",
+      "bodyMany": "{{first}}, {{second}} i jeszcze {{more}} — stuknij, aby zobaczyć, co ugotować."
     }
   }
 }

@@ -56,6 +56,15 @@
           "desc": "Gebruik FreshCheck 7 dagen"
         }
       }
+    },
+    "relative": {
+      "today": "vandaag",
+      "yesterday": "gisteren",
+      "tomorrow": "morgen",
+      "daysAgo_one": "{{count}} dag geleden",
+      "daysAgo_other": "{{count}} dagen geleden",
+      "inDays_one": "over {{count}} dag",
+      "inDays_other": "over {{count}} dagen"
     }
   },
   "errorBoundary": {
@@ -1149,6 +1158,16 @@
     "alerts": {
       "removeFailedTitle": "Kan niet verwijderen",
       "loadFailedTitle": "Kan koelkast niet laden"
+    }
+  },
+  "notifications": {
+    "expiry": {
+      "titleOne": "je {{name}} is bijna over de datum",
+      "titleTwo": "{{a}} & {{b}} zijn bijna over de datum",
+      "titleMany": "{{count}} producten in je koelkast zijn bijna over de datum",
+      "bodyOne": "tik om te zien wat de moeite waard is om te koken voordat het bederft.",
+      "bodyTwo": "tik om te zien wat je kunt koken voordat ze verspild worden.",
+      "bodyMany": "{{first}}, {{second}} +{{more}} meer — tik om te zien wat je kunt koken."
     }
   }
 }

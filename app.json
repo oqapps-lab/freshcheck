@@ -105,6 +105,23 @@
         "projectId": "5ad2a528-532b-47f9-939b-46c508643ada"
       }
     },
-    "owner": "gazetastreet"
+    "owner": "gazetastreet",
+    "locales": {
+      "ar": "./ios-locales/ar.json",
+      "de": "./ios-locales/de.json",
+      "en": "./ios-locales/en.json",
+      "es": "./ios-locales/es.json",
+      "es-MX": "./ios-locales/es-MX.json",
+      "fr": "./ios-locales/fr.json",
+      "it": "./ios-locales/it.json",
+      "ja": "./ios-locales/ja.json",
+      "ko": "./ios-locales/ko.json",
+      "nl": "./ios-locales/nl.json",
+      "pl": "./ios-locales/pl.json",
+      "pt-BR": "./ios-locales/pt-BR.json",
+      "ru": "./ios-locales/ru.json",
+      "tr": "./ios-locales/tr.json",
+      "zh-Hans": "./ios-locales/zh-Hans.json"
+    }
   }
 }

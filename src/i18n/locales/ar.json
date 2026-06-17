@@ -60,6 +60,23 @@
           "desc": "استخدم FreshCheck 7 أيام"
         }
       }
+    },
+    "relative": {
+      "today": "اليوم",
+      "yesterday": "أمس",
+      "tomorrow": "غدًا",
+      "daysAgo_zero": "منذ {{count}} يوم",
+      "daysAgo_one": "منذ يوم واحد",
+      "daysAgo_two": "منذ يومين",
+      "daysAgo_few": "منذ {{count}} أيام",
+      "daysAgo_many": "منذ {{count}} يومًا",
+      "daysAgo_other": "منذ {{count}} يوم",
+      "inDays_zero": "خلال {{count}} يوم",
+      "inDays_one": "خلال يوم واحد",
+      "inDays_two": "خلال يومين",
+      "inDays_few": "خلال {{count}} أيام",
+      "inDays_many": "خلال {{count}} يومًا",
+      "inDays_other": "خلال {{count}} يوم"
     }
   },
   "errorBoundary": {
@@ -1213,6 +1230,16 @@
     "alerts": {
       "removeFailedTitle": "تعذّرت الإزالة",
       "loadFailedTitle": "تعذّر تحميل الثلاجة"
+    }
+  },
+  "notifications": {
+    "expiry": {
+      "titleOne": "{{name}} لديك على وشك انتهاء الصلاحية",
+      "titleTwo": "{{a}} و{{b}} على وشك انتهاء الصلاحية",
+      "titleMany": "{{count}} عناصر في ثلاجتك على وشك انتهاء صلاحيتها",
+      "bodyOne": "اضغط لمعرفة ما يستحق الطهي قبل أن يفسد.",
+      "bodyTwo": "اضغط لمعرفة ما يمكن طهيه قبل أن يضيع.",
+      "bodyMany": "{{first}}، {{second}} و{{more}} أخرى — اضغط لمعرفة ما يمكن طهيه."
     }
   }
 }

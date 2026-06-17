@@ -1,0 +1,5 @@
+{
+  "NSCameraUsageDescription": "FreshCheck, yiyeceklerinizin tazeliğini kontrol etmek için kamerayı kullanır.",
+  "NSPhotoLibraryUsageDescription": "FreshCheck, tazeliğini kontrol etmek için yiyeceğinizin bir fotoğrafını kütüphanenizden seçmenize olanak tanır.",
+  "NSUserTrackingUsageDescription": "FreshCheck, hangi uygulama özelliklerinin sizin gibi ailelere ulaştığını ölçmek ve FreshCheck'i ücretsiz tutmaya yardımcı olmak için cihaz tanımlayıcınızı kullanır. Kişisel verilerinizi asla satmayız."
+}

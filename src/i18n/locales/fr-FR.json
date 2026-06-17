@@ -56,6 +56,15 @@
           "desc": "Utilisez FreshCheck 7 jours"
         }
       }
+    },
+    "relative": {
+      "today": "aujourd'hui",
+      "yesterday": "hier",
+      "tomorrow": "demain",
+      "daysAgo_one": "il y a {{count}} jour",
+      "daysAgo_other": "il y a {{count}} jours",
+      "inDays_one": "dans {{count}} jour",
+      "inDays_other": "dans {{count}} jours"
     }
   },
   "errorBoundary": {
@@ -1149,6 +1158,16 @@
     "alerts": {
       "removeFailedTitle": "Suppression impossible",
       "loadFailedTitle": "Impossible de charger le frigo"
+    }
+  },
+  "notifications": {
+    "expiry": {
+      "titleOne": "votre {{name}} se périme bientôt",
+      "titleTwo": "{{a}} et {{b}} se périment bientôt",
+      "titleMany": "{{count}} aliments de votre frigo se périment bientôt",
+      "bodyOne": "touchez pour voir quoi cuisiner avant qu'il ne soit perdu.",
+      "bodyTwo": "touchez pour voir quoi cuisiner avant qu'ils ne soient gaspillés.",
+      "bodyMany": "{{first}}, {{second}} +{{more}} de plus — touchez pour voir quoi cuisiner."
     }
   }
 }

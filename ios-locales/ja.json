@@ -1,0 +1,5 @@
+{
+  "NSCameraUsageDescription": "FreshCheckはカメラを使って食品の鮮度をチェックします。",
+  "NSPhotoLibraryUsageDescription": "FreshCheckはライブラリから食品の写真を選んで鮮度をチェックできます。",
+  "NSUserTrackingUsageDescription": "FreshCheckはデバイス識別子を使って、どの機能があなたのようなご家族に届いているかを測定し、FreshCheckを無料で提供し続けるために役立てます。お客様の個人データを販売することは決してありません。"
+}

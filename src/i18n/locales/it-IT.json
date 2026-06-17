@@ -56,6 +56,15 @@
           "desc": "Usa FreshCheck per 7 giorni"
         }
       }
+    },
+    "relative": {
+      "today": "oggi",
+      "yesterday": "ieri",
+      "tomorrow": "domani",
+      "daysAgo_one": "{{count}} giorno fa",
+      "daysAgo_other": "{{count}} giorni fa",
+      "inDays_one": "tra {{count}} giorno",
+      "inDays_other": "tra {{count}} giorni"
     }
   },
   "errorBoundary": {
@@ -1149,6 +1158,16 @@
     "alerts": {
       "removeFailedTitle": "Impossibile rimuovere",
       "loadFailedTitle": "Impossibile caricare il frigo"
+    }
+  },
+  "notifications": {
+    "expiry": {
+      "titleOne": "il tuo {{name}} sta per scadere",
+      "titleTwo": "{{a}} e {{b}} stanno per scadere",
+      "titleMany": "{{count}} alimenti nel tuo frigo stanno per scadere",
+      "bodyOne": "tocca per scoprire cosa vale la pena cucinare prima che si rovini.",
+      "bodyTwo": "tocca per scoprire cosa cucinare prima che vadano sprecati.",
+      "bodyMany": "{{first}}, {{second}} +{{more}} altri — tocca per scoprire cosa cucinare."
     }
   }
 }

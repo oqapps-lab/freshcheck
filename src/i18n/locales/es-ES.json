@@ -56,6 +56,15 @@
           "desc": "Usa FreshCheck 7 días"
         }
       }
+    },
+    "relative": {
+      "today": "hoy",
+      "yesterday": "ayer",
+      "tomorrow": "mañana",
+      "daysAgo_one": "hace {{count}} día",
+      "daysAgo_other": "hace {{count}} días",
+      "inDays_one": "dentro de {{count}} día",
+      "inDays_other": "dentro de {{count}} días"
     }
   },
   "errorBoundary": {
@@ -1149,6 +1158,16 @@
     "alerts": {
       "removeFailedTitle": "No se pudo quitar",
       "loadFailedTitle": "No se pudo cargar la nevera"
+    }
+  },
+  "notifications": {
+    "expiry": {
+      "titleOne": "tu {{name}} caduca pronto",
+      "titleTwo": "{{a}} y {{b}} caducan pronto",
+      "titleMany": "{{count}} alimentos de tu nevera caducan pronto",
+      "bodyOne": "toca para ver qué merece la pena cocinar antes de que se eche a perder.",
+      "bodyTwo": "toca para ver qué cocinar antes de que se desperdicien.",
+      "bodyMany": "{{first}}, {{second}} +{{more}} más: toca para ver qué cocinar."
     }
   }
 }
