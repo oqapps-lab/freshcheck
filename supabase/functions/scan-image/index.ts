@@ -36,6 +36,17 @@ const LOCALE_NAMES: Record<string, string> = {
   ja: 'Japanese', ko: 'Korean', 'zh-Hans': 'Simplified Chinese', ru: 'Russian',
   tr: 'Turkish', pl: 'Polish', ar: 'Arabic',
 };
+// Base-language fallback so 'de'/'de-DE'/'de-AT' all resolve (client may send the
+// i18next-normalized base code, not the full BCP-47 tag).
+const BASE_LANG: Record<string, string> = {
+  es: 'Spanish', fr: 'French', de: 'German', pt: 'Portuguese (Brazil)', it: 'Italian',
+  nl: 'Dutch', ja: 'Japanese', ko: 'Korean', zh: 'Simplified Chinese', ru: 'Russian',
+  tr: 'Turkish', pl: 'Polish', ar: 'Arabic',
+};
+function langOf(locale?: string): string | undefined {
+  if (typeof locale !== 'string') return undefined;
+  return LOCALE_NAMES[locale] ?? BASE_LANG[locale.split('-')[0].toLowerCase()];
+}
 
 type VerdictPayload = {
   product: string;
@@ -155,7 +166,7 @@ serve(async (req) => {
   // Locale-aware output: ask the model to write user-facing text (product,
   // reasoning, storage_note, analysis labels) in the user's language, plus a
   // product_en English name for the server-side safety classifier.
-  const langName = typeof locale === 'string' ? LOCALE_NAMES[locale] : undefined;
+  const langName = langOf(locale);
   const langSuffix = langName
     ? `\n\nLOCALIZATION: Write ALL user-facing text — "product", "reasoning", "storage_note", and every analysis[].label — in ${langName}. ADDITIONALLY include "product_en": the item's short name in lowercase ENGLISH (used internally for safety classification; required).`
     : '';

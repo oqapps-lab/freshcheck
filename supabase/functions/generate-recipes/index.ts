@@ -430,6 +430,16 @@ const LOCALE_NAMES: Record<string, string> = {
   ja: 'Japanese', ko: 'Korean', 'zh-Hans': 'Simplified Chinese', ru: 'Russian',
   tr: 'Turkish', pl: 'Polish', ar: 'Arabic',
 };
+// Base-language fallback so 'de', 'de-DE', 'de-AT' all resolve (the client may send
+// the i18next-normalized base code, not the full BCP-47 tag).
+const BASE_LANG: Record<string, string> = {
+  es: 'Spanish', fr: 'French', de: 'German', pt: 'Portuguese (Brazil)', it: 'Italian',
+  nl: 'Dutch', ja: 'Japanese', ko: 'Korean', zh: 'Simplified Chinese', ru: 'Russian',
+  tr: 'Turkish', pl: 'Polish', ar: 'Arabic',
+};
+function langOf(locale: string): string | undefined {
+  return LOCALE_NAMES[locale] ?? BASE_LANG[(locale || '').split('-')[0].toLowerCase()];
+}
 
 // deno-lint-ignore no-explicit-any
 async function localizeBatch(
@@ -440,7 +450,7 @@ async function localizeBatch(
   svc: any,
   openaiKey: string,
 ): Promise<Recipe[]> {
-  const langName = LOCALE_NAMES[locale];
+  const langName = langOf(locale);
   // English (or unknown/unsupported) → return canonical as-is.
   if (!langName || locale === 'en' || locale.startsWith('en')) return english;
 
