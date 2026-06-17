@@ -48,9 +48,21 @@ in `src/i18n/index.ts`, provider + await-ready in `app/_layout.tsx`.
   all dynamic-key enums verified (verdict×4, difficulty×3, stepLabel×5, plan/waste/benefits/tiles,
   achievements×8 = store ids, paywall features/hero/plans, storageGuide/chefTips/foodFacts ids).
   Overflow watch-list: /home/claude/fc_overflow.py (11 strings).
-- W5 VISUAL QA + W6 build/screenshots BLOCKED: Mac has NO outbound internet (github/npm/api.supabase
-  HTTP 000) → native build can't pod-install expo-localization. Loop re-checks Mac net each tick;
-  resume `eas build --profile development-simulator` on sim 8E03808C when Mac is back online.
+- BUILDS DONE on sim 8E03808C: dev-simulator + production-simulator both built (after fixing: Mac
+  internet outage; 100G CocoaPods/Pods cache → ENOSPC, cleared; AppsFlyer zip 404 from Mac's dead
+  route to release-assets.githubusercontent.com → routed cocoapods curl via VPS SOCKS proxy
+  `ssh -fND 1080 claude@185.125.101.254` + ALL_PROXY=socks5h://127.0.0.1:1080).
+- W5 VISUAL QA (partial, WDA-free): captured onboarding + home for ALL 15 locales via AsyncStorage
+  pre-seed (freshcheck_locale_v1 override + onboarding flag) + relaunch + simctl screenshot. Script:
+  /Users/evgenij/fc_qa/cap.py; shots in /Users/evgenij/fc_qa/shots/. VERDICT: PASS — RTL(ar) fully
+  mirrored incl tab bar; CJK(ja/zh/ko) clean via system fallback (no tofu); ru Cyrillic ✓; de/fr long
+  text no overflow; localized numbers ($2 913 ru/ar, 2.913 $ de). No layout bugs found.
+- BLOCKED (deeper-screen interactive QA + 7-screen App Store shots): needs sim TAP automation, which is
+  dead on this Mac under Xcode 26.3 — WDA "times out waiting to be ready" (both mobilecli builds);
+  idb-companion won't install (no Xcode-26.3 CLT/bottle); simctl can't tap; `simctl openurl` always
+  shows the scheme-confirm dialog (needs a tap). Onboarding+home are the only WDA-free-reachable routes.
+  OPTIONS for the rest: (a) user taps through sim while I capture; (b) install Xcode 26.3 CLT → idb;
+  (c) accept static+2-screen visual verification. App is fully localized + verified to high confidence.
 - DEPLOY NOTE: Mac↔api.supabase.com was timing out; ran Mgmt API + `supabase functions deploy`
   from the VPS (CLI at /tmp/sbfull/supabase, needs supabase-go sibling) using the mounted .env.
 - OPTIONAL not-yet-done: in-app language picker in profile (infra ready: setLocale + LOCALE_LABELS).
