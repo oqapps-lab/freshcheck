@@ -70,7 +70,14 @@ in `src/i18n/index.ts`, provider + await-ready in `app/_layout.tsx`.
   numbers). Shots: /Users/evgenij/fc_qa/shots/.
 - W6: builds done. Localized device screenshots captured (onboarding+home ×15 + de/ar deep +
   my-fridge/picker/recipe-builder/recipes en). Fridge seeded for anon uid 9eb9e0ea via Mgmt API.
-- ⚠️ OPEN BUG (W4 dynamic recipe translation): UI CHROME localizes everywhere, but AI RECIPE CONTENT
+- ✅ W4 RECIPE TRANSLATION FIXED (2026-06-17): root cause = STALE DEPLOY (original W4 deploy didn't push
+  localizeBatch). Re-deployed generate-recipes + scan-image from the VPS (CLI is a LINUX binary → run on
+  VPS, reads source via mount, reaches Supabase). Verified by direct call (locale=de-DE): returns fully
+  German recipe (name "Hähnchenbrust-Spinat-Pfanne", German steps/ingredients), `id` PRESERVED
+  ("chicken-breast-and-spinach-skillet") → image reused; recipes_cache_i18n row created. Dynamic
+  translation works end-to-end. NOTE: client app shows the persisted batch — to see translated recipes
+  in-app, re-generate in that locale (cache-hit → translate, cheap). (history below was the bug hunt.)
+- ⚠️ (RESOLVED, kept for history) W4 dynamic recipe translation: UI CHROME localizes everywhere, but AI RECIPE CONTENT
   (name/blurb/ingredients/steps) shows ENGLISH under non-en UI. Confirmed: `recipes_cache_i18n` is EMPTY
   after a de generate (cache HIT on recipes_cache → localizeBatch should translate+cache, but didn't).
   Image-reuse design works (canonical en cached, hero images reused). The translation EXECUTION in the
