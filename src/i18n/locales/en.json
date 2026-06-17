@@ -56,6 +56,15 @@
           "desc": "Use FreshCheck 7 days"
         }
       }
+    },
+    "relative": {
+      "today": "today",
+      "yesterday": "yesterday",
+      "tomorrow": "tomorrow",
+      "daysAgo_one": "{{count}} day ago",
+      "daysAgo_other": "{{count}} days ago",
+      "inDays_one": "in {{count}} day",
+      "inDays_other": "in {{count}} days"
     }
   },
   "errorBoundary": {
@@ -1149,6 +1158,16 @@
     "alerts": {
       "removeFailedTitle": "Could not remove",
       "loadFailedTitle": "Could not load fridge"
+    }
+  },
+  "notifications": {
+    "expiry": {
+      "titleOne": "your {{name}} expires soon",
+      "titleTwo": "{{a}} & {{b}} expire soon",
+      "titleMany": "{{count}} items in your fridge expire soon",
+      "bodyOne": "tap to see what’s worth cooking before it goes.",
+      "bodyTwo": "tap to see what to cook before they’re wasted.",
+      "bodyMany": "{{first}}, {{second}} +{{more}} more — tap to see what to cook."
     }
   }
 }

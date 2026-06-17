@@ -26,6 +26,8 @@
 //
 // Font: Quicksand (300/400/500/600/700).
 
+import { I18nManager } from 'react-native';
+
 export const colors = {
   // Cool slate-tinted off-white — gives the white highlight contrast
   canvas: '#ECEFF4',
@@ -98,7 +100,11 @@ export const spacing = {
   enormous: 64,
 } as const;
 
-// Quicksand — rounded geometric sans, the Stitch-remix font
+// Quicksand — rounded geometric sans, the Stitch-remix font.
+// Glyph coverage: Latin + Latin-Extended + Cyrillic + Vietnamese — so en, es,
+// fr, de, pt, it, nl, tr, pl, ru render in-brand. CJK (ja/ko/zh-Hans) and Arabic
+// (ar) have NO Quicksand glyphs and fall back per-glyph to the iOS/Android system
+// font (legible + clean; a Noto bundle is a future brand-polish option).
 export const fonts = {
   light: 'Quicksand_300Light',
   regular: 'Quicksand_400Regular',
@@ -107,18 +113,24 @@ export const fonts = {
   bold: 'Quicksand_700Bold',
 } as const;
 
+// Letter-spacing helper: RTL scripts (Arabic) are CURSIVE — positive OR negative
+// letter-spacing breaks glyph joining/shaping, so it must be 0 in RTL. I18nManager.isRTL
+// is already set by initI18n (a direction flip forces an app reload), so it is correct
+// at module-eval time on an RTL run. Latin/Cyrillic keep their designed tracking.
+const ls = (v: number): number => (I18nManager.isRTL ? 0 : v);
+
 // Type scale — mapped from Tailwind utilities used in the Stitch HTML
 //   text-5xl 48 / text-3xl 30 / text-xl 20 / text-sm 14 / text-xs 12 / text-[10px] 10
 export const typeScale = {
   // "My Fridge" hero — text-5xl font-bold tracking-tight
-  displayLarge: { fontFamily: fonts.bold, fontSize: 48, lineHeight: 52, letterSpacing: -1.0 },
+  displayLarge: { fontFamily: fonts.bold, fontSize: 48, lineHeight: 52, letterSpacing: ls(-1.0) },
   // "Perfectly Ripe" verdict — text-3xl/4xl font-bold
-  displayMedium: { fontFamily: fonts.bold, fontSize: 32, lineHeight: 36, letterSpacing: -0.6 },
+  displayMedium: { fontFamily: fonts.bold, fontSize: 32, lineHeight: 36, letterSpacing: ls(-0.6) },
 
   // Card title — text-xl font-bold tracking-tight
-  titleLarge: { fontFamily: fonts.bold, fontSize: 20, lineHeight: 26, letterSpacing: -0.3 },
+  titleLarge: { fontFamily: fonts.bold, fontSize: 20, lineHeight: 26, letterSpacing: ls(-0.3) },
   // Body inside info card — text-sm leading-relaxed font-medium
-  titleMedium: { fontFamily: fonts.semibold, fontSize: 16, lineHeight: 22, letterSpacing: -0.1 },
+  titleMedium: { fontFamily: fonts.semibold, fontSize: 16, lineHeight: 22, letterSpacing: ls(-0.1) },
   titleSmall: { fontFamily: fonts.semibold, fontSize: 14, lineHeight: 20, letterSpacing: 0 },
 
   // Body text
@@ -127,18 +139,18 @@ export const typeScale = {
   bodySmall: { fontFamily: fonts.regular, fontSize: 13, lineHeight: 19, letterSpacing: 0 },
 
   // Day count — text-5xl font-bold tracking-tighter
-  numberHuge: { fontFamily: fonts.bold, fontSize: 48, lineHeight: 50, letterSpacing: -2.0 },
-  numberLarge: { fontFamily: fonts.bold, fontSize: 32, lineHeight: 34, letterSpacing: -1.0 },
+  numberHuge: { fontFamily: fonts.bold, fontSize: 48, lineHeight: 50, letterSpacing: ls(-2.0) },
+  numberLarge: { fontFamily: fonts.bold, fontSize: 32, lineHeight: 34, letterSpacing: ls(-1.0) },
 
   // Tracked uppercase labels
   // FRESHCHECK wordmark — text-xs font-bold tracking-[0.3em] uppercase  → letterSpacing 12*0.3 = 3.6
-  wordmark: { fontFamily: fonts.bold, fontSize: 12, lineHeight: 14, letterSpacing: 3.0 },
+  wordmark: { fontFamily: fonts.bold, fontSize: 12, lineHeight: 14, letterSpacing: ls(3.0) },
   // VERDICT/INVENTORY STATUS/ANALYSIS — text-xs font-bold tracking-widest uppercase
-  label: { fontFamily: fonts.bold, fontSize: 12, lineHeight: 14, letterSpacing: 1.6 },
+  label: { fontFamily: fonts.bold, fontSize: 12, lineHeight: 14, letterSpacing: ls(1.6) },
   // Card category eyebrow — text-xs font-bold tracking-widest uppercase
-  labelSmall: { fontFamily: fonts.bold, fontSize: 11, lineHeight: 13, letterSpacing: 1.6 },
+  labelSmall: { fontFamily: fonts.bold, fontSize: 11, lineHeight: 13, letterSpacing: ls(1.6) },
   // "DAYS" "DAY" — text-[10px] font-bold tracking-widest uppercase
-  labelTiny: { fontFamily: fonts.bold, fontSize: 10, lineHeight: 12, letterSpacing: 1.4 },
+  labelTiny: { fontFamily: fonts.bold, fontSize: 10, lineHeight: 12, letterSpacing: ls(1.4) },
 } as const;
 
 // Soft UI shadow recipes — match the CSS box-shadow values exactly.

@@ -1,5 +1,6 @@
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
+import i18n from '@/src/i18n';
 import { loadNotificationSettings } from '@/src/state/notificationSettings';
 
 export type NotifItem = {
@@ -145,18 +146,22 @@ export async function refreshExpiryReminders(items: NotifItem[]): Promise<number
     for (const key of [...byDate.keys()].sort()) {
       if (scheduled >= WEEKLY_CAP) break;
       const bucket = byDate.get(key)!;
-      const lower = bucket.names.map((s) => s.toLowerCase());
+      const names = bucket.names;
       let title: string;
       let body: string;
-      if (lower.length === 1) {
-        title = `your ${lower[0]} expires soon`;
-        body = 'tap to see what’s worth cooking before it goes.';
-      } else if (lower.length === 2) {
-        title = `${lower[0]} & ${lower[1]} expire soon`;
-        body = 'tap to see what to cook before they’re wasted.';
+      if (names.length === 1) {
+        title = i18n.t('notifications.expiry.titleOne', { name: names[0] });
+        body = i18n.t('notifications.expiry.bodyOne');
+      } else if (names.length === 2) {
+        title = i18n.t('notifications.expiry.titleTwo', { a: names[0], b: names[1] });
+        body = i18n.t('notifications.expiry.bodyTwo');
       } else {
-        title = `${lower.length} items in your fridge expire soon`;
-        body = `${lower[0]}, ${lower[1]} +${lower.length - 2} more — tap to see what to cook.`;
+        title = i18n.t('notifications.expiry.titleMany', { count: names.length });
+        body = i18n.t('notifications.expiry.bodyMany', {
+          first: names[0],
+          second: names[1],
+          more: names.length - 2,
+        });
       }
       await N.scheduleNotificationAsync({
         content: {
