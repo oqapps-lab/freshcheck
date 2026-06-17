@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { View, Text, ScrollView, RefreshControl, ActivityIndicator, Pressable, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { currentLocale } from '@/src/i18n';
 import { showAlert } from '@/src/state/alertStore';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -101,8 +102,9 @@ export default function FridgeScreen() {
     // a fridge full of items added the same day doesn't shuffle on every
     // refresh — useFridge re-fetches on focus and Postgres doesn't
     // guarantee row order, which made the list flicker its layout.
+    const loc = currentLocale();
     const sorted = [...items].sort(
-      (a, b) => a.daysLeft - b.daysLeft || a.name.localeCompare(b.name),
+      (a, b) => a.daysLeft - b.daysLeft || a.name.localeCompare(b.name, loc),
     );
     if (filter === 'all') return sorted;
     return sorted.filter((i) => i.category === filter);
