@@ -29,8 +29,20 @@ const CORS = {
 
 const MODEL = 'gpt-5.5';
 
+// Maps the app locale → language name for the OpenAI "respond in" instruction.
+const LOCALE_NAMES: Record<string, string> = {
+  'es-ES': 'European Spanish', 'es-MX': 'Latin-American Spanish', 'fr-FR': 'French',
+  'de-DE': 'German', 'pt-BR': 'Brazilian Portuguese', 'it-IT': 'Italian', 'nl-NL': 'Dutch',
+  ja: 'Japanese', ko: 'Korean', 'zh-Hans': 'Simplified Chinese', ru: 'Russian',
+  tr: 'Turkish', pl: 'Polish', ar: 'Arabic',
+};
+
 type VerdictPayload = {
   product: string;
+  // English canonical name (lowercase) — populated only when the response is
+  // localized, used by applySafetyRails so the raw-poultry rule keeps working
+  // regardless of display language. Not persisted/returned to the client.
+  product_en?: string;
   verdict: 'fresh' | 'safe' | 'soon' | 'past';
   tone: 'fresh' | 'safe' | 'soon' | 'past' | 'neutral';
   confidence: number;
@@ -106,11 +118,13 @@ If you genuinely see no food, return { "items": [] }.`;
 // note. Mirrors the SAFETY RULES in the prompts; this is the hard guarantee.
 const RAW_RISK = /(chicken|poultry|turkey|duck|mince|ground)/i;
 const COOKED_MARKERS = /(cooked|grilled|roasted|fried|baked|rotisserie|smoked|soup|stew|salad|curry|nugget|deli|leftover)/i;
-function applySafetyRails<T extends Pick<VerdictPayload, 'product' | 'verdict' | 'tone' | 'confidence' | 'storage_note'>>(v: T): T {
+function applySafetyRails<T extends Pick<VerdictPayload, 'product' | 'product_en' | 'verdict' | 'tone' | 'confidence' | 'storage_note'>>(v: T): T {
   let verdict = v.verdict;
   if (v.confidence < 60 && verdict === 'fresh') verdict = 'safe';
   if (v.confidence < 40 && (verdict === 'fresh' || verdict === 'safe')) verdict = 'soon';
-  const name = v.product || '';
+  // Classify on the English name when present (display `product` may be localized),
+  // so the raw-poultry safety rule never silently bypasses in non-English locales.
+  const name = v.product_en || v.product || '';
   if (RAW_RISK.test(name) && !COOKED_MARKERS.test(name)) {
     if (verdict === 'fresh' || verdict === 'safe') verdict = 'soon';
     const note = v.storage_note ?? '';
@@ -132,12 +146,19 @@ serve(async (req) => {
     return json({ error: 'method not allowed' }, 405);
   }
 
-  const { image_path, multi, entitled } = await req.json().catch(() => ({}));
+  const { image_path, multi, entitled, locale } = await req.json().catch(() => ({}));
   if (!image_path || typeof image_path !== 'string') {
     return json({ error: 'image_path required' }, 400);
   }
   const isMulti = multi === true;
   const claimsEntitled = entitled === true;
+  // Locale-aware output: ask the model to write user-facing text (product,
+  // reasoning, storage_note, analysis labels) in the user's language, plus a
+  // product_en English name for the server-side safety classifier.
+  const langName = typeof locale === 'string' ? LOCALE_NAMES[locale] : undefined;
+  const langSuffix = langName
+    ? `\n\nLOCALIZATION: Write ALL user-facing text — "product", "reasoning", "storage_note", and every analysis[].label — in ${langName}. ADDITIONALLY include "product_en": the item's short name in lowercase ENGLISH (used internally for safety classification; required).`
+    : '';
 
   const authHeader = req.headers.get('authorization') ?? '';
   const token = authHeader.replace(/^Bearer\s+/i, '');
@@ -251,7 +272,7 @@ serve(async (req) => {
         reasoning_effort: 'low',
         max_completion_tokens: isMulti ? 4000 : 1200,
         messages: [
-          { role: 'system', content: isMulti ? MULTI_SYSTEM_PROMPT : SYSTEM_PROMPT },
+          { role: 'system', content: (isMulti ? MULTI_SYSTEM_PROMPT : SYSTEM_PROMPT) + langSuffix },
           {
             role: 'user',
             content: [
@@ -307,6 +328,7 @@ serve(async (req) => {
     }
     const items = (Array.isArray(mp.items) ? mp.items : []).map((it) => ({
       product: it.product || 'unknown',
+      product_en: it.product_en, // English name for safety classification (stripped below)
       verdict: it.verdict ?? 'safe',
       tone: (it.tone ?? it.verdict ?? 'safe') as VerdictPayload['tone'],
       confidence: Math.max(0, Math.min(100, Number(it.confidence) || 0)),
@@ -315,7 +337,7 @@ serve(async (req) => {
       days_left: it.days_left != null ? Math.max(0, Math.floor(it.days_left)) : null,
       total_days: it.total_days != null ? Math.max(1, Math.floor(it.total_days)) : null,
       analysis: Array.isArray(it.analysis) ? it.analysis : [],
-    })).map(applySafetyRails);
+    })).map(applySafetyRails).map(({ product_en: _drop, ...rest }) => rest);
     return json({ items, image_path });
   }
 
@@ -332,6 +354,7 @@ serve(async (req) => {
   if (parsed.total_days != null) parsed.total_days = Math.max(1, Math.floor(parsed.total_days));
   parsed.multiple_items = parsed.multiple_items === true;
   parsed = applySafetyRails(parsed);
+  delete parsed.product_en; // internal-only; never persisted or returned
 
   // Persist the verdict so the user has a scan history (and so /scan can
   // re-read by id if it's revisited later).

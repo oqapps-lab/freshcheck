@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { getSupabase } from '@/src/lib/supabase';
+import { currentLocale } from '@/src/i18n';
 import { recordRecipeAch } from '@/src/state/achievementsStore';
 import { track } from '@/src/lib/analytics';
 import {
@@ -108,7 +109,7 @@ export function useRecipes() {
         recipes?: Recipe[];
         error?: string;
         message?: string;
-      }>('generate-recipes', { body: { entitled: premium, item_ids: opts?.itemIds ?? [], custom: opts?.custom ?? null } });
+      }>('generate-recipes', { body: { entitled: premium, item_ids: opts?.itemIds ?? [], custom: opts?.custom ?? null, locale: currentLocale() } });
       if (myReq !== requestRef.current) return; // superseded by newer request
       if (fnErr) {
         // supabase-js does NOT parse the response body into `data` on a

@@ -115,6 +115,10 @@ serve(async (req) => {
   const body = await req.json().catch(() => ({}));
   const entitled: boolean = !!body?.entitled;
   const itemIds: string[] = Array.isArray(body?.item_ids) ? body.item_ids : [];
+  // Active app locale (BCP-47, e.g. 'fr-FR','ja','ar'). 'en'/missing = no
+  // translation. Recipes are generated + cached in English (canonical), then
+  // lazily translated per-locale (ids/images preserved). See localizeBatch().
+  const locale: string = typeof body?.locale === 'string' ? body.locale : 'en';
   const custom =
     body?.custom && Array.isArray(body.custom.ingredients) && body.custom.ingredients.length
       ? {
@@ -170,13 +174,16 @@ serve(async (req) => {
       .maybeSingle();
     if (hit?.recipes) {
       // Cache hit is free — don't consume the free-tier daily quota or call
-      // OpenAI. Touch updated_at (fire-and-forget) to track recency.
+      // OpenAI for generation. Touch updated_at (fire-and-forget) to track
+      // recency. Still localize (lazy per-locale translation cache) before
+      // returning so non-English users get translated text + reused images.
       void svc
         .from('recipes_cache')
         .update({ updated_at: new Date().toISOString() })
         .eq('signature', signature)
         .then(() => {});
-      return json({ recipes: hit.recipes, cached: true });
+      const localized = await localizeBatch(hit.recipes as Recipe[], locale, signature, svc, openaiKey);
+      return json({ recipes: localized, cached: true });
     }
   }
 
@@ -397,19 +404,125 @@ serve(async (req) => {
     return { ...r, id };
   });
 
-  // K8: store this fresh batch in the shared cache so the next user with the
-  // same ingredient set gets it free + instantly. Upsert (fire-and-forget).
+  // K8: store this fresh batch (English canonical) in the shared cache so the
+  // next user with the same ingredient set gets it free + instantly. Upsert
+  // (fire-and-forget).
   void svc
     .from('recipes_cache')
     .upsert({ signature, recipes: withIds, updated_at: new Date().toISOString() }, { onConflict: 'signature' })
     .then(() => {});
 
-  return json({ recipes: withIds });
+  // Localize before returning (translation cached per-locale; ids/images reused).
+  const localized = await localizeBatch(withIds, locale, signature, svc, openaiKey);
+  return json({ recipes: localized });
 });
+
+// ---------------------------------------------------------------------------
+// Lazy per-locale translation of a recipe batch. English is the canonical pivot
+// (stored in recipes_cache); translations are cached in recipes_cache_i18n by
+// (signature, locale). Each recipe's `id` (English slug) is PRESERVED so the
+// hero image cached per-slug in the recipe-images bucket is reused for every
+// language — translation costs one cheap text call per (batch, locale), once.
+// On any failure we fall back to the English batch (never block the user).
+const LOCALE_NAMES: Record<string, string> = {
+  'es-ES': 'European Spanish', 'es-MX': 'Latin-American Spanish', 'fr-FR': 'French',
+  'de-DE': 'German', 'pt-BR': 'Brazilian Portuguese', 'it-IT': 'Italian', 'nl-NL': 'Dutch',
+  ja: 'Japanese', ko: 'Korean', 'zh-Hans': 'Simplified Chinese', ru: 'Russian',
+  tr: 'Turkish', pl: 'Polish', ar: 'Arabic',
+};
+
+// deno-lint-ignore no-explicit-any
+async function localizeBatch(
+  english: Recipe[],
+  locale: string,
+  signature: string,
+  // deno-lint-ignore no-explicit-any
+  svc: any,
+  openaiKey: string,
+): Promise<Recipe[]> {
+  const langName = LOCALE_NAMES[locale];
+  // English (or unknown/unsupported) → return canonical as-is.
+  if (!langName || locale === 'en' || locale.startsWith('en')) return english;
+
+  try {
+    // 1) translation cache hit?
+    const { data: hit } = await svc
+      .from('recipes_cache_i18n')
+      .select('recipes')
+      .eq('signature', signature)
+      .eq('locale', locale)
+      .maybeSingle();
+    if (hit?.recipes) return hit.recipes as Recipe[];
+
+    // 2) translate the display fields only (ids/enums/numbers untouched).
+    const sys = `You are a culinary translator. Translate the user-facing TEXT of these recipes into ${langName}. Return VALID JSON only (no markdown), same shape: {"recipes":[...]}. For EACH recipe translate ONLY these fields: name, blurb, ingredients[].name, ingredients[].amount, steps[].text. Keep amounts natural for the locale (don't convert units unnecessarily; translate words like "ripe"/"chopped"). DO NOT change or translate: id, minutes, difficulty, uses_categories, steps[].order, steps[].icon, ingredients[].from_fridge, hero_image_prompt. Preserve the array order and the exact id of every recipe.`;
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', authorization: `Bearer ${openaiKey}` },
+      body: JSON.stringify({
+        model: MODEL,
+        response_format: { type: 'json_object' },
+        messages: [
+          { role: 'system', content: sys },
+          { role: 'user', content: JSON.stringify({ recipes: english }) },
+        ],
+      }),
+    });
+    if (!res.ok) return english;
+    const j = await res.json();
+    const raw = j?.choices?.[0]?.message?.content;
+    if (!raw) return english;
+    const parsed = JSON.parse(raw);
+    const tr: Recipe[] = Array.isArray(parsed) ? parsed : parsed?.recipes ?? [];
+    if (!Array.isArray(tr) || tr.length !== english.length) return english;
+
+    // 3) DEFENSIVE: force-preserve id + image-relevant + structural fields from
+    // the English source by index, so a model slip can never break image reuse
+    // or the render contract.
+    const merged: Recipe[] = english.map((en, i) => {
+      const t = tr[i] ?? ({} as Recipe);
+      return {
+        ...en,
+        name: typeof t.name === 'string' ? t.name : en.name,
+        blurb: typeof t.blurb === 'string' ? t.blurb : en.blurb,
+        ingredients: Array.isArray(t.ingredients) && t.ingredients.length === en.ingredients.length
+          ? en.ingredients.map((ing, k) => ({
+              ...ing,
+              name: typeof t.ingredients[k]?.name === 'string' ? t.ingredients[k].name : ing.name,
+              amount: typeof t.ingredients[k]?.amount === 'string' ? t.ingredients[k].amount : ing.amount,
+            }))
+          : en.ingredients,
+        steps: Array.isArray(t.steps) && t.steps.length === en.steps.length
+          ? en.steps.map((st, k) => ({
+              ...st,
+              text: typeof t.steps[k]?.text === 'string' ? t.steps[k].text : st.text,
+            }))
+          : en.steps,
+      };
+    });
+
+    // 4) cache (fire-and-forget) for every future user in this locale.
+    void svc
+      .from('recipes_cache_i18n')
+      .upsert(
+        { signature, locale, recipes: merged, updated_at: new Date().toISOString() },
+        { onConflict: 'signature,locale' },
+      )
+      .then(() => {});
+    return merged;
+  } catch {
+    return english; // never block the user on a translation hiccup
+  }
+}
 
 // Authoritative gibberish / non-food gate — mirrors constants/foods.ts.
 const AF_VOWELS = /[aeiouyàâäéèêëïîôùûüáíóúñ]/;
-const AF_ALLOWED = /^[a-zA-ZÀ-ÿ][a-zA-ZÀ-ÿ '.\-]*$/;
+// Full Latin range (incl. Latin-Extended) so Turkish/Polish/Vietnamese pass.
+const AF_ALLOWED = /^[a-zA-ZÀ-ɏ][a-zA-ZÀ-ɏ '.\-’]*$/;
+// Non-Latin script detection (Cyrillic/CJK/Hangul/Arabic/…): such input skips
+// the Latin gibberish heuristics (mirrors constants/foods.ts on the client).
+const AF_NON_LATIN = /[^ -ɏ‘-‟–—\s]/;
+const AF_ASCII_TOKEN = /^[a-z'.\-]+$/;
 const AF_KB_FWD = 'qwertyuiopasdfghjklzxcvbnm';
 const AF_KB_REV = 'mnbvcxzlkjhgfdsapoiuytrewq';
 const AF_HINTS = new Set([
@@ -426,10 +539,14 @@ function isLikelyFood(raw: string): { ok: boolean; reason?: string } {
   const trimmed = raw.trim();
   const n = trimmed.toLowerCase();
   if (n.length < 2 || n.length > 40) return { ok: false, reason: 'length' };
+  // Non-Latin scripts: the ASCII-Latin heuristics don't apply — accept (the LLM
+  // step is the semantic backstop for genuine non-food input).
+  if (AF_NON_LATIN.test(trimmed)) return { ok: true };
   if (!AF_ALLOWED.test(trimmed)) return { ok: false, reason: 'chars' };
   const tokens = n.split(/\s+/).filter(Boolean);
   for (const t of tokens) if (AF_HINTS.has(t)) return { ok: true };
   for (const t of tokens) {
+    if (!AF_ASCII_TOKEN.test(t)) continue; // accented/extended Latin exempt
     if (t.length >= 3 && !AF_VOWELS.test(t)) return { ok: false };
     if (afRun(t) >= 6) return { ok: false };
     if (t.length >= 5 && (AF_KB_FWD.includes(t) || AF_KB_REV.includes(t))) return { ok: false };

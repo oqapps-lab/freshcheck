@@ -153,7 +153,7 @@ export async function scanImage(
 ): Promise<LastScan> {
   const { imagePath, imageUri } = await compressAndUpload(supabase, userId, sourceUri);
   const { data, error: fnErr } = await withRetry(
-    () => supabase.functions.invoke('scan-image', { body: { image_path: imagePath, entitled } }),
+    () => supabase.functions.invoke('scan-image', { body: { image_path: imagePath, entitled, locale: i18n.language } }),
     INVOKE_TIMEOUT_MS,
   );
   if (fnErr) throw new Error(await fnErrorMessage(fnErr));
@@ -173,7 +173,7 @@ export async function scanMultiImage(
 ): Promise<LastScan[]> {
   const { imagePath, imageUri } = await compressAndUpload(supabase, userId, sourceUri);
   const { data, error: fnErr } = await withRetry(
-    () => supabase.functions.invoke('scan-image', { body: { image_path: imagePath, multi: true, entitled } }),
+    () => supabase.functions.invoke('scan-image', { body: { image_path: imagePath, multi: true, entitled, locale: i18n.language } }),
     INVOKE_TIMEOUT_MS,
   );
   if (fnErr) throw new Error(await fnErrorMessage(fnErr));
