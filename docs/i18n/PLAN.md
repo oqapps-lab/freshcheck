@@ -68,9 +68,21 @@ in `src/i18n/index.ts`, provider + await-ready in `app/_layout.tsx`.
   onboarding/home/profile/profile-bottom (full mirroring incl tab bar + toggles); ja/zh CJK; ru Cyrillic.
   All overflow watch-list items fit (paywall trial CTA, fridge scan CTA, warn-me-before pills, localized
   numbers). Shots: /Users/evgenij/fc_qa/shots/.
-- W6: builds done. Localized device screenshots captured (onboarding+home ×15 + de/ar deep). Full 7-screen
-  App Store set per locale is now PRODUCIBLE via idb (scan-result/recipe-detail need real scan/recipe data)
-  — pending user go-ahead; user composites final store images in his template + the ready LOCALIZED-CAPTIONS.md.
+- W6: builds done. Localized device screenshots captured (onboarding+home ×15 + de/ar deep +
+  my-fridge/picker/recipe-builder/recipes en). Fridge seeded for anon uid 9eb9e0ea via Mgmt API.
+- ⚠️ OPEN BUG (W4 dynamic recipe translation): UI CHROME localizes everywhere, but AI RECIPE CONTENT
+  (name/blurb/ingredients/steps) shows ENGLISH under non-en UI. Confirmed: `recipes_cache_i18n` is EMPTY
+  after a de generate (cache HIT on recipes_cache → localizeBatch should translate+cache, but didn't).
+  Image-reuse design works (canonical en cached, hero images reused). The translation EXECUTION in the
+  deployed generate-recipes edge fn is the suspect — needs: (1) confirm deployed fn has localizeBatch,
+  (2) check the in-fn OpenAI translation call (MODEL gpt-5.5, response_format json_object) isn't throwing
+  (try/catch falls back to english silently), (3) verify client sends locale (it should — build ⊇ 85b1810).
+  Test directly: call generate-recipes with anon JWT + locale=de + same item set → expect recipes_cache_i18n
+  row. Scans (other dynamic content) untested. IMPORTANT: don't ship recipe/scan screenshots in non-en
+  locales until this is fixed (they'd show English content).
+- INFRA: Mac /tmp is periodically CLEANED — it wiped /tmp/sbfull (supabase CLI) + /tmp/idbc (idb_companion).
+  Re-fetch from VPS when needed (idb-companion.universal.tar.gz from facebook/idb v1.1.8; supabase CLI tar).
+  Keep them in a non-/tmp dir (e.g. ~/.local) to survive.
 - DEPLOY NOTE: Mac↔api.supabase.com was timing out; ran Mgmt API + `supabase functions deploy`
   from the VPS (CLI at /tmp/sbfull/supabase, needs supabase-go sibling) using the mounted .env.
 - OPTIONAL not-yet-done: in-app language picker in profile (infra ready: setLocale + LOCALE_LABELS).
