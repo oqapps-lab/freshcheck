@@ -57,12 +57,20 @@ in `src/i18n/index.ts`, provider + await-ready in `app/_layout.tsx`.
   /Users/evgenij/fc_qa/cap.py; shots in /Users/evgenij/fc_qa/shots/. VERDICT: PASS — RTL(ar) fully
   mirrored incl tab bar; CJK(ja/zh/ko) clean via system fallback (no tofu); ru Cyrillic ✓; de/fr long
   text no overflow; localized numbers ($2 913 ru/ar, 2.913 $ de). No layout bugs found.
-- BLOCKED (deeper-screen interactive QA + 7-screen App Store shots): needs sim TAP automation, which is
-  dead on this Mac under Xcode 26.3 — WDA "times out waiting to be ready" (both mobilecli builds);
-  idb-companion won't install (no Xcode-26.3 CLT/bottle); simctl can't tap; `simctl openurl` always
-  shows the scheme-confirm dialog (needs a tap). Onboarding+home are the only WDA-free-reachable routes.
-  OPTIONS for the rest: (a) user taps through sim while I capture; (b) install Xcode 26.3 CLT → idb;
-  (c) accept static+2-screen visual verification. App is fully localized + verified to high confidence.
+- TAP AUTOMATION UNBLOCKED: WDA/mobilecli dead under Xcode 26.3 AND idb-companion won't compile (no CLT),
+  BUT the PREBUILT `idb-companion.universal.tar.gz` (facebook/idb v1.1.8 release) works — fetched via VPS,
+  pushed to Mac (`scp -P 2222 … evgenij@localhost`), run `idb_companion --udid <U> --grpc-port 10882`,
+  client `~/Library/Python/3.9/bin/idb` → `idb ui tap`/`describe-all` (taps via CoreSimulator, no WDA).
+  Driver: `/Users/evgenij/fc_qa/qadrv.py`. (RTL note: switching ar↔LTR needs a DOUBLE relaunch to clear
+  I18nManager.forceRTL — matches the picker's restart prompt; tab a11y label is localized so nav by coords.)
+- W5 DEEP QA DONE — VERDICT: PASS, no product layout bugs. Covered: onboarding+home all 15 locales;
+  de(longest LTR) home/profile/paywall/profile-bottom/fridge-empty/recipes-empty; ar(RTL)
+  onboarding/home/profile/profile-bottom (full mirroring incl tab bar + toggles); ja/zh CJK; ru Cyrillic.
+  All overflow watch-list items fit (paywall trial CTA, fridge scan CTA, warn-me-before pills, localized
+  numbers). Shots: /Users/evgenij/fc_qa/shots/.
+- W6: builds done. Localized device screenshots captured (onboarding+home ×15 + de/ar deep). Full 7-screen
+  App Store set per locale is now PRODUCIBLE via idb (scan-result/recipe-detail need real scan/recipe data)
+  — pending user go-ahead; user composites final store images in his template + the ready LOCALIZED-CAPTIONS.md.
 - DEPLOY NOTE: Mac↔api.supabase.com was timing out; ran Mgmt API + `supabase functions deploy`
   from the VPS (CLI at /tmp/sbfull/supabase, needs supabase-go sibling) using the mounted .env.
 - OPTIONAL not-yet-done: in-app language picker in profile (infra ready: setLocale + LOCALE_LABELS).
