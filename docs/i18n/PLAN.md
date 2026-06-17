@@ -94,6 +94,15 @@ in `src/i18n/index.ts`, provider + await-ready in `app/_layout.tsx`.
   from the VPS (CLI at /tmp/sbfull/supabase, needs supabase-go sibling) using the mounted .env.
 - OPTIONAL not-yet-done: in-app language picker in profile (infra ready: setLocale + LOCALE_LABELS).
 
+## W4 fix verified (final)
+generate-recipes + scan-image re-deployed with base-language fallback (`langOf()`): client sends the
+i18next-normalized base code (`de`, not `de-DE`) — now `de`/`de-DE`/`de-AT` all → German. Verified via
+direct API call: `locale='de'` → "Hähnchenbrust-Spinat-Pfanne", id preserved, recipes_cache_i18n populated.
+Commits 45a7078 (stale-deploy fix) + 976f371 (base-fallback). To capture localized recipe/scan screenshots,
+CLEAR the persisted recipeStore (`freshcheck_recipes_v1`) then generate fresh in that locale (idb nav coords
+shift between empty/populated recipes-tab states — re-dump AX each time). idb durable at ~/.local/idbc;
+supabase CLI Linux binary runs on VPS (/tmp/sbtool, re-extract from /tmp/supabase_cli.tar.gz if /tmp cleaned).
+
 ## Catalog namespaces (en.json structure)
 common, errors, onboarding, personalize, building, yourPlan, paywall, att, auth,
 home, fridge, recipes, recipeDetail, recipeBuilder, scan, scanResult, scanBatch,
