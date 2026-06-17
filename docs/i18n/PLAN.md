@@ -36,8 +36,17 @@ in `src/i18n/index.ts`, provider + await-ready in `app/_layout.tsx`.
 - [ ] **W5 #306** per-locale sim QA (ui-qa) — overflow/RTL/glyphs/plurals
 - [ ] **W6 #307** build + localized App Store screenshots (original goal)
 
-## Current state
-W0 in progress — deps installing on Mac (bg br8jc97k6). Scaffolding i18n next.
+## Current state (2026-06-17)
+- W0 DONE a0600b88 · W1 DONE (660 strings, en.json 25 ns / 647 keys) · W2 DONE (14 locales,
+  validated) · W3 DONE 7e35775+170f70d+W3c (foods/fridge/tokens-RTL/formatDate/notifications +
+  delta-translate + app.json 15 ios-locales) · W4 DONE 85b1810 (recipes lazy translate+cache,
+  scans in-locale; MIGRATION applied + BOTH edge fns DEPLOYED to fxggqnlicjuvzfqzbqfm).
+- Validator /home/claude/fc_validate.py → ALL GOOD (647/647 keys, 19 plurals, placeholders ok).
+- W5 (sim QA) + W6 (build + screenshots) NEXT — needs a NATIVE build (expo-localization is native;
+  Expo Go can't load it). Use eas.json `development-simulator` profile on a dedicated FreshCheck sim.
+- DEPLOY NOTE: Mac↔api.supabase.com was timing out; ran Mgmt API + `supabase functions deploy`
+  from the VPS (CLI at /tmp/sbfull/supabase, needs supabase-go sibling) using the mounted .env.
+- OPTIONAL not-yet-done: in-app language picker in profile (infra ready: setLocale + LOCALE_LABELS).
 
 ## Catalog namespaces (en.json structure)
 common, errors, onboarding, personalize, building, yourPlan, paywall, att, auth,
