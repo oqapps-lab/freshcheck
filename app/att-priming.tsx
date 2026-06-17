@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { SoftSurface } from '@/components/ui/SoftSurface';
@@ -23,6 +24,7 @@ import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 // (Guideline 5.1.2(i)); the CTA is neutral ('Continue') and leads to the real
 // system dialog, which the user can still decline with no penalty.
 export default function AttPrimingScreen() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const [busy, setBusy] = useState(false);
@@ -54,25 +56,22 @@ export default function AttPrimingScreen() {
         </SoftSurface>
 
         <Text style={[typeScale.displayMedium, styles.headline]}>
-          {family ? 'Make FreshCheck better for families' : 'Make FreshCheck better for you'}
+          {family ? t('att.headlineFamily') : t('att.headlineYou')}
         </Text>
         <Text style={[typeScale.bodyLarge, styles.body]}>
-          {family
-            ? 'With your permission, we measure which features actually help parents like you — so we can keep improving the parts that matter.'
-            : 'With your permission, we measure which features actually help people like you — so we can keep improving the parts that matter.'}
+          {family ? t('att.bodyFamily') : t('att.bodyYou')}
         </Text>
         <Text style={[typeScale.bodyLarge, styles.body]}>
-          We never sell your personal data, and your scans always stay private.
+          {t('att.privacy')}
         </Text>
       </View>
 
       <View style={[styles.bottom, { paddingBottom: insets.bottom + spacing.xl }]}>
         <Text style={[typeScale.bodySmall, styles.micro]}>
-          On the next screen you can Allow or decline. FreshCheck works fully
-          either way, and you can change this anytime in Settings.
+          {t('att.micro')}
         </Text>
         <PrimaryPillCTA
-          label="Continue"
+          label={t('att.continue')}
           onPress={onContinue}
           iconLeft={<Sparkle size={20} color={colors.amber} strokeWidth={2} />}
         />

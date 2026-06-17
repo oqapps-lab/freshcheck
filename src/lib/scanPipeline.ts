@@ -2,6 +2,7 @@ import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import { File } from 'expo-file-system';
 import { decode } from 'base64-arraybuffer';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import i18n from '@/src/i18n';
 import type { LastScan } from '@/src/state/lastScan';
 
 /**
@@ -24,12 +25,14 @@ import type { LastScan } from '@/src/state/lastScan';
 const UPLOAD_TIMEOUT_MS = 25_000;
 const INVOKE_TIMEOUT_MS = 45_000;
 
-const TIMEOUT_MSG = 'This is taking longer than usual — please try again.';
-const UNREACHABLE_MSG = 'Couldn’t reach the scanner. Check your connection and try again.';
+// Localized at call time (i18n is initialized before any scan runs). Resolved
+// lazily so module load never races i18n init.
+const timeoutMsg = () => i18n.t('scan.timeout');
+const unreachableMsg = () => i18n.t('scan.unreachable');
 
 function withTimeout<T>(p: PromiseLike<T>, ms: number): Promise<T> {
   return new Promise<T>((resolve, reject) => {
-    const id = setTimeout(() => reject(new Error(TIMEOUT_MSG)), ms);
+    const id = setTimeout(() => reject(new Error(timeoutMsg())), ms);
     Promise.resolve(p).then(
       (v) => { clearTimeout(id); resolve(v); },
       (e) => { clearTimeout(id); reject(e); },
@@ -76,8 +79,9 @@ async function fnErrorMessage(err: unknown): Promise<string> {
     /* body not JSON / already consumed — fall through */
   }
   const msg = String((err as { message?: string })?.message ?? '');
-  if (isRetryable(err) || msg === TIMEOUT_MSG) return msg === TIMEOUT_MSG ? TIMEOUT_MSG : UNREACHABLE_MSG;
-  return msg || 'Scan failed';
+  const timeout = timeoutMsg();
+  if (isRetryable(err) || msg === timeout) return msg === timeout ? timeout : unreachableMsg();
+  return msg || i18n.t('scan.failed');
 }
 
 // Compress (≤1024px, strips EXIF) + upload to the `scans` bucket. Returns
@@ -110,7 +114,7 @@ async function compressAndUpload(
     UPLOAD_TIMEOUT_MS,
   );
   if (upErr) {
-    throw new Error(isRetryable(upErr) ? UNREACHABLE_MSG : `upload: ${(upErr as { message?: string }).message ?? 'failed'}`);
+    throw new Error(isRetryable(upErr) ? unreachableMsg() : `upload: ${(upErr as { message?: string }).message ?? 'failed'}`);
   }
   return { imagePath, imageUri: resized.uri };
 }
@@ -153,7 +157,7 @@ export async function scanImage(
     INVOKE_TIMEOUT_MS,
   );
   if (fnErr) throw new Error(await fnErrorMessage(fnErr));
-  if (!data || data.error) throw new Error((data?.message as string) ?? (data?.error as string) ?? 'scan failed');
+  if (!data || data.error) throw new Error((data?.message as string) ?? (data?.error as string) ?? i18n.t('scan.failed'));
   return toLastScan(data, imagePath, imageUri);
 }
 
@@ -173,7 +177,7 @@ export async function scanMultiImage(
     INVOKE_TIMEOUT_MS,
   );
   if (fnErr) throw new Error(await fnErrorMessage(fnErr));
-  if (!data || data.error) throw new Error((data?.message as string) ?? (data?.error as string) ?? 'scan failed');
+  if (!data || data.error) throw new Error((data?.message as string) ?? (data?.error as string) ?? i18n.t('scan.failed'));
   const items = Array.isArray(data.items) ? (data.items as Record<string, unknown>[]) : [];
   return items.map((it) => toLastScan(it, imagePath, imageUri));
 }

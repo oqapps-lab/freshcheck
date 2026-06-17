@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { track } from '@/src/lib/analytics';
 import { View, Text, ScrollView, TextInput, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -20,63 +21,65 @@ import {
 } from '@/src/state/onboardingStore';
 import { colors, fonts, layout, spacing, typeScale } from '@/constants/tokens';
 
-type Opt = { value: string; label: string; emoji: string };
+// `qKey`, `subKey`, and `labelKey` hold i18n keys (resolved with t() at render).
+type Opt = { value: string; labelKey: string; emoji: string };
 type Q =
-  | { key: 'household' | 'worry' | 'forgotten' | 'dinner'; kind: 'single'; q: string; sub?: string; options: Opt[] }
-  | { key: 'topWaste'; kind: 'multi'; q: string; sub?: string; options: Opt[] }
-  | { key: 'name'; kind: 'text'; q: string; sub?: string };
+  | { key: 'household' | 'worry' | 'forgotten' | 'dinner'; kind: 'single'; qKey: string; subKey?: string; options: Opt[] }
+  | { key: 'topWaste'; kind: 'multi'; qKey: string; subKey?: string; options: Opt[] }
+  | { key: 'name'; kind: 'text'; qKey: string; subKey?: string };
 
 const QUESTIONS: Q[] = [
   {
-    key: 'household', kind: 'single', q: 'Who are you keeping fresh for?',
+    key: 'household', kind: 'single', qKey: 'personalize.questions.household.q',
     options: [
-      { value: 'me', label: 'Just me', emoji: '🧑' },
-      { value: 'partner', label: 'Me and my partner', emoji: '👫' },
-      { value: 'family', label: 'A family with kids', emoji: '👨‍👩‍👧' },
-      { value: 'roommates', label: 'A roommate household', emoji: '🏠' },
+      { value: 'me', labelKey: 'personalize.questions.household.options.me', emoji: '🧑' },
+      { value: 'partner', labelKey: 'personalize.questions.household.options.partner', emoji: '👫' },
+      { value: 'family', labelKey: 'personalize.questions.household.options.family', emoji: '👨‍👩‍👧' },
+      { value: 'roommates', labelKey: 'personalize.questions.household.options.roommates', emoji: '🏠' },
     ],
   },
   {
-    key: 'topWaste', kind: 'multi', q: 'What do you throw out most?', sub: 'Pick all that apply',
+    key: 'topWaste', kind: 'multi', qKey: 'personalize.questions.topWaste.q', subKey: 'personalize.questions.topWaste.sub',
     options: [
-      { value: 'leftovers', label: 'Leftovers', emoji: '🍱' },
-      { value: 'produce', label: 'Produce and greens', emoji: '🥬' },
-      { value: 'dairy', label: 'Dairy', emoji: '🥛' },
-      { value: 'meat', label: 'Meat and poultry', emoji: '🍗' },
-      { value: 'bread', label: 'Bread', emoji: '🍞' },
+      { value: 'leftovers', labelKey: 'personalize.questions.topWaste.options.leftovers', emoji: '🍱' },
+      { value: 'produce', labelKey: 'personalize.questions.topWaste.options.produce', emoji: '🥬' },
+      { value: 'dairy', labelKey: 'personalize.questions.topWaste.options.dairy', emoji: '🥛' },
+      { value: 'meat', labelKey: 'personalize.questions.topWaste.options.meat', emoji: '🍗' },
+      { value: 'bread', labelKey: 'personalize.questions.topWaste.options.bread', emoji: '🍞' },
     ],
   },
   {
-    key: 'worry', kind: 'single', q: 'What worries you most about food?',
+    key: 'worry', kind: 'single', qKey: 'personalize.questions.worry.q',
     options: [
-      { value: 'sick', label: 'Making someone sick', emoji: '🤢' },
-      { value: 'money', label: 'Wasting money', emoji: '💸' },
-      { value: 'spoiled', label: 'Eating something spoiled', emoji: '🦠' },
-      { value: 'unsure', label: 'Not knowing what is still good', emoji: '🤔' },
+      { value: 'sick', labelKey: 'personalize.questions.worry.options.sick', emoji: '🤢' },
+      { value: 'money', labelKey: 'personalize.questions.worry.options.money', emoji: '💸' },
+      { value: 'spoiled', labelKey: 'personalize.questions.worry.options.spoiled', emoji: '🦠' },
+      { value: 'unsure', labelKey: 'personalize.questions.worry.options.unsure', emoji: '🤔' },
     ],
   },
   {
-    key: 'forgotten', kind: 'single', q: 'How often do leftovers get forgotten in the back of the fridge?',
+    key: 'forgotten', kind: 'single', qKey: 'personalize.questions.forgotten.q',
     options: [
-      { value: 'constantly', label: 'Constantly', emoji: '😅' },
-      { value: 'weekly', label: 'Most weeks', emoji: '📅' },
-      { value: 'sometimes', label: 'Sometimes', emoji: '🤷' },
-      { value: 'rarely', label: 'Rarely', emoji: '✨' },
+      { value: 'constantly', labelKey: 'personalize.questions.forgotten.options.constantly', emoji: '😅' },
+      { value: 'weekly', labelKey: 'personalize.questions.forgotten.options.weekly', emoji: '📅' },
+      { value: 'sometimes', labelKey: 'personalize.questions.forgotten.options.sometimes', emoji: '🤷' },
+      { value: 'rarely', labelKey: 'personalize.questions.forgotten.options.rarely', emoji: '✨' },
     ],
   },
   {
-    key: 'dinner', kind: 'single', q: 'How do you decide dinner?',
+    key: 'dinner', kind: 'single', qKey: 'personalize.questions.dinner.q',
     options: [
-      { value: 'plan', label: 'I plan ahead', emoji: '📝' },
-      { value: 'wing', label: 'I wing it', emoji: '🎲' },
-      { value: 'expiring', label: 'Whatever is about to expire', emoji: '⏳' },
-      { value: 'order', label: 'I order out a lot', emoji: '🛵' },
+      { value: 'plan', labelKey: 'personalize.questions.dinner.options.plan', emoji: '📝' },
+      { value: 'wing', labelKey: 'personalize.questions.dinner.options.wing', emoji: '🎲' },
+      { value: 'expiring', labelKey: 'personalize.questions.dinner.options.expiring', emoji: '⏳' },
+      { value: 'order', labelKey: 'personalize.questions.dinner.options.order', emoji: '🛵' },
     ],
   },
-  { key: 'name', kind: 'text', q: 'Last thing — what should we call you?', sub: 'Optional' },
+  { key: 'name', kind: 'text', qKey: 'personalize.questions.name.q', subKey: 'personalize.questions.name.sub' },
 ];
 
 export default function PersonalizeScreen() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const answers = useOnboardingAnswers();
@@ -126,10 +129,10 @@ export default function PersonalizeScreen() {
   return (
     <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
-        <IconButton accessibilityLabel="back" onPress={onBack}>
+        <IconButton accessibilityLabel={t('personalize.a11y.back')} onPress={onBack}>
           <Back size={22} color={colors.ink} strokeWidth={2} />
         </IconButton>
-        <Text style={[typeScale.label, styles.progress]}>{`Step ${step + 1} of ${QUESTIONS.length}`}</Text>
+        <Text style={[typeScale.label, styles.progress]}>{t('personalize.progress', { current: step + 1, total: QUESTIONS.length })}</Text>
         <View style={styles.headerSpacer} />
       </View>
 
@@ -141,16 +144,16 @@ export default function PersonalizeScreen() {
         contentContainerStyle={[styles.scroll, { paddingBottom: insets.bottom + 120 }]}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={[typeScale.displayMedium, styles.q]}>{q.q}</Text>
-        {q.sub ? <Text style={[typeScale.bodyLarge, styles.qSub]}>{q.sub}</Text> : null}
+        <Text style={[typeScale.displayMedium, styles.q]}>{t(q.qKey)}</Text>
+        {q.subKey ? <Text style={[typeScale.bodyLarge, styles.qSub]}>{t(q.subKey)}</Text> : null}
 
         {q.kind === 'text' ? (
           <SoftInset radius="lg" strength="thin" style={styles.inputBox} contentStyle={styles.inputWrap}>
             <TextInput
               style={styles.input}
               value={answers.name ?? ''}
-              onChangeText={(t) => setAnswer('name', t)}
-              placeholder="Your name"
+              onChangeText={(value) => setAnswer('name', value)}
+              placeholder={t('personalize.namePlaceholder')}
               placeholderTextColor={colors.inkMuted}
               autoFocus
               returnKeyType="done"
@@ -163,7 +166,7 @@ export default function PersonalizeScreen() {
             {q.options.map((o) => (
               <OptionCard
                 key={o.value}
-                label={o.label}
+                label={t(o.labelKey)}
                 emoji={o.emoji}
                 selected={isSelected(o.value)}
                 onPress={() => select(o.value)}
@@ -175,7 +178,7 @@ export default function PersonalizeScreen() {
 
       <View style={[styles.cta, { paddingBottom: insets.bottom + spacing.lg }]}>
         <View style={{ opacity: answered ? 1 : 0.4 }}>
-          <PrimaryPillCTA label={isLast ? 'Build my plan' : 'Continue'} onPress={answered ? onContinue : () => {}} />
+          <PrimaryPillCTA label={isLast ? t('personalize.cta.buildPlan') : t('personalize.cta.continue')} onPress={answered ? onContinue : () => {}} />
         </View>
       </View>
     </KeyboardAvoidingView>

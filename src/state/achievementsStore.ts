@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from "react";
 import { safeStorage } from "@/src/lib/safeStorage";
+import i18n from "@/src/i18n";
 
 // Local achievements / titles earned by using the app. Pure local state
 // (safeStorage), works for anonymous guests. Drives the home badges row +
@@ -10,16 +11,33 @@ const KEY = "freshcheck_achievements_v1";
 export type Metric = "scans" | "recipes" | "fridgeAdds" | "streak";
 export type Achievement = { id: string; title: string; desc: string; emoji: string; metric: Metric; threshold: number };
 
-export const ACHIEVEMENTS: Achievement[] = [
-  { id: "first_scan", title: "First Look", desc: "Scan your first food", emoji: "🔍", metric: "scans", threshold: 1 },
-  { id: "scan_10", title: "Fresh Eyes", desc: "Scan 10 foods", emoji: "👀", metric: "scans", threshold: 10 },
-  { id: "scan_50", title: "Safety Pro", desc: "Scan 50 foods", emoji: "🛡️", metric: "scans", threshold: 50 },
-  { id: "first_recipe", title: "Home Cook", desc: "Generate your first recipe", emoji: "🍳", metric: "recipes", threshold: 1 },
-  { id: "recipe_10", title: "Recipe Explorer", desc: "Generate 10 recipes", emoji: "📖", metric: "recipes", threshold: 10 },
-  { id: "fridge_5", title: "Stocked Up", desc: "Track 5 fridge items", emoji: "🧊", metric: "fridgeAdds", threshold: 5 },
-  { id: "streak_3", title: "Getting Fresh", desc: "Use FreshCheck 3 days", emoji: "🔥", metric: "streak", threshold: 3 },
-  { id: "streak_7", title: "Waste Warrior", desc: "Use FreshCheck 7 days", emoji: "⚔️", metric: "streak", threshold: 7 },
+// Static (non-localized) shape of each achievement. Title/desc are resolved
+// lazily from i18n at access time (via getters below) so the home badges row
+// and the unlock toast stay localized and react to a runtime language switch.
+type AchievementDef = { id: string; emoji: string; metric: Metric; threshold: number };
+
+const ACHIEVEMENT_DEFS: AchievementDef[] = [
+  { id: "first_scan", emoji: "🔍", metric: "scans", threshold: 1 },
+  { id: "scan_10", emoji: "👀", metric: "scans", threshold: 10 },
+  { id: "scan_50", emoji: "🛡️", metric: "scans", threshold: 50 },
+  { id: "first_recipe", emoji: "🍳", metric: "recipes", threshold: 1 },
+  { id: "recipe_10", emoji: "📖", metric: "recipes", threshold: 10 },
+  { id: "fridge_5", emoji: "🧊", metric: "fridgeAdds", threshold: 5 },
+  { id: "streak_3", emoji: "🔥", metric: "streak", threshold: 3 },
+  { id: "streak_7", emoji: "⚔️", metric: "streak", threshold: 7 },
 ];
+
+// Wrap each def so `title`/`desc` resolve via i18n at read time. Consumers keep
+// using `a.title` / `pending.title` unchanged; the strings are localized lazily.
+export const ACHIEVEMENTS: Achievement[] = ACHIEVEMENT_DEFS.map((d) => ({
+  ...d,
+  get title() {
+    return i18n.t(`common.achievements.items.${d.id}.title`);
+  },
+  get desc() {
+    return i18n.t(`common.achievements.items.${d.id}.desc`);
+  },
+}));
 
 type Stats = { scans: number; recipes: number; fridgeAdds: number; days: string[] };
 let stats: Stats = { scans: 0, recipes: 0, fridgeAdds: 0, days: [] };

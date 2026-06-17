@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SoftSurface } from './SoftSurface';
@@ -28,6 +29,7 @@ type Props = {
  *   </nav>
  */
 export function TabBarPill({ tabs, activeKey, onChange }: Props) {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   return (
     <View
@@ -52,7 +54,7 @@ export function TabBarPill({ tabs, activeKey, onChange }: Props) {
                   onChange(tab.key);
                 }}
                 accessibilityRole="button"
-                accessibilityLabel={`${tab.label} tab`}
+                accessibilityLabel={t('common.tabA11y', { label: tab.label })}
                 accessibilityState={{ selected: active }}
                 style={active ? styles.tabActive : styles.tabInactive}
               >

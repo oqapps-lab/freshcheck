@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react';
+import i18n from '@/src/i18n';
 import { safeStorage } from '@/src/lib/safeStorage';
 
 /**
@@ -75,20 +76,21 @@ export async function hydrateOnboardingAnswers(): Promise<void> {
 }
 
 // --- Persona derivation: mirror the user's situation back on plan + paywall ---
+// Lowercase waste labels for mid-sentence interpolation (see personaHeadline).
 const WASTE_LABEL: Record<WasteItem, string> = {
-  leftovers: 'leftovers',
-  produce: 'produce & greens',
-  dairy: 'dairy',
-  meat: 'meat & poultry',
-  bread: 'bread',
+  leftovers: 'plan.wasteLower.leftovers',
+  produce: 'plan.wasteLower.produce',
+  dairy: 'plan.wasteLower.dairy',
+  meat: 'plan.wasteLower.meat',
+  bread: 'plan.wasteLower.bread',
 };
 
 export function householdWord(a: OnboardingAnswers): string {
   switch (a.household) {
-    case 'family': return 'busy family cook';
-    case 'partner': return 'two-person kitchen';
-    case 'roommates': return 'shared household';
-    default: return 'solo cook';
+    case 'family': return i18n.t('plan.household.family');
+    case 'partner': return i18n.t('plan.household.partner');
+    case 'roommates': return i18n.t('plan.household.roommates');
+    default: return i18n.t('plan.household.solo');
   }
 }
 
@@ -96,15 +98,15 @@ export function personaHeadline(a: OnboardingAnswers): string {
   const top = a.topWaste[0];
   const who = householdWord(a);
   return top
-    ? `You're a ${who} — we'll keep an eye on your ${WASTE_LABEL[top]}.`
-    : `You're a ${who} — FreshCheck will watch your fridge for you.`;
+    ? i18n.t('plan.headlineWithWaste', { who, waste: i18n.t(WASTE_LABEL[top]) })
+    : i18n.t('plan.headlineFallback', { who });
 }
 
 export function fearPromise(a: OnboardingAnswers): string {
   switch (a.worry) {
-    case 'sick': return "We'll flag anything risky before it reaches your table.";
-    case 'money': return 'Stop throwing away ~$56 of groceries every week.';
-    case 'spoiled': return "You'll always know what's still good — at a glance.";
-    default: return "Never guess whether something is still safe to eat.";
+    case 'sick': return i18n.t('plan.fear.sick');
+    case 'money': return i18n.t('plan.fear.money');
+    case 'spoiled': return i18n.t('plan.fear.spoiled');
+    default: return i18n.t('plan.fear.default');
   }
 }

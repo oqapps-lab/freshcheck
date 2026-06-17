@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   View,
   Text,
@@ -24,45 +25,46 @@ import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 type Slide = {
   id: string;
   image: ImageSourcePropType;
-  title: string;
-  body: string;
-  proof?: string;
+  titleKey: string;
+  bodyKey: string;
+  proofKey?: string;
 };
 
 // Reordered to lead with the emotional waste/money hook, then the core scan
 // fear, then the system, recipes, and the new barcode teaser. Each slide pairs
 // an appetizing food photo with the value prop.
+// Copy lives in i18n (onboarding.slides.*) — keyed here, resolved with t() at render.
 const SLIDES: Slide[] = [
   {
     id: 'waste',
     image: require('../assets/onboarding/waste-saved.webp'),
-    title: 'Never throw away good food again',
-    body: 'FreshCheck tells you what is still good and nudges you before it spoils.',
-    proof: 'Families save about $2,913 a year',
+    titleKey: 'onboarding.slides.waste.title',
+    bodyKey: 'onboarding.slides.waste.body',
+    proofKey: 'onboarding.slides.waste.proof',
   },
   {
     id: 'scan',
     image: require('../assets/onboarding/scan-verdict.webp'),
-    title: 'Is this still safe? Know in 3 seconds',
-    body: 'Point your camera at any food for an instant verdict — safe, caution, or toss it.',
+    titleKey: 'onboarding.slides.scan.title',
+    bodyKey: 'onboarding.slides.scan.body',
   },
   {
     id: 'timeline',
     image: require('../assets/onboarding/fridge-timeline.webp'),
-    title: 'Your whole fridge, on a freshness timeline',
-    body: 'Everything you own, sorted by what expires next. Nothing forgotten in the back again.',
+    titleKey: 'onboarding.slides.timeline.title',
+    bodyKey: 'onboarding.slides.timeline.body',
   },
   {
     id: 'recipes',
     image: require('../assets/onboarding/plated-dish.webp'),
-    title: 'Tonight\'s dinner, from what you already have',
-    body: 'One tap turns your soon-to-expire ingredients into 3 fresh AI recipes.',
+    titleKey: 'onboarding.slides.recipes.title',
+    bodyKey: 'onboarding.slides.recipes.body',
   },
   {
     id: 'barcode',
     image: require('../assets/onboarding/pantry-barcode.webp'),
-    title: 'Scan the barcode, we track the rest',
-    body: 'Add packaged groceries in a second — just scan the barcode and we log it.',
+    titleKey: 'onboarding.slides.barcode.title',
+    bodyKey: 'onboarding.slides.barcode.body',
   },
 ];
 
@@ -72,6 +74,7 @@ async function markOnboardingDone() {
 }
 
 export default function OnboardingScreen() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const scrollRef = useRef<ScrollView>(null);
@@ -155,13 +158,13 @@ export default function OnboardingScreen() {
                 </SoftSurface>
               </Animated.View>
               <Animated.View style={[styles.copy, { opacity, transform: [{ translateY }] }]}>
-                {slide.proof ? (
+                {slide.proofKey ? (
                   <View style={styles.proofPill}>
-                    <Text style={[typeScale.labelSmall, styles.proofText]}>{slide.proof}</Text>
+                    <Text style={[typeScale.labelSmall, styles.proofText]}>{t(slide.proofKey)}</Text>
                   </View>
                 ) : null}
-                <Text style={[typeScale.displayMedium, styles.title]}>{slide.title}</Text>
-                <Text style={[typeScale.bodyLarge, styles.body]}>{slide.body}</Text>
+                <Text style={[typeScale.displayMedium, styles.title]}>{t(slide.titleKey)}</Text>
+                <Text style={[typeScale.bodyLarge, styles.body]}>{t(slide.bodyKey)}</Text>
               </Animated.View>
             </View>
           );
@@ -175,7 +178,7 @@ export default function OnboardingScreen() {
       </View>
 
       <View style={[styles.cta, { paddingBottom: insets.bottom + spacing.lg }]}>
-        <PrimaryPillCTA label={isLast ? 'Get started' : 'Continue'} onPress={goNext} />
+        <PrimaryPillCTA label={isLast ? t('onboarding.cta.getStarted') : t('onboarding.cta.continue')} onPress={goNext} />
       </View>
     </View>
   );

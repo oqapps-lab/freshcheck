@@ -1,16 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Animated, Easing, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { SoftSurface } from './SoftSurface';
 import { Bowl } from './Glyphs';
 import { colors, spacing, typeScale } from '@/constants/tokens';
 
-const MESSAGES = [
-  'Reading what’s in your fridge…',
-  'Prioritising what expires soonest…',
-  'Pairing flavours that work…',
-  'Writing the steps…',
-  'Plating up 3 ideas…',
-];
+// Stable keys for the cycling status lines; copy lives in i18n (loaders.cooking.*).
+const MESSAGE_KEYS = [
+  'loaders.cooking.readingFridge',
+  'loaders.cooking.prioritising',
+  'loaders.cooking.pairingFlavours',
+  'loaders.cooking.writingSteps',
+  'loaders.cooking.platingUp',
+] as const;
 
 /**
  * On-brand "cooking" loader for recipe generation. A gently bobbing bowl with
@@ -19,6 +21,7 @@ const MESSAGES = [
  * Pure Animated (no Lottie dep).
  */
 export function RecipeCookingLoader({ itemCount }: { itemCount: number }) {
+  const { t } = useTranslation();
   const bob = useRef(new Animated.Value(0)).current;
   const spin = useRef(new Animated.Value(0)).current;
   const steam = [useRef(new Animated.Value(0)).current, useRef(new Animated.Value(0)).current, useRef(new Animated.Value(0)).current];
@@ -50,7 +53,7 @@ export function RecipeCookingLoader({ itemCount }: { itemCount: number }) {
     bobLoop.start();
     spinLoop.start();
     steamLoops.forEach((l) => l.start());
-    const msgInt = setInterval(() => setMsg((m) => (m + 1) % MESSAGES.length), 2400);
+    const msgInt = setInterval(() => setMsg((m) => (m + 1) % MESSAGE_KEYS.length), 2400);
     return () => {
       bobLoop.stop();
       spinLoop.stop();
@@ -89,8 +92,8 @@ export function RecipeCookingLoader({ itemCount }: { itemCount: number }) {
         </Animated.View>
       </View>
 
-      <Text style={[typeScale.titleMedium, styles.msg]}>{MESSAGES[msg]}</Text>
-      <Text style={[typeScale.bodySmall, styles.eta]}>About {etaSec} seconds · photos load right after</Text>
+      <Text style={[typeScale.titleMedium, styles.msg]}>{t(MESSAGE_KEYS[msg])}</Text>
+      <Text style={[typeScale.bodySmall, styles.eta]}>{t('loaders.cooking.eta', { seconds: etaSec })}</Text>
     </View>
   );
 }

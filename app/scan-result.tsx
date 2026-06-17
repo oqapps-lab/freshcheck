@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, Pressable, StyleSheet, Image } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import i18n from '@/src/i18n';
 import { showAlert } from '@/src/state/alertStore';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -16,11 +18,13 @@ import { useLastScan, setLastScan } from '@/src/state/lastScan';
 import { useFridge } from '@/src/hooks/useFridge';
 import { track } from '@/src/lib/analytics';
 
-const VERDICT_TITLE: Record<string, string> = {
-  fresh: 'Looks fresh',
-  safe: 'Safe to eat',
-  soon: 'Use it soon',
-  past: 'Past its prime',
+// Verdict id → i18n key suffix under scanResult.verdict. Resolved with t() at
+// the render site (a hook can't run at module scope).
+const VERDICT_TITLE_KEY: Record<string, string> = {
+  fresh: 'fresh',
+  safe: 'safe',
+  soon: 'soon',
+  past: 'past',
 };
 
 const VERDICT_COLOR: Record<string, string> = {
@@ -31,10 +35,9 @@ const VERDICT_COLOR: Record<string, string> = {
 };
 
 function expiryText(daysLeft: number | null): string {
-  if (daysLeft == null) return 'Unknown shelf life';
-  if (daysLeft <= 0) return 'Use today';
-  if (daysLeft === 1) return '1 day left';
-  return `${daysLeft} days left`;
+  if (daysLeft == null) return i18n.t('scanResult.expiry.unknown');
+  if (daysLeft <= 0) return i18n.t('scanResult.expiry.useToday');
+  return i18n.t('scanResult.expiry.daysLeft', { count: daysLeft });
 }
 
 function capitalize(s: string): string {
@@ -47,6 +50,7 @@ function capitalize(s: string): string {
  * transient result screen so the tab bar can host Recipes instead.
  */
 export default function ScanResultScreen() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const last = useLastScan();
@@ -73,9 +77,9 @@ export default function ScanResultScreen() {
   const onAddToFridge = async () => {
     if (!last) return;
     if (!signedIn) {
-      showAlert('Sign in required', 'Sign in to save items to your fridge.', [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Sign in', onPress: () => router.push('/auth') },
+      showAlert(t('scanResult.alerts.signInRequiredTitle'), t('scanResult.alerts.signInRequiredMessage'), [
+        { text: t('scanResult.alerts.cancel'), style: 'cancel' },
+        { text: t('scanResult.alerts.signIn'), onPress: () => router.push('/auth') },
       ]);
       return;
     }
@@ -94,7 +98,7 @@ export default function ScanResultScreen() {
       source_scan_id: last.scanId,
     });
     if (result?.error) {
-      showAlert('Could not save', result.error);
+      showAlert(t('scanResult.alerts.couldNotSaveTitle'), result.error);
       return;
     }
     track('fridge_item_added', { source: 'scan' });
@@ -110,22 +114,22 @@ export default function ScanResultScreen() {
     return (
       <View style={styles.root}>
         <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-          <IconButton accessibilityLabel="back" onPress={dismiss}>
+          <IconButton accessibilityLabel={t('scanResult.a11y.back')} onPress={dismiss}>
             <Back size={20} color={colors.ink} />
           </IconButton>
-          <Text style={[typeScale.label, styles.headerLabel]}>ANALYSIS</Text>
+          <Text style={[typeScale.label, styles.headerLabel]}>{t('scanResult.header.analysis')}</Text>
           <View style={styles.headerSpacer} />
         </View>
         <View style={styles.emptyWrap}>
           <SoftSurface variant="cushion" radius="full" innerStyle={styles.emptyIcon}>
             <Sparkle size={40} color={colors.amber} strokeWidth={1.6} />
           </SoftSurface>
-          <Text style={[typeScale.displayMedium, styles.emptyTitle]}>No scan yet</Text>
+          <Text style={[typeScale.displayMedium, styles.emptyTitle]}>{t('scanResult.empty.title')}</Text>
           <Text style={[typeScale.body, styles.emptySub]}>
-            Scan an item to see its freshness verdict here.
+            {t('scanResult.empty.subtitle')}
           </Text>
           <View style={styles.emptyCta}>
-            <PrimaryPillCTA label="Scan now" onPress={() => router.replace('/capture')} />
+            <PrimaryPillCTA label={t('scanResult.empty.scanNow')} onPress={() => router.replace('/capture')} />
           </View>
         </View>
       </View>
@@ -133,15 +137,16 @@ export default function ScanResultScreen() {
   }
 
   const titleColor = VERDICT_COLOR[last.verdict] ?? colors.primary;
-  const verdictTitle = VERDICT_TITLE[last.verdict] ?? capitalize(last.verdict);
+  const verdictKey = VERDICT_TITLE_KEY[last.verdict];
+  const verdictTitle = verdictKey ? t(`scanResult.verdict.${verdictKey}`) : capitalize(last.verdict);
 
   return (
     <View style={styles.root}>
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-        <IconButton accessibilityLabel="back" onPress={dismiss}>
+        <IconButton accessibilityLabel={t('scanResult.a11y.back')} onPress={dismiss}>
           <Back size={20} color={colors.ink} />
         </IconButton>
-        <Text style={[typeScale.label, styles.headerLabel]}>ANALYSIS</Text>
+        <Text style={[typeScale.label, styles.headerLabel]}>{t('scanResult.header.analysis')}</Text>
         <View style={styles.headerSpacer} />
       </View>
 
@@ -166,11 +171,11 @@ export default function ScanResultScreen() {
 
         {/* Verdict card — RECESSED */}
         <SoftInset radius="xxl" strength="thick" style={styles.verdictWrap} contentStyle={styles.verdictInner}>
-          <Text style={[typeScale.label, styles.verdictLabel]} numberOfLines={2}>{capitalize(last.product || 'item').toUpperCase()}</Text>
+          <Text style={[typeScale.label, styles.verdictLabel]} numberOfLines={2}>{capitalize(last.product || t('scanResult.labels.itemFallback')).toUpperCase()}</Text>
           <Text style={[typeScale.displayMedium, styles.verdictTitle, { color: titleColor }]}>{verdictTitle}</Text>
           <View style={styles.softnessRow}>
             <SoftnessChip
-              label={`${Math.round(last.confidence)}% confidence`}
+              label={t('scanResult.labels.confidence', { percent: Math.round(last.confidence) })}
               iconColor={titleColor}
             />
           </View>
@@ -183,18 +188,18 @@ export default function ScanResultScreen() {
         {/* Safety disclaimer — permanent, on every verdict. Visual AI cannot
             detect pathogens; this is the documented legal/safety prerequisite. */}
         <Text style={[typeScale.bodySmall, styles.safetyNote]}>
-          Visual estimate only — does not detect bacteria. When in doubt, throw it out.
+          {t('scanResult.safetyNote')}
         </Text>
 
         {/* Refine — the verdict assumes a just-bought item; let the user say
             how long they've had it so days-left is realistic (E1). */}
         {totalShelf != null ? (
           <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.refineCard}>
-            <Text style={[typeScale.label, styles.refineLabel]}>HOW LONG HAVE YOU HAD IT?</Text>
+            <Text style={[typeScale.label, styles.refineLabel]}>{t('scanResult.refine.label')}</Text>
             <View style={styles.refineRow}>
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel="fewer days"
+                accessibilityLabel={t('scanResult.a11y.fewerDays')}
                 onPress={() => {
                   Haptics.selectionAsync().catch(() => {});
                   setDaysAgo((d) => Math.max(0, d - 1));
@@ -205,17 +210,17 @@ export default function ScanResultScreen() {
               </Pressable>
               <View style={styles.refineMid}>
                 <Text style={[typeScale.titleMedium, styles.refineValue]}>
-                  {daysAgo === 0 ? 'Just got it' : daysAgo === 1 ? '1 day ago' : `${daysAgo} days ago`}
+                  {daysAgo === 0 ? t('scanResult.refine.justGotIt') : t('scanResult.refine.daysAgo', { count: daysAgo })}
                 </Text>
                 {daysAgo > 0 && totalShelf != null ? (
                   <Text style={[typeScale.bodySmall, styles.refineHint]}>
-                    {`Adjusted to ${Math.max(0, totalShelf - daysAgo)} day${Math.max(0, totalShelf - daysAgo) === 1 ? '' : 's'} left`}
+                    {t('scanResult.refine.adjusted', { count: Math.max(0, totalShelf - daysAgo) })}
                   </Text>
                 ) : null}
               </View>
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel="more days"
+                accessibilityLabel={t('scanResult.a11y.moreDays')}
                 onPress={() => {
                   Haptics.selectionAsync().catch(() => {});
                   // Cap at the shelf life but never below ~30, so a short-shelf
@@ -255,11 +260,11 @@ export default function ScanResultScreen() {
         {/* CTAs */}
         <View style={styles.ctaBlock}>
           <PrimaryPillCTA
-            label="Add to Fridge"
+            label={t('scanResult.cta.addToFridge')}
             onPress={onAddToFridge}
             iconLeft={<ShoppingBasket size={22} color={colors.amber} strokeWidth={2.2} />}
           />
-          <GhostText label="Scan Another" onPress={onScanAnother} />
+          <GhostText label={t('scanResult.cta.scanAnother')} onPress={onScanAnother} />
         </View>
       </ScrollView>
     </View>

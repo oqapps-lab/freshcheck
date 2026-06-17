@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   useWindowDimensions,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { showAlert } from '@/src/state/alertStore';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -48,6 +49,7 @@ import { recordError } from '@/src/lib/firebase';
  * neumorphic frame stays consistent with the rest of the app.
  */
 export default function CaptureScreen() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { width: winW, height: winH } = useWindowDimensions();
@@ -61,7 +63,7 @@ export default function CaptureScreen() {
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView>(null);
   const [analyzing, setAnalyzing] = useState(false);
-  const [analyzingMsg, setAnalyzingMsg] = useState('Analyzing…');
+  const [analyzingMsg, setAnalyzingMsg] = useState(() => t('capture.status.analyzing'));
   // Elapsed seconds during a scan — shown on the overlay so a slow (10s+) model
   // call never reads as a silent hang ("how long do I wait?").
   const [elapsedS, setElapsedS] = useState(0);
@@ -97,14 +99,14 @@ export default function CaptureScreen() {
         return;
       }
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-      setAnalyzingMsg('Looking up product…');
+      setAnalyzingMsg(t('capture.status.lookingUpProduct'));
       setAnalyzing(true);
       const product = await lookupBarcode(data);
       track('barcode_scanned', { found: !!product });
       if (!product) {
         setAnalyzing(false);
-        setAnalyzingMsg('Analyzing…');
-        showAlert('Product not found', 'No match for that barcode yet. Try the photo scan instead.');
+        setAnalyzingMsg(t('capture.status.analyzing'));
+        showAlert(t('capture.alerts.productNotFound.title'), t('capture.alerts.productNotFound.message'));
         return;
       }
       const res = await addItem({
@@ -112,15 +114,18 @@ export default function CaptureScreen() {
         tone: 'fresh',
         days_left: product.shelfLifeDays,
         total_days: product.shelfLifeDays,
-        expiry_text: `~${product.shelfLifeDays} days left`,
+        expiry_text: t('capture.barcode.expiryText', { days: product.shelfLifeDays }),
       });
       setAnalyzing(false);
-      setAnalyzingMsg('Analyzing…');
-      if (res?.error) { showAlert('Could not add', res.error); return; }
+      setAnalyzingMsg(t('capture.status.analyzing'));
+      if (res?.error) { showAlert(t('capture.alerts.couldNotAdd.title'), res.error); return; }
       track('fridge_item_added', { source: 'barcode' });
-      showAlert('Added to your fridge', `${product.name} · keep ~${product.shelfLifeDays} days`);
+      showAlert(
+        t('capture.alerts.addedToFridge.title'),
+        t('capture.alerts.addedToFridge.message', { product: product.name, days: product.shelfLifeDays }),
+      );
     },
-    [analyzing, premium, premiumResolved, addItem, router],
+    [analyzing, premium, premiumResolved, addItem, router, t],
   );
   // New mode / new visit → allow the paywall to be offered again.
   useEffect(() => {
@@ -168,22 +173,22 @@ export default function CaptureScreen() {
   // supabase+user. (Batch scanning uses the same scanImage() via scanQueue.)
   const runScanPipeline = async (sourceUri: string) => {
     if (!supabase || !user) return;
-    if (!canScan(gatePremium)) { track('rate_limit_hit', { feature: 'scan' }); setAnalyzing(false); setAnalyzingMsg('Analyzing…'); router.push('/paywall?src=scan-limit' as never); return; }
+    if (!canScan(gatePremium)) { track('rate_limit_hit', { feature: 'scan' }); setAnalyzing(false); setAnalyzingMsg(t('capture.status.analyzing')); router.push('/paywall?src=scan-limit' as never); return; }
     try {
-      setAnalyzingMsg('Reading freshness…');
+      setAnalyzingMsg(t('capture.status.readingFreshness'));
       const result = await scanImage(supabase, user.id, sourceUri, premium);
       // People often photograph the WHOLE TABLE in Single mode. If the model
       // flagged several distinct items, offer to enumerate them all instead of
       // returning one verdict / "unknown". Works for camera AND gallery photos.
       if (result.multipleItems) {
         setAnalyzing(false);
-        setAnalyzingMsg('Analyzing…');
+        setAnalyzingMsg(t('capture.status.analyzing'));
         showAlert(
-          'Several items detected',
-          'This photo looks like it has multiple foods. Scan them all, or just the main one?',
+          t('capture.alerts.severalItems.title'),
+          t('capture.alerts.severalItems.message'),
           [
             {
-              text: 'Just the main one',
+              text: t('capture.alerts.severalItems.justMain'),
               style: 'cancel',
               onPress: () => {
                 setLastScan(result);
@@ -192,7 +197,7 @@ export default function CaptureScreen() {
                 router.replace('/scan-result' as never);
               },
             },
-            { text: 'Scan all items', onPress: () => { void runTableScanFromUri(sourceUri); } },
+            { text: t('capture.alerts.severalItems.scanAll'), onPress: () => { void runTableScanFromUri(sourceUri); } },
           ],
         );
         return;
@@ -208,11 +213,11 @@ export default function CaptureScreen() {
       router.replace('/scan-result' as never);
     } catch (err) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
-      const msg = err instanceof Error ? err.message : 'Scan failed.';
+      const msg = err instanceof Error ? err.message : t('capture.errors.scanFailed');
       recordError(err, 'scan-pipeline');
-      showAlert('Scan failed', msg);
+      showAlert(t('capture.alerts.scanFailed.title'), msg);
       setAnalyzing(false);
-      setAnalyzingMsg('Analyzing…');
+      setAnalyzingMsg(t('capture.status.analyzing'));
     }
   };
 
@@ -227,27 +232,27 @@ export default function CaptureScreen() {
     if (!supabase || !user) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
     setAnalyzing(true);
-    setAnalyzingMsg('Finding items…');
+    setAnalyzingMsg(t('capture.status.findingItems'));
     try {
       const results = await scanMultiImage(supabase, user.id, sourceUri, premium);
       if (results.length === 0) {
-        showAlert('No food found', 'Couldn’t spot any food items in that photo. Try getting closer or better light.');
+        showAlert(t('capture.alerts.noFoodFound.title'), t('capture.alerts.noFoodFound.message'));
         setAnalyzing(false);
-        setAnalyzingMsg('Analyzing…');
+        setAnalyzingMsg(t('capture.status.analyzing'));
         return;
       }
       addScannedItems(results);
       track('whole_table_scanned', { item_count: results.length });
       recordScan(); recordScanAch();
       setAnalyzing(false);
-      setAnalyzingMsg('Analyzing…');
+      setAnalyzingMsg(t('capture.status.analyzing'));
       goToBatch();
     } catch (err) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
       recordError(err, 'scan-table');
-      showAlert('Scan failed', err instanceof Error ? err.message : 'Could not scan.');
+      showAlert(t('capture.alerts.scanFailed.title'), err instanceof Error ? err.message : t('capture.errors.couldNotScan'));
       setAnalyzing(false);
-      setAnalyzingMsg('Analyzing…');
+      setAnalyzingMsg(t('capture.status.analyzing'));
     }
   };
 
@@ -255,7 +260,7 @@ export default function CaptureScreen() {
   const onScanTable = async () => {
     if (analyzing) return;
     if (!cameraRef.current || !supabase || !user) {
-      showAlert('Preparing scan', 'Please wait a moment and try again.');
+      showAlert(t('capture.alerts.preparingScan.title'), t('capture.alerts.preparingScan.message'));
       return;
     }
     if (!canScan(gatePremium)) { track('rate_limit_hit', { feature: 'scan' }); router.push('/paywall?src=scan-limit' as never); return; }
@@ -266,9 +271,9 @@ export default function CaptureScreen() {
     } catch (err) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
       recordError(err, 'scan-table');
-      showAlert('Scan failed', err instanceof Error ? err.message : 'Could not scan.');
+      showAlert(t('capture.alerts.scanFailed.title'), err instanceof Error ? err.message : t('capture.errors.couldNotScan'));
       setAnalyzing(false);
-      setAnalyzingMsg('Analyzing…');
+      setAnalyzingMsg(t('capture.status.analyzing'));
     }
   };
 
@@ -279,7 +284,7 @@ export default function CaptureScreen() {
   const onBatchShutter = async () => {
     if (capturing) return;
     if (!cameraRef.current || !supabase || !user) {
-      showAlert('Preparing scan', 'Please wait a moment and try again.');
+      showAlert(t('capture.alerts.preparingScan.title'), t('capture.alerts.preparingScan.message'));
       return;
     }
     if (!canScan(gatePremium)) { track('rate_limit_hit', { feature: 'scan' }); router.push('/paywall?src=scan-limit' as never); return; }
@@ -303,7 +308,7 @@ export default function CaptureScreen() {
     if (batchMode) return onBatchShutter();
     if (analyzing) return;
     if (!cameraRef.current || !supabase || !user) {
-      showAlert('Preparing scan', 'Please wait a moment and try again.');
+      showAlert(t('capture.alerts.preparingScan.title'), t('capture.alerts.preparingScan.message'));
       return;
     }
     // Gate BEFORE taking the photo (matches batch/table modes) — no point
@@ -311,7 +316,7 @@ export default function CaptureScreen() {
     if (!canScan(gatePremium)) { track('rate_limit_hit', { feature: 'scan' }); router.push('/paywall?src=scan-limit' as never); return; }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
     setAnalyzing(true);
-    setAnalyzingMsg('Capturing…');
+    setAnalyzingMsg(t('capture.status.capturing'));
     try {
       // exif:false — strip GPS/time/camera before the public scans bucket.
       const shot = await cameraRef.current.takePictureAsync({ quality: 0.85, skipProcessing: false, exif: false });
@@ -320,9 +325,9 @@ export default function CaptureScreen() {
     } catch (err) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
       recordError(err, 'scan-capture');
-      showAlert('Scan failed', err instanceof Error ? err.message : 'Could not capture photo.');
+      showAlert(t('capture.alerts.scanFailed.title'), err instanceof Error ? err.message : t('capture.errors.couldNotCapture'));
       setAnalyzing(false);
-      setAnalyzingMsg('Analyzing…');
+      setAnalyzingMsg(t('capture.status.analyzing'));
     }
   };
 
@@ -332,20 +337,20 @@ export default function CaptureScreen() {
   const onPickFromGallery = async () => {
     if (analyzing) return;
     if (!supabase || !user) {
-      showAlert('Preparing scan', 'Please wait a moment and try again.');
+      showAlert(t('capture.alerts.preparingScan.title'), t('capture.alerts.preparingScan.message'));
       return;
     }
     Haptics.selectionAsync().catch(() => {});
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!perm.granted) {
       showAlert(
-        'Photo access needed',
+        t('capture.alerts.photoAccess.title'),
         perm.canAskAgain
-          ? 'Allow photo access to pick a food photo from your library.'
-          : 'Enable photo access in Settings, then come back.',
+          ? t('capture.alerts.photoAccess.messageCanAsk')
+          : t('capture.alerts.photoAccess.messageDenied'),
         perm.canAskAgain ? undefined : [
-          { text: 'Cancel', style: 'cancel' },
-          { text: 'Open Settings', onPress: () => Linking.openSettings() },
+          { text: t('capture.alerts.cancel'), style: 'cancel' },
+          { text: t('capture.cta.openSettings'), onPress: () => Linking.openSettings() },
         ],
       );
       return;
@@ -375,8 +380,8 @@ export default function CaptureScreen() {
       allowed.forEach(() => { recordScan(); recordScanAch(); });
       if (allowed.length < uris.length) {
         showAlert(
-          'Daily scan limit',
-          `Added ${allowed.length} of ${uris.length} photos — that's today's free scans. Upgrade to Pro for unlimited.`,
+          t('capture.alerts.dailyScanLimit.title'),
+          t('capture.alerts.dailyScanLimit.message', { added: allowed.length, total: uris.length }),
         );
       }
       void processQueue(supabase, user.id, premium);
@@ -386,7 +391,7 @@ export default function CaptureScreen() {
 
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
     setAnalyzing(true);
-    setAnalyzingMsg('Loading photo…');
+    setAnalyzingMsg(t('capture.status.loadingPhoto'));
     await runScanPipeline(result.assets[0].uri);
   };
 
@@ -406,8 +411,8 @@ export default function CaptureScreen() {
       return (
         <View style={styles.gateBody}>
           <Sparkle size={48} color={colors.amber} strokeWidth={1.6} />
-          <Text style={[typeScale.titleMedium, styles.gateTitle]}>Service unavailable</Text>
-          <Text style={[typeScale.bodySmall, styles.gateSub]}>Scanning is temporarily unavailable. Please try again in a moment.</Text>
+          <Text style={[typeScale.titleMedium, styles.gateTitle]}>{t('capture.gate.serviceUnavailable.title')}</Text>
+          <Text style={[typeScale.bodySmall, styles.gateSub]}>{t('capture.gate.serviceUnavailable.message')}</Text>
         </View>
       );
     }
@@ -416,7 +421,7 @@ export default function CaptureScreen() {
     if (!user) {
       return (
         <View style={styles.gateBody}>
-          <Text style={[typeScale.bodySmall, styles.gateSub]}>Preparing scan…</Text>
+          <Text style={[typeScale.bodySmall, styles.gateSub]}>{t('capture.status.preparingScan')}</Text>
         </View>
       );
     }
@@ -424,7 +429,7 @@ export default function CaptureScreen() {
     if (!permission) {
       return (
         <View style={styles.gateBody}>
-          <Text style={[typeScale.bodySmall, styles.gateSub]}>Loading camera…</Text>
+          <Text style={[typeScale.bodySmall, styles.gateSub]}>{t('capture.status.loadingCamera')}</Text>
         </View>
       );
     }
@@ -432,11 +437,11 @@ export default function CaptureScreen() {
       return (
         <View style={styles.gateBody}>
           <Sparkle size={48} color={colors.amber} strokeWidth={1.6} />
-          <Text style={[typeScale.titleMedium, styles.gateTitle]}>Camera off</Text>
+          <Text style={[typeScale.titleMedium, styles.gateTitle]}>{t('capture.gate.cameraOff.title')}</Text>
           <Text style={[typeScale.bodySmall, styles.gateSub]}>
             {permission.canAskAgain
-              ? 'FreshCheck needs camera access to scan food.'
-              : 'Enable camera access in Settings, then come back.'}
+              ? t('capture.gate.cameraOff.messageCanAsk')
+              : t('capture.gate.cameraOff.messageDenied')}
           </Text>
         </View>
       );
@@ -458,7 +463,7 @@ export default function CaptureScreen() {
             <Sparkle size={56} color={colors.amber} strokeWidth={1.6} />
             <Text style={[typeScale.titleMedium, styles.analyzingText]}>{analyzingMsg}</Text>
             <Text style={[typeScale.bodySmall, styles.analyzingSub]}>
-              {elapsedS >= 4 ? `Still working… ${elapsedS}s` : 'This can take a few seconds'}
+              {elapsedS >= 4 ? t('capture.analyzingSub.stillWorking', { seconds: elapsedS }) : t('capture.analyzingSub.default')}
             </Text>
           </View>
         ) : (
@@ -478,10 +483,10 @@ export default function CaptureScreen() {
   return (
     <View style={styles.root}>
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-        <IconButton accessibilityLabel="back" onPress={dismiss}>
+        <IconButton accessibilityLabel={t('capture.a11y.back')} onPress={dismiss}>
           <Back size={20} color={colors.ink} />
         </IconButton>
-        <Text style={[typeScale.wordmark, styles.eyebrow]}>SCAN</Text>
+        <Text style={[typeScale.wordmark, styles.eyebrow]}>{t('capture.header.scan')}</Text>
         <View style={styles.headerSpacer} />
       </View>
 
@@ -502,7 +507,7 @@ export default function CaptureScreen() {
           <SoftInset radius="full" strength="thin" contentStyle={styles.modeToggle}>
             {(['single', 'batch', 'barcode'] as const).map((m) => {
               const on = scanMode === m;
-              const label = m === 'single' ? 'SINGLE' : m === 'batch' ? 'BATCH' : 'BARCODE';
+              const label = m === 'single' ? t('capture.modes.single') : m === 'batch' ? t('capture.modes.batch') : t('capture.modes.barcode');
               return (
                 <Pressable
                   key={m}
@@ -533,10 +538,10 @@ export default function CaptureScreen() {
             ? ''
             : showShutter
               ? barcodeMode
-                ? 'POINT AT A BARCODE'
+                ? t('capture.hints.barcode')
                 : batchMode
-                  ? 'TAP TO ADD · SCANS RUN IN BACKGROUND'
-                  : 'POINT AT FOOD · TAP TO CAPTURE'
+                  ? t('capture.hints.batch')
+                  : t('capture.hints.single')
               : ''}
         </Text>
 
@@ -544,7 +549,7 @@ export default function CaptureScreen() {
             reads as a plan feature, not a surprise paywall. Infinity = Pro. */}
         {showShutter && !analyzing && !barcodeMode && freeScansLeft !== Infinity ? (
           <Text style={[typeScale.labelSmall, styles.scansLeft]}>
-            {`${freeScansLeft} FREE ${freeScansLeft === 1 ? 'SCAN' : 'SCANS'} LEFT TODAY`}
+            {t('capture.freeScansLeft', { count: freeScansLeft })}
           </Text>
         ) : null}
 
@@ -552,11 +557,11 @@ export default function CaptureScreen() {
         {showShutter && !analyzing && !barcodeMode && (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="scan the whole table"
+            accessibilityLabel={t('capture.a11y.scanWholeTable')}
             onPress={onScanTable}
             style={({ pressed }) => [styles.tableBtn, { opacity: pressed ? 0.7 : 1 }]}
           >
-            <Text style={[typeScale.labelSmall, styles.tableBtnText]}>📋  SCAN THE WHOLE TABLE</Text>
+            <Text style={[typeScale.labelSmall, styles.tableBtnText]}>{t('capture.cta.scanWholeTable')}</Text>
           </Pressable>
         )}
       </View>
@@ -570,7 +575,7 @@ export default function CaptureScreen() {
                   app's library shortcut). Runs the same scan pipeline. */}
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel="choose photo from library"
+                accessibilityLabel={t('capture.a11y.choosePhotoFromLibrary')}
                 accessibilityState={{ disabled: analyzing }}
                 onPress={onPickFromGallery}
                 disabled={analyzing}
@@ -583,7 +588,7 @@ export default function CaptureScreen() {
 
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel="capture"
+                accessibilityLabel={t('capture.a11y.capture')}
                 accessibilityState={{ disabled: analyzing }}
                 onPress={onShutter}
                 disabled={analyzing}
@@ -615,13 +620,13 @@ export default function CaptureScreen() {
             {batchMode && queue.length > 0 && (
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel={`review ${queue.length} scans`}
+                accessibilityLabel={t('capture.a11y.reviewScans', { count: queue.length })}
                 onPress={goToBatch}
                 style={({ pressed }) => [styles.reviewBtnWrap, { opacity: pressed ? 0.85 : 1 }]}
               >
                 <SoftSurface variant="pill" radius="full" innerStyle={styles.reviewBtnInner}>
                   <Text style={[typeScale.titleSmall, styles.reviewBtnText]}>
-                    {`Review ${queue.length} ${queue.length === 1 ? 'scan' : 'scans'}`}
+                    {t('capture.cta.reviewScans', { count: queue.length })}
                   </Text>
                   <Chevron size={18} color={colors.primary} />
                 </SoftSurface>
@@ -643,7 +648,7 @@ export default function CaptureScreen() {
         ) : showPermCta ? (
           <View style={styles.ctaWide}>
             <PrimaryPillCTA
-              label={permission?.canAskAgain ? 'Allow camera' : 'Open Settings'}
+              label={permission?.canAskAgain ? t('capture.cta.allowCamera') : t('capture.cta.openSettings')}
               onPress={async () => {
                 if (permission?.canAskAgain) {
                   await requestPermission();
@@ -654,14 +659,14 @@ export default function CaptureScreen() {
             />
             {/* Camera blocked? You can still scan a photo from the library. */}
             <View style={styles.galleryFallback}>
-              <GhostText label="Choose from library instead" onPress={onPickFromGallery} />
+              <GhostText label={t('capture.cta.chooseFromLibrary')} onPress={onPickFromGallery} />
             </View>
           </View>
         ) : (
           // Backend not configured (missing EXPO_PUBLIC_SUPABASE_URL etc.) —
           // give the user a recovery path instead of a dead-end card.
           <View style={styles.ctaWide}>
-            <PrimaryPillCTA label="Back" onPress={dismiss} />
+            <PrimaryPillCTA label={t('capture.cta.back')} onPress={dismiss} />
           </View>
         )}
       </View>

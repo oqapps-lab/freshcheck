@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { View, Text, ScrollView, RefreshControl, ActivityIndicator, Pressable, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { showAlert } from '@/src/state/alertStore';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -16,14 +17,17 @@ import { useFridge } from '@/src/hooks/useFridge';
 
 type FilterValue = 'all' | 'produce' | 'dairy' | 'poultry' | 'meat' | 'fish' | 'bakery' | 'pantry';
 
-const CATEGORY_LABEL: Record<Exclude<FilterValue, 'all'>, string> = {
-  produce: 'Produce',
-  dairy: 'Dairy',
-  poultry: 'Poultry',
-  meat: 'Meat',
-  fish: 'Fish',
-  bakery: 'Bakery',
-  pantry: 'Pantry',
+// Maps each category filter id → its i18n leaf key (resolved with t() at the
+// render site). The keys are stable filter ids and must NOT change; only the
+// visible labels are externalized.
+const CATEGORY_LABEL_KEY: Record<Exclude<FilterValue, 'all'>, string> = {
+  produce: 'fridge.categories.produce',
+  dairy: 'fridge.categories.dairy',
+  poultry: 'fridge.categories.poultry',
+  meat: 'fridge.categories.meat',
+  fish: 'fridge.categories.fish',
+  bakery: 'fridge.categories.bakery',
+  pantry: 'fridge.categories.pantry',
 };
 const CATEGORY_ORDER: Exclude<FilterValue, 'all'>[] = [
   'produce',
@@ -46,6 +50,7 @@ const CATEGORY_ORDER: Exclude<FilterValue, 'all'>[] = [
  *   <p text-xs tracked uppercase center>4 OF 10 PRODUCTS TRACKED</p>
  */
 export default function FridgeScreen() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { items, loading, error, refresh, removeItem } = useFridge();
@@ -57,19 +62,19 @@ export default function FridgeScreen() {
     async (id: string) => {
       const r = await removeItem(id);
       if (r?.error) {
-        showAlert('Could not remove', r.error);
+        showAlert(t('fridge.alerts.removeFailedTitle'), r.error);
       }
     },
-    [removeItem],
+    [removeItem, t],
   );
 
   // Surface refresh errors instead of swallowing them — silently showing
   // an empty fridge while a network/RLS error happened reads as data loss.
   useEffect(() => {
     if (error) {
-      showAlert('Could not load fridge', error);
+      showAlert(t('fridge.alerts.loadFailedTitle'), error);
     }
-  }, [error]);
+  }, [error, t]);
   const [filter, setFilter] = useState<FilterValue>('all');
   const [refreshing, setRefreshing] = useState(false);
 
@@ -86,10 +91,10 @@ export default function FridgeScreen() {
     const present = new Set(items.map((i) => i.category as FilterValue));
     const cats = CATEGORY_ORDER.filter((c) => present.has(c));
     return [
-      { value: 'all', label: 'All' },
-      ...cats.map((c) => ({ value: c, label: CATEGORY_LABEL[c] })),
+      { value: 'all', label: t('fridge.categories.all') },
+      ...cats.map((c) => ({ value: c, label: t(CATEGORY_LABEL_KEY[c]) })),
     ];
-  }, [items]);
+  }, [items, t]);
 
   const filtered = useMemo(() => {
     // Primary: daysLeft asc (about-to-spoil first). Secondary: name asc so
@@ -134,15 +139,15 @@ export default function FridgeScreen() {
       >
         {/* Hero */}
         <View style={styles.hero}>
-          <Text style={[typeScale.displayLarge, { color: colors.ink }]}>My Fridge</Text>
-          <Text style={[typeScale.label, styles.eyebrow]}>INVENTORY STATUS</Text>
+          <Text style={[typeScale.displayLarge, { color: colors.ink }]}>{t('fridge.title')}</Text>
+          <Text style={[typeScale.label, styles.eyebrow]}>{t('fridge.eyebrow')}</Text>
         </View>
 
         {/* Recipes shortcut — visible only when there's something to cook with */}
         {items.length > 0 && (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="View recipe suggestions"
+            accessibilityLabel={t('fridge.a11y.viewRecipes')}
             onPress={() => router.push('/(tabs)/recipes' as never)}
             style={styles.recipesCtaWrap}
           >
@@ -156,7 +161,7 @@ export default function FridgeScreen() {
                 <Nutrition size={20} color={colors.primary} />
               </SoftInset>
               <Text style={[typeScale.titleSmall, styles.recipesText]}>
-                Recipes from your fridge
+                {t('fridge.recipesLink')}
               </Text>
               <Chevron size={18} color={colors.inkMuted} />
             </SoftSurface>
@@ -204,13 +209,13 @@ export default function FridgeScreen() {
               <ShoppingBasket size={40} color={colors.primary} strokeWidth={1.6} />
             </View>
             <Text style={[typeScale.titleLarge, styles.emptyTitle]}>
-              Fridge is empty
+              {t('fridge.empty.title')}
             </Text>
             <Text style={[typeScale.body, styles.emptyBody]}>
-              Scan an item to start tracking what's in your fridge and when it'll go off.
+              {t('fridge.empty.body')}
             </Text>
             <PrimaryPillCTA
-              label="Scan first item"
+              label={t('fridge.empty.cta')}
               onPress={() => router.replace('/(tabs)')}
               iconLeft={
                 <BarcodeScanner size={22} color={colors.amber} strokeWidth={2.2} />
@@ -237,10 +242,10 @@ export default function FridgeScreen() {
                 without this label first-time users don't discover the
                 gesture). */}
             <Text style={[typeScale.label, styles.footer]}>
-              {`${filtered.length} OF ${items.length} PRODUCTS TRACKED`}
+              {t('fridge.footer.tracked', { shown: filtered.length, count: items.length })}
             </Text>
             <Text style={[typeScale.labelTiny, styles.footerHint]}>
-              SWIPE A CARD LEFT TO REMOVE IT
+              {t('fridge.footer.swipeHint')}
             </Text>
           </>
         )}

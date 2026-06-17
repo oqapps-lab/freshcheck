@@ -12,6 +12,7 @@ import {
 import { GestureHandlerRootView, Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, runOnJS } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
+import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { SoftSurface } from '@/components/ui/SoftSurface';
@@ -49,6 +50,7 @@ const DIFFICULTY_COLOR: Record<Recipe['difficulty'], string> = {
  * the user's recipes instead of resetting to the empty "Generate" state.
  */
 export default function RecipesTab() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { status, error, recipes, hydrated, refresh } = useRecipes();
@@ -156,7 +158,7 @@ export default function RecipesTab() {
   return (
     <View style={styles.root}>
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-        <Text style={[typeScale.wordmark, styles.eyebrow]}>RECIPES</Text>
+        <Text style={[typeScale.wordmark, styles.eyebrow]}>{t('recipes.eyebrow')}</Text>
       </View>
 
       <ScrollView
@@ -170,10 +172,10 @@ export default function RecipesTab() {
           {ready ? (
             <>
               <Text style={[typeScale.displayLarge, { color: colors.ink }]}>
-                {fridgeEmpty ? 'Starter recipes' : 'Cook with what you have'}
+                {fridgeEmpty ? t('recipes.hero.titleEmpty') : t('recipes.hero.title')}
               </Text>
               <Text style={[typeScale.label, styles.eyebrow2]}>
-                {fridgeEmpty ? 'SCAN ITEMS FOR PERSONALIZED PICKS' : 'AI-CRAFTED FROM YOUR FRIDGE'}
+                {fridgeEmpty ? t('recipes.hero.subtitleEmpty') : t('recipes.hero.subtitle')}
               </Text>
             </>
           ) : (
@@ -193,7 +195,7 @@ export default function RecipesTab() {
         {ready && status !== 'loading' && (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={fridgeEmpty ? 'generate starter recipes' : 'cook with what you have'}
+            accessibilityLabel={fridgeEmpty ? t('recipes.a11y.generateStarter') : t('recipes.a11y.cookWithWhatYouHave')}
             onPress={openGenerate}
             style={({ pressed }) => [styles.cookBlockWrap, { opacity: pressed ? 0.9 : 1 }]}
           >
@@ -203,10 +205,10 @@ export default function RecipesTab() {
               </View>
               <View style={styles.cookText}>
                 <Text style={[typeScale.titleMedium, { color: colors.ink }]}>
-                  {fridgeEmpty ? 'Generate starter recipes' : 'Cook with what you have'}
+                  {fridgeEmpty ? t('recipes.cook.titleEmpty') : t('recipes.cook.title')}
                 </Text>
                 <Text style={[typeScale.bodySmall, styles.cookSub]}>
-                  {fridgeEmpty ? '3 simple ideas you can shop for' : 'Pick fridge items → 3 fresh recipes'}
+                  {fridgeEmpty ? t('recipes.cook.subtitleEmpty') : t('recipes.cook.subtitle')}
                 </Text>
               </View>
               <Chevron size={18} color={colors.inkMuted} />
@@ -218,7 +220,7 @@ export default function RecipesTab() {
         {ready && status !== 'loading' && (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="build a custom recipe"
+            accessibilityLabel={t('recipes.a11y.buildCustom')}
             onPress={() => { Haptics.selectionAsync().catch(() => {}); router.push('/recipe-builder' as never); }}
             style={({ pressed }) => [styles.cookBlockWrap, { opacity: pressed ? 0.9 : 1 }]}
           >
@@ -227,8 +229,8 @@ export default function RecipesTab() {
                 <Sparkle size={22} color={colors.primary} strokeWidth={1.8} />
               </View>
               <View style={styles.cookText}>
-                <Text style={[typeScale.titleMedium, { color: colors.ink }]}>Build your own recipe</Text>
-                <Text style={[typeScale.bodySmall, styles.cookSub]}>Type ingredients, method & time</Text>
+                <Text style={[typeScale.titleMedium, { color: colors.ink }]}>{t('recipes.build.title')}</Text>
+                <Text style={[typeScale.bodySmall, styles.cookSub]}>{t('recipes.build.subtitle')}</Text>
               </View>
               <Chevron size={18} color={colors.inkMuted} />
             </SoftSurface>
@@ -256,7 +258,7 @@ export default function RecipesTab() {
           <SoftSurface variant="cushion" radius="xxl" style={styles.emptyBannerOuter} innerStyle={styles.emptyBanner}>
             <Sparkle size={20} color={colors.amber} strokeWidth={1.6} />
             <Text style={[typeScale.bodySmall, styles.emptyBannerText]}>
-              Your fridge is empty — these are generic starter ideas. Scan a few items first for recipes built around what you actually have.
+              {t('recipes.emptyBanner')}
             </Text>
           </SoftSurface>
         )}
@@ -269,13 +271,13 @@ export default function RecipesTab() {
           <View style={styles.loadingState}>
             <Sparkle size={48} color={colors.amber} strokeWidth={1.6} />
             <Text style={[typeScale.titleMedium, styles.loadingText]}>
-              {error?.includes('Free plan') ? 'Daily limit reached' : "Couldn't generate recipes"}
+              {error?.includes('Free plan') ? t('recipes.errors.dailyLimitTitle') : t('recipes.errors.generateFailedTitle')}
             </Text>
             <Text style={[typeScale.bodySmall, styles.loadingSub]}>{error}</Text>
             {error?.includes('Free plan') && (
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel="Upgrade to FreshCheck Pro"
+                accessibilityLabel={t('recipes.a11y.upgradeToPro')}
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
                   router.push('/paywall?src=recipe-limit' as never);
@@ -285,7 +287,7 @@ export default function RecipesTab() {
                 <SoftSurface variant="cushion" radius="full" innerStyle={styles.idleCtaInner}>
                   <Sparkle size={20} color={colors.amber} strokeWidth={1.8} />
                   <Text style={[typeScale.titleMedium, styles.idleCtaText]}>
-                    Unlock unlimited recipes
+                    {t('recipes.errors.unlockUnlimited')}
                   </Text>
                 </SoftSurface>
               </Pressable>
@@ -296,7 +298,7 @@ export default function RecipesTab() {
         {/* Saved recipes — persist across regeneration (G4). */}
         {ready && favorites.length > 0 && (
           <View style={styles.savedSection}>
-            <Text style={[typeScale.label, styles.savedHeader]}>★ SAVED</Text>
+            <Text style={[typeScale.label, styles.savedHeader]}>{t('recipes.sections.saved')}</Text>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -307,7 +309,7 @@ export default function RecipesTab() {
                 <Pressable
                   key={recipe.id}
                   accessibilityRole="button"
-                  accessibilityLabel={`open ${recipe.name}`}
+                  accessibilityLabel={t('recipes.a11y.openRecipe', { name: recipe.name })}
                   onPress={() => onOpen(recipe)}
                   style={styles.savedChip}
                 >
@@ -336,7 +338,7 @@ export default function RecipesTab() {
             <FadeIn key={recipe.id} delay={idx * 80}>
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel={`${recipe.name}, ${recipe.minutes} minutes`}
+              accessibilityLabel={t('recipes.a11y.recipeCard', { name: recipe.name, count: recipe.minutes })}
               onPress={() => onOpen(recipe)}
             >
               <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.card}>
@@ -362,7 +364,7 @@ export default function RecipesTab() {
                       so it doesn't also open the recipe). */}
                   <Pressable
                     accessibilityRole="button"
-                    accessibilityLabel={favIds.has(recipe.id) ? 'remove from saved' : 'save recipe'}
+                    accessibilityLabel={favIds.has(recipe.id) ? t('recipes.a11y.removeFromSaved') : t('recipes.a11y.saveRecipe')}
                     accessibilityState={{ selected: favIds.has(recipe.id) }}
                     onPress={() => onToggleFav(recipe)}
                     style={styles.starBtn}
@@ -373,7 +375,7 @@ export default function RecipesTab() {
                   {/* L3 — remove this recipe from the batch (favorites kept). */}
                   <Pressable
                     accessibilityRole="button"
-                    accessibilityLabel={`remove ${recipe.name}`}
+                    accessibilityLabel={t('recipes.a11y.removeRecipe', { name: recipe.name })}
                     onPress={() => onDeleteRecipe(recipe.id)}
                     style={styles.deleteBtn}
                     hitSlop={8}
@@ -397,7 +399,7 @@ export default function RecipesTab() {
                   </Text>
                   <View style={styles.metaRow}>
                     <Text style={[typeScale.labelSmall, styles.metaTime]}>
-                      {recipe.minutes} MIN
+                      {t('recipes.labels.minutesShort', { count: recipe.minutes })}
                     </Text>
                     <View
                       style={[
@@ -417,7 +419,7 @@ export default function RecipesTab() {
                     {recipe.ingredients.filter((i) => i.from_fridge).length > 0 && (
                       <View style={styles.fridgePill}>
                         <Text style={[typeScale.labelTiny, styles.fridgeText]}>
-                          {recipe.ingredients.filter((i) => i.from_fridge).length} FROM FRIDGE
+                          {t('recipes.labels.fromFridge', { count: recipe.ingredients.filter((i) => i.from_fridge).length })}
                         </Text>
                       </View>
                     )}
@@ -435,16 +437,16 @@ export default function RecipesTab() {
           the whole screen; only the sheet slides up (sheetY). */}
       <Modal visible={selectorOpen} transparent animationType="none" onRequestClose={() => closeSheet()}>
         <GestureHandlerRootView style={styles.sheetBackdropView}>
-          <Pressable style={StyleSheet.absoluteFill} onPress={() => closeSheet()} accessibilityLabel="close" />
+          <Pressable style={StyleSheet.absoluteFill} onPress={() => closeSheet()} accessibilityLabel={t('recipes.a11y.close')} />
           <Animated.View style={[styles.sheet, { paddingBottom: insets.bottom + spacing.lg }, sheetAnimStyle]}>
             <GestureDetector gesture={sheetPan}>
               <View style={styles.sheetHandleZone}>
                 <View style={styles.sheetHandle} />
               </View>
             </GestureDetector>
-            <Text style={[typeScale.titleLarge, styles.sheetTitle]}>Cook with what you have</Text>
+            <Text style={[typeScale.titleLarge, styles.sheetTitle]}>{t('recipes.sheet.title')}</Text>
             <Text style={[typeScale.bodySmall, styles.sheetSub]}>
-              Pick the items to build recipes from. We prioritise what expires soonest.
+              {t('recipes.sheet.subtitle')}
             </Text>
             <ScrollView style={styles.sheetList} contentContainerStyle={styles.sheetListContent} showsVerticalScrollIndicator={false}>
               {fridgeItems.map((item) => {
@@ -463,7 +465,7 @@ export default function RecipesTab() {
                     </View>
                     <Text style={[typeScale.titleSmall, styles.sheetItemName]} numberOfLines={1}>{item.name}</Text>
                     <Text style={[typeScale.labelSmall, styles.sheetItemDays]}>
-                      {item.daysLeft <= 0 ? 'today' : `${item.daysLeft}d`}
+                      {item.daysLeft <= 0 ? t('recipes.labels.today') : t('recipes.labels.daysShort', { count: item.daysLeft })}
                     </Text>
                   </Pressable>
                 );
@@ -472,7 +474,7 @@ export default function RecipesTab() {
             {/* L6: our standard pill CTA, not a flat green button. */}
             <View style={[styles.sheetCtaWrap, { opacity: selectedIds.size === 0 ? 0.4 : 1 }]}>
               <PrimaryPillCTA
-                label={`Generate from ${selectedIds.size} item${selectedIds.size === 1 ? '' : 's'}`}
+                label={t('recipes.cta.generateFromItems', { count: selectedIds.size })}
                 onPress={confirmGenerate}
                 iconLeft={<Sparkle size={20} color={colors.amber} strokeWidth={2} />}
               />

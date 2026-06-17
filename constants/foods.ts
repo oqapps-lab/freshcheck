@@ -3,6 +3,8 @@
 // (the generate-recipes edge function re-validates server-side with the same
 // rules + an LLM semantic backstop); this is instant UX + cost-at-source.
 
+import i18n from '@/src/i18n';
+
 const VOWELS = /[aeiouyàâäéèêëïîôùûüáíóúñ]/;
 const ALLOWED = /^[a-zA-ZÀ-ÿ][a-zA-ZÀ-ÿ '.\-]*$/;
 const KB_FWD = 'qwertyuiopasdfghjklzxcvbnm';
@@ -39,18 +41,18 @@ function consonantRun(token: string): number {
 export function isLikelyFood(raw: string): { ok: boolean; reason?: string } {
   const trimmed = raw.trim();
   const n = trimmed.toLowerCase();
-  if (n.length < 2) return { ok: false, reason: 'Too short' };
-  if (n.length > 40) return { ok: false, reason: 'Too long' };
-  if (!ALLOWED.test(trimmed)) return { ok: false, reason: 'Letters only — no digits or symbols' };
+  if (n.length < 2) return { ok: false, reason: i18n.t('foods.reasons.tooShort') };
+  if (n.length > 40) return { ok: false, reason: i18n.t('foods.reasons.tooLong') };
+  if (!ALLOWED.test(trimmed)) return { ok: false, reason: i18n.t('foods.reasons.lettersOnly') };
 
   const tokens = n.split(/\s+/).filter(Boolean);
   for (const t of tokens) if (FOOD_HINTS.has(t)) return { ok: true };
 
   for (const t of tokens) {
-    if (t.length >= 3 && !VOWELS.test(t)) return { ok: false, reason: 'That does not look like a real ingredient' };
-    if (consonantRun(t) >= 6) return { ok: false, reason: 'That does not look like a real ingredient' };
+    if (t.length >= 3 && !VOWELS.test(t)) return { ok: false, reason: i18n.t('foods.reasons.notRealIngredient') };
+    if (consonantRun(t) >= 6) return { ok: false, reason: i18n.t('foods.reasons.notRealIngredient') };
     if (t.length >= 5 && (KB_FWD.includes(t) || KB_REV.includes(t)))
-      return { ok: false, reason: 'That does not look like a real ingredient' };
+      return { ok: false, reason: i18n.t('foods.reasons.notRealIngredient') };
   }
   return { ok: true };
 }

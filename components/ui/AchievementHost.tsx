@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { View, Text, Animated, Easing, StyleSheet, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next";
 import * as Haptics from "expo-haptics";
 import { SoftSurface } from "./SoftSurface";
 import { useAchievements, clearPendingAchievement } from "@/src/state/achievementsStore";
@@ -13,6 +14,7 @@ import { colors, spacing, typeScale } from "@/constants/tokens";
  */
 export function AchievementHost() {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
   const { pending } = useAchievements();
   const v = useRef(new Animated.Value(0)).current;
 
@@ -42,7 +44,7 @@ export function AchievementHost() {
         <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.card}>
           <Text style={styles.emoji}>{pending.emoji}</Text>
           <View style={styles.text}>
-            <Text style={[typeScale.labelSmall, styles.eyebrow]}>ACHIEVEMENT UNLOCKED</Text>
+            <Text style={[typeScale.labelSmall, styles.eyebrow]}>{t('common.achievements.unlocked')}</Text>
             <Text style={[typeScale.titleSmall, styles.title]}>{pending.title}</Text>
           </View>
         </SoftSurface>

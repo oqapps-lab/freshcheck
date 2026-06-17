@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { View, Text, ScrollView, Pressable, StyleSheet, Linking, Animated, type LayoutChangeEvent } from 'react-native';
 import { showAlert } from '@/src/state/alertStore';
 import * as Haptics from 'expo-haptics';
@@ -44,36 +45,41 @@ const PRICE_USD: Record<Plan, number> = {
 // ripeness analysis, cloud sync and reminders. Keep this list in sync with
 // the gates in capture.tsx (canScan / barcode Pro-gate) and useRecipes —
 // mismatched copy risks Apple Review 3.1.2(c) "genuine value" pushback.
-const FEATURES: { icon: React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>; title: string; body: string }[] = [
-  { icon: BarcodeScanner, title: 'Unlimited scans',       body: 'Scan as many items as you want, no daily cap.' },
-  { icon: Bowl,           title: 'Unlimited AI recipes',  body: 'Generate fresh recipes from your fridge whenever you want, no daily cap.' },
-  { icon: ShoppingBasket, title: 'Barcode pantry add',    body: 'Scan a product barcode to drop it straight into your fridge.' },
-  { icon: Nutrition,      title: 'Whole-table scanning',  body: 'One photo, every item on the table — as often as you like.' },
-  { icon: Zap,            title: 'Rapid batch scanning',  body: 'Fire off your whole grocery haul back-to-back, no limits.' },
+// title/body hold i18n leaf keys (under paywall.features.*) resolved with t()
+// at the render site — keeping a hook out of this module-level array.
+const FEATURES: { icon: React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>; titleKey: string; bodyKey: string }[] = [
+  { icon: BarcodeScanner, titleKey: 'features.unlimitedScans.title',     bodyKey: 'features.unlimitedScans.body' },
+  { icon: Bowl,           titleKey: 'features.unlimitedRecipes.title',   bodyKey: 'features.unlimitedRecipes.body' },
+  { icon: ShoppingBasket, titleKey: 'features.barcodeAdd.title',         bodyKey: 'features.barcodeAdd.body' },
+  { icon: Nutrition,      titleKey: 'features.wholeTable.title',         bodyKey: 'features.wholeTable.body' },
+  { icon: Zap,            titleKey: 'features.batchScanning.title',      bodyKey: 'features.batchScanning.body' },
 ];
 
 // Contextual hero copy — the limit-hit moment is the highest-intent paywall
 // impression; a generic "Unlock Pro" there reads like a bug, not an offer.
-const SRC_COPY: Record<string, { title: string; subtitle: string }> = {
+// Values are i18n leaf keys (under paywall.hero.<variant>.*) resolved with
+// t() at the render site.
+const SRC_COPY: Record<string, { titleKey: string; subtitleKey: string }> = {
   'scan-limit': {
-    title: "You've used today's free scans",
-    subtitle: 'Go unlimited — scan everything in your kitchen, whenever you want.',
+    titleKey: 'hero.scanLimit.title',
+    subtitleKey: 'hero.scanLimit.subtitle',
   },
   barcode: {
-    title: 'Barcode scanning is a Pro feature',
-    subtitle: 'Scan any product barcode and drop it straight into your fridge.',
+    titleKey: 'hero.barcode.title',
+    subtitleKey: 'hero.barcode.subtitle',
   },
   'recipe-limit': {
-    title: "You've used today's free recipe generation",
-    subtitle: 'Unlimited AI recipes from whatever is in your fridge — every day.',
+    titleKey: 'hero.recipeLimit.title',
+    subtitleKey: 'hero.recipeLimit.subtitle',
   },
   default: {
-    title: 'Unlock FreshCheck Pro',
-    subtitle: "Turn what's in your fridge into recipes, and never throw away food again.",
+    titleKey: 'hero.default.title',
+    subtitleKey: 'hero.default.subtitle',
   },
 };
 
 export default function PaywallScreen() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { src } = useLocalSearchParams<{ src?: string }>();
@@ -161,17 +167,17 @@ export default function PaywallScreen() {
         // adapty webhook, so we don't double-count revenue here.
         void logTrialStartEvent(PRODUCT_BY_PLAN[plan]);
         track('trial_start', { plan, revenue: PRICE_USD[plan] });
-        showAlert('Welcome to Pro', 'Your free trial has started. Generate unlimited AI recipes from your fridge!');
+        showAlert(t('paywall.alerts.welcomeTitle'), t('paywall.alerts.welcomeBody'));
         dismiss();
       } else if (r.error === 'cancelled') {
         // user-cancelled → no toast
       } else if (r.error === 'pending') {
-        showAlert('Awaiting approval', 'Your purchase is pending Apple ID approval.');
+        showAlert(t('paywall.alerts.pendingTitle'), t('paywall.alerts.pendingBody'));
       } else if (r.error === 'adapty-not-configured' || r.error === 'adapty-sdk-missing') {
         // SDK already shows its own alert
       } else {
         recordError(new Error(`startTrial: ${r.error ?? 'unknown'}`), 'paywall-start-trial');
-        showAlert('Purchase failed', r.error ?? 'Unknown error');
+        showAlert(t('paywall.alerts.purchaseFailedTitle'), r.error ?? t('paywall.alerts.unknownError'));
       }
     } finally {
       setBusy(false);
@@ -185,14 +191,14 @@ export default function PaywallScreen() {
     try {
       const r = await restorePurchases();
       if (r.ok) {
-        showAlert('Restored', 'Your subscription is active again.');
+        showAlert(t('paywall.alerts.restoredTitle'), t('paywall.alerts.restoredBody'));
         dismiss();
       } else if (r.error === 'no-active-subscription') {
-        showAlert('Nothing to restore', 'No active subscription was found on this Apple ID.');
+        showAlert(t('paywall.alerts.nothingToRestoreTitle'), t('paywall.alerts.nothingToRestoreBody'));
       } else if (r.error === 'adapty-not-configured' || r.error === 'adapty-sdk-missing') {
         // SDK already shows its own alert
       } else {
-        showAlert('Restore failed', r.error ?? 'Unknown error');
+        showAlert(t('paywall.alerts.restoreFailedTitle'), r.error ?? t('paywall.alerts.unknownError'));
       }
     } finally {
       setBusy(false);
@@ -201,25 +207,25 @@ export default function PaywallScreen() {
 
   const openUrl = (url: string) => {
     Haptics.selectionAsync().catch(() => {});
-    Linking.openURL(url).catch((e) => showAlert('Could not open link', String(e)));
+    Linking.openURL(url).catch((e) => showAlert(t('paywall.alerts.couldNotOpenLinkTitle'), String(e)));
   };
 
   const priceStr = (p: Plan): string => tiers?.[p]?.localizedPrice || `$${PRICE_USD[p].toFixed(2)}`;
-  const ctaLabel = busy ? 'Processing…' : 'Start 3-day free trial';
+  const ctaLabel = busy ? t('paywall.cta.processing') : t('paywall.cta.startTrial');
   const fineprint = (() => {
-    if (plan === 'annual') return `First 3 days free, then ${priceStr('annual')} / year. Auto-renews unless cancelled at least 24 hours before period end.`;
-    if (plan === 'monthly') return `First 3 days free, then ${priceStr('monthly')} / month. Auto-renews unless cancelled at least 24 hours before period end.`;
-    return `First 3 days free, then ${priceStr('weekly')} / week. Auto-renews unless cancelled at least 24 hours before period end.`;
+    if (plan === 'annual') return t('paywall.fineprint.annual', { price: priceStr('annual') });
+    if (plan === 'monthly') return t('paywall.fineprint.monthly', { price: priceStr('monthly') });
+    return t('paywall.fineprint.weekly', { price: priceStr('weekly') });
   })();
 
   return (
     <View style={styles.root}>
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <View style={styles.headerSpacer} />
-        <Text style={[typeScale.wordmark, styles.eyebrow]}>FRESHCHECK PRO</Text>
+        <Text style={[typeScale.wordmark, styles.eyebrow]}>{t('paywall.eyebrow')}</Text>
         {closeVisible ? (
           <Animated.View style={{ opacity: closeFade }}>
-            <IconButton accessibilityLabel="close" onPress={dismiss}>
+            <IconButton accessibilityLabel={t('paywall.a11y.close')} onPress={dismiss}>
               <Close size={20} color={colors.ink} />
             </IconButton>
           </Animated.View>
@@ -241,16 +247,16 @@ export default function PaywallScreen() {
             <Sparkle size={44} color={colors.amber} strokeWidth={1.6} />
           </SoftSurface>
           <Text style={[typeScale.displayMedium, styles.title]}>
-            {srcCopy.title}
+            {t(`paywall.${srcCopy.titleKey}`)}
           </Text>
           <Text style={[typeScale.body, styles.subtitle]}>
-            {srcCopy.subtitle}
+            {t(`paywall.${srcCopy.subtitleKey}`)}
           </Text>
           {/* Trust signal — families save ~$2,913/yr (the product thesis). */}
           <View style={styles.trustPill}>
             <Sparkle size={14} color={colors.primary} strokeWidth={2} />
             <Text style={[typeScale.labelSmall, styles.trustPillText]}>
-              {family ? 'SAVES THE AVERAGE FAMILY $2,913 / YEAR' : 'THE AVERAGE HOUSEHOLD SAVES $2,913 / YEAR'}
+              {family ? t('paywall.trust.family') : t('paywall.trust.household')}
             </Text>
           </View>
         </View>
@@ -258,51 +264,51 @@ export default function PaywallScreen() {
         {/* Features — one clean card with a checklist (premium feel, vs. five
             heavy stacked cards). */}
         <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.featuresCard}>
-          <Text style={[typeScale.label, styles.featuresHeader]}>EVERYTHING IN PRO</Text>
-          {FEATURES.map(({ title, body }, i) => (
+          <Text style={[typeScale.label, styles.featuresHeader]}>{t('paywall.features.header')}</Text>
+          {FEATURES.map(({ titleKey, bodyKey }, i) => (
             <View
-              key={title}
+              key={titleKey}
               style={[styles.checkRow, i === FEATURES.length - 1 && styles.checkRowLast]}
             >
               <View style={styles.checkBadge}>
                 <Check size={14} color={colors.surfaceWhite} strokeWidth={3} />
               </View>
               <View style={styles.featureText}>
-                <Text style={[typeScale.titleSmall, styles.featureTitle]}>{title}</Text>
-                <Text style={[typeScale.bodySmall, styles.featureBody]}>{body}</Text>
+                <Text style={[typeScale.titleSmall, styles.featureTitle]}>{t(`paywall.${titleKey}`)}</Text>
+                <Text style={[typeScale.bodySmall, styles.featureBody]}>{t(`paywall.${bodyKey}`)}</Text>
               </View>
             </View>
           ))}
         </SoftSurface>
 
         {/* Plans — annual default, monthly decoy, weekly impulse */}
-        <Text style={[typeScale.label, styles.plansEyebrow]}>CHOOSE YOUR PLAN · 3 DAYS FREE</Text>
+        <Text style={[typeScale.label, styles.plansEyebrow]}>{t('paywall.plans.eyebrow')}</Text>
         <View style={styles.plansBlock}>
           <PlanCard
             value="annual"
-            label="Annual"
+            label={t('paywall.plans.annual.label')}
             price={priceStr('annual')}
-            unit="/ year"
-            badge="SAVE 89%"
-            sublabel="Just $0.77 / week, billed yearly"
+            unit={t('paywall.plans.annual.unit')}
+            badge={t('paywall.plans.annual.badge')}
+            sublabel={t('paywall.plans.annual.sublabel')}
             active={plan === 'annual'}
             onPress={() => setPlan('annual')}
           />
           <PlanCard
             value="monthly"
-            label="Monthly"
+            label={t('paywall.plans.monthly.label')}
             price={priceStr('monthly')}
-            unit="/ month"
-            sublabel="Flexible — cancel anytime"
+            unit={t('paywall.plans.monthly.unit')}
+            sublabel={t('paywall.plans.monthly.sublabel')}
             active={plan === 'monthly'}
             onPress={() => setPlan('monthly')}
           />
           <PlanCard
             value="weekly"
-            label="Weekly"
+            label={t('paywall.plans.weekly.label')}
             price={priceStr('weekly')}
-            unit="/ week"
-            sublabel="Just trying it out"
+            unit={t('paywall.plans.weekly.unit')}
+            sublabel={t('paywall.plans.weekly.sublabel')}
             active={plan === 'weekly'}
             onPress={() => setPlan('weekly')}
           />
@@ -326,15 +332,15 @@ export default function PaywallScreen() {
         <Text style={[typeScale.bodySmall, styles.fineprint]}>{fineprint}</Text>
         <View style={styles.legalRow}>
           <Pressable onPress={onRestore} accessibilityRole="button">
-            <Text style={[typeScale.bodySmall, styles.legalLink]}>Restore</Text>
+            <Text style={[typeScale.bodySmall, styles.legalLink]}>{t('paywall.legal.restore')}</Text>
           </Pressable>
           <Text style={[typeScale.bodySmall, styles.legalDot]}>·</Text>
           <Pressable onPress={() => openUrl(LEGAL.termsOfUse)} accessibilityRole="link">
-            <Text style={[typeScale.bodySmall, styles.legalLink]}>Terms</Text>
+            <Text style={[typeScale.bodySmall, styles.legalLink]}>{t('paywall.legal.terms')}</Text>
           </Pressable>
           <Text style={[typeScale.bodySmall, styles.legalDot]}>·</Text>
           <Pressable onPress={() => openUrl(LEGAL.privacyPolicy)} accessibilityRole="link">
-            <Text style={[typeScale.bodySmall, styles.legalLink]}>Privacy</Text>
+            <Text style={[typeScale.bodySmall, styles.legalLink]}>{t('paywall.legal.privacy')}</Text>
           </Pressable>
         </View>
       </View>
@@ -360,10 +366,11 @@ function PlanCard({
   active: boolean;
   onPress: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`${label} plan, ${price} ${unit}`}
+      accessibilityLabel={t('paywall.a11y.planOption', { label, price, unit })}
       accessibilityState={{ selected: active }}
       onPress={() => {
         Haptics.selectionAsync().catch(() => {});

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, ScrollView, TextInput, Pressable, Switch, KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
+import { useTranslation } from "react-i18next";
 import * as Haptics from "expo-haptics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
@@ -14,19 +15,41 @@ import { showAlert } from "@/src/state/alertStore";
 import { isLikelyFood } from "@/constants/foods";
 import { colors, fonts, layout, spacing, typeScale } from "@/constants/tokens";
 
-const METHODS = ["Any", "Bake", "Fry", "Boil", "Grill", "Steam", "No-cook", "Slow cook"];
-const TIMES: { label: string; v: number | null }[] = [
-  { label: "Any", v: null },
-  { label: "<=15 min", v: 15 },
-  { label: "<=30 min", v: 30 },
-  { label: "<=45 min", v: 45 },
-  { label: "<=60 min", v: 60 },
+// `id` is load-bearing: it is the value stored in state and sent to the edge
+// function (with "Any" mapped to undefined). Only the visible `labelKey` is
+// externalized — the id stays an English token.
+const METHODS: { id: string; labelKey: string }[] = [
+  { id: "Any", labelKey: "recipeBuilder.methods.any" },
+  { id: "Bake", labelKey: "recipeBuilder.methods.bake" },
+  { id: "Fry", labelKey: "recipeBuilder.methods.fry" },
+  { id: "Boil", labelKey: "recipeBuilder.methods.boil" },
+  { id: "Grill", labelKey: "recipeBuilder.methods.grill" },
+  { id: "Steam", labelKey: "recipeBuilder.methods.steam" },
+  { id: "No-cook", labelKey: "recipeBuilder.methods.noCook" },
+  { id: "Slow cook", labelKey: "recipeBuilder.methods.slowCook" },
+];
+const TIMES: { labelKey: string; v: number | null }[] = [
+  { labelKey: "recipeBuilder.times.any", v: null },
+  { labelKey: "recipeBuilder.times.under15", v: 15 },
+  { labelKey: "recipeBuilder.times.under30", v: 30 },
+  { labelKey: "recipeBuilder.times.under45", v: 45 },
+  { labelKey: "recipeBuilder.times.under60", v: 60 },
 ];
 
 type Ing = { name: string; amount: string; unit: string };
-const UNITS = ["g", "pcs", "cups", "tbsp", "tsp", "ml"];
+// `id` is the value stored in state and sent to the edge function; `labelKey`
+// is the visible (uppercased) chip label.
+const UNITS: { id: string; labelKey: string }[] = [
+  { id: "g", labelKey: "recipeBuilder.units.g" },
+  { id: "pcs", labelKey: "recipeBuilder.units.pcs" },
+  { id: "cups", labelKey: "recipeBuilder.units.cups" },
+  { id: "tbsp", labelKey: "recipeBuilder.units.tbsp" },
+  { id: "tsp", labelKey: "recipeBuilder.units.tsp" },
+  { id: "ml", labelKey: "recipeBuilder.units.ml" },
+];
 
 export default function RecipeBuilderScreen() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { refresh: generate } = useRecipes();
@@ -49,7 +72,7 @@ export default function RecipeBuilderScreen() {
     const v = isLikelyFood(name);
     if (!v.ok) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
-      setNameErr(v.reason ?? "Enter a real ingredient");
+      setNameErr(v.reason ?? t("recipeBuilder.errors.notFood"));
       return;
     }
     Haptics.selectionAsync().catch(() => {});
@@ -65,7 +88,7 @@ export default function RecipeBuilderScreen() {
 
   const onGenerate = async () => {
     if (ingredients.length === 0) {
-      showAlert("Add ingredients", "Add at least one ingredient to build a recipe.");
+      showAlert(t("recipeBuilder.alerts.addIngredientsTitle"), t("recipeBuilder.alerts.addIngredientsMessage"));
       return;
     }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
@@ -83,11 +106,11 @@ export default function RecipeBuilderScreen() {
         router.replace("/(tabs)/recipes" as never);
       } else {
         setBusy(false);
-        showAlert("Could not generate", r?.error ?? "Please try again in a moment.");
+        showAlert(t("recipeBuilder.alerts.couldNotGenerateTitle"), r?.error ?? t("recipeBuilder.alerts.tryAgain"));
       }
     } catch {
       setBusy(false);
-      showAlert("Could not generate", "Please try again in a moment.");
+      showAlert(t("recipeBuilder.alerts.couldNotGenerateTitle"), t("recipeBuilder.alerts.tryAgain"));
     }
   };
 
@@ -102,26 +125,26 @@ export default function RecipeBuilderScreen() {
   return (
     <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === "ios" ? "padding" : undefined}>
       <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
-        <IconButton accessibilityLabel="back" onPress={() => router.back()}>
+        <IconButton accessibilityLabel={t("recipeBuilder.a11y.back")} onPress={() => router.back()}>
           <Back size={22} color={colors.ink} strokeWidth={2} />
         </IconButton>
-        <Text style={[typeScale.label, styles.headerTitle]}>BUILD A RECIPE</Text>
+        <Text style={[typeScale.label, styles.headerTitle]}>{t("recipeBuilder.header.title")}</Text>
         <View style={styles.headerSpacer} />
       </View>
 
       <ScrollView contentContainerStyle={[styles.scroll, { paddingBottom: insets.bottom + 120 }]} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-        <Text style={[typeScale.displayMedium, styles.title]}>What is in your kitchen?</Text>
-        <Text style={[typeScale.bodyLarge, styles.sub]}>Add what you have — with amounts if you like — and we will build recipes around it.</Text>
+        <Text style={[typeScale.displayMedium, styles.title]}>{t("recipeBuilder.header.subtitle")}</Text>
+        <Text style={[typeScale.bodyLarge, styles.sub]}>{t("recipeBuilder.header.intro")}</Text>
 
-        <Text style={[typeScale.label, styles.section]}>ADD INGREDIENTS</Text>
+        <Text style={[typeScale.label, styles.section]}>{t("recipeBuilder.sections.addIngredients")}</Text>
         <View style={styles.addRow}>
           <SoftInset radius="lg" strength="thin" style={styles.amountBox} contentStyle={styles.inputWrap}>
-            <TextInput style={styles.input} value={draftAmount} onChangeText={setDraftAmount} placeholder="200" placeholderTextColor={colors.inkMuted} returnKeyType="next" selectionColor={colors.primary} />
+            <TextInput style={styles.input} value={draftAmount} onChangeText={setDraftAmount} placeholder={t("recipeBuilder.placeholders.amount")} placeholderTextColor={colors.inkMuted} returnKeyType="next" selectionColor={colors.primary} />
           </SoftInset>
           <SoftInset radius="lg" strength="thin" style={styles.nameBox} contentStyle={styles.inputWrap}>
-            <TextInput style={styles.input} value={draftName} onChangeText={(t) => { setDraftName(t); if (nameErr) setNameErr(null); }} placeholder="Chicken breast" placeholderTextColor={colors.inkMuted} returnKeyType="done" onSubmitEditing={addIngredient} selectionColor={colors.primary} />
+            <TextInput style={styles.input} value={draftName} onChangeText={(val) => { setDraftName(val); if (nameErr) setNameErr(null); }} placeholder={t("recipeBuilder.placeholders.name")} placeholderTextColor={colors.inkMuted} returnKeyType="done" onSubmitEditing={addIngredient} selectionColor={colors.primary} />
           </SoftInset>
-          <Pressable accessibilityLabel="add ingredient" onPress={addIngredient} style={({ pressed }) => [styles.addBtnWrap, { opacity: pressed ? 0.8 : 1 }]}>
+          <Pressable accessibilityLabel={t("recipeBuilder.a11y.addIngredient")} onPress={addIngredient} style={({ pressed }) => [styles.addBtnWrap, { opacity: pressed ? 0.8 : 1 }]}>
             <SoftSurface variant="pill" radius="full" background={colors.primary} innerStyle={styles.addBtn}>
               <Text style={styles.addBtnPlus}>+</Text>
             </SoftSurface>
@@ -130,10 +153,10 @@ export default function RecipeBuilderScreen() {
         {nameErr ? <Text style={[typeScale.bodySmall, styles.nameErr]}>{nameErr}</Text> : null}
         <View style={styles.units}>
           {UNITS.map((u) => {
-            const on = unit === u;
+            const on = unit === u.id;
             return (
-              <Pressable key={u} onPress={() => { Haptics.selectionAsync().catch(() => {}); setUnit(u); }} style={[styles.unitChip, on && styles.unitChipOn]}>
-                <Text style={[typeScale.labelSmall, on ? styles.pickTextOn : styles.pickText]}>{u.toUpperCase()}</Text>
+              <Pressable key={u.id} onPress={() => { Haptics.selectionAsync().catch(() => {}); setUnit(u.id); }} style={[styles.unitChip, on && styles.unitChipOn]}>
+                <Text style={[typeScale.labelSmall, on ? styles.pickTextOn : styles.pickText]}>{t(u.labelKey).toUpperCase()}</Text>
               </Pressable>
             );
           })}
@@ -150,25 +173,25 @@ export default function RecipeBuilderScreen() {
           </View>
         ) : null}
 
-        <Text style={[typeScale.label, styles.section]}>COOKING METHOD</Text>
+        <Text style={[typeScale.label, styles.section]}>{t("recipeBuilder.sections.cookingMethod")}</Text>
         <View style={styles.chips}>
           {METHODS.map((m) => {
-            const on = method === m;
+            const on = method === m.id;
             return (
-              <Pressable key={m} onPress={() => { Haptics.selectionAsync().catch(() => {}); setMethod(m); }} style={[styles.pick, on && styles.pickOn]}>
-                <Text style={[typeScale.labelSmall, on ? styles.pickTextOn : styles.pickText]}>{m.toUpperCase()}</Text>
+              <Pressable key={m.id} onPress={() => { Haptics.selectionAsync().catch(() => {}); setMethod(m.id); }} style={[styles.pick, on && styles.pickOn]}>
+                <Text style={[typeScale.labelSmall, on ? styles.pickTextOn : styles.pickText]}>{t(m.labelKey).toUpperCase()}</Text>
               </Pressable>
             );
           })}
         </View>
 
-        <Text style={[typeScale.label, styles.section]}>MAX TIME</Text>
+        <Text style={[typeScale.label, styles.section]}>{t("recipeBuilder.sections.maxTime")}</Text>
         <View style={styles.chips}>
-          {TIMES.map((t) => {
-            const on = maxMin === t.v;
+          {TIMES.map((time) => {
+            const on = maxMin === time.v;
             return (
-              <Pressable key={t.label} onPress={() => { Haptics.selectionAsync().catch(() => {}); setMaxMin(t.v); }} style={[styles.pick, on && styles.pickOn]}>
-                <Text style={[typeScale.labelSmall, on ? styles.pickTextOn : styles.pickText]}>{t.label.toUpperCase()}</Text>
+              <Pressable key={time.labelKey} onPress={() => { Haptics.selectionAsync().catch(() => {}); setMaxMin(time.v); }} style={[styles.pick, on && styles.pickOn]}>
+                <Text style={[typeScale.labelSmall, on ? styles.pickTextOn : styles.pickText]}>{t(time.labelKey).toUpperCase()}</Text>
               </Pressable>
             );
           })}
@@ -176,8 +199,8 @@ export default function RecipeBuilderScreen() {
 
         <View style={styles.toggleRow}>
           <View style={styles.toggleText}>
-            <Text style={[typeScale.titleSmall, { color: colors.ink }]}>Use only these ingredients</Text>
-            <Text style={[typeScale.bodySmall, styles.toggleSub]}>Off = we can add common extras (oil, salt, spices).</Text>
+            <Text style={[typeScale.titleSmall, { color: colors.ink }]}>{t("recipeBuilder.toggle.title")}</Text>
+            <Text style={[typeScale.bodySmall, styles.toggleSub]}>{t("recipeBuilder.toggle.sub")}</Text>
           </View>
           <Switch value={onlyThese} onValueChange={setOnlyThese} trackColor={{ true: colors.primary, false: colors.inkMuted }} />
         </View>
@@ -185,7 +208,7 @@ export default function RecipeBuilderScreen() {
 
       <View style={[styles.cta, { paddingBottom: insets.bottom + spacing.lg }]}>
         <View style={{ opacity: ingredients.length > 0 ? 1 : 0.4 }}>
-          <PrimaryPillCTA label="Generate recipes" onPress={onGenerate} />
+          <PrimaryPillCTA label={t("recipeBuilder.cta.generate")} onPress={onGenerate} />
         </View>
       </View>
     </KeyboardAvoidingView>

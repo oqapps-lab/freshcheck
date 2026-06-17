@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Animated, Easing, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import * as Haptics from 'expo-haptics';
 import { SoftSurface } from '@/components/ui/SoftSurface';
 import { Sparkle } from '@/components/ui/Glyphs';
@@ -9,11 +10,11 @@ import { useOnboardingAnswers } from '@/src/state/onboardingStore';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
 const STAGES = [
-  { title: 'Reading your fridge habits', detail: 'What you buy, what you forget' },
-  { title: 'Mapping what spoils fastest in your home', detail: 'So nothing slips past its date' },
-  { title: 'Calibrating freshness alerts', detail: 'Tuned to what you waste most' },
-  { title: 'Lining up recipes for what expires soonest', detail: 'Dinner from what you already have' },
-  { title: 'Your freshness plan is taking shape', detail: 'Almost ready' },
+  { titleKey: 'building.stages.stage0.title', detailKey: 'building.stages.stage0.detail' },
+  { titleKey: 'building.stages.stage1.title', detailKey: 'building.stages.stage1.detail' },
+  { titleKey: 'building.stages.stage2.title', detailKey: 'building.stages.stage2.detail' },
+  { titleKey: 'building.stages.stage3.title', detailKey: 'building.stages.stage3.detail' },
+  { titleKey: 'building.stages.stage4.title', detailKey: 'building.stages.stage4.detail' },
 ];
 const STAGE_MS = 1300;
 
@@ -34,6 +35,7 @@ function Ring({ delay }: { delay: number }) {
 export default function BuildingScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { t } = useTranslation();
   const answers = useOnboardingAnswers();
   const [stage, setStage] = useState(0);
   const [pct, setPct] = useState(0);
@@ -85,17 +87,17 @@ export default function BuildingScreen() {
           <Ring delay={1460} />
           <Animated.View style={{ transform: [{ scale: orbScale }] }}>
             <SoftSurface variant="cushion" radius="full" innerStyle={styles.orb}>
-              <Text style={[typeScale.displayMedium, styles.pct]}>{pct}%</Text>
+              <Text style={[typeScale.displayMedium, styles.pct]}>{t('building.pct', { pct })}</Text>
             </SoftSurface>
           </Animated.View>
         </View>
 
-        <Text style={[typeScale.titleLarge, styles.stageTitle]}>{STAGES[stage].title}</Text>
-        <Text style={[typeScale.bodyLarge, styles.stageDetail]}>{STAGES[stage].detail}</Text>
+        <Text style={[typeScale.titleLarge, styles.stageTitle]}>{t(STAGES[stage].titleKey)}</Text>
+        <Text style={[typeScale.bodyLarge, styles.stageDetail]}>{t(STAGES[stage].detailKey)}</Text>
 
         <View style={styles.dots}>
           {STAGES.map((s, i) => (
-            <View key={s.title} style={[styles.dot, i <= stage ? styles.dotOn : null]} />
+            <View key={s.titleKey} style={[styles.dot, i <= stage ? styles.dotOn : null]} />
           ))}
         </View>
       </View>
@@ -107,7 +109,7 @@ export default function BuildingScreen() {
         <View style={styles.badge}>
           <Sparkle size={16} color={colors.amber} strokeWidth={1.8} />
           <Text style={[typeScale.bodySmall, styles.badgeText]}>
-            {name ? `${name}, your plan is personal — not a template` : 'Your plan is personal — not a template'}
+            {name ? t('building.badge.withName', { name }) : t('building.badge.noName')}
           </Text>
         </View>
       </View>

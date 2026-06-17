@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet, Image } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -33,12 +34,14 @@ const STEP_ICON: Record<RecipeStepIcon, React.ComponentType<{ size?: number; col
   serve: Bowl,
 };
 
+// i18n keys (resolved at render via t()); values come from the
+// recipeDetail.stepLabel.* fragment so translators can localise them.
 const STEP_LABEL: Record<RecipeStepIcon, string> = {
-  prep: 'PREP',
-  cook: 'COOK',
-  mix: 'MIX',
-  wait: 'WAIT',
-  serve: 'SERVE',
+  prep: 'recipeDetail.stepLabel.prep',
+  cook: 'recipeDetail.stepLabel.cook',
+  mix: 'recipeDetail.stepLabel.mix',
+  wait: 'recipeDetail.stepLabel.wait',
+  serve: 'recipeDetail.stepLabel.serve',
 };
 
 // See recipes.tsx for rationale — keep aligned with the list-screen palette
@@ -50,6 +53,7 @@ const DIFFICULTY_COLOR = {
 } as const;
 
 export default function RecipeDetailScreen() {
+  const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
   const router = useRouter();
@@ -68,7 +72,7 @@ export default function RecipeDetailScreen() {
     return (
       <View style={styles.root}>
         <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-          <IconButton accessibilityLabel="back" onPress={() => router.back()}>
+          <IconButton accessibilityLabel={t('recipeDetail.a11y.back')} onPress={() => router.back()}>
             <Back size={20} color={colors.ink} />
           </IconButton>
           <View style={styles.headerSpacer} />
@@ -77,12 +81,12 @@ export default function RecipeDetailScreen() {
         <View style={styles.emptyCenter}>
           <Sparkle size={48} color={colors.amber} strokeWidth={1.6} />
           <Text style={[typeScale.titleMedium, styles.emptyText]}>
-            {status === 'loading' ? 'Loading recipe…' : 'Recipe not found'}
+            {status === 'loading' ? t('recipeDetail.loading.title') : t('recipeDetail.empty.title')}
           </Text>
           <Text style={[typeScale.bodySmall, styles.emptySub]}>
             {status === 'loading'
-              ? 'Generating fresh recipes for you'
-              : 'Head back and pick another recipe.'}
+              ? t('recipeDetail.loading.subtitle')
+              : t('recipeDetail.empty.subtitle')}
           </Text>
         </View>
       </View>
@@ -128,24 +132,24 @@ export default function RecipeDetailScreen() {
           <Text style={[typeScale.body, styles.blurb]}>{recipe.blurb}</Text>
           <View style={styles.metaRow}>
             <View style={styles.metaItem}>
-              <Text style={[typeScale.labelSmall, styles.metaLabel]}>TIME</Text>
+              <Text style={[typeScale.labelSmall, styles.metaLabel]}>{t('recipeDetail.meta.time')}</Text>
               <Text style={[typeScale.titleMedium, styles.metaValue]}>
-                {recipe.minutes}min
+                {t('recipeDetail.meta.minutes', { count: recipe.minutes })}
               </Text>
             </View>
             <View style={styles.metaItem}>
-              <Text style={[typeScale.labelSmall, styles.metaLabel]}>DIFFICULTY</Text>
+              <Text style={[typeScale.labelSmall, styles.metaLabel]}>{t('recipeDetail.meta.difficulty')}</Text>
               <Text
                 style={[
                   typeScale.titleMedium,
                   { color: DIFFICULTY_COLOR[recipe.difficulty] },
                 ]}
               >
-                {recipe.difficulty.toUpperCase()}
+                {t(`recipeDetail.difficulty.${recipe.difficulty}`)}
               </Text>
             </View>
             <View style={styles.metaItem}>
-              <Text style={[typeScale.labelSmall, styles.metaLabel]}>FROM FRIDGE</Text>
+              <Text style={[typeScale.labelSmall, styles.metaLabel]}>{t('recipeDetail.meta.fromFridge')}</Text>
               <Text style={[typeScale.titleMedium, styles.metaValue]}>
                 {fridgeCount}/{recipe.ingredients.length}
               </Text>
@@ -155,7 +159,7 @@ export default function RecipeDetailScreen() {
 
         {/* Ingredients */}
         <View style={styles.section}>
-          <Text style={[typeScale.label, styles.sectionLabel]}>INGREDIENTS</Text>
+          <Text style={[typeScale.label, styles.sectionLabel]}>{t('recipeDetail.sections.ingredients')}</Text>
           <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.card}>
             {recipe.ingredients.map((ing, idx) => (
               <View
@@ -185,7 +189,7 @@ export default function RecipeDetailScreen() {
                 </View>
                 {ing.from_fridge && (
                   <View style={styles.haveBadge}>
-                    <Text style={[typeScale.labelTiny, styles.haveText]}>HAVE</Text>
+                    <Text style={[typeScale.labelTiny, styles.haveText]}>{t('recipeDetail.badges.have')}</Text>
                   </View>
                 )}
               </View>
@@ -195,7 +199,7 @@ export default function RecipeDetailScreen() {
 
         {/* Steps */}
         <View style={styles.section}>
-          <Text style={[typeScale.label, styles.sectionLabel]}>STEPS</Text>
+          <Text style={[typeScale.label, styles.sectionLabel]}>{t('recipeDetail.sections.steps')}</Text>
           <View style={styles.stepsList}>
             {recipe.steps.map((step) => {
               const Icon = STEP_ICON[step.icon] ?? Nutrition;
@@ -218,10 +222,13 @@ export default function RecipeDetailScreen() {
                     <View style={styles.stepBody}>
                       <View style={styles.stepHeader}>
                         <Text style={[typeScale.labelSmall, styles.stepLabel]}>
-                          STEP {step.order} · {STEP_LABEL[step.icon] ?? step.icon.toUpperCase()}
+                          {t('recipeDetail.steps.header', {
+                            order: step.order,
+                            label: STEP_LABEL[step.icon] ? t(STEP_LABEL[step.icon]) : step.icon.toUpperCase(),
+                          })}
                         </Text>
                         <Text style={[typeScale.labelSmall, styles.stepTime]}>
-                          {step.minutes} MIN
+                          {t('recipeDetail.steps.minutes', { minutes: step.minutes })}
                         </Text>
                       </View>
                       <Text style={[typeScale.body, styles.stepText]}>
@@ -240,11 +247,11 @@ export default function RecipeDetailScreen() {
           slide away when the user scrolls down (K5). Icon buttons are
           neumorphic circles, legible over both the photo and white content. */}
       <View style={[styles.fixedHeader, { paddingTop: insets.top + 16 }]} pointerEvents="box-none">
-        <IconButton accessibilityLabel="back" onPress={() => router.back()}>
+        <IconButton accessibilityLabel={t('recipeDetail.a11y.back')} onPress={() => router.back()}>
           <Back size={20} color={colors.ink} />
         </IconButton>
         <IconButton
-          accessibilityLabel={isFav ? 'remove from saved' : 'save recipe'}
+          accessibilityLabel={isFav ? t('recipeDetail.a11y.removeFromSaved') : t('recipeDetail.a11y.saveRecipe')}
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
             toggleFavorite(recipe);

@@ -10,11 +10,1145 @@
     "tryAgain": "Try again",
     "next": "Next",
     "skip": "Skip",
-    "ok": "OK"
+    "ok": "OK",
+    "dayUnit_one": "DAY",
+    "dayUnit_other": "DAYS",
+    "tabA11y": "{{label}} tab",
+    "productRow": {
+      "a11yDaysLeft_one": "{{name}}, {{count}} day left",
+      "a11yDaysLeft_other": "{{name}}, {{count}} days left",
+      "delete": "DELETE",
+      "deleteA11y": "Delete {{name}}"
+    },
+    "achievements": {
+      "unlocked": "ACHIEVEMENT UNLOCKED",
+      "items": {
+        "first_scan": {
+          "title": "First Look",
+          "desc": "Scan your first food"
+        },
+        "scan_10": {
+          "title": "Fresh Eyes",
+          "desc": "Scan 10 foods"
+        },
+        "scan_50": {
+          "title": "Safety Pro",
+          "desc": "Scan 50 foods"
+        },
+        "first_recipe": {
+          "title": "Home Cook",
+          "desc": "Generate your first recipe"
+        },
+        "recipe_10": {
+          "title": "Recipe Explorer",
+          "desc": "Generate 10 recipes"
+        },
+        "fridge_5": {
+          "title": "Stocked Up",
+          "desc": "Track 5 fridge items"
+        },
+        "streak_3": {
+          "title": "Getting Fresh",
+          "desc": "Use FreshCheck 3 days"
+        },
+        "streak_7": {
+          "title": "Waste Warrior",
+          "desc": "Use FreshCheck 7 days"
+        }
+      }
+    }
   },
   "errorBoundary": {
     "title": "Something went wrong",
     "message": "An unexpected error occurred. Try again, or restart the app if the problem persists.",
     "retry": "Try again"
+  },
+  "att": {
+    "headlineFamily": "Make FreshCheck better for families",
+    "headlineYou": "Make FreshCheck better for you",
+    "bodyFamily": "With your permission, we measure which features actually help parents like you — so we can keep improving the parts that matter.",
+    "bodyYou": "With your permission, we measure which features actually help people like you — so we can keep improving the parts that matter.",
+    "privacy": "We never sell your personal data, and your scans always stay private.",
+    "micro": "On the next screen you can Allow or decline. FreshCheck works fully either way, and you can change this anytime in Settings.",
+    "continue": "Continue"
+  },
+  "building": {
+    "pct": "{{pct}}%",
+    "stages": {
+      "stage0": {
+        "title": "Reading your fridge habits",
+        "detail": "What you buy, what you forget"
+      },
+      "stage1": {
+        "title": "Mapping what spoils fastest in your home",
+        "detail": "So nothing slips past its date"
+      },
+      "stage2": {
+        "title": "Calibrating freshness alerts",
+        "detail": "Tuned to what you waste most"
+      },
+      "stage3": {
+        "title": "Lining up recipes for what expires soonest",
+        "detail": "Dinner from what you already have"
+      },
+      "stage4": {
+        "title": "Your freshness plan is taking shape",
+        "detail": "Almost ready"
+      }
+    },
+    "badge": {
+      "withName": "{{name}}, your plan is personal — not a template",
+      "noName": "Your plan is personal — not a template"
+    }
+  },
+  "onboarding": {
+    "cta": {
+      "getStarted": "Get started",
+      "continue": "Continue"
+    },
+    "slides": {
+      "waste": {
+        "title": "Never throw away good food again",
+        "body": "FreshCheck tells you what is still good and nudges you before it spoils.",
+        "proof": "Families save about $2,913 a year"
+      },
+      "scan": {
+        "title": "Is this still safe? Know in 3 seconds",
+        "body": "Point your camera at any food for an instant verdict — safe, caution, or toss it."
+      },
+      "timeline": {
+        "title": "Your whole fridge, on a freshness timeline",
+        "body": "Everything you own, sorted by what expires next. Nothing forgotten in the back again."
+      },
+      "recipes": {
+        "title": "Tonight’s dinner, from what you already have",
+        "body": "One tap turns your soon-to-expire ingredients into 3 fresh AI recipes."
+      },
+      "barcode": {
+        "title": "Scan the barcode, we track the rest",
+        "body": "Add packaged groceries in a second — just scan the barcode and we log it."
+      }
+    }
+  },
+  "personalize": {
+    "progress": "Step {{current}} of {{total}}",
+    "namePlaceholder": "Your name",
+    "a11y": {
+      "back": "back"
+    },
+    "cta": {
+      "buildPlan": "Build my plan",
+      "continue": "Continue"
+    },
+    "questions": {
+      "household": {
+        "q": "Who are you keeping fresh for?",
+        "options": {
+          "me": "Just me",
+          "partner": "Me and my partner",
+          "family": "A family with kids",
+          "roommates": "A roommate household"
+        }
+      },
+      "topWaste": {
+        "q": "What do you throw out most?",
+        "sub": "Pick all that apply",
+        "options": {
+          "leftovers": "Leftovers",
+          "produce": "Produce and greens",
+          "dairy": "Dairy",
+          "meat": "Meat and poultry",
+          "bread": "Bread"
+        }
+      },
+      "worry": {
+        "q": "What worries you most about food?",
+        "options": {
+          "sick": "Making someone sick",
+          "money": "Wasting money",
+          "spoiled": "Eating something spoiled",
+          "unsure": "Not knowing what is still good"
+        }
+      },
+      "forgotten": {
+        "q": "How often do leftovers get forgotten in the back of the fridge?",
+        "options": {
+          "constantly": "Constantly",
+          "weekly": "Most weeks",
+          "sometimes": "Sometimes",
+          "rarely": "Rarely"
+        }
+      },
+      "dinner": {
+        "q": "How do you decide dinner?",
+        "options": {
+          "plan": "I plan ahead",
+          "wing": "I wing it",
+          "expiring": "Whatever is about to expire",
+          "order": "I order out a lot"
+        }
+      },
+      "name": {
+        "q": "Last thing — what should we call you?",
+        "sub": "Optional"
+      }
+    }
+  },
+  "yourPlan": {
+    "eyebrowNamed": "{{name}}'S PLAN",
+    "eyebrowDefault": "YOUR FRESHCHECK PLAN",
+    "watchLabel": "WE WILL KEEP AN EYE ON",
+    "whatIsInside": "WHAT IS INSIDE",
+    "socialProof": "Join families saving about $2,913 a year with FreshCheck.",
+    "cta": {
+      "seeMyPlan": "See my plan"
+    },
+    "waste": {
+      "leftovers": "Leftovers",
+      "produce": "Produce & greens",
+      "dairy": "Dairy",
+      "meat": "Meat & poultry",
+      "bread": "Bread"
+    },
+    "benefits": {
+      "verdict": {
+        "title": "Instant safe / caution / danger verdict",
+        "sub": "Scan any food, know in 3 seconds."
+      },
+      "timeline": {
+        "title": "Your fridge on a freshness timeline",
+        "sub": "Everything sorted by what expires next."
+      },
+      "recipes": {
+        "title": "Recipes from what is expiring",
+        "sub": "Turn soon-to-spoil items into dinner."
+      }
+    },
+    "tiles": {
+      "dailyScans": "Daily freshness scans",
+      "fridgeTimeline": "Fridge timeline",
+      "expiryReminders": "Expiry reminders",
+      "unlimitedScans": "Unlimited scans",
+      "unlimitedRecipes": "Unlimited AI recipes",
+      "barcodeImport": "Barcode import"
+    }
+  },
+  "plan": {
+    "wasteLower": {
+      "leftovers": "leftovers",
+      "produce": "produce & greens",
+      "dairy": "dairy",
+      "meat": "meat & poultry",
+      "bread": "bread"
+    },
+    "household": {
+      "family": "busy family cook",
+      "partner": "two-person kitchen",
+      "roommates": "shared household",
+      "solo": "solo cook"
+    },
+    "headlineWithWaste": "You're a {{who}} — we'll keep an eye on your {{waste}}.",
+    "headlineFallback": "You're a {{who}} — FreshCheck will watch your fridge for you.",
+    "fear": {
+      "sick": "We'll flag anything risky before it reaches your table.",
+      "money": "Stop throwing away ~$56 of groceries every week.",
+      "spoiled": "You'll always know what's still good — at a glance.",
+      "default": "Never guess whether something is still safe to eat."
+    }
+  },
+  "paywall": {
+    "eyebrow": "FRESHCHECK PRO",
+    "a11y": {
+      "close": "close",
+      "planOption": "{{label}} plan, {{price}} {{unit}}"
+    },
+    "hero": {
+      "scanLimit": {
+        "title": "You've used today's free scans",
+        "subtitle": "Go unlimited — scan everything in your kitchen, whenever you want."
+      },
+      "barcode": {
+        "title": "Barcode scanning is a Pro feature",
+        "subtitle": "Scan any product barcode and drop it straight into your fridge."
+      },
+      "recipeLimit": {
+        "title": "You've used today's free recipe generation",
+        "subtitle": "Unlimited AI recipes from whatever is in your fridge — every day."
+      },
+      "default": {
+        "title": "Unlock FreshCheck Pro",
+        "subtitle": "Turn what's in your fridge into recipes, and never throw away food again."
+      }
+    },
+    "trust": {
+      "family": "SAVES THE AVERAGE FAMILY $2,913 / YEAR",
+      "household": "THE AVERAGE HOUSEHOLD SAVES $2,913 / YEAR"
+    },
+    "features": {
+      "header": "EVERYTHING IN PRO",
+      "unlimitedScans": {
+        "title": "Unlimited scans",
+        "body": "Scan as many items as you want, no daily cap."
+      },
+      "unlimitedRecipes": {
+        "title": "Unlimited AI recipes",
+        "body": "Generate fresh recipes from your fridge whenever you want, no daily cap."
+      },
+      "barcodeAdd": {
+        "title": "Barcode pantry add",
+        "body": "Scan a product barcode to drop it straight into your fridge."
+      },
+      "wholeTable": {
+        "title": "Whole-table scanning",
+        "body": "One photo, every item on the table — as often as you like."
+      },
+      "batchScanning": {
+        "title": "Rapid batch scanning",
+        "body": "Fire off your whole grocery haul back-to-back, no limits."
+      }
+    },
+    "plans": {
+      "eyebrow": "CHOOSE YOUR PLAN · 3 DAYS FREE",
+      "annual": {
+        "label": "Annual",
+        "unit": "/ year",
+        "badge": "SAVE 89%",
+        "sublabel": "Just $0.77 / week, billed yearly"
+      },
+      "monthly": {
+        "label": "Monthly",
+        "unit": "/ month",
+        "sublabel": "Flexible — cancel anytime"
+      },
+      "weekly": {
+        "label": "Weekly",
+        "unit": "/ week",
+        "sublabel": "Just trying it out"
+      }
+    },
+    "cta": {
+      "processing": "Processing…",
+      "startTrial": "Start 3-day free trial"
+    },
+    "fineprint": {
+      "annual": "First 3 days free, then {{price}} / year. Auto-renews unless cancelled at least 24 hours before period end.",
+      "monthly": "First 3 days free, then {{price}} / month. Auto-renews unless cancelled at least 24 hours before period end.",
+      "weekly": "First 3 days free, then {{price}} / week. Auto-renews unless cancelled at least 24 hours before period end."
+    },
+    "legal": {
+      "restore": "Restore",
+      "terms": "Terms",
+      "privacy": "Privacy"
+    },
+    "alerts": {
+      "welcomeTitle": "Welcome to Pro",
+      "welcomeBody": "Your free trial has started. Generate unlimited AI recipes from your fridge!",
+      "pendingTitle": "Awaiting approval",
+      "pendingBody": "Your purchase is pending Apple ID approval.",
+      "purchaseFailedTitle": "Purchase failed",
+      "restoredTitle": "Restored",
+      "restoredBody": "Your subscription is active again.",
+      "nothingToRestoreTitle": "Nothing to restore",
+      "nothingToRestoreBody": "No active subscription was found on this Apple ID.",
+      "restoreFailedTitle": "Restore failed",
+      "couldNotOpenLinkTitle": "Could not open link",
+      "unknownError": "Unknown error"
+    }
+  },
+  "auth": {
+    "wordmark": "FRESHCHECK",
+    "title": {
+      "signIn": "Welcome back",
+      "signUp": "Join FreshCheck"
+    },
+    "labels": {
+      "email": "EMAIL",
+      "password": "PASSWORD"
+    },
+    "placeholders": {
+      "email": "you@example.com",
+      "passwordSignIn": "Your password",
+      "passwordSignUp": "Min. 6 characters"
+    },
+    "cta": {
+      "submitting": "...",
+      "signIn": "Sign in",
+      "createAccount": "Create account",
+      "toggleToSignUp": "Don't have an account? Sign up",
+      "toggleToSignIn": "Already have an account? Sign in",
+      "continueAsGuest": "Continue as guest"
+    },
+    "legal": {
+      "prefix": "By continuing you agree to the",
+      "terms": "Terms",
+      "and": "and",
+      "privacy": "Privacy Policy",
+      "suffix": "."
+    },
+    "alerts": {
+      "signInTitle": "Sign in",
+      "signUpTitle": "Sign up",
+      "notConfigured": "Supabase is not configured in this build. Continue as guest to keep using the app locally.",
+      "checkEmailTitle": "Check your email",
+      "checkEmailMessage": "We sent a confirmation link to {{email}}. Tap it, then come back and sign in.",
+      "ok": "OK"
+    },
+    "errors": {
+      "signInFailedTitle": "Sign in failed",
+      "signUpFailedTitle": "Sign up failed",
+      "invalidCredentials": "Enter a valid email and a password of at least 6 characters."
+    },
+    "a11y": {
+      "back": "back",
+      "email": "email",
+      "password": "password",
+      "toggleMode": "toggle auth mode"
+    }
+  },
+  "scanResult": {
+    "header": {
+      "analysis": "ANALYSIS"
+    },
+    "verdict": {
+      "fresh": "Looks fresh",
+      "safe": "Safe to eat",
+      "soon": "Use it soon",
+      "past": "Past its prime"
+    },
+    "expiry": {
+      "unknown": "Unknown shelf life",
+      "useToday": "Use today",
+      "daysLeft_one": "{{count}} day left",
+      "daysLeft_other": "{{count}} days left"
+    },
+    "empty": {
+      "title": "No scan yet",
+      "subtitle": "Scan an item to see its freshness verdict here.",
+      "scanNow": "Scan now"
+    },
+    "labels": {
+      "itemFallback": "item",
+      "confidence": "{{percent}}% confidence"
+    },
+    "safetyNote": "Visual estimate only — does not detect bacteria. When in doubt, throw it out.",
+    "refine": {
+      "label": "HOW LONG HAVE YOU HAD IT?",
+      "justGotIt": "Just got it",
+      "daysAgo_one": "{{count}} day ago",
+      "daysAgo_other": "{{count}} days ago",
+      "adjusted_one": "Adjusted to {{count}} day left",
+      "adjusted_other": "Adjusted to {{count}} days left"
+    },
+    "cta": {
+      "addToFridge": "Add to Fridge",
+      "scanAnother": "Scan Another"
+    },
+    "alerts": {
+      "signInRequiredTitle": "Sign in required",
+      "signInRequiredMessage": "Sign in to save items to your fridge.",
+      "cancel": "Cancel",
+      "signIn": "Sign in",
+      "couldNotSaveTitle": "Could not save"
+    },
+    "a11y": {
+      "back": "back",
+      "fewerDays": "fewer days",
+      "moreDays": "more days"
+    }
+  },
+  "home": {
+    "wordmark": "FRESHCHECK",
+    "heroTitle": "Ready to Scan",
+    "heroSubtitle": "Point at food. Result in 3 seconds.",
+    "tapToScan": "TAP TO SCAN",
+    "recipeOfDayEmpty": "Generate recipes from your fridge",
+    "badgeUnlocked": "Unlocked",
+    "sections": {
+      "recipeOfDay": "RECIPE OF THE DAY",
+      "freshTips": "FRESH TIPS",
+      "storageGuide": "STORAGE GUIDE",
+      "chefTips": "CHEF TIPS",
+      "yourBadges": "YOUR BADGES"
+    },
+    "a11y": {
+      "tapToScan": "Tap to scan",
+      "openRecipe": "open {{name}}",
+      "generateRecipes": "generate recipes"
+    },
+    "freshTips": {
+      "items": {
+        "dangerZone": {
+          "title": "The danger zone",
+          "body": "Bacteria multiply fastest between 4–60°C. Refrigerate leftovers within 2 hours of cooking."
+        },
+        "pestoSealedVsOpen": {
+          "title": "Pesto: sealed vs open",
+          "body": "A sealed jar keeps for months. Once opened, use within about 5–7 days — or freeze it."
+        },
+        "eggsKeepLonger": {
+          "title": "Eggs keep longer than you think",
+          "body": "Refrigerated eggs are usually good 3–5 weeks past purchase. Float test: fresh ones sink."
+        },
+        "herbsLoveWater": {
+          "title": "Herbs love water",
+          "body": "Stand fresh herbs upright in a glass of water, loosely covered — they last about twice as long."
+        },
+        "washBerriesLast": {
+          "title": "Wash berries last",
+          "body": "Moisture speeds up mould. Only rinse berries right before you eat them."
+        }
+      }
+    }
+  },
+  "storageGuide": {
+    "items": {
+      "bananas": {
+        "name": "Bananas",
+        "store": "On the counter, away from other fruit",
+        "life": "2–7 days",
+        "temp": "Room temp"
+      },
+      "berries": {
+        "name": "Berries",
+        "store": "Unwashed, in a paper-towel-lined box",
+        "life": "3–7 days",
+        "temp": "Fridge 1–4°C"
+      },
+      "eggs": {
+        "name": "Eggs",
+        "store": "In the carton, on a shelf (not the door)",
+        "life": "3–5 weeks",
+        "temp": "Fridge ≤4°C"
+      },
+      "leafyGreens": {
+        "name": "Leafy greens",
+        "store": "Wrapped loosely in a dry towel",
+        "life": "5–7 days",
+        "temp": "Fridge 1–4°C"
+      },
+      "chicken": {
+        "name": "Chicken",
+        "store": "Sealed, on the bottom shelf",
+        "life": "1–2 days",
+        "temp": "Fridge ≤4°C"
+      },
+      "cookedLeftovers": {
+        "name": "Cooked leftovers",
+        "store": "Airtight, cooled within 2 hours",
+        "life": "3–4 days",
+        "temp": "Fridge ≤4°C"
+      },
+      "hardCheese": {
+        "name": "Hard cheese",
+        "store": "Wrapped in wax/parchment, not plastic",
+        "life": "3–4 weeks",
+        "temp": "Fridge 1–4°C"
+      },
+      "tomatoes": {
+        "name": "Tomatoes",
+        "store": "On the counter, stem-side down",
+        "life": "4–7 days",
+        "temp": "Room temp"
+      },
+      "bread": {
+        "name": "Bread",
+        "store": "Paper bag at room temp, or freeze",
+        "life": "2–4 days",
+        "temp": "Room temp"
+      },
+      "fish": {
+        "name": "Fish",
+        "store": "On ice, sealed, bottom shelf",
+        "life": "1–2 days",
+        "temp": "Fridge ≤2°C"
+      },
+      "carrots": {
+        "name": "Carrots",
+        "store": "Tops removed, in water or a sealed bag",
+        "life": "2–4 weeks",
+        "temp": "Fridge 1–4°C"
+      },
+      "milk": {
+        "name": "Milk",
+        "store": "Coldest shelf, not the door",
+        "life": "5–7 days after open",
+        "temp": "Fridge ≤4°C"
+      }
+    }
+  },
+  "chefTips": {
+    "items": {
+      "gordonRamsay": {
+        "name": "Gordon Ramsay",
+        "role": "Michelin chef",
+        "tip": "Taste as you go. Season in layers, not all at the end."
+      },
+      "massimoBottura": {
+        "name": "Massimo Bottura",
+        "role": "Osteria Francescana",
+        "tip": "Yesterday's bread becomes today's masterpiece — never waste it."
+      },
+      "juliaChild": {
+        "name": "Julia Child",
+        "role": "Author & TV chef",
+        "tip": "Don't crowd the pan — give food room or it steams instead of browns."
+      },
+      "yotamOttolenghi": {
+        "name": "Yotam Ottolenghi",
+        "role": "Chef & author",
+        "tip": "A squeeze of lemon at the end wakes up almost any dish."
+      },
+      "marcoPierreWhite": {
+        "name": "Marco Pierre White",
+        "role": "Michelin chef",
+        "tip": "Let meat rest after cooking — the juices redistribute."
+      },
+      "nigellaLawson": {
+        "name": "Nigella Lawson",
+        "role": "Food writer",
+        "tip": "Freeze herbs in olive oil in an ice tray before they wilt."
+      },
+      "thomasKeller": {
+        "name": "Thomas Keller",
+        "role": "The French Laundry",
+        "tip": "Pat proteins dry before searing — moisture is the enemy of a crust."
+      },
+      "saminNosrat": {
+        "name": "Samin Nosrat",
+        "role": "Salt Fat Acid Heat",
+        "tip": "Salt from a height so it falls evenly across the food."
+      }
+    }
+  },
+  "foodFacts": {
+    "items": {
+      "smellTestLies": {
+        "title": "The smell test lies",
+        "body": "Dangerous bacteria like salmonella don't change how food smells, looks or tastes."
+      },
+      "dangerZone": {
+        "title": "The danger zone",
+        "body": "Bacteria multiply fastest between 4–60°C. Refrigerate leftovers within 2 hours."
+      },
+      "ripenWithApples": {
+        "title": "Ripen with apples",
+        "body": "Apples and bananas release ethylene — keep them away from greens to slow spoilage."
+      },
+      "freezingPausesTime": {
+        "title": "Freezing pauses time",
+        "body": "Freezing doesn't kill bacteria, it just stops them. They wake up when thawed."
+      }
+    }
+  },
+  "scanBatch": {
+    "header": "BATCH SCAN",
+    "counter": "{{done}} DONE · {{left}} LEFT",
+    "hero": {
+      "scanning": "Scanning your batch…",
+      "results": "Batch results"
+    },
+    "verdict": {
+      "fresh": "Looks fresh",
+      "safe": "Safe to eat",
+      "soon": "Use it soon",
+      "past": "Past its prime"
+    },
+    "expiry": {
+      "unknown": "Unknown shelf life",
+      "today": "Use today",
+      "daysLeft_one": "{{count}} day left",
+      "daysLeft_other": "{{count}} days left"
+    },
+    "empty": {
+      "title": "Nothing queued",
+      "subtitle": "Switch the scanner to Batch and snap a few items.",
+      "cta": "Back to scan"
+    },
+    "card": {
+      "itemFallback": "Item",
+      "editHint": "TAP NAME OR VERDICT TO EDIT",
+      "scanFailed": "Scan failed",
+      "scanFailedHint": "Try this one again from the scanner.",
+      "reading": "Reading freshness…",
+      "waiting": "Waiting…"
+    },
+    "cta": {
+      "add": "ADD",
+      "rescan": "RESCAN",
+      "done": "Done",
+      "addAll_one": "Add {{count}} to fridge",
+      "addAll_other": "Add {{count}} to fridge"
+    },
+    "editPrompt": {
+      "title": "Edit item",
+      "message": "Correct the detected name.",
+      "cancel": "Cancel",
+      "save": "Save",
+      "placeholder": "e.g. chicken breast"
+    },
+    "signInAlert": {
+      "title": "Sign in required",
+      "message": "Sign in to save items to your fridge.",
+      "cancel": "Cancel",
+      "signIn": "Sign in"
+    },
+    "saveError": {
+      "title": "Could not save"
+    },
+    "a11y": {
+      "back": "back",
+      "editName": "edit name, currently {{name}}",
+      "changeVerdict": "change freshness verdict",
+      "addToFridge": "add {{name}} to fridge",
+      "rescan": "rescan this photo",
+      "done": "done"
+    }
+  },
+  "profile": {
+    "fallbackName": "You",
+    "guestName": "Guest",
+    "status": {
+      "signedIn": "SIGNED IN",
+      "notSignedIn": "NOT SIGNED IN",
+      "active": "Active"
+    },
+    "sections": {
+      "account": "ACCOUNT",
+      "pro": "PRO",
+      "notifications": "NOTIFICATIONS",
+      "about": "ABOUT"
+    },
+    "stats": {
+      "itemsInFridge": "ITEMS IN FRIDGE"
+    },
+    "rows": {
+      "signIn": "Sign in",
+      "signOut": "Sign out",
+      "email": "Email",
+      "deleteAccount": "Delete account",
+      "deleteMyData": "Delete my data",
+      "freshcheckPro": "FreshCheck Pro",
+      "manageSubscription": "Manage subscription",
+      "upgradeToPro": "Upgrade to FreshCheck Pro",
+      "restorePurchase": "Restore purchase",
+      "foodExpiryReminders": "Food expiry reminders",
+      "privacyPolicy": "Privacy policy",
+      "termsOfService": "Terms of service",
+      "support": "Support",
+      "version": "Version"
+    },
+    "labels": {
+      "warnMeBefore": "Warn me before",
+      "daysShort_one": "{{count}}d",
+      "daysShort_other": "{{count}}d"
+    },
+    "cta": {
+      "cancel": "Cancel",
+      "save": "Save",
+      "delete": "Delete",
+      "keepAccount": "Keep account",
+      "yesDelete": "Yes, delete",
+      "signOut": "Sign out",
+      "takePhoto": "Take Photo",
+      "chooseFromLibrary": "Choose from Library",
+      "openSettings": "Open Settings"
+    },
+    "a11y": {
+      "changeAvatar": "change avatar",
+      "editName": "edit name",
+      "daysBefore_one": "{{count}} day before",
+      "daysBefore_other": "{{count}} days before"
+    },
+    "errors": {
+      "unknown": "Unknown error"
+    },
+    "alerts": {
+      "photoAccess": {
+        "title": "Photo access needed",
+        "messageCanAsk": "Allow photo access to choose an avatar.",
+        "messageDenied": "Enable photo access in Settings, then come back."
+      },
+      "cameraAccess": {
+        "title": "Camera access needed",
+        "messageCanAsk": "Allow camera access to take a photo.",
+        "messageDenied": "Enable camera access in Settings, then come back."
+      },
+      "changePhoto": {
+        "title": "Change photo",
+        "message": "Choose a new profile photo"
+      },
+      "editName": {
+        "title": "Your name",
+        "message": "How should we call you?"
+      },
+      "signOut": {
+        "title": "Sign out",
+        "message": "Sign out of FreshCheck?"
+      },
+      "restored": {
+        "title": "Restored",
+        "message": "Your subscription is active again."
+      },
+      "nothingToRestore": {
+        "title": "Nothing to restore",
+        "message": "No active subscription was found on this Apple ID."
+      },
+      "restoreFailed": {
+        "title": "Restore failed"
+      },
+      "linkFailed": {
+        "title": "Could not open link"
+      },
+      "deleteAccount": {
+        "title": "Delete account",
+        "message": "This permanently deletes your account, fridge items, and scan history. This cannot be undone."
+      },
+      "deleteConfirm": {
+        "title": "Are you sure?",
+        "message": "This is your last chance to keep your data. Tap \"Yes, delete\" to permanently remove your account."
+      },
+      "notSignedIn": {
+        "title": "Not signed in",
+        "message": "Please sign in first."
+      },
+      "deletionFailed": {
+        "title": "Deletion failed",
+        "message": "Try again or contact support."
+      },
+      "accountDeleted": {
+        "title": "Account deleted",
+        "message": "Your account and data have been removed."
+      }
+    }
+  },
+  "recipeDetail": {
+    "loading": {
+      "title": "Loading recipe…",
+      "subtitle": "Generating fresh recipes for you"
+    },
+    "empty": {
+      "title": "Recipe not found",
+      "subtitle": "Head back and pick another recipe."
+    },
+    "meta": {
+      "time": "TIME",
+      "difficulty": "DIFFICULTY",
+      "fromFridge": "FROM FRIDGE",
+      "minutes_one": "{{count}}min",
+      "minutes_other": "{{count}}min"
+    },
+    "difficulty": {
+      "easy": "EASY",
+      "medium": "MEDIUM",
+      "hard": "HARD"
+    },
+    "sections": {
+      "ingredients": "INGREDIENTS",
+      "steps": "STEPS"
+    },
+    "badges": {
+      "have": "HAVE"
+    },
+    "stepLabel": {
+      "prep": "PREP",
+      "cook": "COOK",
+      "mix": "MIX",
+      "wait": "WAIT",
+      "serve": "SERVE"
+    },
+    "steps": {
+      "header": "STEP {{order}} · {{label}}",
+      "minutes": "{{minutes}} MIN"
+    },
+    "a11y": {
+      "back": "back",
+      "saveRecipe": "save recipe",
+      "removeFromSaved": "remove from saved"
+    }
+  },
+  "recipeBuilder": {
+    "header": {
+      "title": "BUILD A RECIPE",
+      "subtitle": "What is in your kitchen?",
+      "intro": "Add what you have — with amounts if you like — and we will build recipes around it."
+    },
+    "sections": {
+      "addIngredients": "ADD INGREDIENTS",
+      "cookingMethod": "COOKING METHOD",
+      "maxTime": "MAX TIME"
+    },
+    "placeholders": {
+      "amount": "200",
+      "name": "Chicken breast"
+    },
+    "methods": {
+      "any": "Any",
+      "bake": "Bake",
+      "fry": "Fry",
+      "boil": "Boil",
+      "grill": "Grill",
+      "steam": "Steam",
+      "noCook": "No-cook",
+      "slowCook": "Slow cook"
+    },
+    "times": {
+      "any": "Any",
+      "under15": "<=15 min",
+      "under30": "<=30 min",
+      "under45": "<=45 min",
+      "under60": "<=60 min"
+    },
+    "units": {
+      "g": "g",
+      "pcs": "pcs",
+      "cups": "cups",
+      "tbsp": "tbsp",
+      "tsp": "tsp",
+      "ml": "ml"
+    },
+    "toggle": {
+      "title": "Use only these ingredients",
+      "sub": "Off = we can add common extras (oil, salt, spices)."
+    },
+    "cta": {
+      "generate": "Generate recipes"
+    },
+    "errors": {
+      "notFood": "Enter a real ingredient"
+    },
+    "alerts": {
+      "addIngredientsTitle": "Add ingredients",
+      "addIngredientsMessage": "Add at least one ingredient to build a recipe.",
+      "couldNotGenerateTitle": "Could not generate",
+      "tryAgain": "Please try again in a moment."
+    },
+    "a11y": {
+      "back": "back",
+      "addIngredient": "add ingredient"
+    }
+  },
+  "recipes": {
+    "eyebrow": "RECIPES",
+    "hero": {
+      "title": "Cook with what you have",
+      "titleEmpty": "Starter recipes",
+      "subtitle": "AI-CRAFTED FROM YOUR FRIDGE",
+      "subtitleEmpty": "SCAN ITEMS FOR PERSONALIZED PICKS"
+    },
+    "cook": {
+      "title": "Cook with what you have",
+      "titleEmpty": "Generate starter recipes",
+      "subtitle": "Pick fridge items → 3 fresh recipes",
+      "subtitleEmpty": "3 simple ideas you can shop for"
+    },
+    "build": {
+      "title": "Build your own recipe",
+      "subtitle": "Type ingredients, method & time"
+    },
+    "emptyBanner": "Your fridge is empty — these are generic starter ideas. Scan a few items first for recipes built around what you actually have.",
+    "sections": {
+      "saved": "★ SAVED"
+    },
+    "errors": {
+      "dailyLimitTitle": "Daily limit reached",
+      "generateFailedTitle": "Couldn't generate recipes",
+      "unlockUnlimited": "Unlock unlimited recipes"
+    },
+    "labels": {
+      "minutesShort": "{{count}} MIN",
+      "fromFridge_one": "{{count}} FROM FRIDGE",
+      "fromFridge_other": "{{count}} FROM FRIDGE",
+      "today": "today",
+      "daysShort": "{{count}}d"
+    },
+    "sheet": {
+      "title": "Cook with what you have",
+      "subtitle": "Pick the items to build recipes from. We prioritise what expires soonest."
+    },
+    "cta": {
+      "generateFromItems_one": "Generate from {{count}} item",
+      "generateFromItems_other": "Generate from {{count}} items"
+    },
+    "a11y": {
+      "generateStarter": "generate starter recipes",
+      "cookWithWhatYouHave": "cook with what you have",
+      "buildCustom": "build a custom recipe",
+      "upgradeToPro": "Upgrade to FreshCheck Pro",
+      "openRecipe": "open {{name}}",
+      "recipeCard_one": "{{name}}, {{count}} minute",
+      "recipeCard_other": "{{name}}, {{count}} minutes",
+      "removeFromSaved": "remove from saved",
+      "saveRecipe": "save recipe",
+      "removeRecipe": "remove {{name}}",
+      "close": "close"
+    }
+  },
+  "capture": {
+    "header": {
+      "scan": "SCAN"
+    },
+    "a11y": {
+      "back": "back",
+      "capture": "capture",
+      "scanWholeTable": "scan the whole table",
+      "choosePhotoFromLibrary": "choose photo from library",
+      "reviewScans_one": "review {{count}} scan",
+      "reviewScans_other": "review {{count}} scans"
+    },
+    "modes": {
+      "single": "SINGLE",
+      "batch": "BATCH",
+      "barcode": "BARCODE"
+    },
+    "hints": {
+      "barcode": "POINT AT A BARCODE",
+      "batch": "TAP TO ADD · SCANS RUN IN BACKGROUND",
+      "single": "POINT AT FOOD · TAP TO CAPTURE"
+    },
+    "freeScansLeft_one": "{{count}} FREE SCAN LEFT TODAY",
+    "freeScansLeft_other": "{{count}} FREE SCANS LEFT TODAY",
+    "status": {
+      "analyzing": "Analyzing…",
+      "lookingUpProduct": "Looking up product…",
+      "readingFreshness": "Reading freshness…",
+      "findingItems": "Finding items…",
+      "capturing": "Capturing…",
+      "loadingPhoto": "Loading photo…",
+      "preparingScan": "Preparing scan…",
+      "loadingCamera": "Loading camera…"
+    },
+    "analyzingSub": {
+      "stillWorking": "Still working… {{seconds}}s",
+      "default": "This can take a few seconds"
+    },
+    "cta": {
+      "scanWholeTable": "📋  SCAN THE WHOLE TABLE",
+      "reviewScans_one": "Review {{count}} scan",
+      "reviewScans_other": "Review {{count}} scans",
+      "allowCamera": "Allow camera",
+      "openSettings": "Open Settings",
+      "chooseFromLibrary": "Choose from library instead",
+      "back": "Back"
+    },
+    "gate": {
+      "serviceUnavailable": {
+        "title": "Service unavailable",
+        "message": "Scanning is temporarily unavailable. Please try again in a moment."
+      },
+      "cameraOff": {
+        "title": "Camera off",
+        "messageCanAsk": "FreshCheck needs camera access to scan food.",
+        "messageDenied": "Enable camera access in Settings, then come back."
+      }
+    },
+    "barcode": {
+      "expiryText": "~{{days}} days left"
+    },
+    "errors": {
+      "scanFailed": "Scan failed.",
+      "couldNotScan": "Could not scan.",
+      "couldNotCapture": "Could not capture photo."
+    },
+    "alerts": {
+      "cancel": "Cancel",
+      "productNotFound": {
+        "title": "Product not found",
+        "message": "No match for that barcode yet. Try the photo scan instead."
+      },
+      "couldNotAdd": {
+        "title": "Could not add"
+      },
+      "addedToFridge": {
+        "title": "Added to your fridge",
+        "message": "{{product}} · keep ~{{days}} days"
+      },
+      "severalItems": {
+        "title": "Several items detected",
+        "message": "This photo looks like it has multiple foods. Scan them all, or just the main one?",
+        "justMain": "Just the main one",
+        "scanAll": "Scan all items"
+      },
+      "scanFailed": {
+        "title": "Scan failed"
+      },
+      "noFoodFound": {
+        "title": "No food found",
+        "message": "Couldn’t spot any food items in that photo. Try getting closer or better light."
+      },
+      "preparingScan": {
+        "title": "Preparing scan",
+        "message": "Please wait a moment and try again."
+      },
+      "photoAccess": {
+        "title": "Photo access needed",
+        "messageCanAsk": "Allow photo access to pick a food photo from your library.",
+        "messageDenied": "Enable photo access in Settings, then come back."
+      },
+      "dailyScanLimit": {
+        "title": "Daily scan limit",
+        "message": "Added {{added}} of {{total}} photos — that's today's free scans. Upgrade to Pro for unlimited."
+      }
+    }
+  },
+  "loaders": {
+    "cooking": {
+      "readingFridge": "Reading what’s in your fridge…",
+      "prioritising": "Prioritising what expires soonest…",
+      "pairingFlavours": "Pairing flavours that work…",
+      "writingSteps": "Writing the steps…",
+      "platingUp": "Plating up 3 ideas…",
+      "eta": "About {{seconds}} seconds · photos load right after"
+    },
+    "image": {
+      "plating": "Plating your dish",
+      "generating": "Generating a unique recipe",
+      "simmering": "Simmering the details",
+      "pickingIngredients": "Picking fresh ingredients"
+    }
+  },
+  "foods": {
+    "reasons": {
+      "tooShort": "Too short",
+      "tooLong": "Too long",
+      "lettersOnly": "Letters only — no digits or symbols",
+      "notRealIngredient": "That does not look like a real ingredient"
+    }
+  },
+  "scan": {
+    "timeout": "This is taking longer than usual — please try again.",
+    "unreachable": "Couldn’t reach the scanner. Check your connection and try again.",
+    "failed": "Scan failed"
+  },
+  "fridge": {
+    "title": "My Fridge",
+    "eyebrow": "INVENTORY STATUS",
+    "recipesLink": "Recipes from your fridge",
+    "a11y": {
+      "viewRecipes": "View recipes from your fridge"
+    },
+    "categories": {
+      "all": "All",
+      "produce": "Produce",
+      "dairy": "Dairy",
+      "poultry": "Poultry",
+      "meat": "Meat",
+      "fish": "Fish",
+      "bakery": "Bakery",
+      "pantry": "Pantry"
+    },
+    "empty": {
+      "title": "Fridge is empty",
+      "body": "Scan an item to start tracking what's in your fridge and when it'll go off.",
+      "cta": "Scan first item"
+    },
+    "footer": {
+      "tracked_one": "{{shown}} OF {{count}} PRODUCTS TRACKED",
+      "tracked_other": "{{shown}} OF {{count}} PRODUCTS TRACKED",
+      "swipeHint": "SWIPE A CARD LEFT TO REMOVE IT"
+    },
+    "alerts": {
+      "removeFailedTitle": "Could not remove",
+      "loadFailedTitle": "Could not load fridge"
+    }
   }
 }

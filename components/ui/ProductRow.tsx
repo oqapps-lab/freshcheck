@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import * as Haptics from 'expo-haptics';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { SoftSurface } from './SoftSurface';
@@ -37,6 +38,7 @@ export function ProductRow({
   onPress,
   onDelete,
 }: Props) {
+  const { t } = useTranslation();
   const progress = Math.max(0.04, Math.min(1, daysLeft / shelfDays));
 
   // Match Stitch screens: solid colour for definitive states, gradient for transition
@@ -61,7 +63,7 @@ export function ProductRow({
   // Render as a Pressable only when an onPress is wired up. Without it
   // we don't want a fake "button" affordance — silent haptic on tap with
   // no follow-through reads as a dead control.
-  const a11yLabel = `${name}, ${daysLeft} ${daysLeft === 1 ? 'day' : 'days'} left`;
+  const a11yLabel = t('common.productRow.a11yDaysLeft', { name, count: daysLeft });
   const Container: React.ComponentType<{ children: React.ReactNode }> = onPress
     ? ({ children }) => (
         <Pressable
@@ -108,7 +110,7 @@ export function ProductRow({
           <View style={styles.daysWrap}>
             <Text style={[typeScale.numberHuge, { color: countColor }]}>{daysLeft}</Text>
             <Text style={[typeScale.labelTiny, styles.daysLabel]}>
-              {daysLeft === 1 ? 'DAY' : 'DAYS'}
+              {t('common.dayUnit', { count: daysLeft })}
             </Text>
           </View>
         </View>
@@ -130,7 +132,7 @@ export function ProductRow({
   ) => (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`Delete ${name}`}
+      accessibilityLabel={t('common.productRow.deleteA11y', { name })}
       style={styles.deleteAction}
       onPress={() => {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
@@ -140,7 +142,7 @@ export function ProductRow({
     >
       <View style={styles.deleteInner}>
         <Trash size={26} color={colors.surfaceWhite} strokeWidth={2} />
-        <Text style={[typeScale.labelSmall, styles.deleteLabel]}>DELETE</Text>
+        <Text style={[typeScale.labelSmall, styles.deleteLabel]}>{t('common.productRow.delete')}</Text>
       </View>
     </Pressable>
   );

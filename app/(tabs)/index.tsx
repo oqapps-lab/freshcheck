@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { View, Text, ScrollView, Pressable, Image, StyleSheet } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -15,13 +16,8 @@ import { useAchievements, ACHIEVEMENTS } from '@/src/state/achievementsStore';
 
 // Curated, honest food-safety mini-articles. Static (no backend) — these
 // give the user a reason to come back and learn, per the user's request.
-const TIPS: { title: string; body: string }[] = [
-  { title: 'The danger zone', body: 'Bacteria multiply fastest between 4–60°C. Refrigerate leftovers within 2 hours of cooking.' },
-  { title: 'Pesto: sealed vs open', body: 'A sealed jar keeps for months. Once opened, use within about 5–7 days — or freeze it.' },
-  { title: 'Eggs keep longer than you think', body: 'Refrigerated eggs are usually good 3–5 weeks past purchase. Float test: fresh ones sink.' },
-  { title: 'Herbs love water', body: 'Stand fresh herbs upright in a glass of water, loosely covered — they last about twice as long.' },
-  { title: 'Wash berries last', body: 'Moisture speeds up mould. Only rinse berries right before you eat them.' },
-];
+// Text copy lives in i18n under home.freshTips.items.<id>.{title,body}.
+const FRESH_TIP_IDS = ['dangerZone', 'pestoSealedVsOpen', 'eggsKeepLonger', 'herbsLoveWater', 'washBerriesLast'] as const;
 
 /**
  * Home — scan orb on top, then a discovery hub below (I1): your stats, a
@@ -29,6 +25,7 @@ const TIPS: { title: string; body: string }[] = [
  * come back. Scrolls; the orb stays the hero.
  */
 export default function HomeScreen() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const favorites = useFavorites();
@@ -51,7 +48,7 @@ export default function HomeScreen() {
   return (
     <View style={styles.root}>
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-        <Text style={[typeScale.wordmark, { color: colors.inkSecondary }]}>FRESHCHECK</Text>
+        <Text style={[typeScale.wordmark, { color: colors.inkSecondary }]}>{t('home.wordmark')}</Text>
       </View>
       <ScrollView
         contentContainerStyle={[styles.scroll, { paddingBottom: insets.bottom + layout.floatingBottomClearance }]}
@@ -59,13 +56,13 @@ export default function HomeScreen() {
       >
         {/* Scan hero */}
         <View style={styles.heroBlock}>
-          <Text style={[typeScale.displayLarge, styles.title]}>Ready to Scan</Text>
-          <Text style={[typeScale.bodyLarge, styles.subtitle]}>Point at food. Result in 3 seconds.</Text>
+          <Text style={[typeScale.displayLarge, styles.title]}>{t('home.heroTitle')}</Text>
+          <Text style={[typeScale.bodyLarge, styles.subtitle]}>{t('home.heroSubtitle')}</Text>
         </View>
 
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Tap to scan"
+          accessibilityLabel={t('home.a11y.tapToScan')}
           onPress={onScan}
           style={styles.orbWrap}
         >
@@ -78,14 +75,14 @@ export default function HomeScreen() {
             </SoftInset>
           </SoftSurface>
         </Pressable>
-        <Text style={[typeScale.label, styles.tapHint]}>TAP TO SCAN</Text>
+        <Text style={[typeScale.label, styles.tapHint]}>{t('home.tapToScan')}</Text>
 
         {/* Recipe of the day */}
-        <Text style={[typeScale.label, styles.sectionLabel]}>RECIPE OF THE DAY</Text>
+        <Text style={[typeScale.label, styles.sectionLabel]}>{t('home.sections.recipeOfDay')}</Text>
         {recipeOfDay ? (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={`open ${recipeOfDay.name}`}
+            accessibilityLabel={t('home.a11y.openRecipe', { name: recipeOfDay.name })}
             onPress={() => {
               Haptics.selectionAsync().catch(() => {});
               router.push(`/recipe/${recipeOfDay.id}` as never);
@@ -110,7 +107,7 @@ export default function HomeScreen() {
         ) : (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="generate recipes"
+            accessibilityLabel={t('home.a11y.generateRecipes')}
             onPress={() => {
               Haptics.selectionAsync().catch(() => {});
               router.push('/(tabs)/recipes' as never);
@@ -119,7 +116,7 @@ export default function HomeScreen() {
             <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.rotdEmpty}>
               <Sparkle size={24} color={colors.amber} strokeWidth={1.6} />
               <Text style={[typeScale.titleSmall, styles.rotdEmptyText]}>
-                Generate recipes from your fridge
+                {t('home.recipeOfDayEmpty')}
               </Text>
               <Chevron size={18} color={colors.inkMuted} />
             </SoftSurface>
@@ -127,56 +124,56 @@ export default function HomeScreen() {
         )}
 
         {/* Fresh tips */}
-        <Text style={[typeScale.label, styles.sectionLabel]}>FRESH TIPS</Text>
+        <Text style={[typeScale.label, styles.sectionLabel]}>{t('home.sections.freshTips')}</Text>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           style={styles.tipsScrollOuter}
           contentContainerStyle={styles.tipsScroll}
         >
-          {TIPS.map((tip) => (
-            <SoftSurface key={tip.title} variant="cushion" radius="xxl" innerStyle={styles.tipCard}>
+          {FRESH_TIP_IDS.map((id) => (
+            <SoftSurface key={id} variant="cushion" radius="xxl" innerStyle={styles.tipCard}>
               <View style={styles.tipIcon}>
                 <Sparkle size={18} color={colors.primary} strokeWidth={1.8} />
               </View>
-              <Text style={[typeScale.titleSmall, styles.tipTitle]}>{tip.title}</Text>
-              <Text style={[typeScale.bodySmall, styles.tipBody]}>{tip.body}</Text>
+              <Text style={[typeScale.titleSmall, styles.tipTitle]}>{t(`home.freshTips.items.${id}.title`)}</Text>
+              <Text style={[typeScale.bodySmall, styles.tipBody]}>{t(`home.freshTips.items.${id}.body`)}</Text>
             </SoftSurface>
           ))}
         </ScrollView>
 
         {/* Storage guide */}
-        <Text style={[typeScale.label, styles.sectionLabel]}>STORAGE GUIDE</Text>
+        <Text style={[typeScale.label, styles.sectionLabel]}>{t('home.sections.storageGuide')}</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tipsScrollOuter} contentContainerStyle={styles.tipsScroll}>
           {STORAGE_GUIDE.map((it) => (
-            <SoftSurface key={it.food} variant="cushion" radius="xxl" innerStyle={styles.storeCard}>
+            <SoftSurface key={it.id} variant="cushion" radius="xxl" innerStyle={styles.storeCard}>
               <Text style={styles.storeEmoji}>{it.emoji}</Text>
-              <Text style={[typeScale.titleSmall, styles.tipTitle]}>{it.food}</Text>
-              <Text style={[typeScale.bodySmall, styles.tipBody]}>{it.store}</Text>
+              <Text style={[typeScale.titleSmall, styles.tipTitle]}>{t(`storageGuide.items.${it.id}.name`)}</Text>
+              <Text style={[typeScale.bodySmall, styles.tipBody]}>{t(`storageGuide.items.${it.id}.store`)}</Text>
               <View style={styles.storeMeta}>
-                <Text style={[typeScale.labelSmall, styles.storeMetaText]}>{it.life}</Text>
-                <Text style={[typeScale.labelSmall, styles.storeMetaText]}>{it.temp}</Text>
+                <Text style={[typeScale.labelSmall, styles.storeMetaText]}>{t(`storageGuide.items.${it.id}.life`)}</Text>
+                <Text style={[typeScale.labelSmall, styles.storeMetaText]}>{t(`storageGuide.items.${it.id}.temp`)}</Text>
               </View>
             </SoftSurface>
           ))}
         </ScrollView>
 
         {/* Chef tips */}
-        <Text style={[typeScale.label, styles.sectionLabel]}>CHEF TIPS</Text>
+        <Text style={[typeScale.label, styles.sectionLabel]}>{t('home.sections.chefTips')}</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tipsScrollOuter} contentContainerStyle={styles.tipsScroll}>
           {CHEF_TIPS.map((c) => (
-            <SoftSurface key={c.chef} variant="cushion" radius="xxl" innerStyle={styles.chefCard}>
-              <Text style={[typeScale.body, styles.chefTip]}>{c.tip}</Text>
+            <SoftSurface key={c.id} variant="cushion" radius="xxl" innerStyle={styles.chefCard}>
+              <Text style={[typeScale.body, styles.chefTip]}>{t(`chefTips.items.${c.id}.tip`)}</Text>
               <View style={styles.chefWho}>
-                <Text style={[typeScale.titleSmall, styles.tipTitle]}>{c.chef}</Text>
-                <Text style={[typeScale.labelSmall, styles.chefRole]}>{c.role}</Text>
+                <Text style={[typeScale.titleSmall, styles.tipTitle]}>{t(`chefTips.items.${c.id}.name`)}</Text>
+                <Text style={[typeScale.labelSmall, styles.chefRole]}>{t(`chefTips.items.${c.id}.role`)}</Text>
               </View>
             </SoftSurface>
           ))}
         </ScrollView>
 
         {/* Achievements */}
-        <Text style={[typeScale.label, styles.sectionLabel]}>YOUR BADGES</Text>
+        <Text style={[typeScale.label, styles.sectionLabel]}>{t('home.sections.yourBadges')}</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tipsScrollOuter} contentContainerStyle={styles.tipsScroll}>
           {ACHIEVEMENTS.map((a) => {
             const earned = ach.earned.includes(a.id);
@@ -184,7 +181,7 @@ export default function HomeScreen() {
               <SoftSurface key={a.id} variant="cushion" radius="xxl" innerStyle={[styles.badgeCard, earned ? null : styles.badgeLocked]}>
                 <Text style={styles.badgeEmoji}>{a.emoji}</Text>
                 <Text style={[typeScale.labelSmall, styles.badgeTitle]}>{a.title}</Text>
-                <Text style={[typeScale.bodySmall, styles.badgeDesc]}>{earned ? "Unlocked" : a.desc}</Text>
+                <Text style={[typeScale.bodySmall, styles.badgeDesc]}>{earned ? t('home.badgeUnlocked') : a.desc}</Text>
               </SoftSurface>
             );
           })}

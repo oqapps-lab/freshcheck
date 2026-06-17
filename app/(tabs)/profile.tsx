@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { View, Text, ScrollView, Pressable, StyleSheet, Linking, Image, Switch } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { showAlert, showPrompt } from '@/src/state/alertStore';
 import * as Haptics from 'expo-haptics';
 import * as ImagePicker from 'expo-image-picker';
@@ -29,6 +30,7 @@ import { LEGAL } from '@/constants/legal';
 import { colors, layout, spacing, typeScale } from '@/constants/tokens';
 
 export default function ProfileScreen() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { summary, loading: fridgeLoading } = useFridge();
@@ -52,19 +54,19 @@ export default function ProfileScreen() {
   // QA flagged the quiz name being ignored here (B05, 2026-06-11).
   const quizName = onboarding.name?.trim() || null;
   const shownName =
-    localProfile.displayName ?? quizName ?? (signedIn ? user?.email?.split('@')[0] ?? 'You' : 'Guest');
+    localProfile.displayName ?? quizName ?? (signedIn ? user?.email?.split('@')[0] ?? t('profile.fallbackName') : t('profile.guestName'));
 
   const pickFromLibrary = async () => {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!perm.granted) {
       showAlert(
-        'Photo access needed',
+        t('profile.alerts.photoAccess.title'),
         perm.canAskAgain
-          ? 'Allow photo access to choose an avatar.'
-          : 'Enable photo access in Settings, then come back.',
+          ? t('profile.alerts.photoAccess.messageCanAsk')
+          : t('profile.alerts.photoAccess.messageDenied'),
         perm.canAskAgain ? undefined : [
-          { text: 'Cancel', style: 'cancel' },
-          { text: 'Open Settings', onPress: () => Linking.openSettings() },
+          { text: t('profile.cta.cancel'), style: 'cancel' },
+          { text: t('profile.cta.openSettings'), onPress: () => Linking.openSettings() },
         ],
       );
       return;
@@ -84,13 +86,13 @@ export default function ProfileScreen() {
     const perm = await ImagePicker.requestCameraPermissionsAsync();
     if (!perm.granted) {
       showAlert(
-        'Camera access needed',
+        t('profile.alerts.cameraAccess.title'),
         perm.canAskAgain
-          ? 'Allow camera access to take a photo.'
-          : 'Enable camera access in Settings, then come back.',
+          ? t('profile.alerts.cameraAccess.messageCanAsk')
+          : t('profile.alerts.cameraAccess.messageDenied'),
         perm.canAskAgain ? undefined : [
-          { text: 'Cancel', style: 'cancel' },
-          { text: 'Open Settings', onPress: () => Linking.openSettings() },
+          { text: t('profile.cta.cancel'), style: 'cancel' },
+          { text: t('profile.cta.openSettings'), onPress: () => Linking.openSettings() },
         ],
       );
       return;
@@ -107,20 +109,20 @@ export default function ProfileScreen() {
 
   const onPickAvatar = () => {
     Haptics.selectionAsync().catch(() => {});
-    showAlert('Change photo', 'Choose a new profile photo', [
-      { text: 'Take Photo', onPress: () => void takePhoto() },
-      { text: 'Choose from Library', onPress: () => void pickFromLibrary() },
-      { text: 'Cancel', style: 'cancel' },
+    showAlert(t('profile.alerts.changePhoto.title'), t('profile.alerts.changePhoto.message'), [
+      { text: t('profile.cta.takePhoto'), onPress: () => void takePhoto() },
+      { text: t('profile.cta.chooseFromLibrary'), onPress: () => void pickFromLibrary() },
+      { text: t('profile.cta.cancel'), style: 'cancel' },
     ]);
   };
   const onEditName = () => {
     Haptics.selectionAsync().catch(() => {});
     showPrompt(
-      'Your name',
-      'How should we call you?',
+      t('profile.alerts.editName.title'),
+      t('profile.alerts.editName.message'),
       [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Save', onPress: (text?: string) => setDisplayName(text ?? null) },
+        { text: t('profile.cta.cancel'), style: 'cancel' },
+        { text: t('profile.cta.save'), onPress: (text?: string) => setDisplayName(text ?? null) },
       ],
       { defaultValue: localProfile.displayName ?? '' },
     );
@@ -129,10 +131,10 @@ export default function ProfileScreen() {
   const onSignInOrOut = () => {
     Haptics.selectionAsync().catch(() => {});
     if (signedIn) {
-      showAlert('Sign out', 'Sign out of FreshCheck?', [
-        { text: 'Cancel', style: 'cancel' },
+      showAlert(t('profile.alerts.signOut.title'), t('profile.alerts.signOut.message'), [
+        { text: t('profile.cta.cancel'), style: 'cancel' },
         {
-          text: 'Sign out',
+          text: t('profile.cta.signOut'),
           style: 'destructive',
           onPress: () => {
             void logoutAdaptyUser().finally(() => {
@@ -150,42 +152,42 @@ export default function ProfileScreen() {
     Haptics.selectionAsync().catch(() => {});
     const r = await restorePurchases();
     if (r.ok) {
-      showAlert('Restored', 'Your subscription is active again.');
+      showAlert(t('profile.alerts.restored.title'), t('profile.alerts.restored.message'));
     } else if (r.error === 'no-active-subscription') {
-      showAlert('Nothing to restore', 'No active subscription was found on this Apple ID.');
+      showAlert(t('profile.alerts.nothingToRestore.title'), t('profile.alerts.nothingToRestore.message'));
     } else if (r.error === 'adapty-not-configured' || r.error === 'adapty-sdk-missing') {
       // SDK already shows its own alert
     } else {
-      showAlert('Restore failed', r.error ?? 'Unknown error');
+      showAlert(t('profile.alerts.restoreFailed.title'), r.error ?? t('profile.errors.unknown'));
     }
   };
 
   const openUrl = (url: string) => {
     Haptics.selectionAsync().catch(() => {});
     Linking.openURL(url).catch((e) => {
-      showAlert('Could not open link', String(e));
+      showAlert(t('profile.alerts.linkFailed.title'), String(e));
     });
   };
 
   const onDeleteAccount = () => {
     Haptics.selectionAsync().catch(() => {});
     showAlert(
-      'Delete account',
-      'This permanently deletes your account, fridge items, and scan history. This cannot be undone.',
+      t('profile.alerts.deleteAccount.title'),
+      t('profile.alerts.deleteAccount.message'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('profile.cta.cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('profile.cta.delete'),
           style: 'destructive',
           onPress: () => {
             // Second confirmation — App Store reviewers expect a deliberate two-step flow.
             showAlert(
-              'Are you sure?',
-              'This is your last chance to keep your data. Tap "Yes, delete" to permanently remove your account.',
+              t('profile.alerts.deleteConfirm.title'),
+              t('profile.alerts.deleteConfirm.message'),
               [
-                { text: 'Keep account', style: 'cancel' },
+                { text: t('profile.cta.keepAccount'), style: 'cancel' },
                 {
-                  text: 'Yes, delete',
+                  text: t('profile.cta.yesDelete'),
                   style: 'destructive',
                   onPress: () => {
                     void runDelete();
@@ -202,17 +204,17 @@ export default function ProfileScreen() {
   const runDelete = async () => {
     const supabase = getSupabase();
     if (!supabase) {
-      showAlert('Not signed in', 'Please sign in first.');
+      showAlert(t('profile.alerts.notSignedIn.title'), t('profile.alerts.notSignedIn.message'));
       return;
     }
     const { data, error } = await supabase.functions.invoke('delete-account', { body: {} });
     if (error || (data && data.ok === false)) {
-      showAlert('Deletion failed', error?.message ?? data?.error ?? 'Try again or contact support.');
+      showAlert(t('profile.alerts.deletionFailed.title'), error?.message ?? data?.error ?? t('profile.alerts.deletionFailed.message'));
       return;
     }
     await logoutAdaptyUser().catch(() => {});
     await signOut();
-    showAlert('Account deleted', 'Your account and data have been removed.');
+    showAlert(t('profile.alerts.accountDeleted.title'), t('profile.alerts.accountDeleted.message'));
   };
 
   return (
@@ -232,7 +234,7 @@ export default function ProfileScreen() {
         <View style={styles.hero}>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="change avatar"
+            accessibilityLabel={t('profile.a11y.changeAvatar')}
             onPress={onPickAvatar}
             style={({ pressed }) => ({ opacity: pressed ? 0.85 : 1 })}
           >
@@ -249,7 +251,7 @@ export default function ProfileScreen() {
           </Pressable>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="edit name"
+            accessibilityLabel={t('profile.a11y.editName')}
             onPress={onEditName}
             style={({ pressed }) => [styles.nameRow, { opacity: pressed ? 0.7 : 1 }]}
           >
@@ -259,7 +261,7 @@ export default function ProfileScreen() {
             </View>
           </Pressable>
           <Text style={[typeScale.label, styles.eyebrow]}>
-            {signedIn ? 'SIGNED IN' : 'NOT SIGNED IN'}
+            {signedIn ? t('profile.status.signedIn') : t('profile.status.notSignedIn')}
           </Text>
         </View>
 
@@ -271,27 +273,27 @@ export default function ProfileScreen() {
           // pop in a beat later (user-flagged flicker).
           <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.statCard}>
             <View style={styles.statSkeletonNum} />
-            <Text style={[typeScale.label, styles.statLabel]}>ITEMS IN FRIDGE</Text>
+            <Text style={[typeScale.label, styles.statLabel]}>{t('profile.stats.itemsInFridge')}</Text>
           </SoftSurface>
         ) : summary.total > 0 ? (
           <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.statCard}>
             <Text style={[typeScale.numberLarge, styles.statNum]}>{summary.total}</Text>
-            <Text style={[typeScale.label, styles.statLabel]}>ITEMS IN FRIDGE</Text>
+            <Text style={[typeScale.label, styles.statLabel]}>{t('profile.stats.itemsInFridge')}</Text>
           </SoftSurface>
         ) : null}
 
         {/* ACCOUNT section — Email + Delete only render when signed in
             (no point showing "Email —" to a guest). */}
-        <Text style={[typeScale.label, styles.sectionLabel]}>ACCOUNT</Text>
+        <Text style={[typeScale.label, styles.sectionLabel]}>{t('profile.sections.account')}</Text>
         <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cardStack}>
-          <Row label={signedIn ? 'Sign out' : 'Sign in'} onPress={onSignInOrOut} />
+          <Row label={signedIn ? t('profile.rows.signOut') : t('profile.rows.signIn')} onPress={onSignInOrOut} />
           {signedIn && user?.email ? (
             <>
               <Hairline />
-              <RowStatic label="Email" value={user.email} />
+              <RowStatic label={t('profile.rows.email')} value={user.email} />
               <Hairline />
               <Row
-                label="Delete account"
+                label={t('profile.rows.deleteAccount')}
                 onPress={onDeleteAccount}
                 tone="destructive"
               />
@@ -304,7 +306,7 @@ export default function ProfileScreen() {
             <>
               <Hairline />
               <Row
-                label="Delete my data"
+                label={t('profile.rows.deleteMyData')}
                 onPress={onDeleteAccount}
                 tone="destructive"
               />
@@ -314,18 +316,18 @@ export default function ProfileScreen() {
 
         {/* PRO section — show "Active" state when user already has a subscription
             so we don't display "Upgrade" to a paying customer (Apple Review flag). */}
-        <Text style={[typeScale.label, styles.sectionLabel]}>PRO</Text>
+        <Text style={[typeScale.label, styles.sectionLabel]}>{t('profile.sections.pro')}</Text>
         <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cardStack}>
           {!premiumResolved ? (
             // Hold a neutral placeholder until Adapty resolves, so we don't
             // flash "Upgrade to Pro" and snap to "Active" (or vice-versa).
-            <RowStatic label="FreshCheck Pro" value="…" />
+            <RowStatic label={t('profile.rows.freshcheckPro')} value="…" />
           ) : isPremium ? (
             <>
-              <RowStatic label="FreshCheck Pro" value="Active" />
+              <RowStatic label={t('profile.rows.freshcheckPro')} value={t('profile.status.active')} />
               <Hairline />
               <Row
-                label="Manage subscription"
+                label={t('profile.rows.manageSubscription')}
                 onPress={() =>
                   Linking.openURL('https://apps.apple.com/account/subscriptions').catch(() => {})
                 }
@@ -333,19 +335,19 @@ export default function ProfileScreen() {
             </>
           ) : (
             <>
-              <Row label="Upgrade to FreshCheck Pro" onPress={() => router.push('/paywall')} />
+              <Row label={t('profile.rows.upgradeToPro')} onPress={() => router.push('/paywall')} />
               <Hairline />
-              <Row label="Restore purchase" onPress={onRestore} />
+              <Row label={t('profile.rows.restorePurchase')} onPress={onRestore} />
             </>
           )}
         </SoftSurface>
 
         {/* NOTIFICATIONS — one global expiry-reminder toggle + lead-time.
             Deliberately NOT per-product (fights the batched ≤4/week digest). */}
-        <Text style={[typeScale.label, styles.sectionLabel]}>NOTIFICATIONS</Text>
+        <Text style={[typeScale.label, styles.sectionLabel]}>{t('profile.sections.notifications')}</Text>
         <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cardStack}>
           <RowSwitch
-            label="Food expiry reminders"
+            label={t('profile.rows.foodExpiryReminders')}
             value={notif.expiryEnabled}
             onValueChange={(v) => {
               Haptics.selectionAsync().catch(() => {});
@@ -356,7 +358,7 @@ export default function ProfileScreen() {
             <>
               <Hairline />
               <View style={styles.row}>
-                <Text style={[typeScale.titleMedium, { color: colors.ink }]}>Warn me before</Text>
+                <Text style={[typeScale.titleMedium, { color: colors.ink }]}>{t('profile.labels.warnMeBefore')}</Text>
                 <View style={styles.segment}>
                   {[1, 2, 3].map((d) => {
                     const on = notif.leadDays === d;
@@ -365,7 +367,7 @@ export default function ProfileScreen() {
                         key={d}
                         accessibilityRole="button"
                         accessibilityState={{ selected: on }}
-                        accessibilityLabel={`${d} ${d === 1 ? 'day' : 'days'} before`}
+                        accessibilityLabel={t('profile.a11y.daysBefore', { count: d })}
                         onPress={() => {
                           Haptics.selectionAsync().catch(() => {});
                           setLeadDays(d);
@@ -373,7 +375,7 @@ export default function ProfileScreen() {
                         style={[styles.segmentPill, on && styles.segmentPillOn]}
                       >
                         <Text style={[typeScale.labelSmall, on ? styles.segmentTextOn : styles.segmentText]}>
-                          {`${d}d`}
+                          {t('profile.labels.daysShort', { count: d })}
                         </Text>
                       </Pressable>
                     );
@@ -385,15 +387,15 @@ export default function ProfileScreen() {
         </SoftSurface>
 
         {/* ABOUT section */}
-        <Text style={[typeScale.label, styles.sectionLabel]}>ABOUT</Text>
+        <Text style={[typeScale.label, styles.sectionLabel]}>{t('profile.sections.about')}</Text>
         <SoftSurface variant="cushion" radius="xxl" innerStyle={styles.cardStack}>
-          <Row label="Privacy policy" onPress={() => openUrl(LEGAL.privacyPolicy)} />
+          <Row label={t('profile.rows.privacyPolicy')} onPress={() => openUrl(LEGAL.privacyPolicy)} />
           <Hairline />
-          <Row label="Terms of service" onPress={() => openUrl(LEGAL.termsOfUse)} />
+          <Row label={t('profile.rows.termsOfService')} onPress={() => openUrl(LEGAL.termsOfUse)} />
           <Hairline />
-          <Row label="Support" onPress={() => openUrl(LEGAL.support)} />
+          <Row label={t('profile.rows.support')} onPress={() => openUrl(LEGAL.support)} />
           <Hairline />
-          <RowStatic label="Version" value={Constants.expoConfig?.version ?? '0.2.0'} />
+          <RowStatic label={t('profile.rows.version')} value={Constants.expoConfig?.version ?? '0.2.0'} />
         </SoftSurface>
       </ScrollView>
     </View>

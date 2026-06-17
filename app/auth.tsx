@@ -9,6 +9,7 @@ import {
   StyleSheet,
   Linking,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { showAlert } from '@/src/state/alertStore';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -26,6 +27,7 @@ import { LEGAL } from '@/constants/legal';
 type Mode = 'signin' | 'signup';
 
 export default function AuthScreen() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { signInWithEmail, signUpWithEmail, configured } = useAuth();
@@ -87,15 +89,15 @@ export default function AuthScreen() {
     const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail);
     if (!emailOk || password.length < 6) {
       showAlert(
-        isSignIn ? 'Sign in failed' : 'Sign up failed',
-        'Enter a valid email and a password of at least 6 characters.',
+        isSignIn ? t('auth.errors.signInFailedTitle') : t('auth.errors.signUpFailedTitle'),
+        t('auth.errors.invalidCredentials'),
       );
       return;
     }
     if (!configured) {
       showAlert(
-        isSignIn ? 'Sign in' : 'Sign up',
-        'Supabase is not configured in this build. Continue as guest to keep using the app locally.',
+        isSignIn ? t('auth.alerts.signInTitle') : t('auth.alerts.signUpTitle'),
+        t('auth.alerts.notConfigured'),
       );
       return;
     }
@@ -104,7 +106,7 @@ export default function AuthScreen() {
       const { error } = await signInWithEmail(trimmedEmail, password);
       setSubmitting(false);
       if (error) {
-        showAlert('Sign in failed', error);
+        showAlert(t('auth.errors.signInFailedTitle'), error);
         return;
       }
       dismiss();
@@ -113,16 +115,16 @@ export default function AuthScreen() {
     const { error, needsEmailConfirmation } = await signUpWithEmail(trimmedEmail, password);
     setSubmitting(false);
     if (error) {
-      showAlert('Sign up failed', error);
+      showAlert(t('auth.errors.signUpFailedTitle'), error);
       return;
     }
     if (needsEmailConfirmation) {
       // Supabase email-confirmation flow. Without this prompt the user
       // is dropped into the tabs as a guest with no idea why nothing works.
       showAlert(
-        'Check your email',
-        `We sent a confirmation link to ${trimmedEmail}. Tap it, then come back and sign in.`,
-        [{ text: 'OK', onPress: () => setMode('signin') }],
+        t('auth.alerts.checkEmailTitle'),
+        t('auth.alerts.checkEmailMessage', { email: trimmedEmail }),
+        [{ text: t('auth.alerts.ok'), onPress: () => setMode('signin') }],
       );
       return;
     }
@@ -141,10 +143,10 @@ export default function AuthScreen() {
       style={styles.root}
     >
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-        <IconButton accessibilityLabel="back" onPress={dismiss}>
+        <IconButton accessibilityLabel={t('auth.a11y.back')} onPress={dismiss}>
           <Back size={20} color={colors.ink} />
         </IconButton>
-        <Text style={[typeScale.wordmark, styles.eyebrow]}>FRESHCHECK</Text>
+        <Text style={[typeScale.wordmark, styles.eyebrow]}>{t('auth.wordmark')}</Text>
         <View style={styles.headerSpacer} />
       </View>
 
@@ -170,18 +172,18 @@ export default function AuthScreen() {
             <User size={32} color={colors.primary} strokeWidth={1.6} />
           </View>
           <Text style={[typeScale.titleLarge, styles.title]}>
-            {isSignIn ? 'Welcome back' : 'Join FreshCheck'}
+            {isSignIn ? t('auth.title.signIn') : t('auth.title.signUp')}
           </Text>
         </View>
 
         {/* Email field */}
-        <Text style={[typeScale.label, styles.fieldLabel]}>EMAIL</Text>
+        <Text style={[typeScale.label, styles.fieldLabel]}>{t('auth.labels.email')}</Text>
         <SoftInset radius="xl" strength="thin" contentStyle={styles.inputInner}>
           <TextInput
             ref={emailRef}
             value={email}
             onChangeText={setEmail}
-            placeholder="you@example.com"
+            placeholder={t('auth.placeholders.email')}
             placeholderTextColor={colors.inkMuted}
             autoCapitalize="none"
             autoCorrect={false}
@@ -193,13 +195,13 @@ export default function AuthScreen() {
             returnKeyType="next"
             onSubmitEditing={() => passwordRef.current?.focus()}
             onFocus={() => scrollToInput(emailRef.current)}
-            accessibilityLabel="email"
+            accessibilityLabel={t('auth.a11y.email')}
             style={styles.input}
           />
         </SoftInset>
 
         {/* Password field */}
-        <Text style={[typeScale.label, styles.fieldLabel]}>PASSWORD</Text>
+        <Text style={[typeScale.label, styles.fieldLabel]}>{t('auth.labels.password')}</Text>
         {/* iOS Strong Password autofill cover and the Passwords QuickType
             bar can both occlude this field. The combination below
             minimises the autofill surface (no inline suggestions, no
@@ -210,7 +212,7 @@ export default function AuthScreen() {
             ref={passwordRef}
             value={password}
             onChangeText={setPassword}
-            placeholder={isSignIn ? 'Your password' : 'Min. 6 characters'}
+            placeholder={isSignIn ? t('auth.placeholders.passwordSignIn') : t('auth.placeholders.passwordSignUp')}
             placeholderTextColor={colors.inkMuted}
             secureTextEntry
             autoCapitalize="none"
@@ -223,7 +225,7 @@ export default function AuthScreen() {
             returnKeyType="go"
             onSubmitEditing={onSubmit}
             onFocus={() => scrollToInput(passwordRef.current)}
-            accessibilityLabel="password"
+            accessibilityLabel={t('auth.a11y.password')}
             style={styles.input}
           />
         </SoftInset>
@@ -231,18 +233,18 @@ export default function AuthScreen() {
         {/* Primary CTA */}
         <View style={styles.ctaBlock}>
           <PrimaryPillCTA
-            label={submitting ? '...' : isSignIn ? 'Sign in' : 'Create account'}
+            label={submitting ? t('auth.cta.submitting') : isSignIn ? t('auth.cta.signIn') : t('auth.cta.createAccount')}
             onPress={onSubmit}
           />
 
           <GhostText
             label={
               isSignIn
-                ? "Don't have an account? Sign up"
-                : 'Already have an account? Sign in'
+                ? t('auth.cta.toggleToSignUp')
+                : t('auth.cta.toggleToSignIn')
             }
             onPress={() => setMode(isSignIn ? 'signup' : 'signin')}
-            accessibilityLabel="toggle auth mode"
+            accessibilityLabel={t('auth.a11y.toggleMode')}
           />
         </View>
 
@@ -253,25 +255,25 @@ export default function AuthScreen() {
               with no tap target, and the only inline path to them was
               the paywall (which a free-only signup never sees). */}
           <Text style={[typeScale.bodySmall, styles.fineprint]}>
-            By continuing you agree to the{' '}
+            {t('auth.legal.prefix')}{' '}
             <Text
               style={styles.fineprintLink}
               accessibilityRole="link"
               onPress={() => Linking.openURL(LEGAL.termsOfUse).catch(() => {})}
             >
-              Terms
+              {t('auth.legal.terms')}
             </Text>
-            {' '}and{' '}
+            {' '}{t('auth.legal.and')}{' '}
             <Text
               style={styles.fineprintLink}
               accessibilityRole="link"
               onPress={() => Linking.openURL(LEGAL.privacyPolicy).catch(() => {})}
             >
-              Privacy Policy
+              {t('auth.legal.privacy')}
             </Text>
-            .
+            {t('auth.legal.suffix')}
           </Text>
-          <GhostText label="Continue as guest" onPress={dismiss} />
+          <GhostText label={t('auth.cta.continueAsGuest')} onPress={dismiss} />
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
