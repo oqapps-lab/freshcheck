@@ -1,1 +1,1137 @@
-{}
+{
+  "common": {
+    "appName": "FreshCheck",
+    "continue": "계속",
+    "getStarted": "시작하기",
+    "back": "뒤로",
+    "cancel": "취소",
+    "save": "저장",
+    "done": "완료",
+    "tryAgain": "다시 시도",
+    "next": "다음",
+    "skip": "건너뛰기",
+    "ok": "확인",
+    "dayUnit_other": "일",
+    "tabA11y": "{{label}} 탭",
+    "productRow": {
+      "a11yDaysLeft_other": "{{name}}, {{count}}일 남음",
+      "delete": "삭제",
+      "deleteA11y": "{{name}} 삭제"
+    },
+    "achievements": {
+      "unlocked": "업적 달성",
+      "items": {
+        "first_scan": {
+          "title": "첫 확인",
+          "desc": "첫 음식을 스캔하세요"
+        },
+        "scan_10": {
+          "title": "예리한 눈",
+          "desc": "음식 10개를 스캔하세요"
+        },
+        "scan_50": {
+          "title": "안전 전문가",
+          "desc": "음식 50개를 스캔하세요"
+        },
+        "first_recipe": {
+          "title": "홈쿡 입문",
+          "desc": "첫 레시피를 만들어 보세요"
+        },
+        "recipe_10": {
+          "title": "레시피 탐험가",
+          "desc": "레시피 10개를 만들어 보세요"
+        },
+        "fridge_5": {
+          "title": "든든한 냉장고",
+          "desc": "냉장고 품목 5개를 관리하세요"
+        },
+        "streak_3": {
+          "title": "신선 습관 시작",
+          "desc": "FreshCheck를 3일 사용하세요"
+        },
+        "streak_7": {
+          "title": "낭비 없는 일주일",
+          "desc": "FreshCheck를 7일 사용하세요"
+        }
+      }
+    }
+  },
+  "errorBoundary": {
+    "title": "문제가 발생했어요",
+    "message": "예기치 못한 오류가 발생했어요. 다시 시도하시고, 문제가 계속되면 앱을 다시 시작해 주세요.",
+    "retry": "다시 시도"
+  },
+  "att": {
+    "headlineFamily": "가족을 위한 더 나은 FreshCheck를 만들어요",
+    "headlineYou": "당신을 위한 더 나은 FreshCheck를 만들어요",
+    "bodyFamily": "허락해 주시면, 어떤 기능이 부모님께 실제로 도움이 되는지 측정해요. 정말 중요한 부분을 계속 개선할 수 있도록요.",
+    "bodyYou": "허락해 주시면, 어떤 기능이 당신 같은 분들께 실제로 도움이 되는지 측정해요. 정말 중요한 부분을 계속 개선할 수 있도록요.",
+    "privacy": "개인정보는 절대 판매하지 않으며, 스캔 내용은 언제나 비공개로 유지돼요.",
+    "micro": "다음 화면에서 허용하거나 거부할 수 있어요. 어느 쪽이든 FreshCheck는 완전하게 작동하며, 설정에서 언제든 변경할 수 있어요.",
+    "continue": "계속"
+  },
+  "building": {
+    "pct": "{{pct}}%",
+    "stages": {
+      "stage0": {
+        "title": "냉장고 사용 습관을 파악하는 중",
+        "detail": "무엇을 사고, 무엇을 잊어버리는지"
+      },
+      "stage1": {
+        "title": "집에서 가장 빨리 상하는 것을 분석하는 중",
+        "detail": "유통기한을 놓치지 않도록"
+      },
+      "stage2": {
+        "title": "신선도 알림을 조정하는 중",
+        "detail": "가장 많이 버리는 것에 맞춰서"
+      },
+      "stage3": {
+        "title": "곧 만료될 재료로 만들 레시피를 준비하는 중",
+        "detail": "이미 가진 재료로 저녁 한 끼를"
+      },
+      "stage4": {
+        "title": "당신의 신선도 플랜이 완성되고 있어요",
+        "detail": "거의 다 됐어요"
+      }
+    },
+    "badge": {
+      "withName": "{{name}}님, 이 플랜은 당신만을 위한 거예요. 정해진 틀이 아니에요",
+      "noName": "이 플랜은 당신만을 위한 거예요. 정해진 틀이 아니에요"
+    }
+  },
+  "onboarding": {
+    "cta": {
+      "getStarted": "시작하기",
+      "continue": "계속"
+    },
+    "slides": {
+      "waste": {
+        "title": "멀쩡한 음식을 다시는 버리지 마세요",
+        "body": "FreshCheck가 아직 먹어도 되는지 알려주고, 상하기 전에 살짝 일러줘요.",
+        "proof": "가정마다 연간 약 $2,913 절약"
+      },
+      "scan": {
+        "title": "아직 먹어도 될까? 3초면 알아요",
+        "body": "어떤 음식이든 카메라로 비추면 바로 판정해요. 안전, 주의, 또는 폐기."
+      },
+      "timeline": {
+        "title": "냉장고 전체를 신선도 타임라인으로",
+        "body": "가진 모든 것이 만료 순서대로 정렬돼요. 냉장고 안쪽에서 잊히는 일은 이제 없어요."
+      },
+      "recipes": {
+        "title": "오늘 저녁은 이미 가진 재료로",
+        "body": "한 번만 누르면 곧 만료될 재료가 신선한 AI 레시피 3가지로 바뀌어요."
+      },
+      "barcode": {
+        "title": "바코드만 스캔하면 나머지는 우리가 관리해요",
+        "body": "포장 식품도 순식간에 추가해요. 바코드를 스캔하면 바로 기록돼요."
+      }
+    }
+  },
+  "personalize": {
+    "progress": "{{total}}단계 중 {{current}}단계",
+    "namePlaceholder": "이름",
+    "a11y": {
+      "back": "뒤로"
+    },
+    "cta": {
+      "buildPlan": "내 플랜 만들기",
+      "continue": "계속"
+    },
+    "questions": {
+      "household": {
+        "q": "누구를 위해 신선하게 관리하나요?",
+        "options": {
+          "me": "나 혼자",
+          "partner": "나와 파트너",
+          "family": "아이가 있는 가족",
+          "roommates": "룸메이트와 함께"
+        }
+      },
+      "topWaste": {
+        "q": "무엇을 가장 많이 버리나요?",
+        "sub": "해당하는 것을 모두 선택하세요",
+        "options": {
+          "leftovers": "남은 음식",
+          "produce": "채소와 잎채소",
+          "dairy": "유제품",
+          "meat": "육류와 가금류",
+          "bread": "빵"
+        }
+      },
+      "worry": {
+        "q": "음식에 대해 가장 걱정되는 점은?",
+        "options": {
+          "sick": "누군가 배탈 나는 것",
+          "money": "돈을 낭비하는 것",
+          "spoiled": "상한 것을 먹는 것",
+          "unsure": "아직 먹어도 되는지 모르는 것"
+        }
+      },
+      "forgotten": {
+        "q": "남은 음식이 냉장고 안쪽에서 잊히는 일이 얼마나 잦나요?",
+        "options": {
+          "constantly": "항상",
+          "weekly": "거의 매주",
+          "sometimes": "가끔",
+          "rarely": "드물게"
+        }
+      },
+      "dinner": {
+        "q": "저녁 메뉴는 어떻게 정하나요?",
+        "options": {
+          "plan": "미리 계획해요",
+          "wing": "즉흥적으로 정해요",
+          "expiring": "곧 만료되는 것 위주로",
+          "order": "배달을 자주 시켜요"
+        }
+      },
+      "name": {
+        "q": "마지막으로, 어떻게 불러드릴까요?",
+        "sub": "선택 사항"
+      }
+    }
+  },
+  "yourPlan": {
+    "eyebrowNamed": "{{name}}님의 플랜",
+    "eyebrowDefault": "나의 FRESHCHECK 플랜",
+    "watchLabel": "이런 것을 지켜볼게요",
+    "whatIsInside": "이런 것이 담겨 있어요",
+    "socialProof": "FreshCheck로 연간 약 $2,913을 절약하는 가정에 함께하세요.",
+    "cta": {
+      "seeMyPlan": "내 플랜 보기"
+    },
+    "waste": {
+      "leftovers": "남은 음식",
+      "produce": "채소와 잎채소",
+      "dairy": "유제품",
+      "meat": "육류와 가금류",
+      "bread": "빵"
+    },
+    "benefits": {
+      "verdict": {
+        "title": "즉시 판정: 안전 / 주의 / 위험",
+        "sub": "어떤 음식이든 스캔하면 3초 만에 알 수 있어요."
+      },
+      "timeline": {
+        "title": "냉장고를 신선도 타임라인으로",
+        "sub": "만료가 가까운 순서대로 모두 정렬돼요."
+      },
+      "recipes": {
+        "title": "곧 만료되는 재료로 만드는 레시피",
+        "sub": "곧 상할 재료를 저녁 한 끼로 바꿔보세요."
+      }
+    },
+    "tiles": {
+      "dailyScans": "매일 신선도 스캔",
+      "fridgeTimeline": "냉장고 타임라인",
+      "expiryReminders": "만료 알림",
+      "unlimitedScans": "무제한 스캔",
+      "unlimitedRecipes": "무제한 AI 레시피",
+      "barcodeImport": "바코드로 추가"
+    }
+  },
+  "plan": {
+    "wasteLower": {
+      "leftovers": "남은 음식",
+      "produce": "채소와 잎채소",
+      "dairy": "유제품",
+      "meat": "육류와 가금류",
+      "bread": "빵"
+    },
+    "household": {
+      "family": "바쁜 가족 요리사",
+      "partner": "두 사람의 주방",
+      "roommates": "함께 사는 가정",
+      "solo": "1인 요리사"
+    },
+    "headlineWithWaste": "당신은 {{who}}예요. {{waste}}을(를) 잘 지켜볼게요.",
+    "headlineFallback": "당신은 {{who}}예요. FreshCheck가 냉장고를 대신 지켜볼게요.",
+    "fear": {
+      "sick": "위험한 것은 식탁에 오르기 전에 미리 알려드릴게요.",
+      "money": "매주 약 $56어치 식료품을 버리는 일을 멈추세요.",
+      "spoiled": "아직 먹어도 되는 것을 한눈에 알 수 있어요.",
+      "default": "아직 먹어도 안전한지 더는 짐작하지 마세요."
+    }
+  },
+  "paywall": {
+    "eyebrow": "FRESHCHECK PRO",
+    "a11y": {
+      "close": "닫기",
+      "planOption": "{{label}} 플랜, {{unit}} {{price}}"
+    },
+    "hero": {
+      "scanLimit": {
+        "title": "오늘의 무료 스캔을 모두 사용했어요",
+        "subtitle": "무제한으로 전환하세요. 원할 때 언제든 주방의 모든 것을 스캔하세요."
+      },
+      "barcode": {
+        "title": "바코드 스캔은 Pro 기능이에요",
+        "subtitle": "어떤 제품 바코드든 스캔해서 냉장고에 바로 넣으세요."
+      },
+      "recipeLimit": {
+        "title": "오늘의 무료 레시피 생성을 모두 사용했어요",
+        "subtitle": "냉장고에 있는 재료로 매일 무제한 AI 레시피를 만드세요."
+      },
+      "default": {
+        "title": "FreshCheck Pro 잠금 해제",
+        "subtitle": "냉장고 속 재료를 레시피로 바꾸고, 다시는 음식을 버리지 마세요."
+      }
+    },
+    "trust": {
+      "family": "평균적인 가정이 연간 $2,913 절약",
+      "household": "평균적인 가구가 연간 $2,913 절약"
+    },
+    "features": {
+      "header": "PRO에 모두 포함",
+      "unlimitedScans": {
+        "title": "무제한 스캔",
+        "body": "원하는 만큼 스캔하세요. 하루 제한이 없어요."
+      },
+      "unlimitedRecipes": {
+        "title": "무제한 AI 레시피",
+        "body": "원할 때 언제든 냉장고 재료로 새 레시피를 만드세요. 하루 제한이 없어요."
+      },
+      "barcodeAdd": {
+        "title": "바코드로 식료품 추가",
+        "body": "제품 바코드를 스캔해서 냉장고에 바로 넣으세요."
+      },
+      "wholeTable": {
+        "title": "식탁 전체 스캔",
+        "body": "사진 한 장으로 식탁 위 모든 품목을 원하는 만큼 자주 스캔하세요."
+      },
+      "batchScanning": {
+        "title": "빠른 일괄 스캔",
+        "body": "장 본 것 전부를 연달아 스캔하세요. 제한이 없어요."
+      }
+    },
+    "plans": {
+      "eyebrow": "플랜 선택 · 3일 무료",
+      "annual": {
+        "label": "연간",
+        "unit": "/ 년",
+        "badge": "89% 할인",
+        "sublabel": "주당 단 $0.77, 연 단위 청구"
+      },
+      "monthly": {
+        "label": "월간",
+        "unit": "/ 월",
+        "sublabel": "유연하게 — 언제든 해지"
+      },
+      "weekly": {
+        "label": "주간",
+        "unit": "/ 주",
+        "sublabel": "가볍게 체험"
+      }
+    },
+    "cta": {
+      "processing": "처리 중…",
+      "startTrial": "3일 무료 체험 시작"
+    },
+    "fineprint": {
+      "annual": "처음 3일 무료, 이후 연 {{price}}. 기간 종료 최소 24시간 전에 해지하지 않으면 자동 갱신돼요.",
+      "monthly": "처음 3일 무료, 이후 월 {{price}}. 기간 종료 최소 24시간 전에 해지하지 않으면 자동 갱신돼요.",
+      "weekly": "처음 3일 무료, 이후 주 {{price}}. 기간 종료 최소 24시간 전에 해지하지 않으면 자동 갱신돼요."
+    },
+    "legal": {
+      "restore": "복원",
+      "terms": "약관",
+      "privacy": "개인정보"
+    },
+    "alerts": {
+      "welcomeTitle": "Pro에 오신 것을 환영해요",
+      "welcomeBody": "무료 체험이 시작됐어요. 냉장고 재료로 무제한 AI 레시피를 만들어 보세요!",
+      "pendingTitle": "승인 대기 중",
+      "pendingBody": "구매가 Apple ID 승인을 기다리고 있어요.",
+      "purchaseFailedTitle": "구매 실패",
+      "restoredTitle": "복원됨",
+      "restoredBody": "구독이 다시 활성화됐어요.",
+      "nothingToRestoreTitle": "복원할 항목 없음",
+      "nothingToRestoreBody": "이 Apple ID에서 활성 구독을 찾지 못했어요.",
+      "restoreFailedTitle": "복원 실패",
+      "couldNotOpenLinkTitle": "링크를 열 수 없음",
+      "unknownError": "알 수 없는 오류"
+    }
+  },
+  "auth": {
+    "wordmark": "FRESHCHECK",
+    "title": {
+      "signIn": "다시 오신 것을 환영해요",
+      "signUp": "FreshCheck 가입"
+    },
+    "labels": {
+      "email": "이메일",
+      "password": "비밀번호"
+    },
+    "placeholders": {
+      "email": "you@example.com",
+      "passwordSignIn": "비밀번호",
+      "passwordSignUp": "최소 6자"
+    },
+    "cta": {
+      "submitting": "...",
+      "signIn": "로그인",
+      "createAccount": "계정 만들기",
+      "toggleToSignUp": "계정이 없으신가요? 가입하기",
+      "toggleToSignIn": "이미 계정이 있으신가요? 로그인",
+      "continueAsGuest": "게스트로 계속하기"
+    },
+    "legal": {
+      "prefix": "계속하면 다음에 동의하는 것이에요:",
+      "terms": "약관",
+      "and": "및",
+      "privacy": "개인정보 처리방침",
+      "suffix": "."
+    },
+    "alerts": {
+      "signInTitle": "로그인",
+      "signUpTitle": "가입",
+      "notConfigured": "이 빌드에는 Supabase가 설정되어 있지 않아요. 게스트로 계속하면 앱을 로컬에서 계속 사용할 수 있어요.",
+      "checkEmailTitle": "이메일을 확인하세요",
+      "checkEmailMessage": "{{email}}로 확인 링크를 보냈어요. 링크를 누른 다음 돌아와서 로그인하세요.",
+      "ok": "확인"
+    },
+    "errors": {
+      "signInFailedTitle": "로그인 실패",
+      "signUpFailedTitle": "가입 실패",
+      "invalidCredentials": "유효한 이메일과 6자 이상의 비밀번호를 입력하세요."
+    },
+    "a11y": {
+      "back": "뒤로",
+      "email": "이메일",
+      "password": "비밀번호",
+      "toggleMode": "인증 모드 전환"
+    }
+  },
+  "scanResult": {
+    "header": {
+      "analysis": "분석"
+    },
+    "verdict": {
+      "fresh": "신선해 보여요",
+      "safe": "먹어도 안전해요",
+      "soon": "곧 드세요",
+      "past": "한창 때는 지났어요"
+    },
+    "expiry": {
+      "unknown": "보관 기간 알 수 없음",
+      "useToday": "오늘 드세요",
+      "daysLeft_other": "{{count}}일 남음"
+    },
+    "empty": {
+      "title": "아직 스캔이 없어요",
+      "subtitle": "품목을 스캔하면 여기에 신선도 판정이 나타나요.",
+      "scanNow": "지금 스캔"
+    },
+    "labels": {
+      "itemFallback": "품목",
+      "confidence": "신뢰도 {{percent}}%"
+    },
+    "safetyNote": "시각적 추정일 뿐 세균을 감지하지는 않아요. 애매하면 버리세요.",
+    "refine": {
+      "label": "가지고 있은 지 얼마나 됐나요?",
+      "justGotIt": "방금 샀어요",
+      "daysAgo_other": "{{count}}일 전",
+      "adjusted_other": "{{count}}일 남음으로 조정됨"
+    },
+    "cta": {
+      "addToFridge": "냉장고에 추가",
+      "scanAnother": "다른 것 스캔"
+    },
+    "alerts": {
+      "signInRequiredTitle": "로그인이 필요해요",
+      "signInRequiredMessage": "냉장고에 품목을 저장하려면 로그인하세요.",
+      "cancel": "취소",
+      "signIn": "로그인",
+      "couldNotSaveTitle": "저장할 수 없음"
+    },
+    "a11y": {
+      "back": "뒤로",
+      "fewerDays": "일수 줄이기",
+      "moreDays": "일수 늘리기"
+    }
+  },
+  "home": {
+    "wordmark": "FRESHCHECK",
+    "heroTitle": "스캔 준비 완료",
+    "heroSubtitle": "음식을 비추세요. 3초면 결과가 나와요.",
+    "tapToScan": "탭하여 스캔",
+    "recipeOfDayEmpty": "냉장고 재료로 레시피 만들기",
+    "badgeUnlocked": "달성함",
+    "sections": {
+      "recipeOfDay": "오늘의 레시피",
+      "freshTips": "신선 팁",
+      "storageGuide": "보관 가이드",
+      "chefTips": "셰프 팁",
+      "yourBadges": "내 배지"
+    },
+    "a11y": {
+      "tapToScan": "탭하여 스캔",
+      "openRecipe": "{{name}} 열기",
+      "generateRecipes": "레시피 만들기"
+    },
+    "freshTips": {
+      "items": {
+        "dangerZone": {
+          "title": "위험 온도 구간",
+          "body": "세균은 4~60°C에서 가장 빠르게 번식해요. 남은 음식은 조리 후 2시간 이내에 냉장하세요."
+        },
+        "pestoSealedVsOpen": {
+          "title": "페스토: 개봉 전 vs 개봉 후",
+          "body": "밀봉된 병은 몇 달간 보관돼요. 개봉 후에는 약 5~7일 안에 드시거나 냉동하세요."
+        },
+        "eggsKeepLonger": {
+          "title": "달걀은 생각보다 오래가요",
+          "body": "냉장한 달걀은 보통 구매 후 3~5주까지 괜찮아요. 물 테스트: 신선한 달걀은 가라앉아요."
+        },
+        "herbsLoveWater": {
+          "title": "허브는 물을 좋아해요",
+          "body": "신선한 허브를 물컵에 세워 두고 느슨하게 덮어두면 약 두 배 더 오래가요."
+        },
+        "washBerriesLast": {
+          "title": "베리류는 먹기 직전에 씻으세요",
+          "body": "수분은 곰팡이를 빨리 키워요. 베리류는 먹기 바로 직전에만 헹구세요."
+        }
+      }
+    }
+  },
+  "storageGuide": {
+    "items": {
+      "bananas": {
+        "name": "바나나",
+        "store": "다른 과일과 떨어뜨려 실온에",
+        "life": "2~7일",
+        "temp": "실온"
+      },
+      "berries": {
+        "name": "베리류",
+        "store": "씻지 않은 채 키친타월을 깐 용기에",
+        "life": "3~7일",
+        "temp": "냉장 1~4°C"
+      },
+      "eggs": {
+        "name": "달걀",
+        "store": "포장 그대로 선반에 (문 쪽 말고)",
+        "life": "3~5주",
+        "temp": "냉장 4°C 이하"
+      },
+      "leafyGreens": {
+        "name": "잎채소",
+        "store": "마른 천에 느슨하게 싸서",
+        "life": "5~7일",
+        "temp": "냉장 1~4°C"
+      },
+      "chicken": {
+        "name": "닭고기",
+        "store": "밀봉하여 맨 아래 선반에",
+        "life": "1~2일",
+        "temp": "냉장 4°C 이하"
+      },
+      "cookedLeftovers": {
+        "name": "조리한 남은 음식",
+        "store": "밀폐하여, 2시간 이내에 식혀서",
+        "life": "3~4일",
+        "temp": "냉장 4°C 이하"
+      },
+      "hardCheese": {
+        "name": "경질 치즈",
+        "store": "비닐 말고 왁스/유산지에 싸서",
+        "life": "3~4주",
+        "temp": "냉장 1~4°C"
+      },
+      "tomatoes": {
+        "name": "토마토",
+        "store": "꼭지를 아래로 하여 실온에",
+        "life": "4~7일",
+        "temp": "실온"
+      },
+      "bread": {
+        "name": "빵",
+        "store": "종이봉투에 넣어 실온에, 또는 냉동",
+        "life": "2~4일",
+        "temp": "실온"
+      },
+      "fish": {
+        "name": "생선",
+        "store": "얼음 위에 밀봉하여 맨 아래 선반에",
+        "life": "1~2일",
+        "temp": "냉장 2°C 이하"
+      },
+      "carrots": {
+        "name": "당근",
+        "store": "잎을 제거하고 물에 담그거나 밀봉 봉투에",
+        "life": "2~4주",
+        "temp": "냉장 1~4°C"
+      },
+      "milk": {
+        "name": "우유",
+        "store": "문 쪽 말고 가장 차가운 선반에",
+        "life": "개봉 후 5~7일",
+        "temp": "냉장 4°C 이하"
+      }
+    }
+  },
+  "chefTips": {
+    "items": {
+      "gordonRamsay": {
+        "name": "Gordon Ramsay",
+        "role": "미슐랭 셰프",
+        "tip": "요리하면서 계속 맛보세요. 마지막에 한 번에 말고 단계마다 간을 하세요."
+      },
+      "massimoBottura": {
+        "name": "Massimo Bottura",
+        "role": "오스테리아 프란체스카나",
+        "tip": "어제의 빵이 오늘의 걸작이 돼요. 절대 버리지 마세요."
+      },
+      "juliaChild": {
+        "name": "Julia Child",
+        "role": "작가 겸 방송 셰프",
+        "tip": "팬을 꽉 채우지 마세요. 여유 공간이 없으면 노릇해지지 않고 쪄져요."
+      },
+      "yotamOttolenghi": {
+        "name": "Yotam Ottolenghi",
+        "role": "셰프 겸 작가",
+        "tip": "마지막에 레몬즙을 살짝 짜면 거의 모든 요리가 살아나요."
+      },
+      "marcoPierreWhite": {
+        "name": "Marco Pierre White",
+        "role": "미슐랭 셰프",
+        "tip": "조리 후 고기를 잠시 쉬게 하세요. 육즙이 고르게 퍼져요."
+      },
+      "nigellaLawson": {
+        "name": "Nigella Lawson",
+        "role": "음식 칼럼니스트",
+        "tip": "허브가 시들기 전에 얼음틀에 올리브유와 함께 얼리세요."
+      },
+      "thomasKeller": {
+        "name": "Thomas Keller",
+        "role": "더 프렌치 런드리",
+        "tip": "굽기 전에 고기의 물기를 닦으세요. 수분은 바삭한 겉면의 적이에요."
+      },
+      "saminNosrat": {
+        "name": "Samin Nosrat",
+        "role": "소금 지방 산 열",
+        "tip": "소금은 높이서 뿌려 음식 위에 고르게 떨어지게 하세요."
+      }
+    }
+  },
+  "foodFacts": {
+    "items": {
+      "smellTestLies": {
+        "title": "냄새 테스트는 믿을 수 없어요",
+        "body": "살모넬라 같은 위험한 세균은 음식의 냄새, 모양, 맛을 바꾸지 않아요."
+      },
+      "dangerZone": {
+        "title": "위험 온도 구간",
+        "body": "세균은 4~60°C에서 가장 빠르게 번식해요. 남은 음식은 2시간 이내에 냉장하세요."
+      },
+      "ripenWithApples": {
+        "title": "사과로 숙성시키기",
+        "body": "사과와 바나나는 에틸렌을 내뿜어요. 잎채소가 빨리 상하지 않도록 떨어뜨려 두세요."
+      },
+      "freezingPausesTime": {
+        "title": "냉동은 시간을 멈춰요",
+        "body": "냉동은 세균을 죽이지 않고 멈출 뿐이에요. 해동하면 다시 깨어나요."
+      }
+    }
+  },
+  "scanBatch": {
+    "header": "일괄 스캔",
+    "counter": "{{done}}개 완료 · {{left}}개 남음",
+    "hero": {
+      "scanning": "일괄 스캔 중…",
+      "results": "일괄 스캔 결과"
+    },
+    "verdict": {
+      "fresh": "신선해 보여요",
+      "safe": "먹어도 안전해요",
+      "soon": "곧 드세요",
+      "past": "한창 때는 지났어요"
+    },
+    "expiry": {
+      "unknown": "보관 기간 알 수 없음",
+      "today": "오늘 드세요",
+      "daysLeft_other": "{{count}}일 남음"
+    },
+    "empty": {
+      "title": "대기 중인 항목이 없어요",
+      "subtitle": "스캐너를 일괄 모드로 전환하고 품목 몇 개를 찍어보세요.",
+      "cta": "스캔으로 돌아가기"
+    },
+    "card": {
+      "itemFallback": "품목",
+      "editHint": "이름이나 판정을 탭하여 편집",
+      "scanFailed": "스캔 실패",
+      "scanFailedHint": "스캐너에서 이 항목을 다시 시도하세요.",
+      "reading": "신선도 확인 중…",
+      "waiting": "대기 중…"
+    },
+    "cta": {
+      "add": "추가",
+      "rescan": "다시 스캔",
+      "done": "완료",
+      "addAll_other": "{{count}}개 냉장고에 추가"
+    },
+    "editPrompt": {
+      "title": "품목 편집",
+      "message": "감지된 이름을 수정하세요.",
+      "cancel": "취소",
+      "save": "저장",
+      "placeholder": "예: 닭가슴살"
+    },
+    "signInAlert": {
+      "title": "로그인이 필요해요",
+      "message": "냉장고에 품목을 저장하려면 로그인하세요.",
+      "cancel": "취소",
+      "signIn": "로그인"
+    },
+    "saveError": {
+      "title": "저장할 수 없음"
+    },
+    "a11y": {
+      "back": "뒤로",
+      "editName": "이름 편집, 현재 {{name}}",
+      "changeVerdict": "신선도 판정 변경",
+      "addToFridge": "{{name}} 냉장고에 추가",
+      "rescan": "이 사진 다시 스캔",
+      "done": "완료"
+    }
+  },
+  "profile": {
+    "fallbackName": "나",
+    "guestName": "게스트",
+    "status": {
+      "signedIn": "로그인됨",
+      "notSignedIn": "로그인 안 됨",
+      "active": "활성"
+    },
+    "sections": {
+      "account": "계정",
+      "pro": "PRO",
+      "notifications": "알림",
+      "about": "정보"
+    },
+    "stats": {
+      "itemsInFridge": "냉장고 품목"
+    },
+    "rows": {
+      "signIn": "로그인",
+      "signOut": "로그아웃",
+      "email": "이메일",
+      "deleteAccount": "계정 삭제",
+      "deleteMyData": "내 데이터 삭제",
+      "freshcheckPro": "FreshCheck Pro",
+      "manageSubscription": "구독 관리",
+      "upgradeToPro": "FreshCheck Pro로 업그레이드",
+      "restorePurchase": "구매 복원",
+      "foodExpiryReminders": "음식 만료 알림",
+      "privacyPolicy": "개인정보 처리방침",
+      "termsOfService": "서비스 약관",
+      "support": "지원",
+      "version": "버전"
+    },
+    "labels": {
+      "warnMeBefore": "미리 알림",
+      "daysShort_other": "{{count}}일"
+    },
+    "cta": {
+      "cancel": "취소",
+      "save": "저장",
+      "delete": "삭제",
+      "keepAccount": "계정 유지",
+      "yesDelete": "네, 삭제할게요",
+      "signOut": "로그아웃",
+      "takePhoto": "사진 촬영",
+      "chooseFromLibrary": "라이브러리에서 선택",
+      "openSettings": "설정 열기"
+    },
+    "a11y": {
+      "changeAvatar": "아바타 변경",
+      "editName": "이름 편집",
+      "daysBefore_other": "{{count}}일 전"
+    },
+    "errors": {
+      "unknown": "알 수 없는 오류"
+    },
+    "alerts": {
+      "photoAccess": {
+        "title": "사진 접근 권한이 필요해요",
+        "messageCanAsk": "아바타를 선택하려면 사진 접근을 허용하세요.",
+        "messageDenied": "설정에서 사진 접근을 켠 다음 돌아오세요."
+      },
+      "cameraAccess": {
+        "title": "카메라 접근 권한이 필요해요",
+        "messageCanAsk": "사진을 촬영하려면 카메라 접근을 허용하세요.",
+        "messageDenied": "설정에서 카메라 접근을 켠 다음 돌아오세요."
+      },
+      "changePhoto": {
+        "title": "사진 변경",
+        "message": "새 프로필 사진을 선택하세요"
+      },
+      "editName": {
+        "title": "이름",
+        "message": "어떻게 불러드릴까요?"
+      },
+      "signOut": {
+        "title": "로그아웃",
+        "message": "FreshCheck에서 로그아웃할까요?"
+      },
+      "restored": {
+        "title": "복원됨",
+        "message": "구독이 다시 활성화됐어요."
+      },
+      "nothingToRestore": {
+        "title": "복원할 항목 없음",
+        "message": "이 Apple ID에서 활성 구독을 찾지 못했어요."
+      },
+      "restoreFailed": {
+        "title": "복원 실패"
+      },
+      "linkFailed": {
+        "title": "링크를 열 수 없음"
+      },
+      "deleteAccount": {
+        "title": "계정 삭제",
+        "message": "계정, 냉장고 품목, 스캔 기록이 영구적으로 삭제돼요. 되돌릴 수 없어요."
+      },
+      "deleteConfirm": {
+        "title": "정말 삭제할까요?",
+        "message": "데이터를 지킬 마지막 기회예요. \"네, 삭제할게요\"를 누르면 계정이 영구적으로 삭제돼요."
+      },
+      "notSignedIn": {
+        "title": "로그인 안 됨",
+        "message": "먼저 로그인해 주세요."
+      },
+      "deletionFailed": {
+        "title": "삭제 실패",
+        "message": "다시 시도하거나 지원팀에 문의하세요."
+      },
+      "accountDeleted": {
+        "title": "계정 삭제됨",
+        "message": "계정과 데이터가 삭제됐어요."
+      }
+    }
+  },
+  "recipeDetail": {
+    "loading": {
+      "title": "레시피 불러오는 중…",
+      "subtitle": "당신을 위한 신선한 레시피를 만드는 중"
+    },
+    "empty": {
+      "title": "레시피를 찾을 수 없어요",
+      "subtitle": "돌아가서 다른 레시피를 골라보세요."
+    },
+    "meta": {
+      "time": "시간",
+      "difficulty": "난이도",
+      "fromFridge": "냉장고에서",
+      "minutes_other": "{{count}}분"
+    },
+    "difficulty": {
+      "easy": "쉬움",
+      "medium": "보통",
+      "hard": "어려움"
+    },
+    "sections": {
+      "ingredients": "재료",
+      "steps": "조리 단계"
+    },
+    "badges": {
+      "have": "보유"
+    },
+    "stepLabel": {
+      "prep": "준비",
+      "cook": "조리",
+      "mix": "섞기",
+      "wait": "대기",
+      "serve": "담기"
+    },
+    "steps": {
+      "header": "{{order}}단계 · {{label}}",
+      "minutes": "{{minutes}}분"
+    },
+    "a11y": {
+      "back": "뒤로",
+      "saveRecipe": "레시피 저장",
+      "removeFromSaved": "저장 목록에서 제거"
+    }
+  },
+  "recipeBuilder": {
+    "header": {
+      "title": "레시피 만들기",
+      "subtitle": "주방에 무엇이 있나요?",
+      "intro": "가진 재료를 추가하세요. 원하면 분량도 함께요. 그 재료를 중심으로 레시피를 만들어 드릴게요."
+    },
+    "sections": {
+      "addIngredients": "재료 추가",
+      "cookingMethod": "조리 방법",
+      "maxTime": "최대 시간"
+    },
+    "placeholders": {
+      "amount": "200",
+      "name": "닭가슴살"
+    },
+    "methods": {
+      "any": "전체",
+      "bake": "굽기(오븐)",
+      "fry": "튀기기",
+      "boil": "삶기",
+      "grill": "그릴",
+      "steam": "찌기",
+      "noCook": "조리 없음",
+      "slowCook": "저온 조리"
+    },
+    "times": {
+      "any": "전체",
+      "under15": "15분 이하",
+      "under30": "30분 이하",
+      "under45": "45분 이하",
+      "under60": "60분 이하"
+    },
+    "units": {
+      "g": "g",
+      "pcs": "개",
+      "cups": "컵",
+      "tbsp": "큰술",
+      "tsp": "작은술",
+      "ml": "ml"
+    },
+    "toggle": {
+      "title": "이 재료만 사용",
+      "sub": "끄면 흔한 재료(기름, 소금, 향신료)를 추가할 수 있어요."
+    },
+    "cta": {
+      "generate": "레시피 만들기"
+    },
+    "errors": {
+      "notFood": "실제 재료를 입력하세요"
+    },
+    "alerts": {
+      "addIngredientsTitle": "재료 추가",
+      "addIngredientsMessage": "레시피를 만들려면 재료를 하나 이상 추가하세요.",
+      "couldNotGenerateTitle": "만들 수 없음",
+      "tryAgain": "잠시 후 다시 시도해 주세요."
+    },
+    "a11y": {
+      "back": "뒤로",
+      "addIngredient": "재료 추가"
+    }
+  },
+  "recipes": {
+    "eyebrow": "레시피",
+    "hero": {
+      "title": "가진 재료로 요리하기",
+      "titleEmpty": "입문 레시피",
+      "subtitle": "냉장고 재료로 AI가 만든 레시피",
+      "subtitleEmpty": "맞춤 추천을 받으려면 품목을 스캔하세요"
+    },
+    "cook": {
+      "title": "가진 재료로 요리하기",
+      "titleEmpty": "입문 레시피 만들기",
+      "subtitle": "냉장고 품목 선택 → 신선한 레시피 3가지",
+      "subtitleEmpty": "장 봐서 만들 수 있는 간단한 아이디어 3가지"
+    },
+    "build": {
+      "title": "나만의 레시피 만들기",
+      "subtitle": "재료, 방법, 시간을 입력하세요"
+    },
+    "emptyBanner": "냉장고가 비어 있어요. 이건 일반적인 입문 아이디어예요. 실제로 가진 재료에 맞춘 레시피를 보려면 먼저 품목 몇 개를 스캔하세요.",
+    "sections": {
+      "saved": "★ 저장됨"
+    },
+    "errors": {
+      "dailyLimitTitle": "하루 한도에 도달했어요",
+      "generateFailedTitle": "레시피를 만들 수 없어요",
+      "unlockUnlimited": "무제한 레시피 잠금 해제"
+    },
+    "labels": {
+      "minutesShort": "{{count}}분",
+      "fromFridge_other": "냉장고에서 {{count}}개",
+      "today": "오늘",
+      "daysShort": "{{count}}일"
+    },
+    "sheet": {
+      "title": "가진 재료로 요리하기",
+      "subtitle": "레시피를 만들 품목을 선택하세요. 만료가 가까운 것을 우선해요."
+    },
+    "cta": {
+      "generateFromItems_other": "{{count}}개로 만들기"
+    },
+    "a11y": {
+      "generateStarter": "입문 레시피 만들기",
+      "cookWithWhatYouHave": "가진 재료로 요리하기",
+      "buildCustom": "나만의 레시피 만들기",
+      "upgradeToPro": "FreshCheck Pro로 업그레이드",
+      "openRecipe": "{{name}} 열기",
+      "recipeCard_other": "{{name}}, {{count}}분",
+      "removeFromSaved": "저장 목록에서 제거",
+      "saveRecipe": "레시피 저장",
+      "removeRecipe": "{{name}} 제거",
+      "close": "닫기"
+    }
+  },
+  "capture": {
+    "header": {
+      "scan": "스캔"
+    },
+    "a11y": {
+      "back": "뒤로",
+      "capture": "촬영",
+      "scanWholeTable": "식탁 전체 스캔",
+      "choosePhotoFromLibrary": "라이브러리에서 사진 선택",
+      "reviewScans_other": "스캔 {{count}}개 검토"
+    },
+    "modes": {
+      "single": "단일",
+      "batch": "일괄",
+      "barcode": "바코드"
+    },
+    "hints": {
+      "barcode": "바코드를 비추세요",
+      "batch": "탭하여 추가 · 스캔은 백그라운드에서 진행돼요",
+      "single": "음식을 비추세요 · 탭하여 촬영"
+    },
+    "freeScansLeft_other": "오늘 무료 스캔 {{count}}회 남음",
+    "status": {
+      "analyzing": "분석 중…",
+      "lookingUpProduct": "제품 조회 중…",
+      "readingFreshness": "신선도 확인 중…",
+      "findingItems": "품목 찾는 중…",
+      "capturing": "촬영 중…",
+      "loadingPhoto": "사진 불러오는 중…",
+      "preparingScan": "스캔 준비 중…",
+      "loadingCamera": "카메라 불러오는 중…"
+    },
+    "analyzingSub": {
+      "stillWorking": "아직 진행 중… {{seconds}}초",
+      "default": "몇 초 정도 걸릴 수 있어요"
+    },
+    "cta": {
+      "scanWholeTable": "📋  식탁 전체 스캔",
+      "reviewScans_other": "스캔 {{count}}개 검토",
+      "allowCamera": "카메라 허용",
+      "openSettings": "설정 열기",
+      "chooseFromLibrary": "대신 라이브러리에서 선택",
+      "back": "뒤로"
+    },
+    "gate": {
+      "serviceUnavailable": {
+        "title": "서비스 이용 불가",
+        "message": "스캔을 일시적으로 사용할 수 없어요. 잠시 후 다시 시도해 주세요."
+      },
+      "cameraOff": {
+        "title": "카메라 꺼짐",
+        "messageCanAsk": "음식을 스캔하려면 FreshCheck에 카메라 접근이 필요해요.",
+        "messageDenied": "설정에서 카메라 접근을 켠 다음 돌아오세요."
+      }
+    },
+    "barcode": {
+      "expiryText": "약 {{days}}일 남음"
+    },
+    "errors": {
+      "scanFailed": "스캔에 실패했어요.",
+      "couldNotScan": "스캔할 수 없어요.",
+      "couldNotCapture": "사진을 촬영할 수 없어요."
+    },
+    "alerts": {
+      "cancel": "취소",
+      "productNotFound": {
+        "title": "제품을 찾을 수 없음",
+        "message": "아직 이 바코드와 일치하는 제품이 없어요. 대신 사진 스캔을 시도해 보세요."
+      },
+      "couldNotAdd": {
+        "title": "추가할 수 없음"
+      },
+      "addedToFridge": {
+        "title": "냉장고에 추가됨",
+        "message": "{{product}} · 약 {{days}}일 보관"
+      },
+      "severalItems": {
+        "title": "여러 품목이 감지됨",
+        "message": "이 사진에는 여러 음식이 있는 것 같아요. 전부 스캔할까요, 아니면 대표 품목만 스캔할까요?",
+        "justMain": "대표 품목만",
+        "scanAll": "모든 품목 스캔"
+      },
+      "scanFailed": {
+        "title": "스캔 실패"
+      },
+      "noFoodFound": {
+        "title": "음식을 찾을 수 없음",
+        "message": "그 사진에서 음식을 찾지 못했어요. 더 가까이 가거나 더 밝은 곳에서 시도해 보세요."
+      },
+      "preparingScan": {
+        "title": "스캔 준비 중",
+        "message": "잠시 기다렸다가 다시 시도해 주세요."
+      },
+      "photoAccess": {
+        "title": "사진 접근 권한이 필요해요",
+        "messageCanAsk": "라이브러리에서 음식 사진을 고르려면 사진 접근을 허용하세요.",
+        "messageDenied": "설정에서 사진 접근을 켠 다음 돌아오세요."
+      },
+      "dailyScanLimit": {
+        "title": "하루 스캔 한도",
+        "message": "사진 {{total}}장 중 {{added}}장을 추가했어요. 오늘의 무료 스캔을 모두 사용했어요. 무제한은 Pro로 업그레이드하세요."
+      }
+    }
+  },
+  "loaders": {
+    "cooking": {
+      "readingFridge": "냉장고에 무엇이 있는지 확인하는 중…",
+      "prioritising": "만료가 가까운 것을 우선하는 중…",
+      "pairingFlavours": "잘 어울리는 맛을 조합하는 중…",
+      "writingSteps": "조리 단계를 작성하는 중…",
+      "platingUp": "아이디어 3가지를 담는 중…",
+      "eta": "약 {{seconds}}초 · 사진은 바로 뒤에 로드돼요"
+    },
+    "image": {
+      "plating": "요리를 담는 중",
+      "generating": "독창적인 레시피를 만드는 중",
+      "simmering": "디테일을 끓이는 중",
+      "pickingIngredients": "신선한 재료를 고르는 중"
+    }
+  },
+  "foods": {
+    "reasons": {
+      "tooShort": "너무 짧아요",
+      "tooLong": "너무 길어요",
+      "lettersOnly": "글자만 입력하세요. 숫자나 기호는 안 돼요",
+      "notRealIngredient": "실제 재료가 아닌 것 같아요"
+    }
+  },
+  "scan": {
+    "timeout": "평소보다 오래 걸리고 있어요. 다시 시도해 주세요.",
+    "unreachable": "스캐너에 연결하지 못했어요. 연결 상태를 확인하고 다시 시도해 주세요.",
+    "failed": "스캔 실패"
+  },
+  "fridge": {
+    "title": "내 냉장고",
+    "eyebrow": "재고 상태",
+    "recipesLink": "냉장고 재료로 만드는 레시피",
+    "a11y": {
+      "viewRecipes": "냉장고 재료로 만드는 레시피 보기"
+    },
+    "categories": {
+      "all": "전체",
+      "produce": "채소",
+      "dairy": "유제품",
+      "poultry": "가금류",
+      "meat": "육류",
+      "fish": "생선",
+      "bakery": "베이커리",
+      "pantry": "식료품"
+    },
+    "empty": {
+      "title": "냉장고가 비어 있어요",
+      "body": "품목을 스캔하면 냉장고에 무엇이 있고 언제 상하는지 관리할 수 있어요.",
+      "cta": "첫 품목 스캔"
+    },
+    "footer": {
+      "tracked_other": "제품 {{count}}개 중 {{shown}}개 관리 중",
+      "swipeHint": "카드를 왼쪽으로 밀어서 제거하세요"
+    },
+    "alerts": {
+      "removeFailedTitle": "제거할 수 없음",
+      "loadFailedTitle": "냉장고를 불러올 수 없음"
+    }
+  }
+}

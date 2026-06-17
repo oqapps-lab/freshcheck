@@ -1,1 +1,1218 @@
-{}
+{
+  "common": {
+    "appName": "FreshCheck",
+    "continue": "متابعة",
+    "getStarted": "ابدأ الآن",
+    "back": "رجوع",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "done": "تم",
+    "tryAgain": "حاول مرة أخرى",
+    "next": "التالي",
+    "skip": "تخطٍّ",
+    "ok": "حسنًا",
+    "dayUnit_one": "يوم",
+    "dayUnit_other": "أيام",
+    "tabA11y": "علامة تبويب {{label}}",
+    "productRow": {
+      "a11yDaysLeft_zero": "{{name}}، لا أيام متبقية",
+      "a11yDaysLeft_one": "{{name}}، يوم واحد متبقٍّ",
+      "a11yDaysLeft_two": "{{name}}، يومان متبقيان",
+      "a11yDaysLeft_few": "{{name}}، {{count}} أيام متبقية",
+      "a11yDaysLeft_many": "{{name}}، {{count}} يومًا متبقيًا",
+      "a11yDaysLeft_other": "{{name}}، {{count}} يوم متبقٍّ",
+      "delete": "حذف",
+      "deleteA11y": "حذف {{name}}"
+    },
+    "achievements": {
+      "unlocked": "إنجاز مفتوح",
+      "items": {
+        "first_scan": {
+          "title": "النظرة الأولى",
+          "desc": "افحص أول طعام لك"
+        },
+        "scan_10": {
+          "title": "عين خبيرة",
+          "desc": "افحص 10 أطعمة"
+        },
+        "scan_50": {
+          "title": "محترف الأمان",
+          "desc": "افحص 50 طعامًا"
+        },
+        "first_recipe": {
+          "title": "طاهٍ منزلي",
+          "desc": "أنشئ أول وصفة لك"
+        },
+        "recipe_10": {
+          "title": "مستكشف الوصفات",
+          "desc": "أنشئ 10 وصفات"
+        },
+        "fridge_5": {
+          "title": "ثلاجة ممتلئة",
+          "desc": "تتبّع 5 أصناف في الثلاجة"
+        },
+        "streak_3": {
+          "title": "بداية منعشة",
+          "desc": "استخدم FreshCheck 3 أيام"
+        },
+        "streak_7": {
+          "title": "محارب الهدر",
+          "desc": "استخدم FreshCheck 7 أيام"
+        }
+      }
+    }
+  },
+  "errorBoundary": {
+    "title": "حدث خطأ ما",
+    "message": "وقع خطأ غير متوقع. حاول مرة أخرى، أو أعد تشغيل التطبيق إذا استمرت المشكلة.",
+    "retry": "حاول مرة أخرى"
+  },
+  "att": {
+    "headlineFamily": "اجعل FreshCheck أفضل للعائلات",
+    "headlineYou": "اجعل FreshCheck أفضل لك",
+    "bodyFamily": "بإذنك، نقيس الميزات التي تساعد فعلًا آباءً مثلك — لنواصل تحسين ما يهمّ.",
+    "bodyYou": "بإذنك، نقيس الميزات التي تساعد فعلًا أشخاصًا مثلك — لنواصل تحسين ما يهمّ.",
+    "privacy": "نحن لا نبيع بياناتك الشخصية أبدًا، وتبقى عمليات الفحص خاصة دائمًا.",
+    "micro": "في الشاشة التالية يمكنك السماح أو الرفض. يعمل FreshCheck بكامل ميزاته في كلتا الحالتين، ويمكنك تغيير ذلك في أي وقت من الإعدادات.",
+    "continue": "متابعة"
+  },
+  "building": {
+    "pct": "{{pct}}%",
+    "stages": {
+      "stage0": {
+        "title": "نقرأ عاداتك مع الثلاجة",
+        "detail": "ما تشتريه، وما تنساه"
+      },
+      "stage1": {
+        "title": "نحدّد ما يفسد أسرع في منزلك",
+        "detail": "حتى لا يتجاوز شيء تاريخ صلاحيته"
+      },
+      "stage2": {
+        "title": "نضبط تنبيهات الطزاجة",
+        "detail": "مُهيّأة لما تهدره أكثر"
+      },
+      "stage3": {
+        "title": "نجهّز وصفات لما ينتهي أولًا",
+        "detail": "عشاء مما لديك بالفعل"
+      },
+      "stage4": {
+        "title": "خطة الطزاجة الخاصة بك تتشكّل",
+        "detail": "اقتربت من الجاهزية"
+      }
+    },
+    "badge": {
+      "withName": "{{name}}، خطتك شخصية — وليست قالبًا جاهزًا",
+      "noName": "خطتك شخصية — وليست قالبًا جاهزًا"
+    }
+  },
+  "onboarding": {
+    "cta": {
+      "getStarted": "ابدأ الآن",
+      "continue": "متابعة"
+    },
+    "slides": {
+      "waste": {
+        "title": "لا تتخلّص من طعام جيد بعد اليوم",
+        "body": "يخبرك FreshCheck بما لا يزال صالحًا وينبّهك قبل أن يفسد.",
+        "proof": "توفّر العائلات نحو 2٬913 $ سنويًّا"
+      },
+      "scan": {
+        "title": "هل ما زال آمنًا؟ اعرف خلال 3 ثوانٍ",
+        "body": "وجّه الكاميرا نحو أي طعام لحكم فوري — آمن أو احذر أو تخلّص منه."
+      },
+      "timeline": {
+        "title": "ثلاجتك كاملة على خط زمني للطزاجة",
+        "body": "كل ما لديك مرتّب حسب الأقرب للانتهاء. لن يُنسى شيء في الخلف مجددًا."
+      },
+      "recipes": {
+        "title": "عشاء الليلة مما لديك بالفعل",
+        "body": "نقرة واحدة تحوّل المكوّنات قرب انتهائها إلى 3 وصفات طازجة بالذكاء الاصطناعي."
+      },
+      "barcode": {
+        "title": "امسح الباركود، ونحن نتتبّع الباقي",
+        "body": "أضف البقالة المعلّبة في لحظة — فقط امسح الباركود ونحن نسجّله."
+      }
+    }
+  },
+  "personalize": {
+    "progress": "الخطوة {{current}} من {{total}}",
+    "namePlaceholder": "اسمك",
+    "a11y": {
+      "back": "رجوع"
+    },
+    "cta": {
+      "buildPlan": "أنشئ خطتي",
+      "continue": "متابعة"
+    },
+    "questions": {
+      "household": {
+        "q": "لمن تحافظ على الطعام طازجًا؟",
+        "options": {
+          "me": "أنا فقط",
+          "partner": "أنا وشريكي",
+          "family": "عائلة بأطفال",
+          "roommates": "سكن مشترك"
+        }
+      },
+      "topWaste": {
+        "q": "ما الذي ترميه أكثر؟",
+        "sub": "اختر كل ما ينطبق",
+        "options": {
+          "leftovers": "بقايا الطعام",
+          "produce": "الخضار والورقيات",
+          "dairy": "الألبان",
+          "meat": "اللحوم والدواجن",
+          "bread": "الخبز"
+        }
+      },
+      "worry": {
+        "q": "ما الذي يقلقك أكثر بشأن الطعام؟",
+        "options": {
+          "sick": "أن يمرض أحدهم",
+          "money": "هدر المال",
+          "spoiled": "أن آكل شيئًا فاسدًا",
+          "unsure": "عدم معرفة ما لا يزال صالحًا"
+        }
+      },
+      "forgotten": {
+        "q": "كم مرة تُنسى البقايا في خلف الثلاجة؟",
+        "options": {
+          "constantly": "باستمرار",
+          "weekly": "معظم الأسابيع",
+          "sometimes": "أحيانًا",
+          "rarely": "نادرًا"
+        }
+      },
+      "dinner": {
+        "q": "كيف تقرّر العشاء؟",
+        "options": {
+          "plan": "أخطّط مسبقًا",
+          "wing": "أرتجل",
+          "expiring": "ما يكاد ينتهي",
+          "order": "أطلب الطعام كثيرًا"
+        }
+      },
+      "name": {
+        "q": "آخر شيء — بماذا نناديك؟",
+        "sub": "اختياري"
+      }
+    }
+  },
+  "yourPlan": {
+    "eyebrowNamed": "خطة {{name}}",
+    "eyebrowDefault": "خطتك في FRESHCHECK",
+    "watchLabel": "سنراقب من أجلك",
+    "whatIsInside": "ما الذي بالداخل",
+    "socialProof": "انضم إلى عائلات توفّر نحو 2٬913 $ سنويًّا مع FreshCheck.",
+    "cta": {
+      "seeMyPlan": "اعرض خطتي"
+    },
+    "waste": {
+      "leftovers": "بقايا الطعام",
+      "produce": "الخضار والورقيات",
+      "dairy": "الألبان",
+      "meat": "اللحوم والدواجن",
+      "bread": "الخبز"
+    },
+    "benefits": {
+      "verdict": {
+        "title": "حكم فوري: آمن / احذر / خطر",
+        "sub": "افحص أي طعام، واعرف خلال 3 ثوانٍ."
+      },
+      "timeline": {
+        "title": "ثلاجتك على خط زمني للطزاجة",
+        "sub": "كل شيء مرتّب حسب الأقرب للانتهاء."
+      },
+      "recipes": {
+        "title": "وصفات مما يكاد ينتهي",
+        "sub": "حوّل الأصناف قرب فسادها إلى عشاء."
+      }
+    },
+    "tiles": {
+      "dailyScans": "فحوص طزاجة يومية",
+      "fridgeTimeline": "خط زمني للثلاجة",
+      "expiryReminders": "تذكيرات انتهاء الصلاحية",
+      "unlimitedScans": "فحوص غير محدودة",
+      "unlimitedRecipes": "وصفات ذكاء اصطناعي غير محدودة",
+      "barcodeImport": "استيراد عبر الباركود"
+    }
+  },
+  "plan": {
+    "wasteLower": {
+      "leftovers": "بقايا الطعام",
+      "produce": "الخضار والورقيات",
+      "dairy": "الألبان",
+      "meat": "اللحوم والدواجن",
+      "bread": "الخبز"
+    },
+    "household": {
+      "family": "طاهي عائلة مشغولة",
+      "partner": "مطبخ لشخصين",
+      "roommates": "منزل مشترك",
+      "solo": "طاهٍ منفرد"
+    },
+    "headlineWithWaste": "أنت {{who}} — وسنراقب {{waste}} من أجلك.",
+    "headlineFallback": "أنت {{who}} — وسيراقب FreshCheck ثلاجتك نيابة عنك.",
+    "fear": {
+      "sick": "سننبّهك إلى أي شيء خطر قبل أن يصل إلى مائدتك.",
+      "money": "توقّف عن رمي ما قيمته نحو 56 $ من البقالة كل أسبوع.",
+      "spoiled": "ستعرف دائمًا ما لا يزال صالحًا — بنظرة واحدة.",
+      "default": "لا تخمّن بعد الآن إن كان شيء ما لا يزال آمنًا للأكل."
+    }
+  },
+  "paywall": {
+    "eyebrow": "FRESHCHECK PRO",
+    "a11y": {
+      "close": "إغلاق",
+      "planOption": "خطة {{label}}، {{price}} {{unit}}"
+    },
+    "hero": {
+      "scanLimit": {
+        "title": "استنفدت فحوص اليوم المجانية",
+        "subtitle": "انتقل إلى غير المحدود — افحص كل ما في مطبخك متى شئت."
+      },
+      "barcode": {
+        "title": "مسح الباركود ميزة Pro",
+        "subtitle": "امسح باركود أي منتج وأضِفه إلى ثلاجتك مباشرة."
+      },
+      "recipeLimit": {
+        "title": "استنفدت وصفات اليوم المجانية",
+        "subtitle": "وصفات ذكاء اصطناعي غير محدودة مما في ثلاجتك — كل يوم."
+      },
+      "default": {
+        "title": "افتح FreshCheck Pro",
+        "subtitle": "حوّل ما في ثلاجتك إلى وصفات، ولا ترمِ طعامًا بعد اليوم."
+      }
+    },
+    "trust": {
+      "family": "يوفّر للعائلة المتوسطة 2٬913 $ سنويًّا",
+      "household": "يوفّر المنزل المتوسط 2٬913 $ سنويًّا"
+    },
+    "features": {
+      "header": "كل ما في PRO",
+      "unlimitedScans": {
+        "title": "فحوص غير محدودة",
+        "body": "افحص ما تشاء من الأصناف، بلا حد يومي."
+      },
+      "unlimitedRecipes": {
+        "title": "وصفات ذكاء اصطناعي غير محدودة",
+        "body": "أنشئ وصفات طازجة من ثلاجتك متى شئت، بلا حد يومي."
+      },
+      "barcodeAdd": {
+        "title": "إضافة المؤن بالباركود",
+        "body": "امسح باركود منتج لإضافته إلى ثلاجتك مباشرة."
+      },
+      "wholeTable": {
+        "title": "فحص المائدة كاملة",
+        "body": "صورة واحدة، كل صنف على المائدة — كلما شئت."
+      },
+      "batchScanning": {
+        "title": "فحص دفعات سريع",
+        "body": "افحص مشترياتك كاملة تباعًا، بلا حدود."
+      }
+    },
+    "plans": {
+      "eyebrow": "اختر خطتك · 3 أيام مجانًا",
+      "annual": {
+        "label": "سنوي",
+        "unit": "/ سنة",
+        "badge": "وفّر 89%",
+        "sublabel": "بـ 0.77 $ فقط أسبوعيًّا، يُحتسب سنويًّا"
+      },
+      "monthly": {
+        "label": "شهري",
+        "unit": "/ شهر",
+        "sublabel": "مرن — ألغِ في أي وقت"
+      },
+      "weekly": {
+        "label": "أسبوعي",
+        "unit": "/ أسبوع",
+        "sublabel": "للتجربة فقط"
+      }
+    },
+    "cta": {
+      "processing": "جارٍ المعالجة…",
+      "startTrial": "ابدأ التجربة المجانية 3 أيام"
+    },
+    "fineprint": {
+      "annual": "أول 3 أيام مجانًا، ثم {{price}} / سنة. يتجدّد تلقائيًّا ما لم يُلغَ قبل نهاية الفترة بـ 24 ساعة على الأقل.",
+      "monthly": "أول 3 أيام مجانًا، ثم {{price}} / شهر. يتجدّد تلقائيًّا ما لم يُلغَ قبل نهاية الفترة بـ 24 ساعة على الأقل.",
+      "weekly": "أول 3 أيام مجانًا، ثم {{price}} / أسبوع. يتجدّد تلقائيًّا ما لم يُلغَ قبل نهاية الفترة بـ 24 ساعة على الأقل."
+    },
+    "legal": {
+      "restore": "استعادة",
+      "terms": "الشروط",
+      "privacy": "الخصوصية"
+    },
+    "alerts": {
+      "welcomeTitle": "مرحبًا بك في Pro",
+      "welcomeBody": "بدأت تجربتك المجانية. أنشئ وصفات ذكاء اصطناعي غير محدودة من ثلاجتك!",
+      "pendingTitle": "بانتظار الموافقة",
+      "pendingBody": "عملية الشراء بانتظار موافقة Apple ID.",
+      "purchaseFailedTitle": "فشل الشراء",
+      "restoredTitle": "تمت الاستعادة",
+      "restoredBody": "اشتراكك مفعّل مجددًا.",
+      "nothingToRestoreTitle": "لا شيء للاستعادة",
+      "nothingToRestoreBody": "لم يُعثر على اشتراك مفعّل على Apple ID هذا.",
+      "restoreFailedTitle": "فشلت الاستعادة",
+      "couldNotOpenLinkTitle": "تعذّر فتح الرابط",
+      "unknownError": "خطأ غير معروف"
+    }
+  },
+  "auth": {
+    "wordmark": "FRESHCHECK",
+    "title": {
+      "signIn": "مرحبًا بعودتك",
+      "signUp": "انضم إلى FreshCheck"
+    },
+    "labels": {
+      "email": "البريد الإلكتروني",
+      "password": "كلمة المرور"
+    },
+    "placeholders": {
+      "email": "you@example.com",
+      "passwordSignIn": "كلمة المرور",
+      "passwordSignUp": "6 أحرف على الأقل"
+    },
+    "cta": {
+      "submitting": "...",
+      "signIn": "تسجيل الدخول",
+      "createAccount": "إنشاء حساب",
+      "toggleToSignUp": "ليس لديك حساب؟ سجّل الآن",
+      "toggleToSignIn": "لديك حساب بالفعل؟ سجّل الدخول",
+      "continueAsGuest": "المتابعة كضيف"
+    },
+    "legal": {
+      "prefix": "بمتابعتك فإنك توافق على",
+      "terms": "الشروط",
+      "and": "و",
+      "privacy": "سياسة الخصوصية",
+      "suffix": "."
+    },
+    "alerts": {
+      "signInTitle": "تسجيل الدخول",
+      "signUpTitle": "إنشاء حساب",
+      "notConfigured": "Supabase غير مُهيّأ في هذه النسخة. تابع كضيف لمواصلة استخدام التطبيق محليًّا.",
+      "checkEmailTitle": "تحقّق من بريدك",
+      "checkEmailMessage": "أرسلنا رابط تأكيد إلى {{email}}. انقر عليه ثم عُد وسجّل الدخول.",
+      "ok": "حسنًا"
+    },
+    "errors": {
+      "signInFailedTitle": "فشل تسجيل الدخول",
+      "signUpFailedTitle": "فشل إنشاء الحساب",
+      "invalidCredentials": "أدخل بريدًا إلكترونيًّا صالحًا وكلمة مرور لا تقل عن 6 أحرف."
+    },
+    "a11y": {
+      "back": "رجوع",
+      "email": "البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "toggleMode": "تبديل وضع المصادقة"
+    }
+  },
+  "scanResult": {
+    "header": {
+      "analysis": "التحليل"
+    },
+    "verdict": {
+      "fresh": "يبدو طازجًا",
+      "safe": "آمن للأكل",
+      "soon": "استخدمه قريبًا",
+      "past": "تجاوز ذروته"
+    },
+    "expiry": {
+      "unknown": "مدة صلاحية غير معروفة",
+      "useToday": "استخدمه اليوم",
+      "daysLeft_zero": "لا أيام متبقية",
+      "daysLeft_one": "يوم واحد متبقٍّ",
+      "daysLeft_two": "يومان متبقيان",
+      "daysLeft_few": "{{count}} أيام متبقية",
+      "daysLeft_many": "{{count}} يومًا متبقيًا",
+      "daysLeft_other": "{{count}} يوم متبقٍّ"
+    },
+    "empty": {
+      "title": "لا فحص بعد",
+      "subtitle": "افحص صنفًا لرؤية حكم طزاجته هنا.",
+      "scanNow": "افحص الآن"
+    },
+    "labels": {
+      "itemFallback": "صنف",
+      "confidence": "ثقة {{percent}}%"
+    },
+    "safetyNote": "تقدير بصري فقط — لا يكشف البكتيريا. عند الشك، تخلّص منه.",
+    "refine": {
+      "label": "منذ متى وهو لديك؟",
+      "justGotIt": "حصلت عليه للتو",
+      "daysAgo_zero": "اليوم",
+      "daysAgo_one": "منذ يوم واحد",
+      "daysAgo_two": "منذ يومين",
+      "daysAgo_few": "منذ {{count}} أيام",
+      "daysAgo_many": "منذ {{count}} يومًا",
+      "daysAgo_other": "منذ {{count}} يوم",
+      "adjusted_zero": "عُدّل إلى لا أيام متبقية",
+      "adjusted_one": "عُدّل إلى يوم واحد متبقٍّ",
+      "adjusted_two": "عُدّل إلى يومين متبقيين",
+      "adjusted_few": "عُدّل إلى {{count}} أيام متبقية",
+      "adjusted_many": "عُدّل إلى {{count}} يومًا متبقيًا",
+      "adjusted_other": "عُدّل إلى {{count}} يوم متبقٍّ"
+    },
+    "cta": {
+      "addToFridge": "أضف إلى الثلاجة",
+      "scanAnother": "افحص صنفًا آخر"
+    },
+    "alerts": {
+      "signInRequiredTitle": "يلزم تسجيل الدخول",
+      "signInRequiredMessage": "سجّل الدخول لحفظ الأصناف في ثلاجتك.",
+      "cancel": "إلغاء",
+      "signIn": "تسجيل الدخول",
+      "couldNotSaveTitle": "تعذّر الحفظ"
+    },
+    "a11y": {
+      "back": "رجوع",
+      "fewerDays": "أيام أقل",
+      "moreDays": "أيام أكثر"
+    }
+  },
+  "home": {
+    "wordmark": "FRESHCHECK",
+    "heroTitle": "جاهز للفحص",
+    "heroSubtitle": "وجّهه نحو الطعام. النتيجة خلال 3 ثوانٍ.",
+    "tapToScan": "انقر للفحص",
+    "recipeOfDayEmpty": "أنشئ وصفات من ثلاجتك",
+    "badgeUnlocked": "مفتوح",
+    "sections": {
+      "recipeOfDay": "وصفة اليوم",
+      "freshTips": "نصائح منعشة",
+      "storageGuide": "دليل التخزين",
+      "chefTips": "نصائح الطهاة",
+      "yourBadges": "أوسمتك"
+    },
+    "a11y": {
+      "tapToScan": "انقر للفحص",
+      "openRecipe": "افتح {{name}}",
+      "generateRecipes": "أنشئ وصفات"
+    },
+    "freshTips": {
+      "items": {
+        "dangerZone": {
+          "title": "منطقة الخطر",
+          "body": "تتكاثر البكتيريا أسرع بين 4 و60 °م. برّد البقايا خلال ساعتين من الطهي."
+        },
+        "pestoSealedVsOpen": {
+          "title": "البيستو: مغلق مقابل مفتوح",
+          "body": "البرطمان المغلق يبقى لأشهر. بعد فتحه، استخدمه خلال نحو 5–7 أيام — أو جمّده."
+        },
+        "eggsKeepLonger": {
+          "title": "البيض يدوم أطول مما تظن",
+          "body": "البيض المبرّد عادة صالح من 3 إلى 5 أسابيع بعد الشراء. اختبار الطفو: الطازج يغطس."
+        },
+        "herbsLoveWater": {
+          "title": "الأعشاب تحب الماء",
+          "body": "ضع الأعشاب الطازجة منتصبة في كوب ماء مغطّاة بشكل خفيف — تدوم نحو ضعف المدة."
+        },
+        "washBerriesLast": {
+          "title": "اغسل التوت أخيرًا",
+          "body": "الرطوبة تُسرّع العفن. اشطف التوت قبل أكله مباشرة فقط."
+        }
+      }
+    }
+  },
+  "storageGuide": {
+    "items": {
+      "bananas": {
+        "name": "الموز",
+        "store": "على سطح المطبخ، بعيدًا عن الفواكه الأخرى",
+        "life": "2–7 أيام",
+        "temp": "حرارة الغرفة"
+      },
+      "berries": {
+        "name": "التوت",
+        "store": "دون غسل، في علبة مبطّنة بمنشفة ورقية",
+        "life": "3–7 أيام",
+        "temp": "الثلاجة 1–4 °م"
+      },
+      "eggs": {
+        "name": "البيض",
+        "store": "في الكرتونة، على رفّ (لا على الباب)",
+        "life": "3–5 أسابيع",
+        "temp": "الثلاجة ≤4 °م"
+      },
+      "leafyGreens": {
+        "name": "الورقيات الخضراء",
+        "store": "ملفوفة بشكل خفيف في منشفة جافة",
+        "life": "5–7 أيام",
+        "temp": "الثلاجة 1–4 °م"
+      },
+      "chicken": {
+        "name": "الدجاج",
+        "store": "محكم الإغلاق، على الرف السفلي",
+        "life": "1–2 يوم",
+        "temp": "الثلاجة ≤4 °م"
+      },
+      "cookedLeftovers": {
+        "name": "البقايا المطهوة",
+        "store": "محكمة الإغلاق، مبرّدة خلال ساعتين",
+        "life": "3–4 أيام",
+        "temp": "الثلاجة ≤4 °م"
+      },
+      "hardCheese": {
+        "name": "الجبن الصلب",
+        "store": "ملفوف بورق شمع أو زبدة، لا بلاستيك",
+        "life": "3–4 أسابيع",
+        "temp": "الثلاجة 1–4 °م"
+      },
+      "tomatoes": {
+        "name": "الطماطم",
+        "store": "على سطح المطبخ، بجانب العنق للأسفل",
+        "life": "4–7 أيام",
+        "temp": "حرارة الغرفة"
+      },
+      "bread": {
+        "name": "الخبز",
+        "store": "كيس ورقي بحرارة الغرفة، أو جمّده",
+        "life": "2–4 أيام",
+        "temp": "حرارة الغرفة"
+      },
+      "fish": {
+        "name": "السمك",
+        "store": "على ثلج، محكم الإغلاق، الرف السفلي",
+        "life": "1–2 يوم",
+        "temp": "الثلاجة ≤2 °م"
+      },
+      "carrots": {
+        "name": "الجزر",
+        "store": "بعد إزالة الأوراق، في ماء أو كيس محكم",
+        "life": "2–4 أسابيع",
+        "temp": "الثلاجة 1–4 °م"
+      },
+      "milk": {
+        "name": "الحليب",
+        "store": "الرف الأبرد، لا الباب",
+        "life": "5–7 أيام بعد الفتح",
+        "temp": "الثلاجة ≤4 °م"
+      }
+    }
+  },
+  "chefTips": {
+    "items": {
+      "gordonRamsay": {
+        "name": "Gordon Ramsay",
+        "role": "طاهٍ حائز نجمة ميشلان",
+        "tip": "تذوّق أثناء الطهي. تبّل على طبقات، لا كل شيء في النهاية."
+      },
+      "massimoBottura": {
+        "name": "Massimo Bottura",
+        "role": "أوستيريا فرانشيسكانا",
+        "tip": "خبز الأمس يصبح تحفة اليوم — لا تهدره أبدًا."
+      },
+      "juliaChild": {
+        "name": "Julia Child",
+        "role": "مؤلفة وطاهية تلفزيونية",
+        "tip": "لا تزدحم المقلاة — امنح الطعام مساحة وإلا تبخّر بدلًا من أن يتحمّر."
+      },
+      "yotamOttolenghi": {
+        "name": "Yotam Ottolenghi",
+        "role": "طاهٍ ومؤلف",
+        "tip": "عصرة ليمون في النهاية تُنعش أي طبق تقريبًا."
+      },
+      "marcoPierreWhite": {
+        "name": "Marco Pierre White",
+        "role": "طاهٍ حائز نجمة ميشلان",
+        "tip": "دع اللحم يرتاح بعد الطهي — تتوزّع العصارات."
+      },
+      "nigellaLawson": {
+        "name": "Nigella Lawson",
+        "role": "كاتبة طعام",
+        "tip": "جمّد الأعشاب في زيت الزيتون داخل قالب ثلج قبل أن تذبل."
+      },
+      "thomasKeller": {
+        "name": "Thomas Keller",
+        "role": "ذا فرنش لوندري",
+        "tip": "جفّف البروتينات قبل التحمير — الرطوبة عدوّ القشرة الذهبية."
+      },
+      "saminNosrat": {
+        "name": "Samin Nosrat",
+        "role": "ملح دهن حمض حرارة",
+        "tip": "رشّ الملح من ارتفاع ليتوزّع بالتساوي على الطعام."
+      }
+    }
+  },
+  "foodFacts": {
+    "items": {
+      "smellTestLies": {
+        "title": "اختبار الرائحة يخدعك",
+        "body": "البكتيريا الخطرة مثل السالمونيلا لا تغيّر رائحة الطعام ولا شكله ولا مذاقه."
+      },
+      "dangerZone": {
+        "title": "منطقة الخطر",
+        "body": "تتكاثر البكتيريا أسرع بين 4 و60 °م. برّد البقايا خلال ساعتين."
+      },
+      "ripenWithApples": {
+        "title": "أنضِج مع التفاح",
+        "body": "يطلق التفاح والموز غاز الإيثيلين — أبعدهما عن الورقيات لإبطاء الفساد."
+      },
+      "freezingPausesTime": {
+        "title": "التجميد يوقف الزمن",
+        "body": "التجميد لا يقتل البكتيريا، بل يوقفها فقط. تستيقظ عند إذابة الثلج."
+      }
+    }
+  },
+  "scanBatch": {
+    "header": "فحص دفعة",
+    "counter": "{{done}} تم · {{left}} متبقٍّ",
+    "hero": {
+      "scanning": "جارٍ فحص دفعتك…",
+      "results": "نتائج الدفعة"
+    },
+    "verdict": {
+      "fresh": "يبدو طازجًا",
+      "safe": "آمن للأكل",
+      "soon": "استخدمه قريبًا",
+      "past": "تجاوز ذروته"
+    },
+    "expiry": {
+      "unknown": "مدة صلاحية غير معروفة",
+      "today": "استخدمه اليوم",
+      "daysLeft_zero": "لا أيام متبقية",
+      "daysLeft_one": "يوم واحد متبقٍّ",
+      "daysLeft_two": "يومان متبقيان",
+      "daysLeft_few": "{{count}} أيام متبقية",
+      "daysLeft_many": "{{count}} يومًا متبقيًا",
+      "daysLeft_other": "{{count}} يوم متبقٍّ"
+    },
+    "empty": {
+      "title": "لا شيء في الطابور",
+      "subtitle": "بدّل الماسح إلى وضع الدفعة والتقط بضعة أصناف.",
+      "cta": "العودة إلى الفحص"
+    },
+    "card": {
+      "itemFallback": "صنف",
+      "editHint": "انقر الاسم أو الحكم للتعديل",
+      "scanFailed": "فشل الفحص",
+      "scanFailedHint": "أعد فحص هذا الصنف من الماسح.",
+      "reading": "جارٍ قراءة الطزاجة…",
+      "waiting": "بالانتظار…"
+    },
+    "cta": {
+      "add": "أضف",
+      "rescan": "أعد الفحص",
+      "done": "تم",
+      "addAll_zero": "لا أصناف لإضافتها",
+      "addAll_one": "أضف صنفًا إلى الثلاجة",
+      "addAll_two": "أضف صنفين إلى الثلاجة",
+      "addAll_few": "أضف {{count}} أصناف إلى الثلاجة",
+      "addAll_many": "أضف {{count}} صنفًا إلى الثلاجة",
+      "addAll_other": "أضف {{count}} صنف إلى الثلاجة"
+    },
+    "editPrompt": {
+      "title": "تعديل الصنف",
+      "message": "صحّح الاسم المكتشف.",
+      "cancel": "إلغاء",
+      "save": "حفظ",
+      "placeholder": "مثلًا صدر دجاج"
+    },
+    "signInAlert": {
+      "title": "يلزم تسجيل الدخول",
+      "message": "سجّل الدخول لحفظ الأصناف في ثلاجتك.",
+      "cancel": "إلغاء",
+      "signIn": "تسجيل الدخول"
+    },
+    "saveError": {
+      "title": "تعذّر الحفظ"
+    },
+    "a11y": {
+      "back": "رجوع",
+      "editName": "تعديل الاسم، الحالي {{name}}",
+      "changeVerdict": "تغيير حكم الطزاجة",
+      "addToFridge": "أضف {{name}} إلى الثلاجة",
+      "rescan": "أعد فحص هذه الصورة",
+      "done": "تم"
+    }
+  },
+  "profile": {
+    "fallbackName": "أنت",
+    "guestName": "ضيف",
+    "status": {
+      "signedIn": "مُسجَّل الدخول",
+      "notSignedIn": "غير مُسجَّل",
+      "active": "مفعّل"
+    },
+    "sections": {
+      "account": "الحساب",
+      "pro": "PRO",
+      "notifications": "الإشعارات",
+      "about": "حول"
+    },
+    "stats": {
+      "itemsInFridge": "أصناف في الثلاجة"
+    },
+    "rows": {
+      "signIn": "تسجيل الدخول",
+      "signOut": "تسجيل الخروج",
+      "email": "البريد الإلكتروني",
+      "deleteAccount": "حذف الحساب",
+      "deleteMyData": "حذف بياناتي",
+      "freshcheckPro": "FreshCheck Pro",
+      "manageSubscription": "إدارة الاشتراك",
+      "upgradeToPro": "الترقية إلى FreshCheck Pro",
+      "restorePurchase": "استعادة الشراء",
+      "foodExpiryReminders": "تذكيرات انتهاء صلاحية الطعام",
+      "privacyPolicy": "سياسة الخصوصية",
+      "termsOfService": "شروط الخدمة",
+      "support": "الدعم",
+      "version": "الإصدار"
+    },
+    "labels": {
+      "warnMeBefore": "نبّهني قبل",
+      "daysShort_zero": "0 ي",
+      "daysShort_one": "{{count}} ي",
+      "daysShort_two": "{{count}} ي",
+      "daysShort_few": "{{count}} ي",
+      "daysShort_many": "{{count}} ي",
+      "daysShort_other": "{{count}} ي"
+    },
+    "cta": {
+      "cancel": "إلغاء",
+      "save": "حفظ",
+      "delete": "حذف",
+      "keepAccount": "الاحتفاظ بالحساب",
+      "yesDelete": "نعم، احذف",
+      "signOut": "تسجيل الخروج",
+      "takePhoto": "التقاط صورة",
+      "chooseFromLibrary": "اختيار من المكتبة",
+      "openSettings": "فتح الإعدادات"
+    },
+    "a11y": {
+      "changeAvatar": "تغيير الصورة الرمزية",
+      "editName": "تعديل الاسم",
+      "daysBefore_zero": "بلا أيام قبل",
+      "daysBefore_one": "قبل يوم واحد",
+      "daysBefore_two": "قبل يومين",
+      "daysBefore_few": "قبل {{count}} أيام",
+      "daysBefore_many": "قبل {{count}} يومًا",
+      "daysBefore_other": "قبل {{count}} يوم"
+    },
+    "errors": {
+      "unknown": "خطأ غير معروف"
+    },
+    "alerts": {
+      "photoAccess": {
+        "title": "يلزم الوصول إلى الصور",
+        "messageCanAsk": "اسمح بالوصول إلى الصور لاختيار صورة رمزية.",
+        "messageDenied": "فعّل الوصول إلى الصور من الإعدادات ثم عُد."
+      },
+      "cameraAccess": {
+        "title": "يلزم الوصول إلى الكاميرا",
+        "messageCanAsk": "اسمح بالوصول إلى الكاميرا لالتقاط صورة.",
+        "messageDenied": "فعّل الوصول إلى الكاميرا من الإعدادات ثم عُد."
+      },
+      "changePhoto": {
+        "title": "تغيير الصورة",
+        "message": "اختر صورة ملف شخصي جديدة"
+      },
+      "editName": {
+        "title": "اسمك",
+        "message": "بماذا نناديك؟"
+      },
+      "signOut": {
+        "title": "تسجيل الخروج",
+        "message": "هل تريد الخروج من FreshCheck؟"
+      },
+      "restored": {
+        "title": "تمت الاستعادة",
+        "message": "اشتراكك مفعّل مجددًا."
+      },
+      "nothingToRestore": {
+        "title": "لا شيء للاستعادة",
+        "message": "لم يُعثر على اشتراك مفعّل على Apple ID هذا."
+      },
+      "restoreFailed": {
+        "title": "فشلت الاستعادة"
+      },
+      "linkFailed": {
+        "title": "تعذّر فتح الرابط"
+      },
+      "deleteAccount": {
+        "title": "حذف الحساب",
+        "message": "يحذف هذا حسابك وأصناف ثلاجتك وسجل الفحص نهائيًّا. لا يمكن التراجع عن ذلك."
+      },
+      "deleteConfirm": {
+        "title": "هل أنت متأكد؟",
+        "message": "هذه فرصتك الأخيرة للاحتفاظ ببياناتك. انقر \"نعم، احذف\" لإزالة حسابك نهائيًّا."
+      },
+      "notSignedIn": {
+        "title": "غير مُسجَّل الدخول",
+        "message": "يرجى تسجيل الدخول أولًا."
+      },
+      "deletionFailed": {
+        "title": "فشل الحذف",
+        "message": "حاول مرة أخرى أو تواصل مع الدعم."
+      },
+      "accountDeleted": {
+        "title": "تم حذف الحساب",
+        "message": "تمت إزالة حسابك وبياناتك."
+      }
+    }
+  },
+  "recipeDetail": {
+    "loading": {
+      "title": "جارٍ تحميل الوصفة…",
+      "subtitle": "نُنشئ وصفات طازجة من أجلك"
+    },
+    "empty": {
+      "title": "لم يُعثر على الوصفة",
+      "subtitle": "ارجع واختر وصفة أخرى."
+    },
+    "meta": {
+      "time": "الوقت",
+      "difficulty": "الصعوبة",
+      "fromFridge": "من الثلاجة",
+      "minutes_zero": "0 دقيقة",
+      "minutes_one": "{{count}} دقيقة",
+      "minutes_two": "{{count}} دقيقة",
+      "minutes_few": "{{count}} دقيقة",
+      "minutes_many": "{{count}} دقيقة",
+      "minutes_other": "{{count}} دقيقة"
+    },
+    "difficulty": {
+      "easy": "سهل",
+      "medium": "متوسط",
+      "hard": "صعب"
+    },
+    "sections": {
+      "ingredients": "المكوّنات",
+      "steps": "الخطوات"
+    },
+    "badges": {
+      "have": "متوفّر"
+    },
+    "stepLabel": {
+      "prep": "تحضير",
+      "cook": "طهي",
+      "mix": "خلط",
+      "wait": "انتظار",
+      "serve": "تقديم"
+    },
+    "steps": {
+      "header": "الخطوة {{order}} · {{label}}",
+      "minutes": "{{minutes}} دقيقة"
+    },
+    "a11y": {
+      "back": "رجوع",
+      "saveRecipe": "حفظ الوصفة",
+      "removeFromSaved": "إزالة من المحفوظات"
+    }
+  },
+  "recipeBuilder": {
+    "header": {
+      "title": "ابنِ وصفة",
+      "subtitle": "ما الموجود في مطبخك؟",
+      "intro": "أضف ما لديك — مع المقادير إن شئت — وسنبني وصفات حوله."
+    },
+    "sections": {
+      "addIngredients": "إضافة مكوّنات",
+      "cookingMethod": "طريقة الطهي",
+      "maxTime": "أقصى وقت"
+    },
+    "placeholders": {
+      "amount": "200",
+      "name": "صدر دجاج"
+    },
+    "methods": {
+      "any": "أي طريقة",
+      "bake": "خَبز",
+      "fry": "قلي",
+      "boil": "سلق",
+      "grill": "شواء",
+      "steam": "بخار",
+      "noCook": "بلا طهي",
+      "slowCook": "طهي بطيء"
+    },
+    "times": {
+      "any": "أي وقت",
+      "under15": "≤15 دقيقة",
+      "under30": "≤30 دقيقة",
+      "under45": "≤45 دقيقة",
+      "under60": "≤60 دقيقة"
+    },
+    "units": {
+      "g": "غ",
+      "pcs": "قطعة",
+      "cups": "كوب",
+      "tbsp": "م ك",
+      "tsp": "م ص",
+      "ml": "مل"
+    },
+    "toggle": {
+      "title": "استخدم هذه المكوّنات فقط",
+      "sub": "إيقاف = يمكننا إضافة إضافات شائعة (زيت، ملح، بهارات)."
+    },
+    "cta": {
+      "generate": "أنشئ الوصفات"
+    },
+    "errors": {
+      "notFood": "أدخل مكوّنًا حقيقيًّا"
+    },
+    "alerts": {
+      "addIngredientsTitle": "أضف مكوّنات",
+      "addIngredientsMessage": "أضف مكوّنًا واحدًا على الأقل لبناء وصفة.",
+      "couldNotGenerateTitle": "تعذّر الإنشاء",
+      "tryAgain": "يرجى المحاولة مرة أخرى بعد لحظة."
+    },
+    "a11y": {
+      "back": "رجوع",
+      "addIngredient": "أضف مكوّنًا"
+    }
+  },
+  "recipes": {
+    "eyebrow": "الوصفات",
+    "hero": {
+      "title": "اطبخ بما لديك",
+      "titleEmpty": "وصفات للبداية",
+      "subtitle": "مصنوعة بالذكاء الاصطناعي من ثلاجتك",
+      "subtitleEmpty": "افحص أصنافًا لاختيارات مخصّصة"
+    },
+    "cook": {
+      "title": "اطبخ بما لديك",
+      "titleEmpty": "أنشئ وصفات للبداية",
+      "subtitle": "اختر أصناف الثلاجة → 3 وصفات طازجة",
+      "subtitleEmpty": "3 أفكار بسيطة يمكنك التسوّق لها"
+    },
+    "build": {
+      "title": "ابنِ وصفتك الخاصة",
+      "subtitle": "اكتب المكوّنات والطريقة والوقت"
+    },
+    "emptyBanner": "ثلاجتك فارغة — هذه أفكار بداية عامة. افحص بضعة أصناف أولًا للحصول على وصفات مبنية على ما لديك فعلًا.",
+    "sections": {
+      "saved": "★ المحفوظة"
+    },
+    "errors": {
+      "dailyLimitTitle": "بلغت الحد اليومي",
+      "generateFailedTitle": "تعذّر إنشاء الوصفات",
+      "unlockUnlimited": "افتح وصفات غير محدودة"
+    },
+    "labels": {
+      "minutesShort": "{{count}} دقيقة",
+      "fromFridge_zero": "لا شيء من الثلاجة",
+      "fromFridge_one": "صنف من الثلاجة",
+      "fromFridge_two": "صنفان من الثلاجة",
+      "fromFridge_few": "{{count}} أصناف من الثلاجة",
+      "fromFridge_many": "{{count}} صنفًا من الثلاجة",
+      "fromFridge_other": "{{count}} صنف من الثلاجة",
+      "today": "اليوم",
+      "daysShort": "{{count}} ي"
+    },
+    "sheet": {
+      "title": "اطبخ بما لديك",
+      "subtitle": "اختر الأصناف لبناء الوصفات منها. نعطي الأولوية للأقرب انتهاءً."
+    },
+    "cta": {
+      "generateFromItems_zero": "أنشئ من لا أصناف",
+      "generateFromItems_one": "أنشئ من صنف واحد",
+      "generateFromItems_two": "أنشئ من صنفين",
+      "generateFromItems_few": "أنشئ من {{count}} أصناف",
+      "generateFromItems_many": "أنشئ من {{count}} صنفًا",
+      "generateFromItems_other": "أنشئ من {{count}} صنف"
+    },
+    "a11y": {
+      "generateStarter": "أنشئ وصفات للبداية",
+      "cookWithWhatYouHave": "اطبخ بما لديك",
+      "buildCustom": "ابنِ وصفة مخصّصة",
+      "upgradeToPro": "الترقية إلى FreshCheck Pro",
+      "openRecipe": "افتح {{name}}",
+      "recipeCard_zero": "{{name}}، لا دقائق",
+      "recipeCard_one": "{{name}}، دقيقة واحدة",
+      "recipeCard_two": "{{name}}، دقيقتان",
+      "recipeCard_few": "{{name}}، {{count}} دقائق",
+      "recipeCard_many": "{{name}}، {{count}} دقيقة",
+      "recipeCard_other": "{{name}}، {{count}} دقيقة",
+      "removeFromSaved": "إزالة من المحفوظات",
+      "saveRecipe": "حفظ الوصفة",
+      "removeRecipe": "إزالة {{name}}",
+      "close": "إغلاق"
+    }
+  },
+  "capture": {
+    "header": {
+      "scan": "فحص"
+    },
+    "a11y": {
+      "back": "رجوع",
+      "capture": "التقاط",
+      "scanWholeTable": "افحص المائدة كاملة",
+      "choosePhotoFromLibrary": "اختر صورة من المكتبة",
+      "reviewScans_zero": "راجع لا فحوص",
+      "reviewScans_one": "راجع فحصًا واحدًا",
+      "reviewScans_two": "راجع فحصين",
+      "reviewScans_few": "راجع {{count}} فحوص",
+      "reviewScans_many": "راجع {{count}} فحصًا",
+      "reviewScans_other": "راجع {{count}} فحص"
+    },
+    "modes": {
+      "single": "مفرد",
+      "batch": "دفعة",
+      "barcode": "باركود"
+    },
+    "hints": {
+      "barcode": "وجّهه نحو باركود",
+      "batch": "انقر للإضافة · تعمل الفحوص في الخلفية",
+      "single": "وجّهه نحو الطعام · انقر للالتقاط"
+    },
+    "freeScansLeft_zero": "لا فحوص مجانية متبقية اليوم",
+    "freeScansLeft_one": "فحص مجاني واحد متبقٍّ اليوم",
+    "freeScansLeft_two": "فحصان مجانيان متبقيان اليوم",
+    "freeScansLeft_few": "{{count}} فحوص مجانية متبقية اليوم",
+    "freeScansLeft_many": "{{count}} فحصًا مجانيًّا متبقيًا اليوم",
+    "freeScansLeft_other": "{{count}} فحص مجاني متبقٍّ اليوم",
+    "status": {
+      "analyzing": "جارٍ التحليل…",
+      "lookingUpProduct": "جارٍ البحث عن المنتج…",
+      "readingFreshness": "جارٍ قراءة الطزاجة…",
+      "findingItems": "جارٍ العثور على الأصناف…",
+      "capturing": "جارٍ الالتقاط…",
+      "loadingPhoto": "جارٍ تحميل الصورة…",
+      "preparingScan": "جارٍ تجهيز الفحص…",
+      "loadingCamera": "جارٍ تحميل الكاميرا…"
+    },
+    "analyzingSub": {
+      "stillWorking": "ما زلنا نعمل… {{seconds}} ث",
+      "default": "قد يستغرق هذا بضع ثوانٍ"
+    },
+    "cta": {
+      "scanWholeTable": "📋  افحص المائدة كاملة",
+      "reviewScans_zero": "راجع لا فحوص",
+      "reviewScans_one": "راجع فحصًا واحدًا",
+      "reviewScans_two": "راجع فحصين",
+      "reviewScans_few": "راجع {{count}} فحوص",
+      "reviewScans_many": "راجع {{count}} فحصًا",
+      "reviewScans_other": "راجع {{count}} فحص",
+      "allowCamera": "السماح بالكاميرا",
+      "openSettings": "فتح الإعدادات",
+      "chooseFromLibrary": "اختر من المكتبة بدلًا من ذلك",
+      "back": "رجوع"
+    },
+    "gate": {
+      "serviceUnavailable": {
+        "title": "الخدمة غير متاحة",
+        "message": "الفحص غير متاح مؤقتًا. يرجى المحاولة مرة أخرى بعد لحظة."
+      },
+      "cameraOff": {
+        "title": "الكاميرا متوقفة",
+        "messageCanAsk": "يحتاج FreshCheck إلى الوصول إلى الكاميرا لفحص الطعام.",
+        "messageDenied": "فعّل الوصول إلى الكاميرا من الإعدادات ثم عُد."
+      }
+    },
+    "barcode": {
+      "expiryText": "~{{days}} أيام متبقية"
+    },
+    "errors": {
+      "scanFailed": "فشل الفحص.",
+      "couldNotScan": "تعذّر الفحص.",
+      "couldNotCapture": "تعذّر التقاط الصورة."
+    },
+    "alerts": {
+      "cancel": "إلغاء",
+      "productNotFound": {
+        "title": "لم يُعثر على المنتج",
+        "message": "لا تطابق لهذا الباركود بعد. جرّب فحص الصورة بدلًا من ذلك."
+      },
+      "couldNotAdd": {
+        "title": "تعذّرت الإضافة"
+      },
+      "addedToFridge": {
+        "title": "أُضيف إلى ثلاجتك",
+        "message": "{{product}} · يدوم ~{{days}} أيام"
+      },
+      "severalItems": {
+        "title": "اكتُشفت عدة أصناف",
+        "message": "تبدو هذه الصورة وكأنها تحتوي على أطعمة متعددة. هل نفحصها كلها أم الرئيسي فقط؟",
+        "justMain": "الرئيسي فقط",
+        "scanAll": "افحص كل الأصناف"
+      },
+      "scanFailed": {
+        "title": "فشل الفحص"
+      },
+      "noFoodFound": {
+        "title": "لم يُعثر على طعام",
+        "message": "تعذّر رصد أي أطعمة في تلك الصورة. حاول الاقتراب أكثر أو إضاءة أفضل."
+      },
+      "preparingScan": {
+        "title": "جارٍ تجهيز الفحص",
+        "message": "يرجى الانتظار لحظة والمحاولة مرة أخرى."
+      },
+      "photoAccess": {
+        "title": "يلزم الوصول إلى الصور",
+        "messageCanAsk": "اسمح بالوصول إلى الصور لاختيار صورة طعام من مكتبتك.",
+        "messageDenied": "فعّل الوصول إلى الصور من الإعدادات ثم عُد."
+      },
+      "dailyScanLimit": {
+        "title": "الحد اليومي للفحص",
+        "message": "أُضيفت {{added}} من {{total}} صور — هذه فحوص اليوم المجانية. ترقَّ إلى Pro للفحص غير المحدود."
+      }
+    }
+  },
+  "loaders": {
+    "cooking": {
+      "readingFridge": "نقرأ ما في ثلاجتك…",
+      "prioritising": "نُعطي الأولوية للأقرب انتهاءً…",
+      "pairingFlavours": "ننسّق النكهات المتناغمة…",
+      "writingSteps": "نكتب الخطوات…",
+      "platingUp": "نقدّم 3 أفكار…",
+      "eta": "نحو {{seconds}} ثانية · تُحمَّل الصور بعدها مباشرة"
+    },
+    "image": {
+      "plating": "نُقدّم طبقك",
+      "generating": "نُنشئ وصفة فريدة",
+      "simmering": "نُنضج التفاصيل",
+      "pickingIngredients": "ننتقي مكوّنات طازجة"
+    }
+  },
+  "foods": {
+    "reasons": {
+      "tooShort": "قصير جدًّا",
+      "tooLong": "طويل جدًّا",
+      "lettersOnly": "حروف فقط — بلا أرقام أو رموز",
+      "notRealIngredient": "هذا لا يبدو مكوّنًا حقيقيًّا"
+    }
+  },
+  "scan": {
+    "timeout": "يستغرق هذا وقتًا أطول من المعتاد — يرجى المحاولة مرة أخرى.",
+    "unreachable": "تعذّر الوصول إلى الماسح. تحقّق من اتصالك وحاول مرة أخرى.",
+    "failed": "فشل الفحص"
+  },
+  "fridge": {
+    "title": "ثلاجتي",
+    "eyebrow": "حالة المخزون",
+    "recipesLink": "وصفات من ثلاجتك",
+    "a11y": {
+      "viewRecipes": "عرض وصفات من ثلاجتك"
+    },
+    "categories": {
+      "all": "الكل",
+      "produce": "خضار وفواكه",
+      "dairy": "ألبان",
+      "poultry": "دواجن",
+      "meat": "لحوم",
+      "fish": "أسماك",
+      "bakery": "مخبوزات",
+      "pantry": "مؤن"
+    },
+    "empty": {
+      "title": "الثلاجة فارغة",
+      "body": "افحص صنفًا لبدء تتبّع ما في ثلاجتك وموعد انتهائه.",
+      "cta": "افحص أول صنف"
+    },
+    "footer": {
+      "tracked_zero": "{{shown}} من {{count}} منتج متتبَّع",
+      "tracked_one": "{{shown}} من {{count}} منتج متتبَّع",
+      "tracked_two": "{{shown}} من {{count}} منتج متتبَّع",
+      "tracked_few": "{{shown}} من {{count}} منتجات متتبَّعة",
+      "tracked_many": "{{shown}} من {{count}} منتجًا متتبَّعًا",
+      "tracked_other": "{{shown}} من {{count}} منتج متتبَّع",
+      "swipeHint": "اسحب البطاقة لإزالتها"
+    },
+    "alerts": {
+      "removeFailedTitle": "تعذّرت الإزالة",
+      "loadFailedTitle": "تعذّر تحميل الثلاجة"
+    }
+  }
+}

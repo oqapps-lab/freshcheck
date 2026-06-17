@@ -1,1 +1,1154 @@
-{}
+{
+  "common": {
+    "appName": "FreshCheck",
+    "continue": "Doorgaan",
+    "getStarted": "Aan de slag",
+    "back": "Terug",
+    "cancel": "Annuleren",
+    "save": "Opslaan",
+    "done": "Klaar",
+    "tryAgain": "Opnieuw proberen",
+    "next": "Volgende",
+    "skip": "Overslaan",
+    "ok": "OK",
+    "dayUnit_one": "DAG",
+    "dayUnit_other": "DAGEN",
+    "tabA11y": "Tabblad {{label}}",
+    "productRow": {
+      "a11yDaysLeft_one": "{{name}}, nog {{count}} dag",
+      "a11yDaysLeft_other": "{{name}}, nog {{count}} dagen",
+      "delete": "VERWIJDEREN",
+      "deleteA11y": "{{name}} verwijderen"
+    },
+    "achievements": {
+      "unlocked": "PRESTATIE BEHAALD",
+      "items": {
+        "first_scan": {
+          "title": "Eerste blik",
+          "desc": "Scan je eerste voedsel"
+        },
+        "scan_10": {
+          "title": "Frisse blik",
+          "desc": "Scan 10 producten"
+        },
+        "scan_50": {
+          "title": "Veiligheidspro",
+          "desc": "Scan 50 producten"
+        },
+        "first_recipe": {
+          "title": "Thuiskok",
+          "desc": "Genereer je eerste recept"
+        },
+        "recipe_10": {
+          "title": "Receptontdekker",
+          "desc": "Genereer 10 recepten"
+        },
+        "fridge_5": {
+          "title": "Goed gevuld",
+          "desc": "Houd 5 koelkastproducten bij"
+        },
+        "streak_3": {
+          "title": "Lekker fris bezig",
+          "desc": "Gebruik FreshCheck 3 dagen"
+        },
+        "streak_7": {
+          "title": "Verspillingsstrijder",
+          "desc": "Gebruik FreshCheck 7 dagen"
+        }
+      }
+    }
+  },
+  "errorBoundary": {
+    "title": "Er ging iets mis",
+    "message": "Er is een onverwachte fout opgetreden. Probeer het opnieuw, of herstart de app als het probleem aanhoudt.",
+    "retry": "Opnieuw proberen"
+  },
+  "att": {
+    "headlineFamily": "Maak FreshCheck beter voor gezinnen",
+    "headlineYou": "Maak FreshCheck beter voor jou",
+    "bodyFamily": "Met jouw toestemming meten we welke functies ouders zoals jij echt helpen — zodat we de onderdelen die ertoe doen blijven verbeteren.",
+    "bodyYou": "Met jouw toestemming meten we welke functies mensen zoals jij echt helpen — zodat we de onderdelen die ertoe doen blijven verbeteren.",
+    "privacy": "We verkopen je persoonsgegevens nooit, en je scans blijven altijd privé.",
+    "micro": "Op het volgende scherm kun je toestaan of weigeren. FreshCheck werkt hoe dan ook volledig, en je kunt dit altijd wijzigen in Instellingen.",
+    "continue": "Doorgaan"
+  },
+  "building": {
+    "pct": "{{pct}}%",
+    "stages": {
+      "stage0": {
+        "title": "Je koelkastgewoontes lezen",
+        "detail": "Wat je koopt, wat je vergeet"
+      },
+      "stage1": {
+        "title": "In kaart brengen wat bij jou het snelst bederft",
+        "detail": "Zodat niets de houdbaarheidsdatum voorbijglipt"
+      },
+      "stage2": {
+        "title": "Versheidsmeldingen afstemmen",
+        "detail": "Afgestemd op wat jij het meest verspilt"
+      },
+      "stage3": {
+        "title": "Recepten klaarzetten voor wat het eerst verloopt",
+        "detail": "Avondeten van wat je al in huis hebt"
+      },
+      "stage4": {
+        "title": "Je versheidsplan krijgt vorm",
+        "detail": "Bijna klaar"
+      }
+    },
+    "badge": {
+      "withName": "{{name}}, jouw plan is persoonlijk — geen sjabloon",
+      "noName": "Je plan is persoonlijk — geen sjabloon"
+    }
+  },
+  "onboarding": {
+    "cta": {
+      "getStarted": "Aan de slag",
+      "continue": "Doorgaan"
+    },
+    "slides": {
+      "waste": {
+        "title": "Gooi nooit meer goed eten weg",
+        "body": "FreshCheck vertelt je wat nog goed is en geeft een seintje voordat het bederft.",
+        "proof": "Gezinnen besparen zo'n $2.913 per jaar"
+      },
+      "scan": {
+        "title": "Is dit nog veilig? Weet het in 3 seconden",
+        "body": "Richt je camera op elk product voor een direct oordeel — veilig, voorzichtig of weggooien."
+      },
+      "timeline": {
+        "title": "Je hele koelkast op een versheidstijdlijn",
+        "body": "Alles wat je hebt, gesorteerd op wat het eerst verloopt. Nooit meer iets vergeten achterin."
+      },
+      "recipes": {
+        "title": "Het avondeten van vanavond, van wat je al hebt",
+        "body": "Eén tik maakt van je bijna-verlopen ingrediënten 3 verse AI-recepten."
+      },
+      "barcode": {
+        "title": "Scan de streepjescode, wij volgen de rest",
+        "body": "Voeg verpakte boodschappen in een tel toe — scan gewoon de streepjescode en wij houden het bij."
+      }
+    }
+  },
+  "personalize": {
+    "progress": "Stap {{current}} van {{total}}",
+    "namePlaceholder": "Je naam",
+    "a11y": {
+      "back": "terug"
+    },
+    "cta": {
+      "buildPlan": "Maak mijn plan",
+      "continue": "Doorgaan"
+    },
+    "questions": {
+      "household": {
+        "q": "Voor wie houd je het vers?",
+        "options": {
+          "me": "Alleen ik",
+          "partner": "Ik en mijn partner",
+          "family": "Een gezin met kinderen",
+          "roommates": "Een huishouden met huisgenoten"
+        }
+      },
+      "topWaste": {
+        "q": "Wat gooi je het vaakst weg?",
+        "sub": "Kies alles wat van toepassing is",
+        "options": {
+          "leftovers": "Restjes",
+          "produce": "Groente en fruit",
+          "dairy": "Zuivel",
+          "meat": "Vlees en gevogelte",
+          "bread": "Brood"
+        }
+      },
+      "worry": {
+        "q": "Waar maak je je het meest zorgen over bij eten?",
+        "options": {
+          "sick": "Iemand ziek maken",
+          "money": "Geld verspillen",
+          "spoiled": "Iets bedorvens eten",
+          "unsure": "Niet weten wat nog goed is"
+        }
+      },
+      "forgotten": {
+        "q": "Hoe vaak blijven restjes achterin de koelkast vergeten?",
+        "options": {
+          "constantly": "Voortdurend",
+          "weekly": "De meeste weken",
+          "sometimes": "Soms",
+          "rarely": "Zelden"
+        }
+      },
+      "dinner": {
+        "q": "Hoe bepaal je het avondeten?",
+        "options": {
+          "plan": "Ik plan vooruit",
+          "wing": "Ik improviseer",
+          "expiring": "Wat bijna verloopt",
+          "order": "Ik bestel vaak"
+        }
+      },
+      "name": {
+        "q": "Laatste vraag — hoe mogen we je noemen?",
+        "sub": "Optioneel"
+      }
+    }
+  },
+  "yourPlan": {
+    "eyebrowNamed": "PLAN VAN {{name}}",
+    "eyebrowDefault": "JOUW FRESHCHECK-PLAN",
+    "watchLabel": "WIJ HOUDEN EEN OOGJE OP",
+    "whatIsInside": "WAT ZIT ERIN",
+    "socialProof": "Sluit je aan bij gezinnen die zo'n $2.913 per jaar besparen met FreshCheck.",
+    "cta": {
+      "seeMyPlan": "Bekijk mijn plan"
+    },
+    "waste": {
+      "leftovers": "Restjes",
+      "produce": "Groente & fruit",
+      "dairy": "Zuivel",
+      "meat": "Vlees & gevogelte",
+      "bread": "Brood"
+    },
+    "benefits": {
+      "verdict": {
+        "title": "Direct oordeel veilig / voorzichtig / gevaarlijk",
+        "sub": "Scan elk product, weet het in 3 seconden."
+      },
+      "timeline": {
+        "title": "Je koelkast op een versheidstijdlijn",
+        "sub": "Alles gesorteerd op wat het eerst verloopt."
+      },
+      "recipes": {
+        "title": "Recepten van wat bijna verloopt",
+        "sub": "Maak van bijna-bedorven producten avondeten."
+      }
+    },
+    "tiles": {
+      "dailyScans": "Dagelijkse versheidsscans",
+      "fridgeTimeline": "Koelkasttijdlijn",
+      "expiryReminders": "Verloopmeldingen",
+      "unlimitedScans": "Onbeperkt scannen",
+      "unlimitedRecipes": "Onbeperkt AI-recepten",
+      "barcodeImport": "Streepjescode-import"
+    }
+  },
+  "plan": {
+    "wasteLower": {
+      "leftovers": "restjes",
+      "produce": "groente & fruit",
+      "dairy": "zuivel",
+      "meat": "vlees & gevogelte",
+      "bread": "brood"
+    },
+    "household": {
+      "family": "drukke gezinskok",
+      "partner": "tweepersoonskeuken",
+      "roommates": "gedeeld huishouden",
+      "solo": "solokok"
+    },
+    "headlineWithWaste": "Je bent een {{who}} — we houden een oogje op je {{waste}}.",
+    "headlineFallback": "Je bent een {{who}} — FreshCheck bewaakt je koelkast voor je.",
+    "fear": {
+      "sick": "We markeren alles wat riskant is voordat het op tafel komt.",
+      "money": "Stop met het weggooien van ~$56 aan boodschappen per week.",
+      "spoiled": "Je weet altijd in één oogopslag wat nog goed is.",
+      "default": "Gok nooit meer of iets nog veilig is om te eten."
+    }
+  },
+  "paywall": {
+    "eyebrow": "FRESHCHECK PRO",
+    "a11y": {
+      "close": "sluiten",
+      "planOption": "{{label}}-abonnement, {{price}} {{unit}}"
+    },
+    "hero": {
+      "scanLimit": {
+        "title": "Je hebt de gratis scans van vandaag gebruikt",
+        "subtitle": "Ga onbeperkt — scan alles in je keuken, wanneer je maar wilt."
+      },
+      "barcode": {
+        "title": "Streepjescode scannen is een Pro-functie",
+        "subtitle": "Scan elke productstreepjescode en zet hem meteen in je koelkast."
+      },
+      "recipeLimit": {
+        "title": "Je hebt het gratis recept genereren van vandaag gebruikt",
+        "subtitle": "Onbeperkt AI-recepten van wat er in je koelkast ligt — elke dag."
+      },
+      "default": {
+        "title": "Ontgrendel FreshCheck Pro",
+        "subtitle": "Maak van wat er in je koelkast ligt recepten, en gooi nooit meer eten weg."
+      }
+    },
+    "trust": {
+      "family": "BESPAART HET GEMIDDELDE GEZIN $2.913 / JAAR",
+      "household": "HET GEMIDDELDE HUISHOUDEN BESPAART $2.913 / JAAR"
+    },
+    "features": {
+      "header": "ALLES IN PRO",
+      "unlimitedScans": {
+        "title": "Onbeperkt scannen",
+        "body": "Scan zoveel producten als je wilt, geen daglimiet."
+      },
+      "unlimitedRecipes": {
+        "title": "Onbeperkt AI-recepten",
+        "body": "Genereer verse recepten uit je koelkast wanneer je maar wilt, geen daglimiet."
+      },
+      "barcodeAdd": {
+        "title": "Toevoegen via streepjescode",
+        "body": "Scan een productstreepjescode om het meteen in je koelkast te zetten."
+      },
+      "wholeTable": {
+        "title": "Hele tafel scannen",
+        "body": "Eén foto, elk product op tafel — zo vaak als je wilt."
+      },
+      "batchScanning": {
+        "title": "Snel batchscannen",
+        "body": "Scan je hele boodschappenlading achter elkaar, zonder limiet."
+      }
+    },
+    "plans": {
+      "eyebrow": "KIES JE ABONNEMENT · 3 DAGEN GRATIS",
+      "annual": {
+        "label": "Jaarlijks",
+        "unit": "/ jaar",
+        "badge": "BESPAAR 89%",
+        "sublabel": "Slechts $0,77 / week, jaarlijks gefactureerd"
+      },
+      "monthly": {
+        "label": "Maandelijks",
+        "unit": "/ maand",
+        "sublabel": "Flexibel — altijd opzegbaar"
+      },
+      "weekly": {
+        "label": "Wekelijks",
+        "unit": "/ week",
+        "sublabel": "Even uitproberen"
+      }
+    },
+    "cta": {
+      "processing": "Bezig…",
+      "startTrial": "Start gratis proefperiode van 3 dagen"
+    },
+    "fineprint": {
+      "annual": "Eerste 3 dagen gratis, daarna {{price}} / jaar. Verlengt automatisch tenzij minstens 24 uur voor het einde van de periode opgezegd.",
+      "monthly": "Eerste 3 dagen gratis, daarna {{price}} / maand. Verlengt automatisch tenzij minstens 24 uur voor het einde van de periode opgezegd.",
+      "weekly": "Eerste 3 dagen gratis, daarna {{price}} / week. Verlengt automatisch tenzij minstens 24 uur voor het einde van de periode opgezegd."
+    },
+    "legal": {
+      "restore": "Herstellen",
+      "terms": "Voorwaarden",
+      "privacy": "Privacy"
+    },
+    "alerts": {
+      "welcomeTitle": "Welkom bij Pro",
+      "welcomeBody": "Je gratis proefperiode is begonnen. Genereer onbeperkt AI-recepten uit je koelkast!",
+      "pendingTitle": "Wacht op goedkeuring",
+      "pendingBody": "Je aankoop wacht op goedkeuring via je Apple ID.",
+      "purchaseFailedTitle": "Aankoop mislukt",
+      "restoredTitle": "Hersteld",
+      "restoredBody": "Je abonnement is weer actief.",
+      "nothingToRestoreTitle": "Niets om te herstellen",
+      "nothingToRestoreBody": "Geen actief abonnement gevonden op deze Apple ID.",
+      "restoreFailedTitle": "Herstellen mislukt",
+      "couldNotOpenLinkTitle": "Kan link niet openen",
+      "unknownError": "Onbekende fout"
+    }
+  },
+  "auth": {
+    "wordmark": "FRESHCHECK",
+    "title": {
+      "signIn": "Welkom terug",
+      "signUp": "Word lid van FreshCheck"
+    },
+    "labels": {
+      "email": "E-MAIL",
+      "password": "WACHTWOORD"
+    },
+    "placeholders": {
+      "email": "jij@voorbeeld.com",
+      "passwordSignIn": "Je wachtwoord",
+      "passwordSignUp": "Min. 6 tekens"
+    },
+    "cta": {
+      "submitting": "...",
+      "signIn": "Inloggen",
+      "createAccount": "Account aanmaken",
+      "toggleToSignUp": "Nog geen account? Registreer je",
+      "toggleToSignIn": "Heb je al een account? Inloggen",
+      "continueAsGuest": "Doorgaan als gast"
+    },
+    "legal": {
+      "prefix": "Door door te gaan ga je akkoord met de",
+      "terms": "Voorwaarden",
+      "and": "en",
+      "privacy": "Privacybeleid",
+      "suffix": "."
+    },
+    "alerts": {
+      "signInTitle": "Inloggen",
+      "signUpTitle": "Registreren",
+      "notConfigured": "Supabase is niet geconfigureerd in deze build. Ga door als gast om de app lokaal te blijven gebruiken.",
+      "checkEmailTitle": "Check je e-mail",
+      "checkEmailMessage": "We hebben een bevestigingslink naar {{email}} gestuurd. Tik erop, kom dan terug en log in.",
+      "ok": "OK"
+    },
+    "errors": {
+      "signInFailedTitle": "Inloggen mislukt",
+      "signUpFailedTitle": "Registreren mislukt",
+      "invalidCredentials": "Voer een geldig e-mailadres in en een wachtwoord van minstens 6 tekens."
+    },
+    "a11y": {
+      "back": "terug",
+      "email": "e-mail",
+      "password": "wachtwoord",
+      "toggleMode": "wissel inlogmodus"
+    }
+  },
+  "scanResult": {
+    "header": {
+      "analysis": "ANALYSE"
+    },
+    "verdict": {
+      "fresh": "Ziet er vers uit",
+      "safe": "Veilig om te eten",
+      "soon": "Gebruik het snel",
+      "past": "Over de top"
+    },
+    "expiry": {
+      "unknown": "Onbekende houdbaarheid",
+      "useToday": "Gebruik vandaag",
+      "daysLeft_one": "nog {{count}} dag",
+      "daysLeft_other": "nog {{count}} dagen"
+    },
+    "empty": {
+      "title": "Nog geen scan",
+      "subtitle": "Scan een product om hier het versheidsoordeel te zien.",
+      "scanNow": "Scan nu"
+    },
+    "labels": {
+      "itemFallback": "product",
+      "confidence": "{{percent}}% zekerheid"
+    },
+    "safetyNote": "Alleen een visuele schatting — detecteert geen bacteriën. Bij twijfel: gooi het weg.",
+    "refine": {
+      "label": "HOELANG HEB JE HET AL?",
+      "justGotIt": "Net gekregen",
+      "daysAgo_one": "{{count}} dag geleden",
+      "daysAgo_other": "{{count}} dagen geleden",
+      "adjusted_one": "Aangepast naar nog {{count}} dag",
+      "adjusted_other": "Aangepast naar nog {{count}} dagen"
+    },
+    "cta": {
+      "addToFridge": "Aan koelkast toevoegen",
+      "scanAnother": "Nog een scannen"
+    },
+    "alerts": {
+      "signInRequiredTitle": "Inloggen vereist",
+      "signInRequiredMessage": "Log in om producten in je koelkast op te slaan.",
+      "cancel": "Annuleren",
+      "signIn": "Inloggen",
+      "couldNotSaveTitle": "Kan niet opslaan"
+    },
+    "a11y": {
+      "back": "terug",
+      "fewerDays": "minder dagen",
+      "moreDays": "meer dagen"
+    }
+  },
+  "home": {
+    "wordmark": "FRESHCHECK",
+    "heroTitle": "Klaar om te scannen",
+    "heroSubtitle": "Richt op eten. Resultaat in 3 seconden.",
+    "tapToScan": "TIK OM TE SCANNEN",
+    "recipeOfDayEmpty": "Genereer recepten uit je koelkast",
+    "badgeUnlocked": "Ontgrendeld",
+    "sections": {
+      "recipeOfDay": "RECEPT VAN DE DAG",
+      "freshTips": "VERSE TIPS",
+      "storageGuide": "BEWAARGIDS",
+      "chefTips": "CHEF-TIPS",
+      "yourBadges": "JOUW BADGES"
+    },
+    "a11y": {
+      "tapToScan": "Tik om te scannen",
+      "openRecipe": "open {{name}}",
+      "generateRecipes": "genereer recepten"
+    },
+    "freshTips": {
+      "items": {
+        "dangerZone": {
+          "title": "De gevarenzone",
+          "body": "Bacteriën vermenigvuldigen zich het snelst tussen 4–60 °C. Zet restjes binnen 2 uur na het koken in de koelkast."
+        },
+        "pestoSealedVsOpen": {
+          "title": "Pesto: dicht vs. open",
+          "body": "Een dicht potje blijft maandenlang goed. Eenmaal geopend binnen ongeveer 5–7 dagen gebruiken — of invriezen."
+        },
+        "eggsKeepLonger": {
+          "title": "Eieren blijven langer goed dan je denkt",
+          "body": "Gekoelde eieren zijn meestal 3–5 weken na aankoop goed. Drijftest: verse eieren zinken."
+        },
+        "herbsLoveWater": {
+          "title": "Kruiden houden van water",
+          "body": "Zet verse kruiden rechtop in een glas water, los afgedekt — ze blijven zo ongeveer twee keer zo lang goed."
+        },
+        "washBerriesLast": {
+          "title": "Was bessen als laatste",
+          "body": "Vocht versnelt schimmel. Spoel bessen pas vlak voordat je ze eet."
+        }
+      }
+    }
+  },
+  "storageGuide": {
+    "items": {
+      "bananas": {
+        "name": "Bananen",
+        "store": "Op het aanrecht, weg van ander fruit",
+        "life": "2–7 dagen",
+        "temp": "Kamertemp."
+      },
+      "berries": {
+        "name": "Bessen",
+        "store": "Ongewassen, in een doos met keukenpapier",
+        "life": "3–7 dagen",
+        "temp": "Koelkast 1–4 °C"
+      },
+      "eggs": {
+        "name": "Eieren",
+        "store": "In de doos, op een plank (niet in de deur)",
+        "life": "3–5 weken",
+        "temp": "Koelkast ≤4 °C"
+      },
+      "leafyGreens": {
+        "name": "Bladgroenten",
+        "store": "Los gewikkeld in een droge doek",
+        "life": "5–7 dagen",
+        "temp": "Koelkast 1–4 °C"
+      },
+      "chicken": {
+        "name": "Kip",
+        "store": "Afgesloten, op de onderste plank",
+        "life": "1–2 dagen",
+        "temp": "Koelkast ≤4 °C"
+      },
+      "cookedLeftovers": {
+        "name": "Gekookte restjes",
+        "store": "Luchtdicht, binnen 2 uur afgekoeld",
+        "life": "3–4 dagen",
+        "temp": "Koelkast ≤4 °C"
+      },
+      "hardCheese": {
+        "name": "Harde kaas",
+        "store": "In was-/perkamentpapier, niet plastic",
+        "life": "3–4 weken",
+        "temp": "Koelkast 1–4 °C"
+      },
+      "tomatoes": {
+        "name": "Tomaten",
+        "store": "Op het aanrecht, kroontje omlaag",
+        "life": "4–7 dagen",
+        "temp": "Kamertemp."
+      },
+      "bread": {
+        "name": "Brood",
+        "store": "Papieren zak op kamertemperatuur, of invriezen",
+        "life": "2–4 dagen",
+        "temp": "Kamertemp."
+      },
+      "fish": {
+        "name": "Vis",
+        "store": "Op ijs, afgesloten, onderste plank",
+        "life": "1–2 dagen",
+        "temp": "Koelkast ≤2 °C"
+      },
+      "carrots": {
+        "name": "Wortels",
+        "store": "Loof eraf, in water of een afgesloten zak",
+        "life": "2–4 weken",
+        "temp": "Koelkast 1–4 °C"
+      },
+      "milk": {
+        "name": "Melk",
+        "store": "Koudste plank, niet in de deur",
+        "life": "5–7 dagen na openen",
+        "temp": "Koelkast ≤4 °C"
+      }
+    }
+  },
+  "chefTips": {
+    "items": {
+      "gordonRamsay": {
+        "name": "Gordon Ramsay",
+        "role": "Michelinkok",
+        "tip": "Proef tijdens het koken. Breng in laagjes op smaak, niet alles aan het eind."
+      },
+      "massimoBottura": {
+        "name": "Massimo Bottura",
+        "role": "Osteria Francescana",
+        "tip": "Het brood van gisteren wordt het meesterwerk van vandaag — verspil het nooit."
+      },
+      "juliaChild": {
+        "name": "Julia Child",
+        "role": "Auteur & tv-kok",
+        "tip": "Maak de pan niet te vol — geef het eten ruimte, anders stooft het in plaats van bruint."
+      },
+      "yotamOttolenghi": {
+        "name": "Yotam Ottolenghi",
+        "role": "Chef & auteur",
+        "tip": "Een scheutje citroen aan het eind brengt bijna elk gerecht tot leven."
+      },
+      "marcoPierreWhite": {
+        "name": "Marco Pierre White",
+        "role": "Michelinkok",
+        "tip": "Laat vlees rusten na het bakken — de sappen verdelen zich opnieuw."
+      },
+      "nigellaLawson": {
+        "name": "Nigella Lawson",
+        "role": "Culinair schrijfster",
+        "tip": "Vries kruiden in olijfolie in een ijsblokjesvorm voordat ze verleppen."
+      },
+      "thomasKeller": {
+        "name": "Thomas Keller",
+        "role": "The French Laundry",
+        "tip": "Dep vlees en vis droog voor het schroeien — vocht is de vijand van een korstje."
+      },
+      "saminNosrat": {
+        "name": "Samin Nosrat",
+        "role": "Salt Fat Acid Heat",
+        "tip": "Strooi zout van een hoogte zodat het gelijkmatig over het eten valt."
+      }
+    }
+  },
+  "foodFacts": {
+    "items": {
+      "smellTestLies": {
+        "title": "De ruiktest liegt",
+        "body": "Gevaarlijke bacteriën zoals salmonella veranderen niets aan hoe eten ruikt, eruitziet of smaakt."
+      },
+      "dangerZone": {
+        "title": "De gevarenzone",
+        "body": "Bacteriën vermenigvuldigen zich het snelst tussen 4–60 °C. Zet restjes binnen 2 uur in de koelkast."
+      },
+      "ripenWithApples": {
+        "title": "Rijpen met appels",
+        "body": "Appels en bananen geven ethyleen af — houd ze weg van groenten om bederf te vertragen."
+      },
+      "freezingPausesTime": {
+        "title": "Invriezen zet de tijd stil",
+        "body": "Invriezen doodt geen bacteriën, het stopt ze alleen. Bij het ontdooien worden ze weer actief."
+      }
+    }
+  },
+  "scanBatch": {
+    "header": "BATCHSCAN",
+    "counter": "{{done}} KLAAR · {{left}} TE GAAN",
+    "hero": {
+      "scanning": "Je batch scannen…",
+      "results": "Batchresultaten"
+    },
+    "verdict": {
+      "fresh": "Ziet er vers uit",
+      "safe": "Veilig om te eten",
+      "soon": "Gebruik het snel",
+      "past": "Over de top"
+    },
+    "expiry": {
+      "unknown": "Onbekende houdbaarheid",
+      "today": "Gebruik vandaag",
+      "daysLeft_one": "nog {{count}} dag",
+      "daysLeft_other": "nog {{count}} dagen"
+    },
+    "empty": {
+      "title": "Niets in de wachtrij",
+      "subtitle": "Zet de scanner op Batch en maak een paar foto's.",
+      "cta": "Terug naar scannen"
+    },
+    "card": {
+      "itemFallback": "Product",
+      "editHint": "TIK OP NAAM OF OORDEEL OM TE BEWERKEN",
+      "scanFailed": "Scan mislukt",
+      "scanFailedHint": "Probeer deze opnieuw vanaf de scanner.",
+      "reading": "Versheid lezen…",
+      "waiting": "Wachten…"
+    },
+    "cta": {
+      "add": "TOEVOEGEN",
+      "rescan": "OPNIEUW SCANNEN",
+      "done": "Klaar",
+      "addAll_one": "{{count}} aan koelkast toevoegen",
+      "addAll_other": "{{count}} aan koelkast toevoegen"
+    },
+    "editPrompt": {
+      "title": "Product bewerken",
+      "message": "Corrigeer de gedetecteerde naam.",
+      "cancel": "Annuleren",
+      "save": "Opslaan",
+      "placeholder": "bijv. kipfilet"
+    },
+    "signInAlert": {
+      "title": "Inloggen vereist",
+      "message": "Log in om producten in je koelkast op te slaan.",
+      "cancel": "Annuleren",
+      "signIn": "Inloggen"
+    },
+    "saveError": {
+      "title": "Kan niet opslaan"
+    },
+    "a11y": {
+      "back": "terug",
+      "editName": "naam bewerken, nu {{name}}",
+      "changeVerdict": "versheidsoordeel wijzigen",
+      "addToFridge": "{{name}} aan koelkast toevoegen",
+      "rescan": "deze foto opnieuw scannen",
+      "done": "klaar"
+    }
+  },
+  "profile": {
+    "fallbackName": "Jij",
+    "guestName": "Gast",
+    "status": {
+      "signedIn": "INGELOGD",
+      "notSignedIn": "NIET INGELOGD",
+      "active": "Actief"
+    },
+    "sections": {
+      "account": "ACCOUNT",
+      "pro": "PRO",
+      "notifications": "MELDINGEN",
+      "about": "OVER"
+    },
+    "stats": {
+      "itemsInFridge": "PRODUCTEN IN KOELKAST"
+    },
+    "rows": {
+      "signIn": "Inloggen",
+      "signOut": "Uitloggen",
+      "email": "E-mail",
+      "deleteAccount": "Account verwijderen",
+      "deleteMyData": "Mijn gegevens verwijderen",
+      "freshcheckPro": "FreshCheck Pro",
+      "manageSubscription": "Abonnement beheren",
+      "upgradeToPro": "Upgrade naar FreshCheck Pro",
+      "restorePurchase": "Aankoop herstellen",
+      "foodExpiryReminders": "Verloopmeldingen voor voedsel",
+      "privacyPolicy": "Privacybeleid",
+      "termsOfService": "Servicevoorwaarden",
+      "support": "Support",
+      "version": "Versie"
+    },
+    "labels": {
+      "warnMeBefore": "Waarschuw me",
+      "daysShort_one": "{{count}}d",
+      "daysShort_other": "{{count}}d"
+    },
+    "cta": {
+      "cancel": "Annuleren",
+      "save": "Opslaan",
+      "delete": "Verwijderen",
+      "keepAccount": "Account behouden",
+      "yesDelete": "Ja, verwijderen",
+      "signOut": "Uitloggen",
+      "takePhoto": "Foto maken",
+      "chooseFromLibrary": "Kies uit bibliotheek",
+      "openSettings": "Instellingen openen"
+    },
+    "a11y": {
+      "changeAvatar": "avatar wijzigen",
+      "editName": "naam bewerken",
+      "daysBefore_one": "{{count}} dag van tevoren",
+      "daysBefore_other": "{{count}} dagen van tevoren"
+    },
+    "errors": {
+      "unknown": "Onbekende fout"
+    },
+    "alerts": {
+      "photoAccess": {
+        "title": "Fototoegang nodig",
+        "messageCanAsk": "Sta fototoegang toe om een avatar te kiezen.",
+        "messageDenied": "Schakel fototoegang in bij Instellingen en kom dan terug."
+      },
+      "cameraAccess": {
+        "title": "Cameratoegang nodig",
+        "messageCanAsk": "Sta cameratoegang toe om een foto te maken.",
+        "messageDenied": "Schakel cameratoegang in bij Instellingen en kom dan terug."
+      },
+      "changePhoto": {
+        "title": "Foto wijzigen",
+        "message": "Kies een nieuwe profielfoto"
+      },
+      "editName": {
+        "title": "Je naam",
+        "message": "Hoe mogen we je noemen?"
+      },
+      "signOut": {
+        "title": "Uitloggen",
+        "message": "Uitloggen bij FreshCheck?"
+      },
+      "restored": {
+        "title": "Hersteld",
+        "message": "Je abonnement is weer actief."
+      },
+      "nothingToRestore": {
+        "title": "Niets om te herstellen",
+        "message": "Geen actief abonnement gevonden op deze Apple ID."
+      },
+      "restoreFailed": {
+        "title": "Herstellen mislukt"
+      },
+      "linkFailed": {
+        "title": "Kan link niet openen"
+      },
+      "deleteAccount": {
+        "title": "Account verwijderen",
+        "message": "Dit verwijdert je account, koelkastproducten en scangeschiedenis permanent. Dit kan niet ongedaan worden gemaakt."
+      },
+      "deleteConfirm": {
+        "title": "Weet je het zeker?",
+        "message": "Dit is je laatste kans om je gegevens te behouden. Tik op \"Ja, verwijderen\" om je account permanent te verwijderen."
+      },
+      "notSignedIn": {
+        "title": "Niet ingelogd",
+        "message": "Log eerst in."
+      },
+      "deletionFailed": {
+        "title": "Verwijderen mislukt",
+        "message": "Probeer het opnieuw of neem contact op met support."
+      },
+      "accountDeleted": {
+        "title": "Account verwijderd",
+        "message": "Je account en gegevens zijn verwijderd."
+      }
+    }
+  },
+  "recipeDetail": {
+    "loading": {
+      "title": "Recept laden…",
+      "subtitle": "Verse recepten voor je genereren"
+    },
+    "empty": {
+      "title": "Recept niet gevonden",
+      "subtitle": "Ga terug en kies een ander recept."
+    },
+    "meta": {
+      "time": "TIJD",
+      "difficulty": "MOEILIJKHEID",
+      "fromFridge": "UIT KOELKAST",
+      "minutes_one": "{{count}}min",
+      "minutes_other": "{{count}}min"
+    },
+    "difficulty": {
+      "easy": "MAKKELIJK",
+      "medium": "GEMIDDELD",
+      "hard": "MOEILIJK"
+    },
+    "sections": {
+      "ingredients": "INGREDIËNTEN",
+      "steps": "STAPPEN"
+    },
+    "badges": {
+      "have": "IN HUIS"
+    },
+    "stepLabel": {
+      "prep": "VOORBEREIDEN",
+      "cook": "KOKEN",
+      "mix": "MENGEN",
+      "wait": "WACHTEN",
+      "serve": "SERVEREN"
+    },
+    "steps": {
+      "header": "STAP {{order}} · {{label}}",
+      "minutes": "{{minutes}} MIN"
+    },
+    "a11y": {
+      "back": "terug",
+      "saveRecipe": "recept opslaan",
+      "removeFromSaved": "uit opgeslagen verwijderen"
+    }
+  },
+  "recipeBuilder": {
+    "header": {
+      "title": "MAAK EEN RECEPT",
+      "subtitle": "Wat heb je in je keuken?",
+      "intro": "Voeg toe wat je hebt — met hoeveelheden als je wilt — en wij bouwen er recepten omheen."
+    },
+    "sections": {
+      "addIngredients": "INGREDIËNTEN TOEVOEGEN",
+      "cookingMethod": "BEREIDINGSWIJZE",
+      "maxTime": "MAX. TIJD"
+    },
+    "placeholders": {
+      "amount": "200",
+      "name": "Kipfilet"
+    },
+    "methods": {
+      "any": "Alles",
+      "bake": "Bakken",
+      "fry": "Frituren",
+      "boil": "Koken",
+      "grill": "Grillen",
+      "steam": "Stomen",
+      "noCook": "Onbereid",
+      "slowCook": "Langzaam garen"
+    },
+    "times": {
+      "any": "Alles",
+      "under15": "<=15 min",
+      "under30": "<=30 min",
+      "under45": "<=45 min",
+      "under60": "<=60 min"
+    },
+    "units": {
+      "g": "g",
+      "pcs": "st",
+      "cups": "kopjes",
+      "tbsp": "el",
+      "tsp": "tl",
+      "ml": "ml"
+    },
+    "toggle": {
+      "title": "Gebruik alleen deze ingrediënten",
+      "sub": "Uit = we mogen gangbare extra's toevoegen (olie, zout, kruiden)."
+    },
+    "cta": {
+      "generate": "Genereer recepten"
+    },
+    "errors": {
+      "notFood": "Voer een echt ingrediënt in"
+    },
+    "alerts": {
+      "addIngredientsTitle": "Voeg ingrediënten toe",
+      "addIngredientsMessage": "Voeg minstens één ingrediënt toe om een recept te maken.",
+      "couldNotGenerateTitle": "Kan niet genereren",
+      "tryAgain": "Probeer het zo meteen opnieuw."
+    },
+    "a11y": {
+      "back": "terug",
+      "addIngredient": "ingrediënt toevoegen"
+    }
+  },
+  "recipes": {
+    "eyebrow": "RECEPTEN",
+    "hero": {
+      "title": "Kook met wat je hebt",
+      "titleEmpty": "Startrecepten",
+      "subtitle": "AI-GEMAAKT UIT JE KOELKAST",
+      "subtitleEmpty": "SCAN PRODUCTEN VOOR PERSOONLIJKE KEUZES"
+    },
+    "cook": {
+      "title": "Kook met wat je hebt",
+      "titleEmpty": "Genereer startrecepten",
+      "subtitle": "Kies koelkastproducten → 3 verse recepten",
+      "subtitleEmpty": "3 simpele ideeën om voor te shoppen"
+    },
+    "build": {
+      "title": "Maak je eigen recept",
+      "subtitle": "Typ ingrediënten, methode & tijd"
+    },
+    "emptyBanner": "Je koelkast is leeg — dit zijn algemene startideeën. Scan eerst een paar producten voor recepten gebouwd rond wat je echt hebt.",
+    "sections": {
+      "saved": "★ OPGESLAGEN"
+    },
+    "errors": {
+      "dailyLimitTitle": "Daglimiet bereikt",
+      "generateFailedTitle": "Kon geen recepten genereren",
+      "unlockUnlimited": "Ontgrendel onbeperkte recepten"
+    },
+    "labels": {
+      "minutesShort": "{{count}} MIN",
+      "fromFridge_one": "{{count}} UIT KOELKAST",
+      "fromFridge_other": "{{count}} UIT KOELKAST",
+      "today": "vandaag",
+      "daysShort": "{{count}}d"
+    },
+    "sheet": {
+      "title": "Kook met wat je hebt",
+      "subtitle": "Kies de producten om recepten van te maken. We geven voorrang aan wat het eerst verloopt."
+    },
+    "cta": {
+      "generateFromItems_one": "Genereer uit {{count}} product",
+      "generateFromItems_other": "Genereer uit {{count}} producten"
+    },
+    "a11y": {
+      "generateStarter": "genereer startrecepten",
+      "cookWithWhatYouHave": "kook met wat je hebt",
+      "buildCustom": "maak een eigen recept",
+      "upgradeToPro": "Upgrade naar FreshCheck Pro",
+      "openRecipe": "open {{name}}",
+      "recipeCard_one": "{{name}}, {{count}} minuut",
+      "recipeCard_other": "{{name}}, {{count}} minuten",
+      "removeFromSaved": "uit opgeslagen verwijderen",
+      "saveRecipe": "recept opslaan",
+      "removeRecipe": "{{name}} verwijderen",
+      "close": "sluiten"
+    }
+  },
+  "capture": {
+    "header": {
+      "scan": "SCAN"
+    },
+    "a11y": {
+      "back": "terug",
+      "capture": "vastleggen",
+      "scanWholeTable": "scan de hele tafel",
+      "choosePhotoFromLibrary": "kies foto uit bibliotheek",
+      "reviewScans_one": "bekijk {{count}} scan",
+      "reviewScans_other": "bekijk {{count}} scans"
+    },
+    "modes": {
+      "single": "ENKEL",
+      "batch": "BATCH",
+      "barcode": "STREEPJESCODE"
+    },
+    "hints": {
+      "barcode": "RICHT OP EEN STREEPJESCODE",
+      "batch": "TIK OM TOE TE VOEGEN · SCANS LOPEN OP DE ACHTERGROND",
+      "single": "RICHT OP ETEN · TIK OM VAST TE LEGGEN"
+    },
+    "freeScansLeft_one": "NOG {{count}} GRATIS SCAN VANDAAG",
+    "freeScansLeft_other": "NOG {{count}} GRATIS SCANS VANDAAG",
+    "status": {
+      "analyzing": "Analyseren…",
+      "lookingUpProduct": "Product opzoeken…",
+      "readingFreshness": "Versheid lezen…",
+      "findingItems": "Producten zoeken…",
+      "capturing": "Vastleggen…",
+      "loadingPhoto": "Foto laden…",
+      "preparingScan": "Scan voorbereiden…",
+      "loadingCamera": "Camera laden…"
+    },
+    "analyzingSub": {
+      "stillWorking": "Nog bezig… {{seconds}}s",
+      "default": "Dit kan een paar seconden duren"
+    },
+    "cta": {
+      "scanWholeTable": "📋  SCAN DE HELE TAFEL",
+      "reviewScans_one": "Bekijk {{count}} scan",
+      "reviewScans_other": "Bekijk {{count}} scans",
+      "allowCamera": "Camera toestaan",
+      "openSettings": "Instellingen openen",
+      "chooseFromLibrary": "Kies in plaats daarvan uit bibliotheek",
+      "back": "Terug"
+    },
+    "gate": {
+      "serviceUnavailable": {
+        "title": "Service niet beschikbaar",
+        "message": "Scannen is tijdelijk niet beschikbaar. Probeer het zo meteen opnieuw."
+      },
+      "cameraOff": {
+        "title": "Camera uit",
+        "messageCanAsk": "FreshCheck heeft cameratoegang nodig om eten te scannen.",
+        "messageDenied": "Schakel cameratoegang in bij Instellingen en kom dan terug."
+      }
+    },
+    "barcode": {
+      "expiryText": "~nog {{days}} dagen"
+    },
+    "errors": {
+      "scanFailed": "Scan mislukt.",
+      "couldNotScan": "Kon niet scannen.",
+      "couldNotCapture": "Kon foto niet maken."
+    },
+    "alerts": {
+      "cancel": "Annuleren",
+      "productNotFound": {
+        "title": "Product niet gevonden",
+        "message": "Nog geen overeenkomst voor die streepjescode. Probeer in plaats daarvan de fotoscan."
+      },
+      "couldNotAdd": {
+        "title": "Kan niet toevoegen"
+      },
+      "addedToFridge": {
+        "title": "Toegevoegd aan je koelkast",
+        "message": "{{product}} · houdt ~{{days}} dagen"
+      },
+      "severalItems": {
+        "title": "Meerdere producten gedetecteerd",
+        "message": "Deze foto lijkt meerdere voedingsmiddelen te bevatten. Allemaal scannen, of alleen de belangrijkste?",
+        "justMain": "Alleen de belangrijkste",
+        "scanAll": "Alle producten scannen"
+      },
+      "scanFailed": {
+        "title": "Scan mislukt"
+      },
+      "noFoodFound": {
+        "title": "Geen eten gevonden",
+        "message": "Kon geen voedingsmiddelen in die foto vinden. Probeer dichterbij te komen of beter licht."
+      },
+      "preparingScan": {
+        "title": "Scan voorbereiden",
+        "message": "Wacht even en probeer het opnieuw."
+      },
+      "photoAccess": {
+        "title": "Fototoegang nodig",
+        "messageCanAsk": "Sta fototoegang toe om een foto van eten uit je bibliotheek te kiezen.",
+        "messageDenied": "Schakel fototoegang in bij Instellingen en kom dan terug."
+      },
+      "dailyScanLimit": {
+        "title": "Daglimiet voor scans",
+        "message": "{{added}} van {{total}} foto's toegevoegd — dat zijn de gratis scans van vandaag. Upgrade naar Pro voor onbeperkt."
+      }
+    }
+  },
+  "loaders": {
+    "cooking": {
+      "readingFridge": "Lezen wat er in je koelkast ligt…",
+      "prioritising": "Voorrang geven aan wat het eerst verloopt…",
+      "pairingFlavours": "Smaken combineren die werken…",
+      "writingSteps": "De stappen schrijven…",
+      "platingUp": "3 ideeën opdienen…",
+      "eta": "Ongeveer {{seconds}} seconden · foto's laden meteen daarna"
+    },
+    "image": {
+      "plating": "Je gerecht opmaken",
+      "generating": "Een uniek recept genereren",
+      "simmering": "De details laten sudderen",
+      "pickingIngredients": "Verse ingrediënten kiezen"
+    }
+  },
+  "foods": {
+    "reasons": {
+      "tooShort": "Te kort",
+      "tooLong": "Te lang",
+      "lettersOnly": "Alleen letters — geen cijfers of symbolen",
+      "notRealIngredient": "Dat lijkt niet op een echt ingrediënt"
+    }
+  },
+  "scan": {
+    "timeout": "Dit duurt langer dan gewoonlijk — probeer het opnieuw.",
+    "unreachable": "Kon de scanner niet bereiken. Controleer je verbinding en probeer het opnieuw.",
+    "failed": "Scan mislukt"
+  },
+  "fridge": {
+    "title": "Mijn koelkast",
+    "eyebrow": "VOORRAADSTATUS",
+    "recipesLink": "Recepten uit je koelkast",
+    "a11y": {
+      "viewRecipes": "Bekijk recepten uit je koelkast"
+    },
+    "categories": {
+      "all": "Alles",
+      "produce": "Groente & fruit",
+      "dairy": "Zuivel",
+      "poultry": "Gevogelte",
+      "meat": "Vlees",
+      "fish": "Vis",
+      "bakery": "Bakkerij",
+      "pantry": "Voorraadkast"
+    },
+    "empty": {
+      "title": "Koelkast is leeg",
+      "body": "Scan een product om bij te houden wat er in je koelkast ligt en wanneer het bederft.",
+      "cta": "Scan eerste product"
+    },
+    "footer": {
+      "tracked_one": "{{shown}} VAN {{count}} PRODUCT BIJGEHOUDEN",
+      "tracked_other": "{{shown}} VAN {{count}} PRODUCTEN BIJGEHOUDEN",
+      "swipeHint": "VEEG EEN KAART NAAR LINKS OM HEM TE VERWIJDEREN"
+    },
+    "alerts": {
+      "removeFailedTitle": "Kan niet verwijderen",
+      "loadFailedTitle": "Kan koelkast niet laden"
+    }
+  }
+}

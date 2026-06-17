@@ -1,1 +1,1154 @@
-{}
+{
+  "common": {
+    "appName": "FreshCheck",
+    "continue": "Weiter",
+    "getStarted": "Loslegen",
+    "back": "Zurück",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "done": "Fertig",
+    "tryAgain": "Erneut versuchen",
+    "next": "Weiter",
+    "skip": "Überspringen",
+    "ok": "OK",
+    "dayUnit_one": "TAG",
+    "dayUnit_other": "TAGE",
+    "tabA11y": "Tab {{label}}",
+    "productRow": {
+      "a11yDaysLeft_one": "{{name}}, noch {{count}} Tag",
+      "a11yDaysLeft_other": "{{name}}, noch {{count}} Tage",
+      "delete": "LÖSCHEN",
+      "deleteA11y": "{{name}} löschen"
+    },
+    "achievements": {
+      "unlocked": "ERFOLG FREIGESCHALTET",
+      "items": {
+        "first_scan": {
+          "title": "Erster Blick",
+          "desc": "Scanne dein erstes Lebensmittel"
+        },
+        "scan_10": {
+          "title": "Frischer Blick",
+          "desc": "Scanne 10 Lebensmittel"
+        },
+        "scan_50": {
+          "title": "Sicherheits-Profi",
+          "desc": "Scanne 50 Lebensmittel"
+        },
+        "first_recipe": {
+          "title": "Hobbykoch",
+          "desc": "Erstelle dein erstes Rezept"
+        },
+        "recipe_10": {
+          "title": "Rezept-Entdecker",
+          "desc": "Erstelle 10 Rezepte"
+        },
+        "fridge_5": {
+          "title": "Gut bestückt",
+          "desc": "Verfolge 5 Kühlschrank-Artikel"
+        },
+        "streak_3": {
+          "title": "Frisch im Spiel",
+          "desc": "Nutze FreshCheck 3 Tage lang"
+        },
+        "streak_7": {
+          "title": "Anti-Verschwendung",
+          "desc": "Nutze FreshCheck 7 Tage lang"
+        }
+      }
+    }
+  },
+  "errorBoundary": {
+    "title": "Etwas ist schiefgelaufen",
+    "message": "Ein unerwarteter Fehler ist aufgetreten. Versuche es erneut oder starte die App neu, falls das Problem bestehen bleibt.",
+    "retry": "Erneut versuchen"
+  },
+  "att": {
+    "headlineFamily": "Mach FreshCheck besser für Familien",
+    "headlineYou": "Mach FreshCheck besser für dich",
+    "bodyFamily": "Mit deiner Erlaubnis messen wir, welche Funktionen Eltern wie dir wirklich helfen – damit wir genau das verbessern, worauf es ankommt.",
+    "bodyYou": "Mit deiner Erlaubnis messen wir, welche Funktionen Menschen wie dir wirklich helfen – damit wir genau das verbessern, worauf es ankommt.",
+    "privacy": "Wir verkaufen deine persönlichen Daten niemals, und deine Scans bleiben immer privat.",
+    "micro": "Auf dem nächsten Bildschirm kannst du zustimmen oder ablehnen. FreshCheck funktioniert so oder so vollständig, und du kannst dies jederzeit in den Einstellungen ändern.",
+    "continue": "Weiter"
+  },
+  "building": {
+    "pct": "{{pct}}%",
+    "stages": {
+      "stage0": {
+        "title": "Deine Kühlschrank-Gewohnheiten werden gelesen",
+        "detail": "Was du kaufst, was du vergisst"
+      },
+      "stage1": {
+        "title": "Wir erfassen, was bei dir am schnellsten verdirbt",
+        "detail": "Damit nichts sein Ablaufdatum überschreitet"
+      },
+      "stage2": {
+        "title": "Frische-Warnungen werden kalibriert",
+        "detail": "Abgestimmt auf das, was du am meisten wegwirfst"
+      },
+      "stage3": {
+        "title": "Rezepte für das, was zuerst abläuft, werden vorbereitet",
+        "detail": "Abendessen aus dem, was du schon hast"
+      },
+      "stage4": {
+        "title": "Dein Frische-Plan nimmt Gestalt an",
+        "detail": "Fast fertig"
+      }
+    },
+    "badge": {
+      "withName": "{{name}}, dein Plan ist persönlich – keine Vorlage",
+      "noName": "Dein Plan ist persönlich – keine Vorlage"
+    }
+  },
+  "onboarding": {
+    "cta": {
+      "getStarted": "Loslegen",
+      "continue": "Weiter"
+    },
+    "slides": {
+      "waste": {
+        "title": "Nie wieder gutes Essen wegwerfen",
+        "body": "FreshCheck sagt dir, was noch gut ist, und erinnert dich, bevor es verdirbt.",
+        "proof": "Familien sparen rund 2.913 $ im Jahr"
+      },
+      "scan": {
+        "title": "Ist das noch sicher? In 3 Sekunden weißt du es",
+        "body": "Richte deine Kamera auf ein Lebensmittel für ein sofortiges Urteil – sicher, Vorsicht oder weg damit."
+      },
+      "timeline": {
+        "title": "Dein ganzer Kühlschrank auf einer Frische-Timeline",
+        "body": "Alles, was du hast, sortiert nach Ablaufdatum. Nie wieder etwas hinten vergessen."
+      },
+      "recipes": {
+        "title": "Das Abendessen heute, aus dem, was du schon hast",
+        "body": "Ein Tipp verwandelt deine bald ablaufenden Zutaten in 3 frische KI-Rezepte."
+      },
+      "barcode": {
+        "title": "Scanne den Barcode, den Rest übernehmen wir",
+        "body": "Verpackte Lebensmittel in Sekunden hinzufügen – einfach Barcode scannen und wir erfassen es."
+      }
+    }
+  },
+  "personalize": {
+    "progress": "Schritt {{current}} von {{total}}",
+    "namePlaceholder": "Dein Name",
+    "a11y": {
+      "back": "zurück"
+    },
+    "cta": {
+      "buildPlan": "Plan erstellen",
+      "continue": "Weiter"
+    },
+    "questions": {
+      "household": {
+        "q": "Für wen hältst du alles frisch?",
+        "options": {
+          "me": "Nur ich",
+          "partner": "Ich und mein Partner",
+          "family": "Eine Familie mit Kindern",
+          "roommates": "Eine WG"
+        }
+      },
+      "topWaste": {
+        "q": "Was wirfst du am häufigsten weg?",
+        "sub": "Wähle alles Zutreffende",
+        "options": {
+          "leftovers": "Reste",
+          "produce": "Obst und Gemüse",
+          "dairy": "Milchprodukte",
+          "meat": "Fleisch und Geflügel",
+          "bread": "Brot"
+        }
+      },
+      "worry": {
+        "q": "Was macht dir bei Lebensmitteln am meisten Sorgen?",
+        "options": {
+          "sick": "Jemanden krank machen",
+          "money": "Geld verschwenden",
+          "spoiled": "Etwas Verdorbenes essen",
+          "unsure": "Nicht zu wissen, was noch gut ist"
+        }
+      },
+      "forgotten": {
+        "q": "Wie oft werden Reste hinten im Kühlschrank vergessen?",
+        "options": {
+          "constantly": "Ständig",
+          "weekly": "Fast jede Woche",
+          "sometimes": "Manchmal",
+          "rarely": "Selten"
+        }
+      },
+      "dinner": {
+        "q": "Wie entscheidest du, was es zum Abendessen gibt?",
+        "options": {
+          "plan": "Ich plane im Voraus",
+          "wing": "Ich improvisiere",
+          "expiring": "Was gerade abzulaufen droht",
+          "order": "Ich bestelle oft etwas"
+        }
+      },
+      "name": {
+        "q": "Zum Schluss – wie sollen wir dich nennen?",
+        "sub": "Optional"
+      }
+    }
+  },
+  "yourPlan": {
+    "eyebrowNamed": "{{name}}S PLAN",
+    "eyebrowDefault": "DEIN FRESHCHECK-PLAN",
+    "watchLabel": "DARAUF ACHTEN WIR",
+    "whatIsInside": "WAS DRIN IST",
+    "socialProof": "Werde Teil der Familien, die mit FreshCheck rund 2.913 $ im Jahr sparen.",
+    "cta": {
+      "seeMyPlan": "Meinen Plan ansehen"
+    },
+    "waste": {
+      "leftovers": "Reste",
+      "produce": "Obst & Gemüse",
+      "dairy": "Milchprodukte",
+      "meat": "Fleisch & Geflügel",
+      "bread": "Brot"
+    },
+    "benefits": {
+      "verdict": {
+        "title": "Sofortiges Urteil: sicher / Vorsicht / Gefahr",
+        "sub": "Scanne jedes Lebensmittel, in 3 Sekunden weißt du es."
+      },
+      "timeline": {
+        "title": "Dein Kühlschrank auf einer Frische-Timeline",
+        "sub": "Alles sortiert nach Ablaufdatum."
+      },
+      "recipes": {
+        "title": "Rezepte aus dem, was abläuft",
+        "sub": "Mach bald verderbliche Artikel zum Abendessen."
+      }
+    },
+    "tiles": {
+      "dailyScans": "Tägliche Frische-Scans",
+      "fridgeTimeline": "Kühlschrank-Timeline",
+      "expiryReminders": "Ablauf-Erinnerungen",
+      "unlimitedScans": "Unbegrenzte Scans",
+      "unlimitedRecipes": "Unbegrenzte KI-Rezepte",
+      "barcodeImport": "Barcode-Import"
+    }
+  },
+  "plan": {
+    "wasteLower": {
+      "leftovers": "Reste",
+      "produce": "Obst & Gemüse",
+      "dairy": "Milchprodukte",
+      "meat": "Fleisch & Geflügel",
+      "bread": "Brot"
+    },
+    "household": {
+      "family": "vielbeschäftigter Familienkoch",
+      "partner": "Zwei-Personen-Küche",
+      "roommates": "gemeinsamer Haushalt",
+      "solo": "Single-Koch"
+    },
+    "headlineWithWaste": "Du bist ein {{who}} – wir behalten dein {{waste}} im Blick.",
+    "headlineFallback": "Du bist ein {{who}} – FreshCheck behält deinen Kühlschrank für dich im Blick.",
+    "fear": {
+      "sick": "Wir markieren alles Riskante, bevor es auf deinen Tisch kommt.",
+      "money": "Schluss damit, jede Woche Lebensmittel für ~56 $ wegzuwerfen.",
+      "spoiled": "Du weißt immer auf einen Blick, was noch gut ist.",
+      "default": "Nie wieder raten, ob etwas noch sicher zu essen ist."
+    }
+  },
+  "paywall": {
+    "eyebrow": "FRESHCHECK PRO",
+    "a11y": {
+      "close": "schließen",
+      "planOption": "Plan {{label}}, {{price}} {{unit}}"
+    },
+    "hero": {
+      "scanLimit": {
+        "title": "Du hast die kostenlosen Scans für heute aufgebraucht",
+        "subtitle": "Unbegrenzt nutzen – scanne alles in deiner Küche, wann immer du willst."
+      },
+      "barcode": {
+        "title": "Barcode-Scannen ist eine Pro-Funktion",
+        "subtitle": "Scanne jeden Produkt-Barcode und füge ihn direkt in deinen Kühlschrank ein."
+      },
+      "recipeLimit": {
+        "title": "Du hast die kostenlose Rezepterstellung für heute aufgebraucht",
+        "subtitle": "Unbegrenzte KI-Rezepte aus allem in deinem Kühlschrank – jeden Tag."
+      },
+      "default": {
+        "title": "FreshCheck Pro freischalten",
+        "subtitle": "Mach aus dem, was in deinem Kühlschrank ist, Rezepte und wirf nie wieder Essen weg."
+      }
+    },
+    "trust": {
+      "family": "SPART DER DURCHSCHNITTSFAMILIE 2.913 $ / JAHR",
+      "household": "DER DURCHSCHNITTSHAUSHALT SPART 2.913 $ / JAHR"
+    },
+    "features": {
+      "header": "ALLES IN PRO",
+      "unlimitedScans": {
+        "title": "Unbegrenzte Scans",
+        "body": "Scanne so viele Artikel, wie du willst – kein Tageslimit."
+      },
+      "unlimitedRecipes": {
+        "title": "Unbegrenzte KI-Rezepte",
+        "body": "Erstelle frische Rezepte aus deinem Kühlschrank, wann immer du willst – kein Tageslimit."
+      },
+      "barcodeAdd": {
+        "title": "Barcode zur Vorratskammer hinzufügen",
+        "body": "Scanne einen Produkt-Barcode, um ihn direkt in deinen Kühlschrank einzufügen."
+      },
+      "wholeTable": {
+        "title": "Ganzen Tisch scannen",
+        "body": "Ein Foto, jeder Artikel auf dem Tisch – so oft du möchtest."
+      },
+      "batchScanning": {
+        "title": "Schnelles Stapel-Scannen",
+        "body": "Scanne deinen ganzen Einkauf in einem Rutsch – ohne Limits."
+      }
+    },
+    "plans": {
+      "eyebrow": "WÄHLE DEINEN PLAN · 3 TAGE GRATIS",
+      "annual": {
+        "label": "Jährlich",
+        "unit": "/ Jahr",
+        "badge": "SPARE 89 %",
+        "sublabel": "Nur 0,77 $ / Woche, jährlich abgerechnet"
+      },
+      "monthly": {
+        "label": "Monatlich",
+        "unit": "/ Monat",
+        "sublabel": "Flexibel – jederzeit kündbar"
+      },
+      "weekly": {
+        "label": "Wöchentlich",
+        "unit": "/ Woche",
+        "sublabel": "Einfach mal ausprobieren"
+      }
+    },
+    "cta": {
+      "processing": "Wird verarbeitet…",
+      "startTrial": "3-tägige Gratis-Testphase starten"
+    },
+    "fineprint": {
+      "annual": "Die ersten 3 Tage gratis, danach {{price}} / Jahr. Verlängert sich automatisch, sofern nicht mindestens 24 Stunden vor Ablauf gekündigt wird.",
+      "monthly": "Die ersten 3 Tage gratis, danach {{price}} / Monat. Verlängert sich automatisch, sofern nicht mindestens 24 Stunden vor Ablauf gekündigt wird.",
+      "weekly": "Die ersten 3 Tage gratis, danach {{price}} / Woche. Verlängert sich automatisch, sofern nicht mindestens 24 Stunden vor Ablauf gekündigt wird."
+    },
+    "legal": {
+      "restore": "Wiederherstellen",
+      "terms": "AGB",
+      "privacy": "Datenschutz"
+    },
+    "alerts": {
+      "welcomeTitle": "Willkommen bei Pro",
+      "welcomeBody": "Deine Gratis-Testphase hat begonnen. Erstelle unbegrenzt KI-Rezepte aus deinem Kühlschrank!",
+      "pendingTitle": "Warten auf Bestätigung",
+      "pendingBody": "Dein Kauf wartet auf die Bestätigung über deine Apple-ID.",
+      "purchaseFailedTitle": "Kauf fehlgeschlagen",
+      "restoredTitle": "Wiederhergestellt",
+      "restoredBody": "Dein Abo ist wieder aktiv.",
+      "nothingToRestoreTitle": "Nichts wiederherzustellen",
+      "nothingToRestoreBody": "Auf dieser Apple-ID wurde kein aktives Abo gefunden.",
+      "restoreFailedTitle": "Wiederherstellung fehlgeschlagen",
+      "couldNotOpenLinkTitle": "Link konnte nicht geöffnet werden",
+      "unknownError": "Unbekannter Fehler"
+    }
+  },
+  "auth": {
+    "wordmark": "FRESHCHECK",
+    "title": {
+      "signIn": "Willkommen zurück",
+      "signUp": "Bei FreshCheck registrieren"
+    },
+    "labels": {
+      "email": "E-MAIL",
+      "password": "PASSWORT"
+    },
+    "placeholders": {
+      "email": "du@beispiel.de",
+      "passwordSignIn": "Dein Passwort",
+      "passwordSignUp": "Mind. 6 Zeichen"
+    },
+    "cta": {
+      "submitting": "...",
+      "signIn": "Anmelden",
+      "createAccount": "Konto erstellen",
+      "toggleToSignUp": "Noch kein Konto? Registrieren",
+      "toggleToSignIn": "Schon ein Konto? Anmelden",
+      "continueAsGuest": "Als Gast fortfahren"
+    },
+    "legal": {
+      "prefix": "Mit dem Fortfahren stimmst du den",
+      "terms": "AGB",
+      "and": "und der",
+      "privacy": "Datenschutzerklärung",
+      "suffix": "zu."
+    },
+    "alerts": {
+      "signInTitle": "Anmelden",
+      "signUpTitle": "Registrieren",
+      "notConfigured": "Supabase ist in diesem Build nicht konfiguriert. Fahre als Gast fort, um die App lokal weiter zu nutzen.",
+      "checkEmailTitle": "Prüfe deine E-Mails",
+      "checkEmailMessage": "Wir haben einen Bestätigungslink an {{email}} gesendet. Tippe darauf, komm dann zurück und melde dich an.",
+      "ok": "OK"
+    },
+    "errors": {
+      "signInFailedTitle": "Anmeldung fehlgeschlagen",
+      "signUpFailedTitle": "Registrierung fehlgeschlagen",
+      "invalidCredentials": "Gib eine gültige E-Mail und ein Passwort mit mindestens 6 Zeichen ein."
+    },
+    "a11y": {
+      "back": "zurück",
+      "email": "E-Mail",
+      "password": "Passwort",
+      "toggleMode": "Anmeldemodus wechseln"
+    }
+  },
+  "scanResult": {
+    "header": {
+      "analysis": "ANALYSE"
+    },
+    "verdict": {
+      "fresh": "Sieht frisch aus",
+      "safe": "Sicher zu essen",
+      "soon": "Bald verbrauchen",
+      "past": "Über dem Höhepunkt"
+    },
+    "expiry": {
+      "unknown": "Haltbarkeit unbekannt",
+      "useToday": "Heute verbrauchen",
+      "daysLeft_one": "noch {{count}} Tag",
+      "daysLeft_other": "noch {{count}} Tage"
+    },
+    "empty": {
+      "title": "Noch kein Scan",
+      "subtitle": "Scanne einen Artikel, um hier sein Frische-Urteil zu sehen.",
+      "scanNow": "Jetzt scannen"
+    },
+    "labels": {
+      "itemFallback": "Artikel",
+      "confidence": "{{percent}} % Zuverlässigkeit"
+    },
+    "safetyNote": "Nur eine visuelle Einschätzung – erkennt keine Bakterien. Im Zweifel: weg damit.",
+    "refine": {
+      "label": "WIE LANGE HAST DU ES SCHON?",
+      "justGotIt": "Gerade bekommen",
+      "daysAgo_one": "vor {{count}} Tag",
+      "daysAgo_other": "vor {{count}} Tagen",
+      "adjusted_one": "Angepasst auf noch {{count}} Tag",
+      "adjusted_other": "Angepasst auf noch {{count}} Tage"
+    },
+    "cta": {
+      "addToFridge": "Zum Kühlschrank",
+      "scanAnother": "Weiteres scannen"
+    },
+    "alerts": {
+      "signInRequiredTitle": "Anmeldung erforderlich",
+      "signInRequiredMessage": "Melde dich an, um Artikel in deinem Kühlschrank zu speichern.",
+      "cancel": "Abbrechen",
+      "signIn": "Anmelden",
+      "couldNotSaveTitle": "Konnte nicht gespeichert werden"
+    },
+    "a11y": {
+      "back": "zurück",
+      "fewerDays": "weniger Tage",
+      "moreDays": "mehr Tage"
+    }
+  },
+  "home": {
+    "wordmark": "FRESHCHECK",
+    "heroTitle": "Bereit zum Scannen",
+    "heroSubtitle": "Auf Essen richten. Ergebnis in 3 Sekunden.",
+    "tapToScan": "ZUM SCANNEN TIPPEN",
+    "recipeOfDayEmpty": "Erstelle Rezepte aus deinem Kühlschrank",
+    "badgeUnlocked": "Freigeschaltet",
+    "sections": {
+      "recipeOfDay": "REZEPT DES TAGES",
+      "freshTips": "FRISCHE-TIPPS",
+      "storageGuide": "AUFBEWAHRUNGS-GUIDE",
+      "chefTips": "KOCH-TIPPS",
+      "yourBadges": "DEINE ABZEICHEN"
+    },
+    "a11y": {
+      "tapToScan": "Zum Scannen tippen",
+      "openRecipe": "{{name}} öffnen",
+      "generateRecipes": "Rezepte erstellen"
+    },
+    "freshTips": {
+      "items": {
+        "dangerZone": {
+          "title": "Die Gefahrenzone",
+          "body": "Bakterien vermehren sich am schnellsten zwischen 4–60 °C. Reste innerhalb von 2 Stunden nach dem Kochen kühlen."
+        },
+        "pestoSealedVsOpen": {
+          "title": "Pesto: verschlossen vs. offen",
+          "body": "Ein verschlossenes Glas hält monatelang. Nach dem Öffnen innerhalb von etwa 5–7 Tagen verbrauchen – oder einfrieren."
+        },
+        "eggsKeepLonger": {
+          "title": "Eier halten länger, als du denkst",
+          "body": "Gekühlte Eier sind meist noch 3–5 Wochen nach dem Kauf gut. Schwimmtest: frische Eier sinken."
+        },
+        "herbsLoveWater": {
+          "title": "Kräuter lieben Wasser",
+          "body": "Stell frische Kräuter aufrecht in ein Glas Wasser, locker abgedeckt – sie halten etwa doppelt so lange."
+        },
+        "washBerriesLast": {
+          "title": "Beeren zuletzt waschen",
+          "body": "Feuchtigkeit beschleunigt Schimmel. Spüle Beeren erst direkt vor dem Essen ab."
+        }
+      }
+    }
+  },
+  "storageGuide": {
+    "items": {
+      "bananas": {
+        "name": "Bananen",
+        "store": "Auf der Arbeitsfläche, getrennt von anderem Obst",
+        "life": "2–7 Tage",
+        "temp": "Zimmertemperatur"
+      },
+      "berries": {
+        "name": "Beeren",
+        "store": "Ungewaschen, in einer mit Küchenpapier ausgelegten Box",
+        "life": "3–7 Tage",
+        "temp": "Kühlschrank 1–4 °C"
+      },
+      "eggs": {
+        "name": "Eier",
+        "store": "In der Schachtel, auf einem Fach (nicht in der Tür)",
+        "life": "3–5 Wochen",
+        "temp": "Kühlschrank ≤4 °C"
+      },
+      "leafyGreens": {
+        "name": "Blattgemüse",
+        "store": "Locker in ein trockenes Tuch gewickelt",
+        "life": "5–7 Tage",
+        "temp": "Kühlschrank 1–4 °C"
+      },
+      "chicken": {
+        "name": "Hähnchen",
+        "store": "Verschlossen, im untersten Fach",
+        "life": "1–2 Tage",
+        "temp": "Kühlschrank ≤4 °C"
+      },
+      "cookedLeftovers": {
+        "name": "Gekochte Reste",
+        "store": "Luftdicht, innerhalb von 2 Stunden abgekühlt",
+        "life": "3–4 Tage",
+        "temp": "Kühlschrank ≤4 °C"
+      },
+      "hardCheese": {
+        "name": "Hartkäse",
+        "store": "In Wachs-/Pergamentpapier, nicht in Plastik",
+        "life": "3–4 Wochen",
+        "temp": "Kühlschrank 1–4 °C"
+      },
+      "tomatoes": {
+        "name": "Tomaten",
+        "store": "Auf der Arbeitsfläche, mit dem Stielansatz nach unten",
+        "life": "4–7 Tage",
+        "temp": "Zimmertemperatur"
+      },
+      "bread": {
+        "name": "Brot",
+        "store": "Papiertüte bei Zimmertemperatur oder einfrieren",
+        "life": "2–4 Tage",
+        "temp": "Zimmertemperatur"
+      },
+      "fish": {
+        "name": "Fisch",
+        "store": "Auf Eis, verschlossen, im untersten Fach",
+        "life": "1–2 Tage",
+        "temp": "Kühlschrank ≤2 °C"
+      },
+      "carrots": {
+        "name": "Karotten",
+        "store": "Grün entfernt, in Wasser oder einem verschlossenen Beutel",
+        "life": "2–4 Wochen",
+        "temp": "Kühlschrank 1–4 °C"
+      },
+      "milk": {
+        "name": "Milch",
+        "store": "Im kältesten Fach, nicht in der Tür",
+        "life": "5–7 Tage nach dem Öffnen",
+        "temp": "Kühlschrank ≤4 °C"
+      }
+    }
+  },
+  "chefTips": {
+    "items": {
+      "gordonRamsay": {
+        "name": "Gordon Ramsay",
+        "role": "Sternekoch",
+        "tip": "Probiere beim Kochen. Würze in Schichten, nicht erst am Ende."
+      },
+      "massimoBottura": {
+        "name": "Massimo Bottura",
+        "role": "Osteria Francescana",
+        "tip": "Das Brot von gestern wird das Meisterwerk von heute – verschwende es nie."
+      },
+      "juliaChild": {
+        "name": "Julia Child",
+        "role": "Autorin & TV-Köchin",
+        "tip": "Überfülle die Pfanne nicht – gib dem Essen Platz, sonst dünstet es, statt zu bräunen."
+      },
+      "yotamOttolenghi": {
+        "name": "Yotam Ottolenghi",
+        "role": "Koch & Autor",
+        "tip": "Ein Spritzer Zitrone am Ende belebt fast jedes Gericht."
+      },
+      "marcoPierreWhite": {
+        "name": "Marco Pierre White",
+        "role": "Sternekoch",
+        "tip": "Lass Fleisch nach dem Garen ruhen – so verteilt sich der Saft wieder."
+      },
+      "nigellaLawson": {
+        "name": "Nigella Lawson",
+        "role": "Food-Autorin",
+        "tip": "Friere Kräuter in Olivenöl in einer Eiswürfelform ein, bevor sie welk werden."
+      },
+      "thomasKeller": {
+        "name": "Thomas Keller",
+        "role": "The French Laundry",
+        "tip": "Tupfe Proteine vor dem Anbraten trocken – Feuchtigkeit ist der Feind einer Kruste."
+      },
+      "saminNosrat": {
+        "name": "Samin Nosrat",
+        "role": "Salt Fat Acid Heat",
+        "tip": "Salze aus der Höhe, damit es gleichmäßig auf das Essen fällt."
+      }
+    }
+  },
+  "foodFacts": {
+    "items": {
+      "smellTestLies": {
+        "title": "Der Geruchstest täuscht",
+        "body": "Gefährliche Bakterien wie Salmonellen verändern weder Geruch, Aussehen noch Geschmack von Essen."
+      },
+      "dangerZone": {
+        "title": "Die Gefahrenzone",
+        "body": "Bakterien vermehren sich am schnellsten zwischen 4–60 °C. Reste innerhalb von 2 Stunden kühlen."
+      },
+      "ripenWithApples": {
+        "title": "Mit Äpfeln nachreifen",
+        "body": "Äpfel und Bananen geben Ethylen ab – halte sie von Blattgemüse fern, um das Verderben zu verlangsamen."
+      },
+      "freezingPausesTime": {
+        "title": "Einfrieren hält die Zeit an",
+        "body": "Einfrieren tötet Bakterien nicht ab, es stoppt sie nur. Beim Auftauen werden sie wieder aktiv."
+      }
+    }
+  },
+  "scanBatch": {
+    "header": "STAPEL-SCAN",
+    "counter": "{{done}} FERTIG · {{left}} OFFEN",
+    "hero": {
+      "scanning": "Dein Stapel wird gescannt…",
+      "results": "Stapel-Ergebnisse"
+    },
+    "verdict": {
+      "fresh": "Sieht frisch aus",
+      "safe": "Sicher zu essen",
+      "soon": "Bald verbrauchen",
+      "past": "Über dem Höhepunkt"
+    },
+    "expiry": {
+      "unknown": "Haltbarkeit unbekannt",
+      "today": "Heute verbrauchen",
+      "daysLeft_one": "noch {{count}} Tag",
+      "daysLeft_other": "noch {{count}} Tage"
+    },
+    "empty": {
+      "title": "Nichts in der Warteschlange",
+      "subtitle": "Stell den Scanner auf Stapel und nimm ein paar Artikel auf.",
+      "cta": "Zurück zum Scan"
+    },
+    "card": {
+      "itemFallback": "Artikel",
+      "editHint": "NAMEN ODER URTEIL ZUM BEARBEITEN TIPPEN",
+      "scanFailed": "Scan fehlgeschlagen",
+      "scanFailedHint": "Versuche diesen noch einmal über den Scanner.",
+      "reading": "Frische wird gelesen…",
+      "waiting": "Wartet…"
+    },
+    "cta": {
+      "add": "HINZU",
+      "rescan": "NEU SCANNEN",
+      "done": "Fertig",
+      "addAll_one": "{{count}} zum Kühlschrank hinzufügen",
+      "addAll_other": "{{count}} zum Kühlschrank hinzufügen"
+    },
+    "editPrompt": {
+      "title": "Artikel bearbeiten",
+      "message": "Korrigiere den erkannten Namen.",
+      "cancel": "Abbrechen",
+      "save": "Speichern",
+      "placeholder": "z. B. Hähnchenbrust"
+    },
+    "signInAlert": {
+      "title": "Anmeldung erforderlich",
+      "message": "Melde dich an, um Artikel in deinem Kühlschrank zu speichern.",
+      "cancel": "Abbrechen",
+      "signIn": "Anmelden"
+    },
+    "saveError": {
+      "title": "Konnte nicht gespeichert werden"
+    },
+    "a11y": {
+      "back": "zurück",
+      "editName": "Namen bearbeiten, aktuell {{name}}",
+      "changeVerdict": "Frische-Urteil ändern",
+      "addToFridge": "{{name}} zum Kühlschrank hinzufügen",
+      "rescan": "dieses Foto neu scannen",
+      "done": "fertig"
+    }
+  },
+  "profile": {
+    "fallbackName": "Du",
+    "guestName": "Gast",
+    "status": {
+      "signedIn": "ANGEMELDET",
+      "notSignedIn": "NICHT ANGEMELDET",
+      "active": "Aktiv"
+    },
+    "sections": {
+      "account": "KONTO",
+      "pro": "PRO",
+      "notifications": "BENACHRICHTIGUNGEN",
+      "about": "ÜBER"
+    },
+    "stats": {
+      "itemsInFridge": "ARTIKEL IM KÜHLSCHRANK"
+    },
+    "rows": {
+      "signIn": "Anmelden",
+      "signOut": "Abmelden",
+      "email": "E-Mail",
+      "deleteAccount": "Konto löschen",
+      "deleteMyData": "Meine Daten löschen",
+      "freshcheckPro": "FreshCheck Pro",
+      "manageSubscription": "Abo verwalten",
+      "upgradeToPro": "Auf FreshCheck Pro upgraden",
+      "restorePurchase": "Kauf wiederherstellen",
+      "foodExpiryReminders": "Erinnerungen an Ablaufdaten",
+      "privacyPolicy": "Datenschutzerklärung",
+      "termsOfService": "Nutzungsbedingungen",
+      "support": "Support",
+      "version": "Version"
+    },
+    "labels": {
+      "warnMeBefore": "Warne mich vorher",
+      "daysShort_one": "{{count}} T",
+      "daysShort_other": "{{count}} T"
+    },
+    "cta": {
+      "cancel": "Abbrechen",
+      "save": "Speichern",
+      "delete": "Löschen",
+      "keepAccount": "Konto behalten",
+      "yesDelete": "Ja, löschen",
+      "signOut": "Abmelden",
+      "takePhoto": "Foto aufnehmen",
+      "chooseFromLibrary": "Aus Mediathek wählen",
+      "openSettings": "Einstellungen öffnen"
+    },
+    "a11y": {
+      "changeAvatar": "Avatar ändern",
+      "editName": "Namen bearbeiten",
+      "daysBefore_one": "{{count}} Tag vorher",
+      "daysBefore_other": "{{count}} Tage vorher"
+    },
+    "errors": {
+      "unknown": "Unbekannter Fehler"
+    },
+    "alerts": {
+      "photoAccess": {
+        "title": "Fotozugriff erforderlich",
+        "messageCanAsk": "Erlaube den Fotozugriff, um einen Avatar zu wählen.",
+        "messageDenied": "Aktiviere den Fotozugriff in den Einstellungen und komm dann zurück."
+      },
+      "cameraAccess": {
+        "title": "Kamerazugriff erforderlich",
+        "messageCanAsk": "Erlaube den Kamerazugriff, um ein Foto aufzunehmen.",
+        "messageDenied": "Aktiviere den Kamerazugriff in den Einstellungen und komm dann zurück."
+      },
+      "changePhoto": {
+        "title": "Foto ändern",
+        "message": "Wähle ein neues Profilfoto"
+      },
+      "editName": {
+        "title": "Dein Name",
+        "message": "Wie sollen wir dich nennen?"
+      },
+      "signOut": {
+        "title": "Abmelden",
+        "message": "Von FreshCheck abmelden?"
+      },
+      "restored": {
+        "title": "Wiederhergestellt",
+        "message": "Dein Abo ist wieder aktiv."
+      },
+      "nothingToRestore": {
+        "title": "Nichts wiederherzustellen",
+        "message": "Auf dieser Apple-ID wurde kein aktives Abo gefunden."
+      },
+      "restoreFailed": {
+        "title": "Wiederherstellung fehlgeschlagen"
+      },
+      "linkFailed": {
+        "title": "Link konnte nicht geöffnet werden"
+      },
+      "deleteAccount": {
+        "title": "Konto löschen",
+        "message": "Dies löscht dein Konto, deine Kühlschrank-Artikel und deinen Scan-Verlauf dauerhaft. Das kann nicht rückgängig gemacht werden."
+      },
+      "deleteConfirm": {
+        "title": "Bist du sicher?",
+        "message": "Dies ist deine letzte Chance, deine Daten zu behalten. Tippe auf „Ja, löschen“, um dein Konto dauerhaft zu entfernen."
+      },
+      "notSignedIn": {
+        "title": "Nicht angemeldet",
+        "message": "Bitte melde dich zuerst an."
+      },
+      "deletionFailed": {
+        "title": "Löschen fehlgeschlagen",
+        "message": "Versuche es erneut oder kontaktiere den Support."
+      },
+      "accountDeleted": {
+        "title": "Konto gelöscht",
+        "message": "Dein Konto und deine Daten wurden entfernt."
+      }
+    }
+  },
+  "recipeDetail": {
+    "loading": {
+      "title": "Rezept wird geladen…",
+      "subtitle": "Frische Rezepte werden für dich erstellt"
+    },
+    "empty": {
+      "title": "Rezept nicht gefunden",
+      "subtitle": "Geh zurück und wähle ein anderes Rezept."
+    },
+    "meta": {
+      "time": "ZEIT",
+      "difficulty": "SCHWIERIGKEIT",
+      "fromFridge": "AUS KÜHLSCHRANK",
+      "minutes_one": "{{count}} Min.",
+      "minutes_other": "{{count}} Min."
+    },
+    "difficulty": {
+      "easy": "LEICHT",
+      "medium": "MITTEL",
+      "hard": "SCHWER"
+    },
+    "sections": {
+      "ingredients": "ZUTATEN",
+      "steps": "SCHRITTE"
+    },
+    "badges": {
+      "have": "VORHANDEN"
+    },
+    "stepLabel": {
+      "prep": "VORBEREITEN",
+      "cook": "KOCHEN",
+      "mix": "MISCHEN",
+      "wait": "WARTEN",
+      "serve": "SERVIEREN"
+    },
+    "steps": {
+      "header": "SCHRITT {{order}} · {{label}}",
+      "minutes": "{{minutes}} MIN."
+    },
+    "a11y": {
+      "back": "zurück",
+      "saveRecipe": "Rezept speichern",
+      "removeFromSaved": "aus Gespeicherten entfernen"
+    }
+  },
+  "recipeBuilder": {
+    "header": {
+      "title": "REZEPT ERSTELLEN",
+      "subtitle": "Was hast du in der Küche?",
+      "intro": "Füge hinzu, was du hast – mit Mengen, wenn du magst – und wir bauen Rezepte darum herum."
+    },
+    "sections": {
+      "addIngredients": "ZUTATEN HINZUFÜGEN",
+      "cookingMethod": "ZUBEREITUNGSART",
+      "maxTime": "MAX. ZEIT"
+    },
+    "placeholders": {
+      "amount": "200",
+      "name": "Hähnchenbrust"
+    },
+    "methods": {
+      "any": "Beliebig",
+      "bake": "Backen",
+      "fry": "Braten",
+      "boil": "Kochen",
+      "grill": "Grillen",
+      "steam": "Dämpfen",
+      "noCook": "Ohne Kochen",
+      "slowCook": "Schmoren"
+    },
+    "times": {
+      "any": "Beliebig",
+      "under15": "≤15 Min.",
+      "under30": "≤30 Min.",
+      "under45": "≤45 Min.",
+      "under60": "≤60 Min."
+    },
+    "units": {
+      "g": "g",
+      "pcs": "Stk.",
+      "cups": "Tassen",
+      "tbsp": "EL",
+      "tsp": "TL",
+      "ml": "ml"
+    },
+    "toggle": {
+      "title": "Nur diese Zutaten verwenden",
+      "sub": "Aus = wir dürfen gängige Extras ergänzen (Öl, Salz, Gewürze)."
+    },
+    "cta": {
+      "generate": "Rezepte erstellen"
+    },
+    "errors": {
+      "notFood": "Gib eine echte Zutat ein"
+    },
+    "alerts": {
+      "addIngredientsTitle": "Zutaten hinzufügen",
+      "addIngredientsMessage": "Füge mindestens eine Zutat hinzu, um ein Rezept zu erstellen.",
+      "couldNotGenerateTitle": "Erstellung fehlgeschlagen",
+      "tryAgain": "Bitte versuche es gleich noch einmal."
+    },
+    "a11y": {
+      "back": "zurück",
+      "addIngredient": "Zutat hinzufügen"
+    }
+  },
+  "recipes": {
+    "eyebrow": "REZEPTE",
+    "hero": {
+      "title": "Koche mit dem, was du hast",
+      "titleEmpty": "Einsteiger-Rezepte",
+      "subtitle": "KI-ERSTELLT AUS DEINEM KÜHLSCHRANK",
+      "subtitleEmpty": "SCANNE ARTIKEL FÜR PERSÖNLICHE EMPFEHLUNGEN"
+    },
+    "cook": {
+      "title": "Koche mit dem, was du hast",
+      "titleEmpty": "Einsteiger-Rezepte erstellen",
+      "subtitle": "Kühlschrank-Artikel wählen → 3 frische Rezepte",
+      "subtitleEmpty": "3 einfache Ideen, für die du einkaufen kannst"
+    },
+    "build": {
+      "title": "Eigenes Rezept erstellen",
+      "subtitle": "Zutaten, Methode & Zeit eingeben"
+    },
+    "emptyBanner": "Dein Kühlschrank ist leer – das sind allgemeine Einsteiger-Ideen. Scanne zuerst ein paar Artikel für Rezepte rund um das, was du wirklich hast.",
+    "sections": {
+      "saved": "★ GESPEICHERT"
+    },
+    "errors": {
+      "dailyLimitTitle": "Tageslimit erreicht",
+      "generateFailedTitle": "Rezepte konnten nicht erstellt werden",
+      "unlockUnlimited": "Unbegrenzte Rezepte freischalten"
+    },
+    "labels": {
+      "minutesShort": "{{count}} MIN.",
+      "fromFridge_one": "{{count}} AUS KÜHLSCHRANK",
+      "fromFridge_other": "{{count}} AUS KÜHLSCHRANK",
+      "today": "heute",
+      "daysShort": "{{count}} T"
+    },
+    "sheet": {
+      "title": "Koche mit dem, was du hast",
+      "subtitle": "Wähle die Artikel, aus denen wir Rezepte bauen. Wir bevorzugen, was zuerst abläuft."
+    },
+    "cta": {
+      "generateFromItems_one": "Aus {{count}} Artikel erstellen",
+      "generateFromItems_other": "Aus {{count}} Artikeln erstellen"
+    },
+    "a11y": {
+      "generateStarter": "Einsteiger-Rezepte erstellen",
+      "cookWithWhatYouHave": "koche mit dem, was du hast",
+      "buildCustom": "ein eigenes Rezept erstellen",
+      "upgradeToPro": "Auf FreshCheck Pro upgraden",
+      "openRecipe": "{{name}} öffnen",
+      "recipeCard_one": "{{name}}, {{count}} Minute",
+      "recipeCard_other": "{{name}}, {{count}} Minuten",
+      "removeFromSaved": "aus Gespeicherten entfernen",
+      "saveRecipe": "Rezept speichern",
+      "removeRecipe": "{{name}} entfernen",
+      "close": "schließen"
+    }
+  },
+  "capture": {
+    "header": {
+      "scan": "SCAN"
+    },
+    "a11y": {
+      "back": "zurück",
+      "capture": "aufnehmen",
+      "scanWholeTable": "den ganzen Tisch scannen",
+      "choosePhotoFromLibrary": "Foto aus Mediathek wählen",
+      "reviewScans_one": "{{count}} Scan prüfen",
+      "reviewScans_other": "{{count}} Scans prüfen"
+    },
+    "modes": {
+      "single": "EINZELN",
+      "batch": "STAPEL",
+      "barcode": "BARCODE"
+    },
+    "hints": {
+      "barcode": "AUF EINEN BARCODE RICHTEN",
+      "batch": "ZUM HINZUFÜGEN TIPPEN · SCANS LAUFEN IM HINTERGRUND",
+      "single": "AUF ESSEN RICHTEN · ZUM AUFNEHMEN TIPPEN"
+    },
+    "freeScansLeft_one": "NOCH {{count}} GRATIS-SCAN HEUTE",
+    "freeScansLeft_other": "NOCH {{count}} GRATIS-SCANS HEUTE",
+    "status": {
+      "analyzing": "Wird analysiert…",
+      "lookingUpProduct": "Produkt wird gesucht…",
+      "readingFreshness": "Frische wird gelesen…",
+      "findingItems": "Artikel werden gefunden…",
+      "capturing": "Wird aufgenommen…",
+      "loadingPhoto": "Foto wird geladen…",
+      "preparingScan": "Scan wird vorbereitet…",
+      "loadingCamera": "Kamera wird geladen…"
+    },
+    "analyzingSub": {
+      "stillWorking": "Arbeitet noch… {{seconds}} s",
+      "default": "Das kann ein paar Sekunden dauern"
+    },
+    "cta": {
+      "scanWholeTable": "📋  DEN GANZEN TISCH SCANNEN",
+      "reviewScans_one": "{{count}} Scan prüfen",
+      "reviewScans_other": "{{count}} Scans prüfen",
+      "allowCamera": "Kamera erlauben",
+      "openSettings": "Einstellungen öffnen",
+      "chooseFromLibrary": "Stattdessen aus Mediathek wählen",
+      "back": "Zurück"
+    },
+    "gate": {
+      "serviceUnavailable": {
+        "title": "Dienst nicht verfügbar",
+        "message": "Das Scannen ist vorübergehend nicht verfügbar. Bitte versuche es gleich noch einmal."
+      },
+      "cameraOff": {
+        "title": "Kamera aus",
+        "messageCanAsk": "FreshCheck braucht Kamerazugriff, um Essen zu scannen.",
+        "messageDenied": "Aktiviere den Kamerazugriff in den Einstellungen und komm dann zurück."
+      }
+    },
+    "barcode": {
+      "expiryText": "~{{days}} Tage übrig"
+    },
+    "errors": {
+      "scanFailed": "Scan fehlgeschlagen.",
+      "couldNotScan": "Konnte nicht gescannt werden.",
+      "couldNotCapture": "Foto konnte nicht aufgenommen werden."
+    },
+    "alerts": {
+      "cancel": "Abbrechen",
+      "productNotFound": {
+        "title": "Produkt nicht gefunden",
+        "message": "Noch keine Übereinstimmung für diesen Barcode. Versuche stattdessen den Foto-Scan."
+      },
+      "couldNotAdd": {
+        "title": "Konnte nicht hinzugefügt werden"
+      },
+      "addedToFridge": {
+        "title": "Zu deinem Kühlschrank hinzugefügt",
+        "message": "{{product}} · hält ~{{days}} Tage"
+      },
+      "severalItems": {
+        "title": "Mehrere Artikel erkannt",
+        "message": "Dieses Foto scheint mehrere Lebensmittel zu zeigen. Alle scannen oder nur das wichtigste?",
+        "justMain": "Nur das wichtigste",
+        "scanAll": "Alle Artikel scannen"
+      },
+      "scanFailed": {
+        "title": "Scan fehlgeschlagen"
+      },
+      "noFoodFound": {
+        "title": "Kein Essen gefunden",
+        "message": "Auf diesem Foto konnten keine Lebensmittel erkannt werden. Geh näher heran oder sorge für besseres Licht."
+      },
+      "preparingScan": {
+        "title": "Scan wird vorbereitet",
+        "message": "Bitte warte einen Moment und versuche es erneut."
+      },
+      "photoAccess": {
+        "title": "Fotozugriff erforderlich",
+        "messageCanAsk": "Erlaube den Fotozugriff, um ein Essensfoto aus deiner Mediathek zu wählen.",
+        "messageDenied": "Aktiviere den Fotozugriff in den Einstellungen und komm dann zurück."
+      },
+      "dailyScanLimit": {
+        "title": "Tägliches Scan-Limit",
+        "message": "{{added}} von {{total}} Fotos hinzugefügt – das sind die Gratis-Scans für heute. Upgrade auf Pro für unbegrenzte."
+      }
+    }
+  },
+  "loaders": {
+    "cooking": {
+      "readingFridge": "Wir lesen, was in deinem Kühlschrank ist…",
+      "prioritising": "Wir priorisieren, was zuerst abläuft…",
+      "pairingFlavours": "Wir kombinieren Aromen, die harmonieren…",
+      "writingSteps": "Wir schreiben die Schritte…",
+      "platingUp": "Wir richten 3 Ideen an…",
+      "eta": "Etwa {{seconds}} Sekunden · Fotos laden direkt danach"
+    },
+    "image": {
+      "plating": "Dein Gericht wird angerichtet",
+      "generating": "Ein einzigartiges Rezept wird erstellt",
+      "simmering": "Die Details köcheln vor sich hin",
+      "pickingIngredients": "Frische Zutaten werden ausgewählt"
+    }
+  },
+  "foods": {
+    "reasons": {
+      "tooShort": "Zu kurz",
+      "tooLong": "Zu lang",
+      "lettersOnly": "Nur Buchstaben – keine Ziffern oder Symbole",
+      "notRealIngredient": "Das sieht nicht nach einer echten Zutat aus"
+    }
+  },
+  "scan": {
+    "timeout": "Das dauert länger als üblich – bitte versuche es erneut.",
+    "unreachable": "Der Scanner ist nicht erreichbar. Prüfe deine Verbindung und versuche es erneut.",
+    "failed": "Scan fehlgeschlagen"
+  },
+  "fridge": {
+    "title": "Mein Kühlschrank",
+    "eyebrow": "BESTANDSSTATUS",
+    "recipesLink": "Rezepte aus deinem Kühlschrank",
+    "a11y": {
+      "viewRecipes": "Rezepte aus deinem Kühlschrank ansehen"
+    },
+    "categories": {
+      "all": "Alle",
+      "produce": "Obst & Gemüse",
+      "dairy": "Milchprodukte",
+      "poultry": "Geflügel",
+      "meat": "Fleisch",
+      "fish": "Fisch",
+      "bakery": "Backwaren",
+      "pantry": "Vorrat"
+    },
+    "empty": {
+      "title": "Kühlschrank ist leer",
+      "body": "Scanne einen Artikel, um zu verfolgen, was in deinem Kühlschrank ist und wann es schlecht wird.",
+      "cta": "Ersten Artikel scannen"
+    },
+    "footer": {
+      "tracked_one": "{{shown}} VON {{count}} PRODUKT VERFOLGT",
+      "tracked_other": "{{shown}} VON {{count}} PRODUKTEN VERFOLGT",
+      "swipeHint": "EINE KARTE NACH LINKS WISCHEN, UM SIE ZU ENTFERNEN"
+    },
+    "alerts": {
+      "removeFailedTitle": "Konnte nicht entfernt werden",
+      "loadFailedTitle": "Kühlschrank konnte nicht geladen werden"
+    }
+  }
+}

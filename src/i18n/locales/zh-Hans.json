@@ -1,1 +1,1137 @@
-{}
+{
+  "common": {
+    "appName": "FreshCheck",
+    "continue": "继续",
+    "getStarted": "开始使用",
+    "back": "返回",
+    "cancel": "取消",
+    "save": "保存",
+    "done": "完成",
+    "tryAgain": "重试",
+    "next": "下一步",
+    "skip": "跳过",
+    "ok": "好",
+    "dayUnit_other": "天",
+    "tabA11y": "{{label}} 标签页",
+    "productRow": {
+      "a11yDaysLeft_other": "{{name}}，还剩 {{count}} 天",
+      "delete": "删除",
+      "deleteA11y": "删除 {{name}}"
+    },
+    "achievements": {
+      "unlocked": "成就解锁",
+      "items": {
+        "first_scan": {
+          "title": "初次一瞥",
+          "desc": "扫描你的第一份食物"
+        },
+        "scan_10": {
+          "title": "慧眼识鲜",
+          "desc": "扫描 10 份食物"
+        },
+        "scan_50": {
+          "title": "食安达人",
+          "desc": "扫描 50 份食物"
+        },
+        "first_recipe": {
+          "title": "下厨房",
+          "desc": "生成你的第一份食谱"
+        },
+        "recipe_10": {
+          "title": "食谱探索家",
+          "desc": "生成 10 份食谱"
+        },
+        "fridge_5": {
+          "title": "囤货达人",
+          "desc": "追踪 5 件冰箱食材"
+        },
+        "streak_3": {
+          "title": "保鲜起步",
+          "desc": "连续使用 FreshCheck 3 天"
+        },
+        "streak_7": {
+          "title": "零浪费勇士",
+          "desc": "连续使用 FreshCheck 7 天"
+        }
+      }
+    }
+  },
+  "errorBoundary": {
+    "title": "出错了",
+    "message": "发生了意外错误。请重试，如果问题持续，请重启应用。",
+    "retry": "重试"
+  },
+  "att": {
+    "headlineFamily": "让 FreshCheck 更懂你的家庭",
+    "headlineYou": "让 FreshCheck 更懂你",
+    "bodyFamily": "得到你的允许后，我们会衡量哪些功能真正帮到了像你这样的父母——以便持续打磨最重要的部分。",
+    "bodyYou": "得到你的允许后，我们会衡量哪些功能真正帮到了像你这样的用户——以便持续打磨最重要的部分。",
+    "privacy": "我们绝不出售你的个人数据，你的扫描记录始终保密。",
+    "micro": "在下一个界面你可以选择允许或拒绝。无论如何 FreshCheck 都能完整使用，你随时可以在设置中更改。",
+    "continue": "继续"
+  },
+  "building": {
+    "pct": "{{pct}}%",
+    "stages": {
+      "stage0": {
+        "title": "正在了解你的冰箱习惯",
+        "detail": "你常买什么，又常忘了什么"
+      },
+      "stage1": {
+        "title": "正在梳理家中最易变质的食物",
+        "detail": "让任何东西都不会过期溜走"
+      },
+      "stage2": {
+        "title": "正在校准保鲜提醒",
+        "detail": "针对你最常浪费的食物量身定制"
+      },
+      "stage3": {
+        "title": "正在为最快过期的食材搭配食谱",
+        "detail": "用现有食材就能做出晚餐"
+      },
+      "stage4": {
+        "title": "你的保鲜方案正在成形",
+        "detail": "马上就好"
+      }
+    },
+    "badge": {
+      "withName": "{{name}}，这是专属于你的方案——而非千篇一律的模板",
+      "noName": "这是专属于你的方案——而非千篇一律的模板"
+    }
+  },
+  "onboarding": {
+    "cta": {
+      "getStarted": "开始使用",
+      "continue": "继续"
+    },
+    "slides": {
+      "waste": {
+        "title": "再也不扔掉还能吃的食物",
+        "body": "FreshCheck 告诉你哪些还能吃，并在变质前提醒你。",
+        "proof": "家庭每年约可省下 $2,913"
+      },
+      "scan": {
+        "title": "这个还能吃吗？3 秒就知道",
+        "body": "把镜头对准任何食物，立即得到结论——安全、注意，还是该扔。"
+      },
+      "timeline": {
+        "title": "整个冰箱，一目了然的保鲜时间线",
+        "body": "所有食材按最先过期排序，再也不会被遗忘在冰箱深处。"
+      },
+      "recipes": {
+        "title": "用现有食材，搞定今晚的晚餐",
+        "body": "一键把快过期的食材变成 3 份新鲜的 AI 食谱。"
+      },
+      "barcode": {
+        "title": "扫一扫条形码，剩下的交给我们",
+        "body": "一秒添加包装食品——只需扫码，我们帮你记录。"
+      }
+    }
+  },
+  "personalize": {
+    "progress": "第 {{current}} 步，共 {{total}} 步",
+    "namePlaceholder": "你的名字",
+    "a11y": {
+      "back": "返回"
+    },
+    "cta": {
+      "buildPlan": "生成我的方案",
+      "continue": "继续"
+    },
+    "questions": {
+      "household": {
+        "q": "你在为谁保鲜？",
+        "options": {
+          "me": "只有我",
+          "partner": "我和伴侣",
+          "family": "有孩子的家庭",
+          "roommates": "合租的室友"
+        }
+      },
+      "topWaste": {
+        "q": "你最常扔掉什么？",
+        "sub": "可多选",
+        "options": {
+          "leftovers": "剩菜剩饭",
+          "produce": "果蔬和绿叶菜",
+          "dairy": "乳制品",
+          "meat": "肉禽类",
+          "bread": "面包"
+        }
+      },
+      "worry": {
+        "q": "在饮食上你最担心什么？",
+        "options": {
+          "sick": "让家人吃坏肚子",
+          "money": "浪费钱",
+          "spoiled": "吃到变质的东西",
+          "unsure": "不知道哪些还能吃"
+        }
+      },
+      "forgotten": {
+        "q": "剩菜被遗忘在冰箱深处的频率有多高？",
+        "options": {
+          "constantly": "经常",
+          "weekly": "大多数周",
+          "sometimes": "偶尔",
+          "rarely": "很少"
+        }
+      },
+      "dinner": {
+        "q": "你是怎么决定晚餐的？",
+        "options": {
+          "plan": "我会提前规划",
+          "wing": "随性而定",
+          "expiring": "看什么快过期吃什么",
+          "order": "经常点外卖"
+        }
+      },
+      "name": {
+        "q": "最后一件事——我们该怎么称呼你？",
+        "sub": "可选"
+      }
+    }
+  },
+  "yourPlan": {
+    "eyebrowNamed": "{{name}} 的方案",
+    "eyebrowDefault": "你的 FRESHCHECK 方案",
+    "watchLabel": "我们会帮你盯着",
+    "whatIsInside": "方案内容",
+    "socialProof": "加入用 FreshCheck 每年约省 $2,913 的家庭吧。",
+    "cta": {
+      "seeMyPlan": "查看我的方案"
+    },
+    "waste": {
+      "leftovers": "剩菜剩饭",
+      "produce": "果蔬和绿叶菜",
+      "dairy": "乳制品",
+      "meat": "肉禽类",
+      "bread": "面包"
+    },
+    "benefits": {
+      "verdict": {
+        "title": "即时给出安全 / 注意 / 危险结论",
+        "sub": "扫描任何食物，3 秒便知。"
+      },
+      "timeline": {
+        "title": "冰箱化作保鲜时间线",
+        "sub": "所有食材按最先过期排序。"
+      },
+      "recipes": {
+        "title": "用快过期的食材做食谱",
+        "sub": "把快变质的食材变成一顿晚餐。"
+      }
+    },
+    "tiles": {
+      "dailyScans": "每日保鲜扫描",
+      "fridgeTimeline": "冰箱时间线",
+      "expiryReminders": "过期提醒",
+      "unlimitedScans": "无限扫描",
+      "unlimitedRecipes": "无限 AI 食谱",
+      "barcodeImport": "条码导入"
+    }
+  },
+  "plan": {
+    "wasteLower": {
+      "leftovers": "剩菜剩饭",
+      "produce": "果蔬和绿叶菜",
+      "dairy": "乳制品",
+      "meat": "肉禽类",
+      "bread": "面包"
+    },
+    "household": {
+      "family": "忙碌的家庭厨师",
+      "partner": "两人小厨房",
+      "roommates": "合租之家",
+      "solo": "独居厨师"
+    },
+    "headlineWithWaste": "你是一位{{who}}——我们会帮你盯着你的{{waste}}。",
+    "headlineFallback": "你是一位{{who}}——FreshCheck 会替你看好冰箱。",
+    "fear": {
+      "sick": "任何有风险的食物，我们都会在它上桌前标出来。",
+      "money": "别再每周扔掉约 $56 的食材了。",
+      "spoiled": "你随时都能一眼看清哪些还能吃。",
+      "default": "再也不用猜某样东西还能不能吃。"
+    }
+  },
+  "paywall": {
+    "eyebrow": "FRESHCHECK PRO",
+    "a11y": {
+      "close": "关闭",
+      "planOption": "{{label}}方案，{{price}} {{unit}}"
+    },
+    "hero": {
+      "scanLimit": {
+        "title": "今天的免费扫描次数已用完",
+        "subtitle": "升级至无限——随时想扫就扫遍整个厨房。"
+      },
+      "barcode": {
+        "title": "条码扫描是 Pro 专享功能",
+        "subtitle": "扫描任意商品条码，直接添加进你的冰箱。"
+      },
+      "recipeLimit": {
+        "title": "今天的免费食谱生成次数已用完",
+        "subtitle": "用冰箱里现有的食材，每天生成无限 AI 食谱。"
+      },
+      "default": {
+        "title": "解锁 FreshCheck Pro",
+        "subtitle": "把冰箱里的食材变成食谱，再也不浪费食物。"
+      }
+    },
+    "trust": {
+      "family": "平均每个家庭每年省下 $2,913",
+      "household": "平均每户家庭每年省下 $2,913"
+    },
+    "features": {
+      "header": "PRO 全部功能",
+      "unlimitedScans": {
+        "title": "无限扫描",
+        "body": "想扫多少件就扫多少件，没有每日上限。"
+      },
+      "unlimitedRecipes": {
+        "title": "无限 AI 食谱",
+        "body": "随时用冰箱食材生成新食谱，没有每日上限。"
+      },
+      "barcodeAdd": {
+        "title": "条码添加食材",
+        "body": "扫描商品条码，直接添加进你的冰箱。"
+      },
+      "wholeTable": {
+        "title": "整桌扫描",
+        "body": "一张照片识别桌上所有食物——想扫多少次都行。"
+      },
+      "batchScanning": {
+        "title": "快速批量扫描",
+        "body": "把整趟采购连续扫完，没有任何限制。"
+      }
+    },
+    "plans": {
+      "eyebrow": "选择方案 · 免费 3 天",
+      "annual": {
+        "label": "年付",
+        "unit": "/ 年",
+        "badge": "省 89%",
+        "sublabel": "每周仅 $0.77，按年计费"
+      },
+      "monthly": {
+        "label": "月付",
+        "unit": "/ 月",
+        "sublabel": "灵活——随时取消"
+      },
+      "weekly": {
+        "label": "周付",
+        "unit": "/ 周",
+        "sublabel": "先试试看"
+      }
+    },
+    "cta": {
+      "processing": "处理中…",
+      "startTrial": "开始 3 天免费试用"
+    },
+    "fineprint": {
+      "annual": "前 3 天免费，之后 {{price}} / 年。除非在到期前至少 24 小时取消，否则将自动续订。",
+      "monthly": "前 3 天免费，之后 {{price}} / 月。除非在到期前至少 24 小时取消，否则将自动续订。",
+      "weekly": "前 3 天免费，之后 {{price}} / 周。除非在到期前至少 24 小时取消，否则将自动续订。"
+    },
+    "legal": {
+      "restore": "恢复购买",
+      "terms": "条款",
+      "privacy": "隐私"
+    },
+    "alerts": {
+      "welcomeTitle": "欢迎使用 Pro",
+      "welcomeBody": "你的免费试用已开始。用冰箱食材生成无限 AI 食谱吧！",
+      "pendingTitle": "等待批准",
+      "pendingBody": "你的购买正在等待 Apple ID 批准。",
+      "purchaseFailedTitle": "购买失败",
+      "restoredTitle": "已恢复",
+      "restoredBody": "你的订阅已重新生效。",
+      "nothingToRestoreTitle": "没有可恢复的内容",
+      "nothingToRestoreBody": "此 Apple ID 上未找到有效订阅。",
+      "restoreFailedTitle": "恢复失败",
+      "couldNotOpenLinkTitle": "无法打开链接",
+      "unknownError": "未知错误"
+    }
+  },
+  "auth": {
+    "wordmark": "FRESHCHECK",
+    "title": {
+      "signIn": "欢迎回来",
+      "signUp": "加入 FreshCheck"
+    },
+    "labels": {
+      "email": "邮箱",
+      "password": "密码"
+    },
+    "placeholders": {
+      "email": "you@example.com",
+      "passwordSignIn": "你的密码",
+      "passwordSignUp": "至少 6 个字符"
+    },
+    "cta": {
+      "submitting": "...",
+      "signIn": "登录",
+      "createAccount": "创建账户",
+      "toggleToSignUp": "还没有账户？注册",
+      "toggleToSignIn": "已有账户？登录",
+      "continueAsGuest": "以访客身份继续"
+    },
+    "legal": {
+      "prefix": "继续即表示你同意",
+      "terms": "条款",
+      "and": "和",
+      "privacy": "隐私政策",
+      "suffix": "。"
+    },
+    "alerts": {
+      "signInTitle": "登录",
+      "signUpTitle": "注册",
+      "notConfigured": "此版本未配置 Supabase。以访客身份继续，即可在本地继续使用应用。",
+      "checkEmailTitle": "请查收邮件",
+      "checkEmailMessage": "我们已向 {{email}} 发送确认链接。点击链接后，返回此处登录。",
+      "ok": "好"
+    },
+    "errors": {
+      "signInFailedTitle": "登录失败",
+      "signUpFailedTitle": "注册失败",
+      "invalidCredentials": "请输入有效的邮箱和至少 6 个字符的密码。"
+    },
+    "a11y": {
+      "back": "返回",
+      "email": "邮箱",
+      "password": "密码",
+      "toggleMode": "切换登录模式"
+    }
+  },
+  "scanResult": {
+    "header": {
+      "analysis": "分析"
+    },
+    "verdict": {
+      "fresh": "看起来很新鲜",
+      "safe": "可以放心吃",
+      "soon": "尽快食用",
+      "past": "已过最佳食用期"
+    },
+    "expiry": {
+      "unknown": "保质期未知",
+      "useToday": "今天吃完",
+      "daysLeft_other": "还剩 {{count}} 天"
+    },
+    "empty": {
+      "title": "还没有扫描",
+      "subtitle": "扫描一件食物，在这里查看它的保鲜结论。",
+      "scanNow": "立即扫描"
+    },
+    "labels": {
+      "itemFallback": "食物",
+      "confidence": "{{percent}}% 置信度"
+    },
+    "safetyNote": "仅为外观估计——无法检测细菌。拿不准时，宁可扔掉。",
+    "refine": {
+      "label": "你买回来多久了？",
+      "justGotIt": "刚买的",
+      "daysAgo_other": "{{count}} 天前",
+      "adjusted_other": "已调整为还剩 {{count}} 天"
+    },
+    "cta": {
+      "addToFridge": "添加到冰箱",
+      "scanAnother": "再扫一件"
+    },
+    "alerts": {
+      "signInRequiredTitle": "需要登录",
+      "signInRequiredMessage": "登录后即可把食物保存到冰箱。",
+      "cancel": "取消",
+      "signIn": "登录",
+      "couldNotSaveTitle": "无法保存"
+    },
+    "a11y": {
+      "back": "返回",
+      "fewerDays": "减少天数",
+      "moreDays": "增加天数"
+    }
+  },
+  "home": {
+    "wordmark": "FRESHCHECK",
+    "heroTitle": "准备扫描",
+    "heroSubtitle": "对准食物，3 秒出结果。",
+    "tapToScan": "点击扫描",
+    "recipeOfDayEmpty": "用冰箱食材生成食谱",
+    "badgeUnlocked": "已解锁",
+    "sections": {
+      "recipeOfDay": "每日食谱",
+      "freshTips": "保鲜贴士",
+      "storageGuide": "存放指南",
+      "chefTips": "大厨秘诀",
+      "yourBadges": "你的徽章"
+    },
+    "a11y": {
+      "tapToScan": "点击扫描",
+      "openRecipe": "打开 {{name}}",
+      "generateRecipes": "生成食谱"
+    },
+    "freshTips": {
+      "items": {
+        "dangerZone": {
+          "title": "危险温区",
+          "body": "细菌在 4–60°C 之间繁殖最快。煮好的食物要在 2 小时内冷藏。"
+        },
+        "pestoSealedVsOpen": {
+          "title": "青酱：未开封 vs 已开封",
+          "body": "未开封可保存数月。开封后约 5–7 天内用完——或冷冻保存。"
+        },
+        "eggsKeepLonger": {
+          "title": "鸡蛋比你想的更耐放",
+          "body": "冷藏鸡蛋通常在购买后 3–5 周内仍可食用。漂浮测试：新鲜的会沉底。"
+        },
+        "herbsLoveWater": {
+          "title": "香草喜欢水",
+          "body": "把新鲜香草直立插在一杯水里，松松地盖住——保鲜时间约能延长一倍。"
+        },
+        "washBerriesLast": {
+          "title": "浆果最后再洗",
+          "body": "水分会加速发霉。只在准备吃之前才冲洗浆果。"
+        }
+      }
+    }
+  },
+  "storageGuide": {
+    "items": {
+      "bananas": {
+        "name": "香蕉",
+        "store": "放在台面上，远离其他水果",
+        "life": "2–7 天",
+        "temp": "室温"
+      },
+      "berries": {
+        "name": "浆果",
+        "store": "不洗，放进铺有厨房纸的盒子里",
+        "life": "3–7 天",
+        "temp": "冷藏 1–4°C"
+      },
+      "eggs": {
+        "name": "鸡蛋",
+        "store": "放在原包装盒里，置于搁架上（别放门边）",
+        "life": "3–5 周",
+        "temp": "冷藏 ≤4°C"
+      },
+      "leafyGreens": {
+        "name": "绿叶菜",
+        "store": "用干毛巾松松地裹住",
+        "life": "5–7 天",
+        "temp": "冷藏 1–4°C"
+      },
+      "chicken": {
+        "name": "鸡肉",
+        "store": "密封后放在底层搁架",
+        "life": "1–2 天",
+        "temp": "冷藏 ≤4°C"
+      },
+      "cookedLeftovers": {
+        "name": "熟剩菜",
+        "store": "密封容器，2 小时内放凉",
+        "life": "3–4 天",
+        "temp": "冷藏 ≤4°C"
+      },
+      "hardCheese": {
+        "name": "硬奶酪",
+        "store": "用蜡纸/烘焙纸包裹，不要用塑料膜",
+        "life": "3–4 周",
+        "temp": "冷藏 1–4°C"
+      },
+      "tomatoes": {
+        "name": "番茄",
+        "store": "放在台面上，蒂朝下",
+        "life": "4–7 天",
+        "temp": "室温"
+      },
+      "bread": {
+        "name": "面包",
+        "store": "用纸袋常温存放，或冷冻",
+        "life": "2–4 天",
+        "temp": "室温"
+      },
+      "fish": {
+        "name": "鱼",
+        "store": "置于冰上，密封后放底层搁架",
+        "life": "1–2 天",
+        "temp": "冷藏 ≤2°C"
+      },
+      "carrots": {
+        "name": "胡萝卜",
+        "store": "去掉缨子，泡水或装进密封袋",
+        "life": "2–4 周",
+        "temp": "冷藏 1–4°C"
+      },
+      "milk": {
+        "name": "牛奶",
+        "store": "放在最冷的搁架，别放门边",
+        "life": "开封后 5–7 天",
+        "temp": "冷藏 ≤4°C"
+      }
+    }
+  },
+  "chefTips": {
+    "items": {
+      "gordonRamsay": {
+        "name": "Gordon Ramsay",
+        "role": "米其林大厨",
+        "tip": "边做边尝。调味要分层进行，别全留到最后。"
+      },
+      "massimoBottura": {
+        "name": "Massimo Bottura",
+        "role": "Osteria Francescana",
+        "tip": "昨天的面包能成为今天的杰作——千万别浪费。"
+      },
+      "juliaChild": {
+        "name": "Julia Child",
+        "role": "作家兼电视名厨",
+        "tip": "别把锅塞太满——给食物留空间，否则就成了蒸而不是煎。"
+      },
+      "yotamOttolenghi": {
+        "name": "Yotam Ottolenghi",
+        "role": "大厨兼作家",
+        "tip": "出锅前挤一点柠檬汁，几乎能唤醒任何一道菜。"
+      },
+      "marcoPierreWhite": {
+        "name": "Marco Pierre White",
+        "role": "米其林大厨",
+        "tip": "肉做好后要静置——让肉汁重新均匀分布。"
+      },
+      "nigellaLawson": {
+        "name": "Nigella Lawson",
+        "role": "美食作家",
+        "tip": "趁香草还没蔫，把它们泡在橄榄油里冻进冰格。"
+      },
+      "thomasKeller": {
+        "name": "Thomas Keller",
+        "role": "The French Laundry",
+        "tip": "煎之前把肉拍干——水分是焦脆外壳的大敌。"
+      },
+      "saminNosrat": {
+        "name": "Samin Nosrat",
+        "role": "《盐、脂、酸、热》",
+        "tip": "从高处撒盐，让盐均匀落在食物上。"
+      }
+    }
+  },
+  "foodFacts": {
+    "items": {
+      "smellTestLies": {
+        "title": "闻味道会骗人",
+        "body": "沙门氏菌等危险细菌不会改变食物的气味、外观或味道。"
+      },
+      "dangerZone": {
+        "title": "危险温区",
+        "body": "细菌在 4–60°C 之间繁殖最快。剩菜要在 2 小时内冷藏。"
+      },
+      "ripenWithApples": {
+        "title": "用苹果催熟",
+        "body": "苹果和香蕉会释放乙烯——把它们远离绿叶菜，以减缓变质。"
+      },
+      "freezingPausesTime": {
+        "title": "冷冻能让时间暂停",
+        "body": "冷冻杀不死细菌，只是让它们停摆。解冻后它们又会苏醒。"
+      }
+    }
+  },
+  "scanBatch": {
+    "header": "批量扫描",
+    "counter": "已完成 {{done}} · 剩余 {{left}}",
+    "hero": {
+      "scanning": "正在扫描这一批…",
+      "results": "批量结果"
+    },
+    "verdict": {
+      "fresh": "看起来很新鲜",
+      "safe": "可以放心吃",
+      "soon": "尽快食用",
+      "past": "已过最佳食用期"
+    },
+    "expiry": {
+      "unknown": "保质期未知",
+      "today": "今天吃完",
+      "daysLeft_other": "还剩 {{count}} 天"
+    },
+    "empty": {
+      "title": "队列为空",
+      "subtitle": "把扫描器切换到批量模式，拍下几件食物。",
+      "cta": "返回扫描"
+    },
+    "card": {
+      "itemFallback": "食物",
+      "editHint": "点击名称或结论即可编辑",
+      "scanFailed": "扫描失败",
+      "scanFailedHint": "请回到扫描器重新扫描这一件。",
+      "reading": "正在判断新鲜度…",
+      "waiting": "等待中…"
+    },
+    "cta": {
+      "add": "添加",
+      "rescan": "重扫",
+      "done": "完成",
+      "addAll_other": "把 {{count}} 件加入冰箱"
+    },
+    "editPrompt": {
+      "title": "编辑食物",
+      "message": "修正识别出的名称。",
+      "cancel": "取消",
+      "save": "保存",
+      "placeholder": "例如：鸡胸肉"
+    },
+    "signInAlert": {
+      "title": "需要登录",
+      "message": "登录后即可把食物保存到冰箱。",
+      "cancel": "取消",
+      "signIn": "登录"
+    },
+    "saveError": {
+      "title": "无法保存"
+    },
+    "a11y": {
+      "back": "返回",
+      "editName": "编辑名称，当前为 {{name}}",
+      "changeVerdict": "更改新鲜度结论",
+      "addToFridge": "把 {{name}} 加入冰箱",
+      "rescan": "重新扫描这张照片",
+      "done": "完成"
+    }
+  },
+  "profile": {
+    "fallbackName": "你",
+    "guestName": "访客",
+    "status": {
+      "signedIn": "已登录",
+      "notSignedIn": "未登录",
+      "active": "有效"
+    },
+    "sections": {
+      "account": "账户",
+      "pro": "PRO",
+      "notifications": "通知",
+      "about": "关于"
+    },
+    "stats": {
+      "itemsInFridge": "冰箱内食材"
+    },
+    "rows": {
+      "signIn": "登录",
+      "signOut": "退出登录",
+      "email": "邮箱",
+      "deleteAccount": "删除账户",
+      "deleteMyData": "删除我的数据",
+      "freshcheckPro": "FreshCheck Pro",
+      "manageSubscription": "管理订阅",
+      "upgradeToPro": "升级到 FreshCheck Pro",
+      "restorePurchase": "恢复购买",
+      "foodExpiryReminders": "食物过期提醒",
+      "privacyPolicy": "隐私政策",
+      "termsOfService": "服务条款",
+      "support": "支持",
+      "version": "版本"
+    },
+    "labels": {
+      "warnMeBefore": "提前提醒我",
+      "daysShort_other": "{{count}} 天"
+    },
+    "cta": {
+      "cancel": "取消",
+      "save": "保存",
+      "delete": "删除",
+      "keepAccount": "保留账户",
+      "yesDelete": "确认删除",
+      "signOut": "退出登录",
+      "takePhoto": "拍照",
+      "chooseFromLibrary": "从相册选择",
+      "openSettings": "打开设置"
+    },
+    "a11y": {
+      "changeAvatar": "更换头像",
+      "editName": "编辑名称",
+      "daysBefore_other": "提前 {{count}} 天"
+    },
+    "errors": {
+      "unknown": "未知错误"
+    },
+    "alerts": {
+      "photoAccess": {
+        "title": "需要相册权限",
+        "messageCanAsk": "允许访问相册以选择头像。",
+        "messageDenied": "请在设置中开启相册权限，然后返回。"
+      },
+      "cameraAccess": {
+        "title": "需要相机权限",
+        "messageCanAsk": "允许访问相机以拍照。",
+        "messageDenied": "请在设置中开启相机权限，然后返回。"
+      },
+      "changePhoto": {
+        "title": "更换照片",
+        "message": "选择一张新的头像照片"
+      },
+      "editName": {
+        "title": "你的名字",
+        "message": "我们该怎么称呼你？"
+      },
+      "signOut": {
+        "title": "退出登录",
+        "message": "要退出 FreshCheck 吗？"
+      },
+      "restored": {
+        "title": "已恢复",
+        "message": "你的订阅已重新生效。"
+      },
+      "nothingToRestore": {
+        "title": "没有可恢复的内容",
+        "message": "此 Apple ID 上未找到有效订阅。"
+      },
+      "restoreFailed": {
+        "title": "恢复失败"
+      },
+      "linkFailed": {
+        "title": "无法打开链接"
+      },
+      "deleteAccount": {
+        "title": "删除账户",
+        "message": "这将永久删除你的账户、冰箱食材和扫描记录。此操作无法撤销。"
+      },
+      "deleteConfirm": {
+        "title": "你确定吗？",
+        "message": "这是保留数据的最后机会。点击“确认删除”即永久移除你的账户。"
+      },
+      "notSignedIn": {
+        "title": "未登录",
+        "message": "请先登录。"
+      },
+      "deletionFailed": {
+        "title": "删除失败",
+        "message": "请重试或联系客服。"
+      },
+      "accountDeleted": {
+        "title": "账户已删除",
+        "message": "你的账户和数据已被移除。"
+      }
+    }
+  },
+  "recipeDetail": {
+    "loading": {
+      "title": "正在加载食谱…",
+      "subtitle": "正在为你生成新鲜食谱"
+    },
+    "empty": {
+      "title": "未找到食谱",
+      "subtitle": "返回再挑一份食谱吧。"
+    },
+    "meta": {
+      "time": "用时",
+      "difficulty": "难度",
+      "fromFridge": "来自冰箱",
+      "minutes_other": "{{count}} 分钟"
+    },
+    "difficulty": {
+      "easy": "简单",
+      "medium": "中等",
+      "hard": "困难"
+    },
+    "sections": {
+      "ingredients": "食材",
+      "steps": "步骤"
+    },
+    "badges": {
+      "have": "已有"
+    },
+    "stepLabel": {
+      "prep": "备料",
+      "cook": "烹饪",
+      "mix": "拌合",
+      "wait": "等待",
+      "serve": "装盘"
+    },
+    "steps": {
+      "header": "第 {{order}} 步 · {{label}}",
+      "minutes": "{{minutes}} 分钟"
+    },
+    "a11y": {
+      "back": "返回",
+      "saveRecipe": "收藏食谱",
+      "removeFromSaved": "取消收藏"
+    }
+  },
+  "recipeBuilder": {
+    "header": {
+      "title": "定制食谱",
+      "subtitle": "你的厨房里有什么？",
+      "intro": "添加你现有的食材——也可以注明用量——我们会围绕它们生成食谱。"
+    },
+    "sections": {
+      "addIngredients": "添加食材",
+      "cookingMethod": "烹饪方式",
+      "maxTime": "最长用时"
+    },
+    "placeholders": {
+      "amount": "200",
+      "name": "鸡胸肉"
+    },
+    "methods": {
+      "any": "不限",
+      "bake": "烘烤",
+      "fry": "煎炸",
+      "boil": "水煮",
+      "grill": "炙烤",
+      "steam": "清蒸",
+      "noCook": "免煮",
+      "slowCook": "慢炖"
+    },
+    "times": {
+      "any": "不限",
+      "under15": "≤15 分钟",
+      "under30": "≤30 分钟",
+      "under45": "≤45 分钟",
+      "under60": "≤60 分钟"
+    },
+    "units": {
+      "g": "克",
+      "pcs": "个",
+      "cups": "杯",
+      "tbsp": "汤匙",
+      "tsp": "茶匙",
+      "ml": "毫升"
+    },
+    "toggle": {
+      "title": "只用这些食材",
+      "sub": "关闭后我们可加入常见辅料（油、盐、香料）。"
+    },
+    "cta": {
+      "generate": "生成食谱"
+    },
+    "errors": {
+      "notFood": "请输入真实的食材"
+    },
+    "alerts": {
+      "addIngredientsTitle": "添加食材",
+      "addIngredientsMessage": "至少添加一种食材才能生成食谱。",
+      "couldNotGenerateTitle": "无法生成",
+      "tryAgain": "请稍后重试。"
+    },
+    "a11y": {
+      "back": "返回",
+      "addIngredient": "添加食材"
+    }
+  },
+  "recipes": {
+    "eyebrow": "食谱",
+    "hero": {
+      "title": "用现有食材下厨",
+      "titleEmpty": "入门食谱",
+      "subtitle": "由 AI 根据你的冰箱定制",
+      "subtitleEmpty": "扫描食材获取专属推荐"
+    },
+    "cook": {
+      "title": "用现有食材下厨",
+      "titleEmpty": "生成入门食谱",
+      "subtitle": "挑选冰箱食材 → 3 份新鲜食谱",
+      "subtitleEmpty": "3 个简单点子，可照单采购"
+    },
+    "build": {
+      "title": "定制你自己的食谱",
+      "subtitle": "输入食材、做法和用时"
+    },
+    "emptyBanner": "你的冰箱是空的——这些是通用的入门点子。先扫描几件食材，即可获得围绕你实际所有食材定制的食谱。",
+    "sections": {
+      "saved": "★ 已收藏"
+    },
+    "errors": {
+      "dailyLimitTitle": "已达每日上限",
+      "generateFailedTitle": "无法生成食谱",
+      "unlockUnlimited": "解锁无限食谱"
+    },
+    "labels": {
+      "minutesShort": "{{count}} 分钟",
+      "fromFridge_other": "{{count}} 件来自冰箱",
+      "today": "今天",
+      "daysShort": "{{count}} 天"
+    },
+    "sheet": {
+      "title": "用现有食材下厨",
+      "subtitle": "挑选食材来生成食谱。我们会优先选用最快过期的食材。"
+    },
+    "cta": {
+      "generateFromItems_other": "用 {{count}} 件食材生成"
+    },
+    "a11y": {
+      "generateStarter": "生成入门食谱",
+      "cookWithWhatYouHave": "用现有食材下厨",
+      "buildCustom": "定制食谱",
+      "upgradeToPro": "升级到 FreshCheck Pro",
+      "openRecipe": "打开 {{name}}",
+      "recipeCard_other": "{{name}}，{{count}} 分钟",
+      "removeFromSaved": "取消收藏",
+      "saveRecipe": "收藏食谱",
+      "removeRecipe": "移除 {{name}}",
+      "close": "关闭"
+    }
+  },
+  "capture": {
+    "header": {
+      "scan": "扫描"
+    },
+    "a11y": {
+      "back": "返回",
+      "capture": "拍摄",
+      "scanWholeTable": "扫描整桌食物",
+      "choosePhotoFromLibrary": "从相册选择照片",
+      "reviewScans_other": "查看 {{count}} 项扫描"
+    },
+    "modes": {
+      "single": "单件",
+      "batch": "批量",
+      "barcode": "条码"
+    },
+    "hints": {
+      "barcode": "对准条形码",
+      "batch": "点击添加 · 扫描在后台进行",
+      "single": "对准食物 · 点击拍摄"
+    },
+    "freeScansLeft_other": "今天还剩 {{count}} 次免费扫描",
+    "status": {
+      "analyzing": "正在分析…",
+      "lookingUpProduct": "正在查询商品…",
+      "readingFreshness": "正在判断新鲜度…",
+      "findingItems": "正在查找食物…",
+      "capturing": "正在拍摄…",
+      "loadingPhoto": "正在加载照片…",
+      "preparingScan": "正在准备扫描…",
+      "loadingCamera": "正在加载相机…"
+    },
+    "analyzingSub": {
+      "stillWorking": "仍在处理… {{seconds}} 秒",
+      "default": "这可能需要几秒钟"
+    },
+    "cta": {
+      "scanWholeTable": "📋  扫描整桌食物",
+      "reviewScans_other": "查看 {{count}} 项扫描",
+      "allowCamera": "允许相机",
+      "openSettings": "打开设置",
+      "chooseFromLibrary": "改为从相册选择",
+      "back": "返回"
+    },
+    "gate": {
+      "serviceUnavailable": {
+        "title": "服务不可用",
+        "message": "扫描功能暂时不可用。请稍后重试。"
+      },
+      "cameraOff": {
+        "title": "相机已关闭",
+        "messageCanAsk": "FreshCheck 需要相机权限才能扫描食物。",
+        "messageDenied": "请在设置中开启相机权限，然后返回。"
+      }
+    },
+    "barcode": {
+      "expiryText": "约还剩 {{days}} 天"
+    },
+    "errors": {
+      "scanFailed": "扫描失败。",
+      "couldNotScan": "无法扫描。",
+      "couldNotCapture": "无法拍摄照片。"
+    },
+    "alerts": {
+      "cancel": "取消",
+      "productNotFound": {
+        "title": "未找到商品",
+        "message": "暂时找不到与该条码匹配的商品。请改用照片扫描。"
+      },
+      "couldNotAdd": {
+        "title": "无法添加"
+      },
+      "addedToFridge": {
+        "title": "已加入冰箱",
+        "message": "{{product}} · 可保存约 {{days}} 天"
+      },
+      "severalItems": {
+        "title": "检测到多件食物",
+        "message": "这张照片里似乎有多种食物。是全部扫描，还是只扫主要那一件？",
+        "justMain": "只扫主要那件",
+        "scanAll": "扫描全部食物"
+      },
+      "scanFailed": {
+        "title": "扫描失败"
+      },
+      "noFoodFound": {
+        "title": "未发现食物",
+        "message": "在这张照片里没能识别出任何食物。试着靠近一点或换更好的光线。"
+      },
+      "preparingScan": {
+        "title": "正在准备扫描",
+        "message": "请稍候片刻再试。"
+      },
+      "photoAccess": {
+        "title": "需要相册权限",
+        "messageCanAsk": "允许访问相册以从你的相册中选择食物照片。",
+        "messageDenied": "请在设置中开启相册权限，然后返回。"
+      },
+      "dailyScanLimit": {
+        "title": "每日扫描上限",
+        "message": "已添加 {{added}} / {{total}} 张照片——今天的免费扫描已用完。升级到 Pro 即可无限扫描。"
+      }
+    }
+  },
+  "loaders": {
+    "cooking": {
+      "readingFridge": "正在读取你冰箱里的食材…",
+      "prioritising": "正在优先选用最快过期的食材…",
+      "pairingFlavours": "正在搭配协调的风味…",
+      "writingSteps": "正在编写步骤…",
+      "platingUp": "正在装盘 3 个点子…",
+      "eta": "约 {{seconds}} 秒 · 照片随后加载"
+    },
+    "image": {
+      "plating": "正在为你的菜品装盘",
+      "generating": "正在生成专属食谱",
+      "simmering": "正在细细打磨细节",
+      "pickingIngredients": "正在挑选新鲜食材"
+    }
+  },
+  "foods": {
+    "reasons": {
+      "tooShort": "太短",
+      "tooLong": "太长",
+      "lettersOnly": "只能是文字——不含数字或符号",
+      "notRealIngredient": "这看起来不像真实的食材"
+    }
+  },
+  "scan": {
+    "timeout": "这次比平常久了一些——请重试。",
+    "unreachable": "无法连接扫描服务。请检查网络后重试。",
+    "failed": "扫描失败"
+  },
+  "fridge": {
+    "title": "我的冰箱",
+    "eyebrow": "库存状态",
+    "recipesLink": "用冰箱食材做的食谱",
+    "a11y": {
+      "viewRecipes": "查看用冰箱食材做的食谱"
+    },
+    "categories": {
+      "all": "全部",
+      "produce": "果蔬",
+      "dairy": "乳制品",
+      "poultry": "禽类",
+      "meat": "肉类",
+      "fish": "鱼类",
+      "bakery": "烘焙",
+      "pantry": "常备"
+    },
+    "empty": {
+      "title": "冰箱是空的",
+      "body": "扫描一件食物，开始追踪冰箱里的内容以及它们什么时候会变质。",
+      "cta": "扫描第一件"
+    },
+    "footer": {
+      "tracked_other": "已追踪 {{shown}} / {{count}} 件食材",
+      "swipeHint": "向左滑动卡片即可移除"
+    },
+    "alerts": {
+      "removeFailedTitle": "无法移除",
+      "loadFailedTitle": "无法加载冰箱"
+    }
+  }
+}

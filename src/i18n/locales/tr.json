@@ -1,1 +1,1154 @@
-{}
+{
+  "common": {
+    "appName": "FreshCheck",
+    "continue": "Devam et",
+    "getStarted": "Başla",
+    "back": "Geri",
+    "cancel": "Vazgeç",
+    "save": "Kaydet",
+    "done": "Tamam",
+    "tryAgain": "Tekrar dene",
+    "next": "İleri",
+    "skip": "Atla",
+    "ok": "Tamam",
+    "dayUnit_one": "GÜN",
+    "dayUnit_other": "GÜN",
+    "tabA11y": "{{label}} sekmesi",
+    "productRow": {
+      "a11yDaysLeft_one": "{{name}}, {{count}} gün kaldı",
+      "a11yDaysLeft_other": "{{name}}, {{count}} gün kaldı",
+      "delete": "SİL",
+      "deleteA11y": "{{name}} sil"
+    },
+    "achievements": {
+      "unlocked": "BAŞARIM AÇILDI",
+      "items": {
+        "first_scan": {
+          "title": "İlk Bakış",
+          "desc": "İlk yiyeceğini tara"
+        },
+        "scan_10": {
+          "title": "Keskin Göz",
+          "desc": "10 yiyecek tara"
+        },
+        "scan_50": {
+          "title": "Güvenlik Ustası",
+          "desc": "50 yiyecek tara"
+        },
+        "first_recipe": {
+          "title": "Ev Aşçısı",
+          "desc": "İlk tarifini oluştur"
+        },
+        "recipe_10": {
+          "title": "Tarif Kâşifi",
+          "desc": "10 tarif oluştur"
+        },
+        "fridge_5": {
+          "title": "Stok Tamam",
+          "desc": "5 buzdolabı ürünü takip et"
+        },
+        "streak_3": {
+          "title": "Taze Başlangıç",
+          "desc": "FreshCheck'i 3 gün kullan"
+        },
+        "streak_7": {
+          "title": "İsraf Savaşçısı",
+          "desc": "FreshCheck'i 7 gün kullan"
+        }
+      }
+    }
+  },
+  "errorBoundary": {
+    "title": "Bir şeyler ters gitti",
+    "message": "Beklenmeyen bir hata oluştu. Tekrar deneyin veya sorun sürerse uygulamayı yeniden başlatın.",
+    "retry": "Tekrar dene"
+  },
+  "att": {
+    "headlineFamily": "FreshCheck'i aileniz için daha iyi yapın",
+    "headlineYou": "FreshCheck'i sizin için daha iyi yapın",
+    "bodyFamily": "İzninizle, hangi özelliklerin sizin gibi ebeveynlere gerçekten yardımcı olduğunu ölçüyoruz — böylece önemli olan kısımları geliştirmeyi sürdürebiliyoruz.",
+    "bodyYou": "İzninizle, hangi özelliklerin sizin gibi insanlara gerçekten yardımcı olduğunu ölçüyoruz — böylece önemli olan kısımları geliştirmeyi sürdürebiliyoruz.",
+    "privacy": "Kişisel verilerinizi asla satmayız ve taramalarınız her zaman gizli kalır.",
+    "micro": "Sonraki ekranda izin verebilir veya reddedebilirsiniz. FreshCheck her iki durumda da tam çalışır ve bunu istediğiniz zaman Ayarlar'dan değiştirebilirsiniz.",
+    "continue": "Devam et"
+  },
+  "building": {
+    "pct": "%{{pct}}",
+    "stages": {
+      "stage0": {
+        "title": "Buzdolabı alışkanlıklarınız okunuyor",
+        "detail": "Ne aldığınız, neyi unuttuğunuz"
+      },
+      "stage1": {
+        "title": "Evinizde en hızlı bozulanlar belirleniyor",
+        "detail": "Hiçbir şey tarihini geçirmesin diye"
+      },
+      "stage2": {
+        "title": "Tazelik uyarıları ayarlanıyor",
+        "detail": "En çok israf ettiğinize göre düzenleniyor"
+      },
+      "stage3": {
+        "title": "En önce bozulacaklar için tarifler sıralanıyor",
+        "detail": "Zaten elinizde olanlardan akşam yemeği"
+      },
+      "stage4": {
+        "title": "Tazelik planınız şekilleniyor",
+        "detail": "Neredeyse hazır"
+      }
+    },
+    "badge": {
+      "withName": "{{name}}, planınız size özel — şablon değil",
+      "noName": "Planınız size özel — şablon değil"
+    }
+  },
+  "onboarding": {
+    "cta": {
+      "getStarted": "Başla",
+      "continue": "Devam et"
+    },
+    "slides": {
+      "waste": {
+        "title": "Sağlam yiyeceği bir daha asla çöpe atmayın",
+        "body": "FreshCheck neyin hâlâ sağlam olduğunu söyler ve bozulmadan önce sizi uyarır.",
+        "proof": "Aileler yılda yaklaşık 2.913 $ tasarruf ediyor"
+      },
+      "scan": {
+        "title": "Bu hâlâ güvenli mi? 3 saniyede öğrenin",
+        "body": "Kameranızı herhangi bir yiyeceğe tutun, anında karar alın — güvenli, dikkat veya at gitsin."
+      },
+      "timeline": {
+        "title": "Tüm buzdolabınız, bir tazelik akışında",
+        "body": "Sahip olduğunuz her şey, en önce bozulacağa göre sıralı. Hiçbir şey bir daha arkada unutulmasın."
+      },
+      "recipes": {
+        "title": "Bu akşamın yemeği, zaten elinizdekilerden",
+        "body": "Tek dokunuş, yakında bozulacak malzemelerinizi 3 taze yapay zekâ tarifine dönüştürür."
+      },
+      "barcode": {
+        "title": "Barkodu tarayın, gerisini biz takip edelim",
+        "body": "Paketli ürünleri saniyeler içinde ekleyin — sadece barkodu tarayın, biz kaydedelim."
+      }
+    }
+  },
+  "personalize": {
+    "progress": "Adım {{current}} / {{total}}",
+    "namePlaceholder": "Adınız",
+    "a11y": {
+      "back": "geri"
+    },
+    "cta": {
+      "buildPlan": "Planımı oluştur",
+      "continue": "Devam et"
+    },
+    "questions": {
+      "household": {
+        "q": "Kimin için taze tutuyorsunuz?",
+        "options": {
+          "me": "Sadece ben",
+          "partner": "Ben ve eşim",
+          "family": "Çocuklu bir aile",
+          "roommates": "Ev arkadaşlı bir ev"
+        }
+      },
+      "topWaste": {
+        "q": "En çok neyi çöpe atıyorsunuz?",
+        "sub": "Geçerli olanların hepsini seçin",
+        "options": {
+          "leftovers": "Artıklar",
+          "produce": "Sebze ve yeşillik",
+          "dairy": "Süt ürünleri",
+          "meat": "Et ve tavuk",
+          "bread": "Ekmek"
+        }
+      },
+      "worry": {
+        "q": "Yiyecek konusunda en çok ne sizi kaygılandırıyor?",
+        "options": {
+          "sick": "Birini hasta etmek",
+          "money": "Para israf etmek",
+          "spoiled": "Bozuk bir şey yemek",
+          "unsure": "Neyin hâlâ sağlam olduğunu bilmemek"
+        }
+      },
+      "forgotten": {
+        "q": "Artıklar ne sıklıkla buzdolabının arkasında unutuluyor?",
+        "options": {
+          "constantly": "Sürekli",
+          "weekly": "Çoğu hafta",
+          "sometimes": "Bazen",
+          "rarely": "Nadiren"
+        }
+      },
+      "dinner": {
+        "q": "Akşam yemeğine nasıl karar veriyorsunuz?",
+        "options": {
+          "plan": "Önceden planlarım",
+          "wing": "Doğaçlama yaparım",
+          "expiring": "Neredeyse bozulacak ne varsa",
+          "order": "Sık sık dışarıdan söylerim"
+        }
+      },
+      "name": {
+        "q": "Son bir şey — size nasıl hitap edelim?",
+        "sub": "İsteğe bağlı"
+      }
+    }
+  },
+  "yourPlan": {
+    "eyebrowNamed": "{{name}} PLANI",
+    "eyebrowDefault": "FRESHCHECK PLANINIZ",
+    "watchLabel": "GÖZÜMÜZ ŞUNUN ÜZERİNDE OLACAK",
+    "whatIsInside": "İÇİNDE NELER VAR",
+    "socialProof": "FreshCheck ile yılda yaklaşık 2.913 $ tasarruf eden ailelere katılın.",
+    "cta": {
+      "seeMyPlan": "Planımı gör"
+    },
+    "waste": {
+      "leftovers": "Artıklar",
+      "produce": "Sebze ve yeşillik",
+      "dairy": "Süt ürünleri",
+      "meat": "Et ve tavuk",
+      "bread": "Ekmek"
+    },
+    "benefits": {
+      "verdict": {
+        "title": "Anında güvenli / dikkat / tehlike kararı",
+        "sub": "Herhangi bir yiyeceği tara, 3 saniyede öğren."
+      },
+      "timeline": {
+        "title": "Buzdolabınız bir tazelik akışında",
+        "sub": "Her şey en önce bozulacağa göre sıralı."
+      },
+      "recipes": {
+        "title": "Bozulmak üzere olanlardan tarifler",
+        "sub": "Yakında bozulacak ürünleri akşam yemeğine dönüştür."
+      }
+    },
+    "tiles": {
+      "dailyScans": "Günlük tazelik taramaları",
+      "fridgeTimeline": "Buzdolabı akışı",
+      "expiryReminders": "Son kullanım hatırlatıcıları",
+      "unlimitedScans": "Sınırsız tarama",
+      "unlimitedRecipes": "Sınırsız yapay zekâ tarifleri",
+      "barcodeImport": "Barkodla içe aktarma"
+    }
+  },
+  "plan": {
+    "wasteLower": {
+      "leftovers": "artıklar",
+      "produce": "sebze ve yeşillik",
+      "dairy": "süt ürünleri",
+      "meat": "et ve tavuk",
+      "bread": "ekmek"
+    },
+    "household": {
+      "family": "yoğun aile aşçısı",
+      "partner": "iki kişilik mutfak",
+      "roommates": "paylaşımlı ev",
+      "solo": "tek kişilik aşçı"
+    },
+    "headlineWithWaste": "Siz tam bir {{who}} sayılırsınız — {{waste}} gözümüzde olacak.",
+    "headlineFallback": "Siz tam bir {{who}} sayılırsınız — FreshCheck buzdolabınızı sizin yerinize izleyecek.",
+    "fear": {
+      "sick": "Riskli olan her şeyi sofranıza gelmeden işaretleriz.",
+      "money": "Her hafta ~56 $ değerinde alışverişi çöpe atmayı bırakın.",
+      "spoiled": "Neyin hâlâ sağlam olduğunu her zaman bir bakışta bileceksiniz.",
+      "default": "Bir şeyin hâlâ yenebilir olup olmadığını bir daha tahmin etmeyin."
+    }
+  },
+  "paywall": {
+    "eyebrow": "FRESHCHECK PRO",
+    "a11y": {
+      "close": "kapat",
+      "planOption": "{{label}} plan, {{price}} {{unit}}"
+    },
+    "hero": {
+      "scanLimit": {
+        "title": "Bugünkü ücretsiz taramalarınızı kullandınız",
+        "subtitle": "Sınırsıza geçin — mutfağınızdaki her şeyi istediğiniz zaman tarayın."
+      },
+      "barcode": {
+        "title": "Barkod tarama bir Pro özelliğidir",
+        "subtitle": "Herhangi bir ürün barkodunu tarayın ve doğrudan buzdolabınıza ekleyin."
+      },
+      "recipeLimit": {
+        "title": "Bugünkü ücretsiz tarif oluşturma hakkınızı kullandınız",
+        "subtitle": "Buzdolabınızdaki her şeyden sınırsız yapay zekâ tarifi — her gün."
+      },
+      "default": {
+        "title": "FreshCheck Pro'yu açın",
+        "subtitle": "Buzdolabınızdakileri tariflere dönüştürün ve bir daha asla yiyecek atmayın."
+      }
+    },
+    "trust": {
+      "family": "ORTALAMA BİR AİLEYE YILDA 2.913 $ KAZANDIRIR",
+      "household": "ORTALAMA BİR HANE YILDA 2.913 $ TASARRUF EDER"
+    },
+    "features": {
+      "header": "PRO'DA HER ŞEY",
+      "unlimitedScans": {
+        "title": "Sınırsız tarama",
+        "body": "İstediğiniz kadar ürün tarayın, günlük sınır yok."
+      },
+      "unlimitedRecipes": {
+        "title": "Sınırsız yapay zekâ tarifleri",
+        "body": "Buzdolabınızdan istediğiniz zaman taze tarifler oluşturun, günlük sınır yok."
+      },
+      "barcodeAdd": {
+        "title": "Barkodla kilere ekleme",
+        "body": "Bir ürün barkodunu tarayıp doğrudan buzdolabınıza ekleyin."
+      },
+      "wholeTable": {
+        "title": "Tüm masayı tarama",
+        "body": "Tek fotoğraf, masadaki her ürün — istediğiniz kadar sık."
+      },
+      "batchScanning": {
+        "title": "Hızlı toplu tarama",
+        "body": "Tüm market alışverişinizi peş peşe tarayın, sınır yok."
+      }
+    },
+    "plans": {
+      "eyebrow": "PLANINIZI SEÇİN · 3 GÜN ÜCRETSİZ",
+      "annual": {
+        "label": "Yıllık",
+        "unit": "/ yıl",
+        "badge": "%89 İNDİRİM",
+        "sublabel": "Haftada sadece 0,77 $, yıllık faturalanır"
+      },
+      "monthly": {
+        "label": "Aylık",
+        "unit": "/ ay",
+        "sublabel": "Esnek — istediğiniz zaman iptal edin"
+      },
+      "weekly": {
+        "label": "Haftalık",
+        "unit": "/ hafta",
+        "sublabel": "Sadece denemek için"
+      }
+    },
+    "cta": {
+      "processing": "İşleniyor…",
+      "startTrial": "3 günlük ücretsiz denemeyi başlat"
+    },
+    "fineprint": {
+      "annual": "İlk 3 gün ücretsiz, ardından yılda {{price}}. Dönem bitmeden en az 24 saat önce iptal edilmezse otomatik yenilenir.",
+      "monthly": "İlk 3 gün ücretsiz, ardından ayda {{price}}. Dönem bitmeden en az 24 saat önce iptal edilmezse otomatik yenilenir.",
+      "weekly": "İlk 3 gün ücretsiz, ardından haftada {{price}}. Dönem bitmeden en az 24 saat önce iptal edilmezse otomatik yenilenir."
+    },
+    "legal": {
+      "restore": "Geri yükle",
+      "terms": "Koşullar",
+      "privacy": "Gizlilik"
+    },
+    "alerts": {
+      "welcomeTitle": "Pro'ya hoş geldiniz",
+      "welcomeBody": "Ücretsiz denemeniz başladı. Buzdolabınızdan sınırsız yapay zekâ tarifi oluşturun!",
+      "pendingTitle": "Onay bekleniyor",
+      "pendingBody": "Satın alımınız Apple ID onayını bekliyor.",
+      "purchaseFailedTitle": "Satın alma başarısız",
+      "restoredTitle": "Geri yüklendi",
+      "restoredBody": "Aboneliğiniz yeniden etkin.",
+      "nothingToRestoreTitle": "Geri yüklenecek bir şey yok",
+      "nothingToRestoreBody": "Bu Apple ID'de etkin abonelik bulunamadı.",
+      "restoreFailedTitle": "Geri yükleme başarısız",
+      "couldNotOpenLinkTitle": "Bağlantı açılamadı",
+      "unknownError": "Bilinmeyen hata"
+    }
+  },
+  "auth": {
+    "wordmark": "FRESHCHECK",
+    "title": {
+      "signIn": "Tekrar hoş geldiniz",
+      "signUp": "FreshCheck'e katılın"
+    },
+    "labels": {
+      "email": "E-POSTA",
+      "password": "PAROLA"
+    },
+    "placeholders": {
+      "email": "sen@ornek.com",
+      "passwordSignIn": "Parolanız",
+      "passwordSignUp": "En az 6 karakter"
+    },
+    "cta": {
+      "submitting": "...",
+      "signIn": "Giriş yap",
+      "createAccount": "Hesap oluştur",
+      "toggleToSignUp": "Hesabınız yok mu? Kaydolun",
+      "toggleToSignIn": "Zaten hesabınız var mı? Giriş yapın",
+      "continueAsGuest": "Misafir olarak devam et"
+    },
+    "legal": {
+      "prefix": "Devam ederek şunları kabul edersiniz:",
+      "terms": "Koşullar",
+      "and": "ve",
+      "privacy": "Gizlilik Politikası",
+      "suffix": "."
+    },
+    "alerts": {
+      "signInTitle": "Giriş yap",
+      "signUpTitle": "Kaydol",
+      "notConfigured": "Bu sürümde Supabase yapılandırılmamış. Uygulamayı yerel olarak kullanmayı sürdürmek için misafir olarak devam edin.",
+      "checkEmailTitle": "E-postanızı kontrol edin",
+      "checkEmailMessage": "{{email}} adresine bir onay bağlantısı gönderdik. Bağlantıya dokunun, sonra geri dönüp giriş yapın.",
+      "ok": "Tamam"
+    },
+    "errors": {
+      "signInFailedTitle": "Giriş başarısız",
+      "signUpFailedTitle": "Kayıt başarısız",
+      "invalidCredentials": "Geçerli bir e-posta ve en az 6 karakterli bir parola girin."
+    },
+    "a11y": {
+      "back": "geri",
+      "email": "e-posta",
+      "password": "parola",
+      "toggleMode": "kimlik doğrulama modunu değiştir"
+    }
+  },
+  "scanResult": {
+    "header": {
+      "analysis": "ANALİZ"
+    },
+    "verdict": {
+      "fresh": "Taze görünüyor",
+      "safe": "Yenebilir",
+      "soon": "Yakında tüketin",
+      "past": "En iyi günlerini geçmiş"
+    },
+    "expiry": {
+      "unknown": "Raf ömrü bilinmiyor",
+      "useToday": "Bugün tüketin",
+      "daysLeft_one": "{{count}} gün kaldı",
+      "daysLeft_other": "{{count}} gün kaldı"
+    },
+    "empty": {
+      "title": "Henüz tarama yok",
+      "subtitle": "Tazelik kararını burada görmek için bir ürün tarayın.",
+      "scanNow": "Şimdi tara"
+    },
+    "labels": {
+      "itemFallback": "ürün",
+      "confidence": "%{{percent}} güven"
+    },
+    "safetyNote": "Yalnızca görsel tahmin — bakteri tespit etmez. Şüphedeyseniz çöpe atın.",
+    "refine": {
+      "label": "NE ZAMANDIR SİZDE?",
+      "justGotIt": "Yeni aldım",
+      "daysAgo_one": "{{count}} gün önce",
+      "daysAgo_other": "{{count}} gün önce",
+      "adjusted_one": "{{count}} gün kalacak şekilde ayarlandı",
+      "adjusted_other": "{{count}} gün kalacak şekilde ayarlandı"
+    },
+    "cta": {
+      "addToFridge": "Buzdolabına Ekle",
+      "scanAnother": "Başka Tara"
+    },
+    "alerts": {
+      "signInRequiredTitle": "Giriş gerekli",
+      "signInRequiredMessage": "Ürünleri buzdolabınıza kaydetmek için giriş yapın.",
+      "cancel": "Vazgeç",
+      "signIn": "Giriş yap",
+      "couldNotSaveTitle": "Kaydedilemedi"
+    },
+    "a11y": {
+      "back": "geri",
+      "fewerDays": "daha az gün",
+      "moreDays": "daha fazla gün"
+    }
+  },
+  "home": {
+    "wordmark": "FRESHCHECK",
+    "heroTitle": "Taramaya Hazır",
+    "heroSubtitle": "Yiyeceğe tutun. 3 saniyede sonuç.",
+    "tapToScan": "TARAMAK İÇİN DOKUN",
+    "recipeOfDayEmpty": "Buzdolabınızdan tarifler oluşturun",
+    "badgeUnlocked": "Açıldı",
+    "sections": {
+      "recipeOfDay": "GÜNÜN TARİFİ",
+      "freshTips": "TAZE İPUÇLARI",
+      "storageGuide": "SAKLAMA REHBERİ",
+      "chefTips": "ŞEF İPUÇLARI",
+      "yourBadges": "ROZETLERİNİZ"
+    },
+    "a11y": {
+      "tapToScan": "Taramak için dokun",
+      "openRecipe": "{{name}} aç",
+      "generateRecipes": "tarif oluştur"
+    },
+    "freshTips": {
+      "items": {
+        "dangerZone": {
+          "title": "Tehlike bölgesi",
+          "body": "Bakteriler en hızlı 4–60°C arasında çoğalır. Artıkları pişirdikten sonra 2 saat içinde buzdolabına koyun."
+        },
+        "pestoSealedVsOpen": {
+          "title": "Pesto: kapalı ve açık",
+          "body": "Kapalı bir kavanoz aylarca dayanır. Açıldıktan sonra yaklaşık 5–7 gün içinde tüketin — ya da dondurun."
+        },
+        "eggsKeepLonger": {
+          "title": "Yumurta sandığınızdan uzun dayanır",
+          "body": "Buzdolabındaki yumurtalar genellikle alımdan 3–5 hafta sonrasına kadar sağlamdır. Su testi: tazeler dibe batar."
+        },
+        "herbsLoveWater": {
+          "title": "Otlar suyu sever",
+          "body": "Taze otları bir bardak suda dik durdurun, gevşekçe örtün — yaklaşık iki kat daha uzun dayanır."
+        },
+        "washBerriesLast": {
+          "title": "Orman meyvelerini en son yıkayın",
+          "body": "Nem küflenmeyi hızlandırır. Orman meyvelerini yalnızca yemeden hemen önce durulayın."
+        }
+      }
+    }
+  },
+  "storageGuide": {
+    "items": {
+      "bananas": {
+        "name": "Muz",
+        "store": "Tezgâhta, diğer meyvelerden uzakta",
+        "life": "2–7 gün",
+        "temp": "Oda sıcaklığı"
+      },
+      "berries": {
+        "name": "Orman meyveleri",
+        "store": "Yıkanmadan, kâğıt havluyla kaplı kutuda",
+        "life": "3–7 gün",
+        "temp": "Buzdolabı 1–4°C"
+      },
+      "eggs": {
+        "name": "Yumurta",
+        "store": "Kartonunda, bir rafta (kapakta değil)",
+        "life": "3–5 hafta",
+        "temp": "Buzdolabı ≤4°C"
+      },
+      "leafyGreens": {
+        "name": "Yapraklı yeşillikler",
+        "store": "Kuru bir beze gevşekçe sarılı",
+        "life": "5–7 gün",
+        "temp": "Buzdolabı 1–4°C"
+      },
+      "chicken": {
+        "name": "Tavuk",
+        "store": "Kapalı, en alt rafta",
+        "life": "1–2 gün",
+        "temp": "Buzdolabı ≤4°C"
+      },
+      "cookedLeftovers": {
+        "name": "Pişmiş artıklar",
+        "store": "Hava almaz kapta, 2 saat içinde soğutulmuş",
+        "life": "3–4 gün",
+        "temp": "Buzdolabı ≤4°C"
+      },
+      "hardCheese": {
+        "name": "Sert peynir",
+        "store": "Mum/yağlı kâğıda sarılı, plastiğe değil",
+        "life": "3–4 hafta",
+        "temp": "Buzdolabı 1–4°C"
+      },
+      "tomatoes": {
+        "name": "Domates",
+        "store": "Tezgâhta, sap tarafı aşağı",
+        "life": "4–7 gün",
+        "temp": "Oda sıcaklığı"
+      },
+      "bread": {
+        "name": "Ekmek",
+        "store": "Oda sıcaklığında kâğıt torbada veya dondurun",
+        "life": "2–4 gün",
+        "temp": "Oda sıcaklığı"
+      },
+      "fish": {
+        "name": "Balık",
+        "store": "Buz üzerinde, kapalı, en alt rafta",
+        "life": "1–2 gün",
+        "temp": "Buzdolabı ≤2°C"
+      },
+      "carrots": {
+        "name": "Havuç",
+        "store": "Sapları kesilmiş, suda veya kapalı poşette",
+        "life": "2–4 hafta",
+        "temp": "Buzdolabı 1–4°C"
+      },
+      "milk": {
+        "name": "Süt",
+        "store": "En soğuk rafta, kapakta değil",
+        "life": "Açıldıktan sonra 5–7 gün",
+        "temp": "Buzdolabı ≤4°C"
+      }
+    }
+  },
+  "chefTips": {
+    "items": {
+      "gordonRamsay": {
+        "name": "Gordon Ramsay",
+        "role": "Michelin şefi",
+        "tip": "Pişirirken tadına bak. Baharatı katman katman ekle, hepsini en sona bırakma."
+      },
+      "massimoBottura": {
+        "name": "Massimo Bottura",
+        "role": "Osteria Francescana",
+        "tip": "Dünün ekmeği bugünün şaheseri olur — asla israf etme."
+      },
+      "juliaChild": {
+        "name": "Julia Child",
+        "role": "Yazar ve TV şefi",
+        "tip": "Tavayı tıka basa doldurma — yiyeceğe yer ver, yoksa kızarmak yerine buharda pişer."
+      },
+      "yotamOttolenghi": {
+        "name": "Yotam Ottolenghi",
+        "role": "Şef ve yazar",
+        "tip": "Sona sıkılan bir damla limon neredeyse her yemeği canlandırır."
+      },
+      "marcoPierreWhite": {
+        "name": "Marco Pierre White",
+        "role": "Michelin şefi",
+        "tip": "Eti pişirdikten sonra dinlendir — etin suyu yeniden dağılır."
+      },
+      "nigellaLawson": {
+        "name": "Nigella Lawson",
+        "role": "Yemek yazarı",
+        "tip": "Otları solmadan önce buz kalıbında zeytinyağıyla dondur."
+      },
+      "thomasKeller": {
+        "name": "Thomas Keller",
+        "role": "The French Laundry",
+        "tip": "Etleri mühürlemeden önce kurula — nem, çıtır kabuğun düşmanıdır."
+      },
+      "saminNosrat": {
+        "name": "Samin Nosrat",
+        "role": "Tuz Yağ Asit Isı",
+        "tip": "Tuzu yüksekten serp ki yiyeceğe eşit dağılsın."
+      }
+    }
+  },
+  "foodFacts": {
+    "items": {
+      "smellTestLies": {
+        "title": "Koklama testi yanıltır",
+        "body": "Salmonella gibi tehlikeli bakteriler yiyeceğin kokusunu, görünümünü ya da tadını değiştirmez."
+      },
+      "dangerZone": {
+        "title": "Tehlike bölgesi",
+        "body": "Bakteriler en hızlı 4–60°C arasında çoğalır. Artıkları 2 saat içinde buzdolabına koyun."
+      },
+      "ripenWithApples": {
+        "title": "Elmayla olgunlaştırın",
+        "body": "Elma ve muz etilen salar — bozulmayı yavaşlatmak için bunları yeşilliklerden uzak tutun."
+      },
+      "freezingPausesTime": {
+        "title": "Dondurmak zamanı durdurur",
+        "body": "Dondurmak bakterileri öldürmez, sadece durdurur. Çözülünce yeniden canlanırlar."
+      }
+    }
+  },
+  "scanBatch": {
+    "header": "TOPLU TARAMA",
+    "counter": "{{done}} BİTTİ · {{left}} KALDI",
+    "hero": {
+      "scanning": "Partiniz taranıyor…",
+      "results": "Toplu sonuçlar"
+    },
+    "verdict": {
+      "fresh": "Taze görünüyor",
+      "safe": "Yenebilir",
+      "soon": "Yakında tüketin",
+      "past": "En iyi günlerini geçmiş"
+    },
+    "expiry": {
+      "unknown": "Raf ömrü bilinmiyor",
+      "today": "Bugün tüketin",
+      "daysLeft_one": "{{count}} gün kaldı",
+      "daysLeft_other": "{{count}} gün kaldı"
+    },
+    "empty": {
+      "title": "Sırada bir şey yok",
+      "subtitle": "Tarayıcıyı Toplu moda alın ve birkaç ürün çekin.",
+      "cta": "Taramaya dön"
+    },
+    "card": {
+      "itemFallback": "Ürün",
+      "editHint": "DÜZENLEMEK İÇİN ADA VEYA KARARA DOKUN",
+      "scanFailed": "Tarama başarısız",
+      "scanFailedHint": "Bunu tarayıcıdan tekrar deneyin.",
+      "reading": "Tazelik okunuyor…",
+      "waiting": "Bekleniyor…"
+    },
+    "cta": {
+      "add": "EKLE",
+      "rescan": "YENİDEN TARA",
+      "done": "Tamam",
+      "addAll_one": "{{count}} ürünü buzdolabına ekle",
+      "addAll_other": "{{count}} ürünü buzdolabına ekle"
+    },
+    "editPrompt": {
+      "title": "Ürünü düzenle",
+      "message": "Algılanan adı düzeltin.",
+      "cancel": "Vazgeç",
+      "save": "Kaydet",
+      "placeholder": "ör. tavuk göğsü"
+    },
+    "signInAlert": {
+      "title": "Giriş gerekli",
+      "message": "Ürünleri buzdolabınıza kaydetmek için giriş yapın.",
+      "cancel": "Vazgeç",
+      "signIn": "Giriş yap"
+    },
+    "saveError": {
+      "title": "Kaydedilemedi"
+    },
+    "a11y": {
+      "back": "geri",
+      "editName": "adı düzenle, şu an {{name}}",
+      "changeVerdict": "tazelik kararını değiştir",
+      "addToFridge": "{{name}} buzdolabına ekle",
+      "rescan": "bu fotoğrafı yeniden tara",
+      "done": "tamam"
+    }
+  },
+  "profile": {
+    "fallbackName": "Sen",
+    "guestName": "Misafir",
+    "status": {
+      "signedIn": "GİRİŞ YAPILDI",
+      "notSignedIn": "GİRİŞ YAPILMADI",
+      "active": "Etkin"
+    },
+    "sections": {
+      "account": "HESAP",
+      "pro": "PRO",
+      "notifications": "BİLDİRİMLER",
+      "about": "HAKKINDA"
+    },
+    "stats": {
+      "itemsInFridge": "BUZDOLABINDAKİ ÜRÜNLER"
+    },
+    "rows": {
+      "signIn": "Giriş yap",
+      "signOut": "Çıkış yap",
+      "email": "E-posta",
+      "deleteAccount": "Hesabı sil",
+      "deleteMyData": "Verilerimi sil",
+      "freshcheckPro": "FreshCheck Pro",
+      "manageSubscription": "Aboneliği yönet",
+      "upgradeToPro": "FreshCheck Pro'ya yükselt",
+      "restorePurchase": "Satın alımı geri yükle",
+      "foodExpiryReminders": "Yiyecek son kullanım hatırlatıcıları",
+      "privacyPolicy": "Gizlilik politikası",
+      "termsOfService": "Hizmet koşulları",
+      "support": "Destek",
+      "version": "Sürüm"
+    },
+    "labels": {
+      "warnMeBefore": "Beni şu kadar önce uyar",
+      "daysShort_one": "{{count}}g",
+      "daysShort_other": "{{count}}g"
+    },
+    "cta": {
+      "cancel": "Vazgeç",
+      "save": "Kaydet",
+      "delete": "Sil",
+      "keepAccount": "Hesabı tut",
+      "yesDelete": "Evet, sil",
+      "signOut": "Çıkış yap",
+      "takePhoto": "Fotoğraf Çek",
+      "chooseFromLibrary": "Galeriden Seç",
+      "openSettings": "Ayarları Aç"
+    },
+    "a11y": {
+      "changeAvatar": "avatarı değiştir",
+      "editName": "adı düzenle",
+      "daysBefore_one": "{{count}} gün önce",
+      "daysBefore_other": "{{count}} gün önce"
+    },
+    "errors": {
+      "unknown": "Bilinmeyen hata"
+    },
+    "alerts": {
+      "photoAccess": {
+        "title": "Fotoğraf erişimi gerekli",
+        "messageCanAsk": "Avatar seçmek için fotoğraf erişimine izin verin.",
+        "messageDenied": "Ayarlar'dan fotoğraf erişimini açın, sonra geri dönün."
+      },
+      "cameraAccess": {
+        "title": "Kamera erişimi gerekli",
+        "messageCanAsk": "Fotoğraf çekmek için kamera erişimine izin verin.",
+        "messageDenied": "Ayarlar'dan kamera erişimini açın, sonra geri dönün."
+      },
+      "changePhoto": {
+        "title": "Fotoğrafı değiştir",
+        "message": "Yeni bir profil fotoğrafı seçin"
+      },
+      "editName": {
+        "title": "Adınız",
+        "message": "Size nasıl hitap edelim?"
+      },
+      "signOut": {
+        "title": "Çıkış yap",
+        "message": "FreshCheck'ten çıkış yapılsın mı?"
+      },
+      "restored": {
+        "title": "Geri yüklendi",
+        "message": "Aboneliğiniz yeniden etkin."
+      },
+      "nothingToRestore": {
+        "title": "Geri yüklenecek bir şey yok",
+        "message": "Bu Apple ID'de etkin abonelik bulunamadı."
+      },
+      "restoreFailed": {
+        "title": "Geri yükleme başarısız"
+      },
+      "linkFailed": {
+        "title": "Bağlantı açılamadı"
+      },
+      "deleteAccount": {
+        "title": "Hesabı sil",
+        "message": "Bu işlem hesabınızı, buzdolabı ürünlerinizi ve tarama geçmişinizi kalıcı olarak siler. Bu geri alınamaz."
+      },
+      "deleteConfirm": {
+        "title": "Emin misiniz?",
+        "message": "Verilerinizi tutmak için son şansınız. Hesabınızı kalıcı olarak kaldırmak için \"Evet, sil\"e dokunun."
+      },
+      "notSignedIn": {
+        "title": "Giriş yapılmadı",
+        "message": "Lütfen önce giriş yapın."
+      },
+      "deletionFailed": {
+        "title": "Silme başarısız",
+        "message": "Tekrar deneyin veya desteğe başvurun."
+      },
+      "accountDeleted": {
+        "title": "Hesap silindi",
+        "message": "Hesabınız ve verileriniz kaldırıldı."
+      }
+    }
+  },
+  "recipeDetail": {
+    "loading": {
+      "title": "Tarif yükleniyor…",
+      "subtitle": "Sizin için taze tarifler oluşturuluyor"
+    },
+    "empty": {
+      "title": "Tarif bulunamadı",
+      "subtitle": "Geri dönüp başka bir tarif seçin."
+    },
+    "meta": {
+      "time": "SÜRE",
+      "difficulty": "ZORLUK",
+      "fromFridge": "BUZDOLABINDAN",
+      "minutes_one": "{{count}}dk",
+      "minutes_other": "{{count}}dk"
+    },
+    "difficulty": {
+      "easy": "KOLAY",
+      "medium": "ORTA",
+      "hard": "ZOR"
+    },
+    "sections": {
+      "ingredients": "MALZEMELER",
+      "steps": "ADIMLAR"
+    },
+    "badges": {
+      "have": "VAR"
+    },
+    "stepLabel": {
+      "prep": "HAZIRLIK",
+      "cook": "PİŞİR",
+      "mix": "KARIŞTIR",
+      "wait": "BEKLE",
+      "serve": "SERVİS"
+    },
+    "steps": {
+      "header": "ADIM {{order}} · {{label}}",
+      "minutes": "{{minutes}} DK"
+    },
+    "a11y": {
+      "back": "geri",
+      "saveRecipe": "tarifi kaydet",
+      "removeFromSaved": "kayıtlılardan kaldır"
+    }
+  },
+  "recipeBuilder": {
+    "header": {
+      "title": "TARİF OLUŞTUR",
+      "subtitle": "Mutfağınızda ne var?",
+      "intro": "Elinizdekileri ekleyin — isterseniz miktarlarıyla — biz de etrafında tarifler oluşturalım."
+    },
+    "sections": {
+      "addIngredients": "MALZEME EKLE",
+      "cookingMethod": "PİŞİRME YÖNTEMİ",
+      "maxTime": "AZAMİ SÜRE"
+    },
+    "placeholders": {
+      "amount": "200",
+      "name": "Tavuk göğsü"
+    },
+    "methods": {
+      "any": "Hepsi",
+      "bake": "Fırınla",
+      "fry": "Kızart",
+      "boil": "Haşla",
+      "grill": "Izgara",
+      "steam": "Buğula",
+      "noCook": "Pişirmesiz",
+      "slowCook": "Yavaş pişir"
+    },
+    "times": {
+      "any": "Hepsi",
+      "under15": "<=15 dk",
+      "under30": "<=30 dk",
+      "under45": "<=45 dk",
+      "under60": "<=60 dk"
+    },
+    "units": {
+      "g": "g",
+      "pcs": "adet",
+      "cups": "su bardağı",
+      "tbsp": "yk",
+      "tsp": "tk",
+      "ml": "ml"
+    },
+    "toggle": {
+      "title": "Yalnızca bu malzemeleri kullan",
+      "sub": "Kapalı = sık kullanılan ekstralar ekleyebiliriz (yağ, tuz, baharat)."
+    },
+    "cta": {
+      "generate": "Tarif oluştur"
+    },
+    "errors": {
+      "notFood": "Gerçek bir malzeme girin"
+    },
+    "alerts": {
+      "addIngredientsTitle": "Malzeme ekleyin",
+      "addIngredientsMessage": "Tarif oluşturmak için en az bir malzeme ekleyin.",
+      "couldNotGenerateTitle": "Oluşturulamadı",
+      "tryAgain": "Lütfen birazdan tekrar deneyin."
+    },
+    "a11y": {
+      "back": "geri",
+      "addIngredient": "malzeme ekle"
+    }
+  },
+  "recipes": {
+    "eyebrow": "TARİFLER",
+    "hero": {
+      "title": "Elinizdekilerle pişirin",
+      "titleEmpty": "Başlangıç tarifleri",
+      "subtitle": "BUZDOLABINIZDAN YAPAY ZEKÂYLA HAZIRLANDI",
+      "subtitleEmpty": "KİŞİSEL ÖNERİLER İÇİN ÜRÜN TARAYIN"
+    },
+    "cook": {
+      "title": "Elinizdekilerle pişirin",
+      "titleEmpty": "Başlangıç tarifleri oluştur",
+      "subtitle": "Buzdolabı ürünleri seç → 3 taze tarif",
+      "subtitleEmpty": "Alışveriş edebileceğiniz 3 basit fikir"
+    },
+    "build": {
+      "title": "Kendi tarifinizi oluşturun",
+      "subtitle": "Malzeme, yöntem ve süre yazın"
+    },
+    "emptyBanner": "Buzdolabınız boş — bunlar genel başlangıç fikirleri. Gerçekten elinizdekilere göre tarifler için önce birkaç ürün tarayın.",
+    "sections": {
+      "saved": "★ KAYITLI"
+    },
+    "errors": {
+      "dailyLimitTitle": "Günlük sınıra ulaşıldı",
+      "generateFailedTitle": "Tarifler oluşturulamadı",
+      "unlockUnlimited": "Sınırsız tarifin kilidini aç"
+    },
+    "labels": {
+      "minutesShort": "{{count}} DK",
+      "fromFridge_one": "BUZDOLABINDAN {{count}}",
+      "fromFridge_other": "BUZDOLABINDAN {{count}}",
+      "today": "bugün",
+      "daysShort": "{{count}}g"
+    },
+    "sheet": {
+      "title": "Elinizdekilerle pişirin",
+      "subtitle": "Tarif oluşturulacak ürünleri seçin. En önce bozulacaklara öncelik veririz."
+    },
+    "cta": {
+      "generateFromItems_one": "{{count}} üründen oluştur",
+      "generateFromItems_other": "{{count}} üründen oluştur"
+    },
+    "a11y": {
+      "generateStarter": "başlangıç tarifleri oluştur",
+      "cookWithWhatYouHave": "elinizdekilerle pişirin",
+      "buildCustom": "özel bir tarif oluştur",
+      "upgradeToPro": "FreshCheck Pro'ya yükselt",
+      "openRecipe": "{{name}} aç",
+      "recipeCard_one": "{{name}}, {{count}} dakika",
+      "recipeCard_other": "{{name}}, {{count}} dakika",
+      "removeFromSaved": "kayıtlılardan kaldır",
+      "saveRecipe": "tarifi kaydet",
+      "removeRecipe": "{{name}} kaldır",
+      "close": "kapat"
+    }
+  },
+  "capture": {
+    "header": {
+      "scan": "TARA"
+    },
+    "a11y": {
+      "back": "geri",
+      "capture": "çek",
+      "scanWholeTable": "tüm masayı tara",
+      "choosePhotoFromLibrary": "galeriden fotoğraf seç",
+      "reviewScans_one": "{{count}} taramayı incele",
+      "reviewScans_other": "{{count}} taramayı incele"
+    },
+    "modes": {
+      "single": "TEKLİ",
+      "batch": "TOPLU",
+      "barcode": "BARKOD"
+    },
+    "hints": {
+      "barcode": "BİR BARKODA TUTUN",
+      "batch": "EKLEMEK İÇİN DOKUN · TARAMALAR ARKA PLANDA ÇALIŞIR",
+      "single": "YİYECEĞE TUTUN · ÇEKMEK İÇİN DOKUN"
+    },
+    "freeScansLeft_one": "BUGÜN {{count}} ÜCRETSİZ TARAMA KALDI",
+    "freeScansLeft_other": "BUGÜN {{count}} ÜCRETSİZ TARAMA KALDI",
+    "status": {
+      "analyzing": "Analiz ediliyor…",
+      "lookingUpProduct": "Ürün aranıyor…",
+      "readingFreshness": "Tazelik okunuyor…",
+      "findingItems": "Ürünler bulunuyor…",
+      "capturing": "Çekiliyor…",
+      "loadingPhoto": "Fotoğraf yükleniyor…",
+      "preparingScan": "Tarama hazırlanıyor…",
+      "loadingCamera": "Kamera yükleniyor…"
+    },
+    "analyzingSub": {
+      "stillWorking": "Hâlâ çalışıyor… {{seconds}}sn",
+      "default": "Bu birkaç saniye sürebilir"
+    },
+    "cta": {
+      "scanWholeTable": "📋  TÜM MASAYI TARA",
+      "reviewScans_one": "{{count}} taramayı incele",
+      "reviewScans_other": "{{count}} taramayı incele",
+      "allowCamera": "Kameraya izin ver",
+      "openSettings": "Ayarları Aç",
+      "chooseFromLibrary": "Bunun yerine galeriden seç",
+      "back": "Geri"
+    },
+    "gate": {
+      "serviceUnavailable": {
+        "title": "Hizmet kullanılamıyor",
+        "message": "Tarama geçici olarak kullanılamıyor. Lütfen birazdan tekrar deneyin."
+      },
+      "cameraOff": {
+        "title": "Kamera kapalı",
+        "messageCanAsk": "FreshCheck'in yiyecek taramak için kamera erişimine ihtiyacı var.",
+        "messageDenied": "Ayarlar'dan kamera erişimini açın, sonra geri dönün."
+      }
+    },
+    "barcode": {
+      "expiryText": "~{{days}} gün kaldı"
+    },
+    "errors": {
+      "scanFailed": "Tarama başarısız.",
+      "couldNotScan": "Taranamadı.",
+      "couldNotCapture": "Fotoğraf çekilemedi."
+    },
+    "alerts": {
+      "cancel": "Vazgeç",
+      "productNotFound": {
+        "title": "Ürün bulunamadı",
+        "message": "Bu barkod için henüz eşleşme yok. Bunun yerine fotoğraf taramayı deneyin."
+      },
+      "couldNotAdd": {
+        "title": "Eklenemedi"
+      },
+      "addedToFridge": {
+        "title": "Buzdolabınıza eklendi",
+        "message": "{{product}} · ~{{days}} gün dayanır"
+      },
+      "severalItems": {
+        "title": "Birden çok ürün algılandı",
+        "message": "Bu fotoğrafta birden çok yiyecek var gibi görünüyor. Hepsini mi yoksa sadece ana olanı mı tarayalım?",
+        "justMain": "Sadece ana olanı",
+        "scanAll": "Tüm ürünleri tara"
+      },
+      "scanFailed": {
+        "title": "Tarama başarısız"
+      },
+      "noFoodFound": {
+        "title": "Yiyecek bulunamadı",
+        "message": "Bu fotoğrafta hiçbir yiyecek bulunamadı. Daha yakına gelmeyi veya daha iyi ışığı deneyin."
+      },
+      "preparingScan": {
+        "title": "Tarama hazırlanıyor",
+        "message": "Lütfen bir an bekleyip tekrar deneyin."
+      },
+      "photoAccess": {
+        "title": "Fotoğraf erişimi gerekli",
+        "messageCanAsk": "Galerinizden bir yiyecek fotoğrafı seçmek için fotoğraf erişimine izin verin.",
+        "messageDenied": "Ayarlar'dan fotoğraf erişimini açın, sonra geri dönün."
+      },
+      "dailyScanLimit": {
+        "title": "Günlük tarama sınırı",
+        "message": "{{total}} fotoğrafın {{added}} tanesi eklendi — bugünün ücretsiz taramaları bu kadar. Sınırsız için Pro'ya yükseltin."
+      }
+    }
+  },
+  "loaders": {
+    "cooking": {
+      "readingFridge": "Buzdolabınızda ne olduğu okunuyor…",
+      "prioritising": "En önce bozulacaklara öncelik veriliyor…",
+      "pairingFlavours": "Uyumlu lezzetler eşleştiriliyor…",
+      "writingSteps": "Adımlar yazılıyor…",
+      "platingUp": "3 fikir tabağa yerleştiriliyor…",
+      "eta": "Yaklaşık {{seconds}} saniye · fotoğraflar hemen ardından yüklenir"
+    },
+    "image": {
+      "plating": "Tabağınız hazırlanıyor",
+      "generating": "Benzersiz bir tarif oluşturuluyor",
+      "simmering": "Ayrıntılar pişiriliyor",
+      "pickingIngredients": "Taze malzemeler seçiliyor"
+    }
+  },
+  "foods": {
+    "reasons": {
+      "tooShort": "Çok kısa",
+      "tooLong": "Çok uzun",
+      "lettersOnly": "Yalnızca harf — rakam veya sembol yok",
+      "notRealIngredient": "Bu gerçek bir malzemeye benzemiyor"
+    }
+  },
+  "scan": {
+    "timeout": "Bu her zamankinden uzun sürüyor — lütfen tekrar deneyin.",
+    "unreachable": "Tarayıcıya ulaşılamadı. Bağlantınızı kontrol edip tekrar deneyin.",
+    "failed": "Tarama başarısız"
+  },
+  "fridge": {
+    "title": "Buzdolabım",
+    "eyebrow": "STOK DURUMU",
+    "recipesLink": "Buzdolabınızdan tarifler",
+    "a11y": {
+      "viewRecipes": "Buzdolabınızdan tarifleri görüntüle"
+    },
+    "categories": {
+      "all": "Tümü",
+      "produce": "Sebze-Meyve",
+      "dairy": "Süt ürünleri",
+      "poultry": "Kümes hayvanı",
+      "meat": "Et",
+      "fish": "Balık",
+      "bakery": "Fırın ürünleri",
+      "pantry": "Kiler"
+    },
+    "empty": {
+      "title": "Buzdolabı boş",
+      "body": "Buzdolabınızda ne olduğunu ve ne zaman bozulacağını takip etmeye başlamak için bir ürün tarayın.",
+      "cta": "İlk ürünü tara"
+    },
+    "footer": {
+      "tracked_one": "{{count}} ÜRÜNÜN {{shown}} TANESİ TAKİP EDİLİYOR",
+      "tracked_other": "{{count}} ÜRÜNÜN {{shown}} TANESİ TAKİP EDİLİYOR",
+      "swipeHint": "KALDIRMAK İÇİN KARTI SOLA KAYDIRIN"
+    },
+    "alerts": {
+      "removeFailedTitle": "Kaldırılamadı",
+      "loadFailedTitle": "Buzdolabı yüklenemedi"
+    }
+  }
+}

@@ -1,1 +1,1154 @@
-{}
+{
+  "common": {
+    "appName": "FreshCheck",
+    "continue": "Continuar",
+    "getStarted": "Empezar",
+    "back": "Atrás",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "done": "Hecho",
+    "tryAgain": "Reintentar",
+    "next": "Siguiente",
+    "skip": "Omitir",
+    "ok": "Aceptar",
+    "dayUnit_one": "DÍA",
+    "dayUnit_other": "DÍAS",
+    "tabA11y": "Pestaña {{label}}",
+    "productRow": {
+      "a11yDaysLeft_one": "{{name}}, queda {{count}} día",
+      "a11yDaysLeft_other": "{{name}}, quedan {{count}} días",
+      "delete": "ELIMINAR",
+      "deleteA11y": "Eliminar {{name}}"
+    },
+    "achievements": {
+      "unlocked": "LOGRO DESBLOQUEADO",
+      "items": {
+        "first_scan": {
+          "title": "Primer vistazo",
+          "desc": "Escanea tu primer alimento"
+        },
+        "scan_10": {
+          "title": "Ojo fresco",
+          "desc": "Escanea 10 alimentos"
+        },
+        "scan_50": {
+          "title": "Pro de la seguridad",
+          "desc": "Escanea 50 alimentos"
+        },
+        "first_recipe": {
+          "title": "Cocinillas",
+          "desc": "Genera tu primera receta"
+        },
+        "recipe_10": {
+          "title": "Explorador de recetas",
+          "desc": "Genera 10 recetas"
+        },
+        "fridge_5": {
+          "title": "Despensa llena",
+          "desc": "Controla 5 alimentos de la nevera"
+        },
+        "streak_3": {
+          "title": "Cogiendo frescura",
+          "desc": "Usa FreshCheck 3 días"
+        },
+        "streak_7": {
+          "title": "Guerrero anti-desperdicio",
+          "desc": "Usa FreshCheck 7 días"
+        }
+      }
+    }
+  },
+  "errorBoundary": {
+    "title": "Algo ha salido mal",
+    "message": "Se ha producido un error inesperado. Reinténtalo o reinicia la app si el problema persiste.",
+    "retry": "Reintentar"
+  },
+  "att": {
+    "headlineFamily": "Haz que FreshCheck mejore para las familias",
+    "headlineYou": "Haz que FreshCheck mejore para ti",
+    "bodyFamily": "Con tu permiso, medimos qué funciones ayudan de verdad a padres y madres como tú, para seguir mejorando lo que importa.",
+    "bodyYou": "Con tu permiso, medimos qué funciones ayudan de verdad a personas como tú, para seguir mejorando lo que importa.",
+    "privacy": "Nunca vendemos tus datos personales y tus escaneos siempre quedan en privado.",
+    "micro": "En la siguiente pantalla podrás permitir o rechazar. FreshCheck funciona igual de bien de cualquier forma, y puedes cambiarlo cuando quieras en Ajustes.",
+    "continue": "Continuar"
+  },
+  "building": {
+    "pct": "{{pct}}%",
+    "stages": {
+      "stage0": {
+        "title": "Analizando tus hábitos de nevera",
+        "detail": "Lo que compras, lo que olvidas"
+      },
+      "stage1": {
+        "title": "Detectando qué se estropea antes en tu casa",
+        "detail": "Para que nada se pase de fecha"
+      },
+      "stage2": {
+        "title": "Calibrando los avisos de frescura",
+        "detail": "Ajustados a lo que más desperdicias"
+      },
+      "stage3": {
+        "title": "Preparando recetas para lo que caduca antes",
+        "detail": "Cena con lo que ya tienes"
+      },
+      "stage4": {
+        "title": "Tu plan de frescura va tomando forma",
+        "detail": "Casi listo"
+      }
+    },
+    "badge": {
+      "withName": "{{name}}, tu plan es personal, no una plantilla",
+      "noName": "Tu plan es personal, no una plantilla"
+    }
+  },
+  "onboarding": {
+    "cta": {
+      "getStarted": "Empezar",
+      "continue": "Continuar"
+    },
+    "slides": {
+      "waste": {
+        "title": "No vuelvas a tirar comida en buen estado",
+        "body": "FreshCheck te dice qué sigue estando bueno y te avisa antes de que se estropee.",
+        "proof": "Las familias ahorran unos 2913 $ al año"
+      },
+      "scan": {
+        "title": "¿Sigue siendo seguro? Descúbrelo en 3 segundos",
+        "body": "Apunta la cámara a cualquier alimento y obtén un veredicto al instante: seguro, precaución o a la basura."
+      },
+      "timeline": {
+        "title": "Toda tu nevera, en una línea de frescura",
+        "body": "Todo lo que tienes, ordenado por lo que caduca antes. Nunca más nada olvidado al fondo."
+      },
+      "recipes": {
+        "title": "La cena de hoy, con lo que ya tienes",
+        "body": "Un toque convierte tus ingredientes a punto de caducar en 3 recetas frescas con IA."
+      },
+      "barcode": {
+        "title": "Escanea el código de barras, nosotros llevamos el resto",
+        "body": "Añade productos envasados en un segundo: escanea el código de barras y lo registramos."
+      }
+    }
+  },
+  "personalize": {
+    "progress": "Paso {{current}} de {{total}}",
+    "namePlaceholder": "Tu nombre",
+    "a11y": {
+      "back": "atrás"
+    },
+    "cta": {
+      "buildPlan": "Crear mi plan",
+      "continue": "Continuar"
+    },
+    "questions": {
+      "household": {
+        "q": "¿Para quién quieres mantener todo fresco?",
+        "options": {
+          "me": "Solo para mí",
+          "partner": "Mi pareja y yo",
+          "family": "Una familia con niños",
+          "roommates": "Un piso compartido"
+        }
+      },
+      "topWaste": {
+        "q": "¿Qué es lo que más tiras?",
+        "sub": "Marca todo lo que corresponda",
+        "options": {
+          "leftovers": "Sobras",
+          "produce": "Fruta y verdura",
+          "dairy": "Lácteos",
+          "meat": "Carne y aves",
+          "bread": "Pan"
+        }
+      },
+      "worry": {
+        "q": "¿Qué te preocupa más de la comida?",
+        "options": {
+          "sick": "Que alguien enferme",
+          "money": "Desperdiciar dinero",
+          "spoiled": "Comer algo en mal estado",
+          "unsure": "No saber qué sigue estando bueno"
+        }
+      },
+      "forgotten": {
+        "q": "¿Con qué frecuencia se olvidan las sobras al fondo de la nevera?",
+        "options": {
+          "constantly": "Constantemente",
+          "weekly": "Casi cada semana",
+          "sometimes": "A veces",
+          "rarely": "Rara vez"
+        }
+      },
+      "dinner": {
+        "q": "¿Cómo decides qué cenar?",
+        "options": {
+          "plan": "Lo planifico con antelación",
+          "wing": "Improviso",
+          "expiring": "Lo que está a punto de caducar",
+          "order": "Pido mucho a domicilio"
+        }
+      },
+      "name": {
+        "q": "Una última cosa: ¿cómo te llamamos?",
+        "sub": "Opcional"
+      }
+    }
+  },
+  "yourPlan": {
+    "eyebrowNamed": "PLAN DE {{name}}",
+    "eyebrowDefault": "TU PLAN FRESHCHECK",
+    "watchLabel": "VIGILAREMOS DE CERCA",
+    "whatIsInside": "QUÉ INCLUYE",
+    "socialProof": "Únete a las familias que ahorran unos 2913 $ al año con FreshCheck.",
+    "cta": {
+      "seeMyPlan": "Ver mi plan"
+    },
+    "waste": {
+      "leftovers": "Sobras",
+      "produce": "Fruta y verdura",
+      "dairy": "Lácteos",
+      "meat": "Carne y aves",
+      "bread": "Pan"
+    },
+    "benefits": {
+      "verdict": {
+        "title": "Veredicto al instante: seguro / precaución / peligro",
+        "sub": "Escanea cualquier alimento y entérate en 3 segundos."
+      },
+      "timeline": {
+        "title": "Tu nevera en una línea de frescura",
+        "sub": "Todo ordenado por lo que caduca antes."
+      },
+      "recipes": {
+        "title": "Recetas con lo que está caducando",
+        "sub": "Convierte lo que va a estropearse en cena."
+      }
+    },
+    "tiles": {
+      "dailyScans": "Escaneos de frescura diarios",
+      "fridgeTimeline": "Línea de la nevera",
+      "expiryReminders": "Avisos de caducidad",
+      "unlimitedScans": "Escaneos ilimitados",
+      "unlimitedRecipes": "Recetas con IA ilimitadas",
+      "barcodeImport": "Importar por código de barras"
+    }
+  },
+  "plan": {
+    "wasteLower": {
+      "leftovers": "sobras",
+      "produce": "fruta y verdura",
+      "dairy": "lácteos",
+      "meat": "carne y aves",
+      "bread": "pan"
+    },
+    "household": {
+      "family": "cocinero de familia ajetreada",
+      "partner": "cocina para dos",
+      "roommates": "hogar compartido",
+      "solo": "cocinero en solitario"
+    },
+    "headlineWithWaste": "Eres un {{who}}: vigilaremos de cerca tu {{waste}}.",
+    "headlineFallback": "Eres un {{who}}: FreshCheck vigilará tu nevera por ti.",
+    "fear": {
+      "sick": "Detectaremos cualquier riesgo antes de que llegue a tu mesa.",
+      "money": "Deja de tirar unos 56 $ de comida cada semana.",
+      "spoiled": "Siempre sabrás qué sigue estando bueno, de un vistazo.",
+      "default": "No vuelvas a dudar si algo se puede comer o no."
+    }
+  },
+  "paywall": {
+    "eyebrow": "FRESHCHECK PRO",
+    "a11y": {
+      "close": "cerrar",
+      "planOption": "Plan {{label}}, {{price}} {{unit}}"
+    },
+    "hero": {
+      "scanLimit": {
+        "title": "Has usado tus escaneos gratis de hoy",
+        "subtitle": "Pásate a ilimitado: escanea todo lo de tu cocina cuando quieras."
+      },
+      "barcode": {
+        "title": "Escanear códigos de barras es una función Pro",
+        "subtitle": "Escanea el código de barras de cualquier producto y mételo directo en tu nevera."
+      },
+      "recipeLimit": {
+        "title": "Has usado tu generación de recetas gratis de hoy",
+        "subtitle": "Recetas con IA ilimitadas a partir de lo que tengas en la nevera, cada día."
+      },
+      "default": {
+        "title": "Desbloquea FreshCheck Pro",
+        "subtitle": "Convierte lo que hay en tu nevera en recetas y no vuelvas a tirar comida."
+      }
+    },
+    "trust": {
+      "family": "AHORRA A LA FAMILIA MEDIA 2913 $ AL AÑO",
+      "household": "EL HOGAR MEDIO AHORRA 2913 $ AL AÑO"
+    },
+    "features": {
+      "header": "TODO LO QUE INCLUYE PRO",
+      "unlimitedScans": {
+        "title": "Escaneos ilimitados",
+        "body": "Escanea tantos productos como quieras, sin límite diario."
+      },
+      "unlimitedRecipes": {
+        "title": "Recetas con IA ilimitadas",
+        "body": "Genera recetas frescas con tu nevera cuando quieras, sin límite diario."
+      },
+      "barcodeAdd": {
+        "title": "Añadir a la despensa por código de barras",
+        "body": "Escanea el código de barras de un producto y mételo directo en tu nevera."
+      },
+      "wholeTable": {
+        "title": "Escaneo de la mesa entera",
+        "body": "Una foto, todos los platos de la mesa, tantas veces como quieras."
+      },
+      "batchScanning": {
+        "title": "Escaneo por lotes rápido",
+        "body": "Escanea toda la compra de un tirón, sin límites."
+      }
+    },
+    "plans": {
+      "eyebrow": "ELIGE TU PLAN · 3 DÍAS GRATIS",
+      "annual": {
+        "label": "Anual",
+        "unit": "/ año",
+        "badge": "AHORRA 89 %",
+        "sublabel": "Solo 0,77 $ / semana, facturado al año"
+      },
+      "monthly": {
+        "label": "Mensual",
+        "unit": "/ mes",
+        "sublabel": "Flexible: cancela cuando quieras"
+      },
+      "weekly": {
+        "label": "Semanal",
+        "unit": "/ semana",
+        "sublabel": "Solo para probarlo"
+      }
+    },
+    "cta": {
+      "processing": "Procesando…",
+      "startTrial": "Iniciar prueba gratis de 3 días"
+    },
+    "fineprint": {
+      "annual": "Los 3 primeros días gratis, luego {{price}} / año. Se renueva automáticamente salvo que se cancele al menos 24 horas antes de que acabe el periodo.",
+      "monthly": "Los 3 primeros días gratis, luego {{price}} / mes. Se renueva automáticamente salvo que se cancele al menos 24 horas antes de que acabe el periodo.",
+      "weekly": "Los 3 primeros días gratis, luego {{price}} / semana. Se renueva automáticamente salvo que se cancele al menos 24 horas antes de que acabe el periodo."
+    },
+    "legal": {
+      "restore": "Restaurar",
+      "terms": "Términos",
+      "privacy": "Privacidad"
+    },
+    "alerts": {
+      "welcomeTitle": "Te damos la bienvenida a Pro",
+      "welcomeBody": "Tu prueba gratuita ha comenzado. ¡Genera recetas con IA ilimitadas con tu nevera!",
+      "pendingTitle": "Pendiente de aprobación",
+      "pendingBody": "Tu compra está pendiente de aprobación del Apple ID.",
+      "purchaseFailedTitle": "La compra ha fallado",
+      "restoredTitle": "Restaurada",
+      "restoredBody": "Tu suscripción vuelve a estar activa.",
+      "nothingToRestoreTitle": "Nada que restaurar",
+      "nothingToRestoreBody": "No se ha encontrado ninguna suscripción activa en este Apple ID.",
+      "restoreFailedTitle": "La restauración ha fallado",
+      "couldNotOpenLinkTitle": "No se pudo abrir el enlace",
+      "unknownError": "Error desconocido"
+    }
+  },
+  "auth": {
+    "wordmark": "FRESHCHECK",
+    "title": {
+      "signIn": "Bienvenido de nuevo",
+      "signUp": "Únete a FreshCheck"
+    },
+    "labels": {
+      "email": "CORREO",
+      "password": "CONTRASEÑA"
+    },
+    "placeholders": {
+      "email": "tu@ejemplo.com",
+      "passwordSignIn": "Tu contraseña",
+      "passwordSignUp": "Mín. 6 caracteres"
+    },
+    "cta": {
+      "submitting": "...",
+      "signIn": "Iniciar sesión",
+      "createAccount": "Crear cuenta",
+      "toggleToSignUp": "¿No tienes cuenta? Regístrate",
+      "toggleToSignIn": "¿Ya tienes cuenta? Inicia sesión",
+      "continueAsGuest": "Continuar como invitado"
+    },
+    "legal": {
+      "prefix": "Al continuar aceptas los",
+      "terms": "Términos",
+      "and": "y la",
+      "privacy": "Política de Privacidad",
+      "suffix": "."
+    },
+    "alerts": {
+      "signInTitle": "Iniciar sesión",
+      "signUpTitle": "Registrarse",
+      "notConfigured": "Supabase no está configurado en esta versión. Continúa como invitado para seguir usando la app en local.",
+      "checkEmailTitle": "Revisa tu correo",
+      "checkEmailMessage": "Hemos enviado un enlace de confirmación a {{email}}. Tócalo y vuelve para iniciar sesión.",
+      "ok": "Aceptar"
+    },
+    "errors": {
+      "signInFailedTitle": "Error al iniciar sesión",
+      "signUpFailedTitle": "Error al registrarse",
+      "invalidCredentials": "Introduce un correo válido y una contraseña de al menos 6 caracteres."
+    },
+    "a11y": {
+      "back": "atrás",
+      "email": "correo",
+      "password": "contraseña",
+      "toggleMode": "cambiar modo de autenticación"
+    }
+  },
+  "scanResult": {
+    "header": {
+      "analysis": "ANÁLISIS"
+    },
+    "verdict": {
+      "fresh": "Tiene buena pinta",
+      "safe": "Seguro para comer",
+      "soon": "Cómelo pronto",
+      "past": "Ya no está en su mejor momento"
+    },
+    "expiry": {
+      "unknown": "Duración desconocida",
+      "useToday": "Cómelo hoy",
+      "daysLeft_one": "Queda {{count}} día",
+      "daysLeft_other": "Quedan {{count}} días"
+    },
+    "empty": {
+      "title": "Aún no hay escaneos",
+      "subtitle": "Escanea un alimento para ver aquí su veredicto de frescura.",
+      "scanNow": "Escanear ahora"
+    },
+    "labels": {
+      "itemFallback": "alimento",
+      "confidence": "{{percent}}% de confianza"
+    },
+    "safetyNote": "Solo es una estimación visual; no detecta bacterias. Ante la duda, mejor tíralo.",
+    "refine": {
+      "label": "¿CUÁNTO TIEMPO HACE QUE LO TIENES?",
+      "justGotIt": "Recién comprado",
+      "daysAgo_one": "Hace {{count}} día",
+      "daysAgo_other": "Hace {{count}} días",
+      "adjusted_one": "Ajustado a {{count}} día restante",
+      "adjusted_other": "Ajustado a {{count}} días restantes"
+    },
+    "cta": {
+      "addToFridge": "Añadir a la nevera",
+      "scanAnother": "Escanear otro"
+    },
+    "alerts": {
+      "signInRequiredTitle": "Inicio de sesión necesario",
+      "signInRequiredMessage": "Inicia sesión para guardar alimentos en tu nevera.",
+      "cancel": "Cancelar",
+      "signIn": "Iniciar sesión",
+      "couldNotSaveTitle": "No se pudo guardar"
+    },
+    "a11y": {
+      "back": "atrás",
+      "fewerDays": "menos días",
+      "moreDays": "más días"
+    }
+  },
+  "home": {
+    "wordmark": "FRESHCHECK",
+    "heroTitle": "Listo para escanear",
+    "heroSubtitle": "Apunta a la comida. Resultado en 3 segundos.",
+    "tapToScan": "TOCA PARA ESCANEAR",
+    "recipeOfDayEmpty": "Genera recetas con tu nevera",
+    "badgeUnlocked": "Desbloqueado",
+    "sections": {
+      "recipeOfDay": "RECETA DEL DÍA",
+      "freshTips": "CONSEJOS FRESCOS",
+      "storageGuide": "GUÍA DE CONSERVACIÓN",
+      "chefTips": "CONSEJOS DE CHEFS",
+      "yourBadges": "TUS INSIGNIAS"
+    },
+    "a11y": {
+      "tapToScan": "Toca para escanear",
+      "openRecipe": "abrir {{name}}",
+      "generateRecipes": "generar recetas"
+    },
+    "freshTips": {
+      "items": {
+        "dangerZone": {
+          "title": "La zona de peligro",
+          "body": "Las bacterias se multiplican más rápido entre 4 y 60 °C. Refrigera las sobras antes de 2 horas tras cocinar."
+        },
+        "pestoSealedVsOpen": {
+          "title": "Pesto: cerrado frente a abierto",
+          "body": "Un bote cerrado aguanta meses. Una vez abierto, consúmelo en unos 5-7 días o congélalo."
+        },
+        "eggsKeepLonger": {
+          "title": "Los huevos duran más de lo que crees",
+          "body": "Refrigerados, suelen aguantar 3-5 semanas tras la compra. Prueba del agua: los frescos se hunden."
+        },
+        "herbsLoveWater": {
+          "title": "A las hierbas les encanta el agua",
+          "body": "Pon las hierbas frescas de pie en un vaso de agua, tapadas sin apretar: duran casi el doble."
+        },
+        "washBerriesLast": {
+          "title": "Lava los frutos rojos al final",
+          "body": "La humedad acelera el moho. Enjuaga los frutos rojos justo antes de comerlos."
+        }
+      }
+    }
+  },
+  "storageGuide": {
+    "items": {
+      "bananas": {
+        "name": "Plátanos",
+        "store": "En la encimera, lejos de otras frutas",
+        "life": "2-7 días",
+        "temp": "Temp. ambiente"
+      },
+      "berries": {
+        "name": "Frutos rojos",
+        "store": "Sin lavar, en una caja con papel de cocina",
+        "life": "3-7 días",
+        "temp": "Nevera 1-4 °C"
+      },
+      "eggs": {
+        "name": "Huevos",
+        "store": "En el cartón, en un estante (no en la puerta)",
+        "life": "3-5 semanas",
+        "temp": "Nevera ≤4 °C"
+      },
+      "leafyGreens": {
+        "name": "Verduras de hoja",
+        "store": "Envueltas sin apretar en un paño seco",
+        "life": "5-7 días",
+        "temp": "Nevera 1-4 °C"
+      },
+      "chicken": {
+        "name": "Pollo",
+        "store": "Cerrado, en el estante inferior",
+        "life": "1-2 días",
+        "temp": "Nevera ≤4 °C"
+      },
+      "cookedLeftovers": {
+        "name": "Sobras cocinadas",
+        "store": "En recipiente hermético, enfriadas antes de 2 horas",
+        "life": "3-4 días",
+        "temp": "Nevera ≤4 °C"
+      },
+      "hardCheese": {
+        "name": "Queso curado",
+        "store": "Envuelto en papel encerado/vegetal, no en plástico",
+        "life": "3-4 semanas",
+        "temp": "Nevera 1-4 °C"
+      },
+      "tomatoes": {
+        "name": "Tomates",
+        "store": "En la encimera, con el pedúnculo hacia abajo",
+        "life": "4-7 días",
+        "temp": "Temp. ambiente"
+      },
+      "bread": {
+        "name": "Pan",
+        "store": "En bolsa de papel a temperatura ambiente, o congelado",
+        "life": "2-4 días",
+        "temp": "Temp. ambiente"
+      },
+      "fish": {
+        "name": "Pescado",
+        "store": "Sobre hielo, cerrado, en el estante inferior",
+        "life": "1-2 días",
+        "temp": "Nevera ≤2 °C"
+      },
+      "carrots": {
+        "name": "Zanahorias",
+        "store": "Sin las hojas, en agua o en una bolsa cerrada",
+        "life": "2-4 semanas",
+        "temp": "Nevera 1-4 °C"
+      },
+      "milk": {
+        "name": "Leche",
+        "store": "En el estante más frío, no en la puerta",
+        "life": "5-7 días tras abrir",
+        "temp": "Nevera ≤4 °C"
+      }
+    }
+  },
+  "chefTips": {
+    "items": {
+      "gordonRamsay": {
+        "name": "Gordon Ramsay",
+        "role": "Chef con estrella Michelin",
+        "tip": "Prueba mientras cocinas. Sazona por capas, no todo al final."
+      },
+      "massimoBottura": {
+        "name": "Massimo Bottura",
+        "role": "Osteria Francescana",
+        "tip": "El pan de ayer es la obra maestra de hoy: nunca lo desperdicies."
+      },
+      "juliaChild": {
+        "name": "Julia Child",
+        "role": "Autora y chef de televisión",
+        "tip": "No abarrotes la sartén: deja espacio o la comida se cuece al vapor en vez de dorarse."
+      },
+      "yotamOttolenghi": {
+        "name": "Yotam Ottolenghi",
+        "role": "Chef y autor",
+        "tip": "Un chorrito de limón al final despierta casi cualquier plato."
+      },
+      "marcoPierreWhite": {
+        "name": "Marco Pierre White",
+        "role": "Chef con estrella Michelin",
+        "tip": "Deja reposar la carne tras cocinarla: los jugos se redistribuyen."
+      },
+      "nigellaLawson": {
+        "name": "Nigella Lawson",
+        "role": "Escritora gastronómica",
+        "tip": "Congela las hierbas en aceite de oliva en una cubitera antes de que se marchiten."
+      },
+      "thomasKeller": {
+        "name": "Thomas Keller",
+        "role": "The French Laundry",
+        "tip": "Seca bien las proteínas antes de sellarlas: la humedad es enemiga de la costra."
+      },
+      "saminNosrat": {
+        "name": "Samin Nosrat",
+        "role": "Sal, grasa, ácido, calor",
+        "tip": "Echa la sal desde lo alto para que caiga de forma uniforme sobre la comida."
+      }
+    }
+  },
+  "foodFacts": {
+    "items": {
+      "smellTestLies": {
+        "title": "La prueba del olfato engaña",
+        "body": "Las bacterias peligrosas como la salmonela no cambian el olor, el aspecto ni el sabor de la comida."
+      },
+      "dangerZone": {
+        "title": "La zona de peligro",
+        "body": "Las bacterias se multiplican más rápido entre 4 y 60 °C. Refrigera las sobras antes de 2 horas."
+      },
+      "ripenWithApples": {
+        "title": "Madura con manzanas",
+        "body": "Las manzanas y los plátanos liberan etileno: mantenlos lejos de las verduras para que duren más."
+      },
+      "freezingPausesTime": {
+        "title": "Congelar pausa el tiempo",
+        "body": "Congelar no mata las bacterias, solo las detiene. Se reactivan al descongelar."
+      }
+    }
+  },
+  "scanBatch": {
+    "header": "ESCANEO POR LOTES",
+    "counter": "{{done}} HECHOS · {{left}} RESTANTES",
+    "hero": {
+      "scanning": "Escaneando tu lote…",
+      "results": "Resultados del lote"
+    },
+    "verdict": {
+      "fresh": "Tiene buena pinta",
+      "safe": "Seguro para comer",
+      "soon": "Cómelo pronto",
+      "past": "Ya no está en su mejor momento"
+    },
+    "expiry": {
+      "unknown": "Duración desconocida",
+      "today": "Cómelo hoy",
+      "daysLeft_one": "Queda {{count}} día",
+      "daysLeft_other": "Quedan {{count}} días"
+    },
+    "empty": {
+      "title": "Nada en cola",
+      "subtitle": "Cambia el escáner a Lote y haz fotos a varios alimentos.",
+      "cta": "Volver al escaneo"
+    },
+    "card": {
+      "itemFallback": "Alimento",
+      "editHint": "TOCA EL NOMBRE O EL VEREDICTO PARA EDITAR",
+      "scanFailed": "Escaneo fallido",
+      "scanFailedHint": "Vuelve a escanear este desde el escáner.",
+      "reading": "Analizando frescura…",
+      "waiting": "Esperando…"
+    },
+    "cta": {
+      "add": "AÑADIR",
+      "rescan": "REESCANEAR",
+      "done": "Hecho",
+      "addAll_one": "Añadir {{count}} a la nevera",
+      "addAll_other": "Añadir {{count}} a la nevera"
+    },
+    "editPrompt": {
+      "title": "Editar alimento",
+      "message": "Corrige el nombre detectado.",
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "placeholder": "p. ej. pechuga de pollo"
+    },
+    "signInAlert": {
+      "title": "Inicio de sesión necesario",
+      "message": "Inicia sesión para guardar alimentos en tu nevera.",
+      "cancel": "Cancelar",
+      "signIn": "Iniciar sesión"
+    },
+    "saveError": {
+      "title": "No se pudo guardar"
+    },
+    "a11y": {
+      "back": "atrás",
+      "editName": "editar nombre, actualmente {{name}}",
+      "changeVerdict": "cambiar veredicto de frescura",
+      "addToFridge": "añadir {{name}} a la nevera",
+      "rescan": "reescanear esta foto",
+      "done": "hecho"
+    }
+  },
+  "profile": {
+    "fallbackName": "Tú",
+    "guestName": "Invitado",
+    "status": {
+      "signedIn": "SESIÓN INICIADA",
+      "notSignedIn": "SIN SESIÓN",
+      "active": "Activa"
+    },
+    "sections": {
+      "account": "CUENTA",
+      "pro": "PRO",
+      "notifications": "NOTIFICACIONES",
+      "about": "ACERCA DE"
+    },
+    "stats": {
+      "itemsInFridge": "ALIMENTOS EN LA NEVERA"
+    },
+    "rows": {
+      "signIn": "Iniciar sesión",
+      "signOut": "Cerrar sesión",
+      "email": "Correo",
+      "deleteAccount": "Eliminar cuenta",
+      "deleteMyData": "Eliminar mis datos",
+      "freshcheckPro": "FreshCheck Pro",
+      "manageSubscription": "Gestionar suscripción",
+      "upgradeToPro": "Pásate a FreshCheck Pro",
+      "restorePurchase": "Restaurar compra",
+      "foodExpiryReminders": "Avisos de caducidad de alimentos",
+      "privacyPolicy": "Política de privacidad",
+      "termsOfService": "Términos del servicio",
+      "support": "Soporte",
+      "version": "Versión"
+    },
+    "labels": {
+      "warnMeBefore": "Avisarme con",
+      "daysShort_one": "{{count}} d antes",
+      "daysShort_other": "{{count}} d antes"
+    },
+    "cta": {
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "delete": "Eliminar",
+      "keepAccount": "Conservar cuenta",
+      "yesDelete": "Sí, eliminar",
+      "signOut": "Cerrar sesión",
+      "takePhoto": "Hacer foto",
+      "chooseFromLibrary": "Elegir de la galería",
+      "openSettings": "Abrir Ajustes"
+    },
+    "a11y": {
+      "changeAvatar": "cambiar avatar",
+      "editName": "editar nombre",
+      "daysBefore_one": "{{count}} día antes",
+      "daysBefore_other": "{{count}} días antes"
+    },
+    "errors": {
+      "unknown": "Error desconocido"
+    },
+    "alerts": {
+      "photoAccess": {
+        "title": "Se necesita acceso a las fotos",
+        "messageCanAsk": "Permite el acceso a las fotos para elegir un avatar.",
+        "messageDenied": "Activa el acceso a las fotos en Ajustes y vuelve."
+      },
+      "cameraAccess": {
+        "title": "Se necesita acceso a la cámara",
+        "messageCanAsk": "Permite el acceso a la cámara para hacer una foto.",
+        "messageDenied": "Activa el acceso a la cámara en Ajustes y vuelve."
+      },
+      "changePhoto": {
+        "title": "Cambiar foto",
+        "message": "Elige una nueva foto de perfil"
+      },
+      "editName": {
+        "title": "Tu nombre",
+        "message": "¿Cómo te llamamos?"
+      },
+      "signOut": {
+        "title": "Cerrar sesión",
+        "message": "¿Cerrar sesión en FreshCheck?"
+      },
+      "restored": {
+        "title": "Restaurada",
+        "message": "Tu suscripción vuelve a estar activa."
+      },
+      "nothingToRestore": {
+        "title": "Nada que restaurar",
+        "message": "No se ha encontrado ninguna suscripción activa en este Apple ID."
+      },
+      "restoreFailed": {
+        "title": "La restauración ha fallado"
+      },
+      "linkFailed": {
+        "title": "No se pudo abrir el enlace"
+      },
+      "deleteAccount": {
+        "title": "Eliminar cuenta",
+        "message": "Esto elimina permanentemente tu cuenta, los alimentos de tu nevera y tu historial de escaneos. No se puede deshacer."
+      },
+      "deleteConfirm": {
+        "title": "¿Seguro?",
+        "message": "Es tu última oportunidad de conservar tus datos. Toca «Sí, eliminar» para borrar tu cuenta de forma permanente."
+      },
+      "notSignedIn": {
+        "title": "Sin sesión iniciada",
+        "message": "Inicia sesión primero, por favor."
+      },
+      "deletionFailed": {
+        "title": "La eliminación ha fallado",
+        "message": "Reinténtalo o contacta con soporte."
+      },
+      "accountDeleted": {
+        "title": "Cuenta eliminada",
+        "message": "Tu cuenta y tus datos se han eliminado."
+      }
+    }
+  },
+  "recipeDetail": {
+    "loading": {
+      "title": "Cargando receta…",
+      "subtitle": "Generando recetas frescas para ti"
+    },
+    "empty": {
+      "title": "Receta no encontrada",
+      "subtitle": "Vuelve atrás y elige otra receta."
+    },
+    "meta": {
+      "time": "TIEMPO",
+      "difficulty": "DIFICULTAD",
+      "fromFridge": "DE LA NEVERA",
+      "minutes_one": "{{count}} min",
+      "minutes_other": "{{count}} min"
+    },
+    "difficulty": {
+      "easy": "FÁCIL",
+      "medium": "MEDIA",
+      "hard": "DIFÍCIL"
+    },
+    "sections": {
+      "ingredients": "INGREDIENTES",
+      "steps": "PASOS"
+    },
+    "badges": {
+      "have": "TIENES"
+    },
+    "stepLabel": {
+      "prep": "PREPARAR",
+      "cook": "COCINAR",
+      "mix": "MEZCLAR",
+      "wait": "ESPERAR",
+      "serve": "SERVIR"
+    },
+    "steps": {
+      "header": "PASO {{order}} · {{label}}",
+      "minutes": "{{minutes}} MIN"
+    },
+    "a11y": {
+      "back": "atrás",
+      "saveRecipe": "guardar receta",
+      "removeFromSaved": "quitar de guardadas"
+    }
+  },
+  "recipeBuilder": {
+    "header": {
+      "title": "CREAR UNA RECETA",
+      "subtitle": "¿Qué tienes en la cocina?",
+      "intro": "Añade lo que tengas, con cantidades si quieres, y crearemos recetas a partir de ello."
+    },
+    "sections": {
+      "addIngredients": "AÑADIR INGREDIENTES",
+      "cookingMethod": "MÉTODO DE COCCIÓN",
+      "maxTime": "TIEMPO MÁX."
+    },
+    "placeholders": {
+      "amount": "200",
+      "name": "Pechuga de pollo"
+    },
+    "methods": {
+      "any": "Cualquiera",
+      "bake": "Al horno",
+      "fry": "Freír",
+      "boil": "Hervir",
+      "grill": "A la plancha",
+      "steam": "Al vapor",
+      "noCook": "Sin cocción",
+      "slowCook": "Cocción lenta"
+    },
+    "times": {
+      "any": "Cualquiera",
+      "under15": "≤15 min",
+      "under30": "≤30 min",
+      "under45": "≤45 min",
+      "under60": "≤60 min"
+    },
+    "units": {
+      "g": "g",
+      "pcs": "uds",
+      "cups": "tazas",
+      "tbsp": "cda",
+      "tsp": "cdta",
+      "ml": "ml"
+    },
+    "toggle": {
+      "title": "Usar solo estos ingredientes",
+      "sub": "Desactivado = podemos añadir extras comunes (aceite, sal, especias)."
+    },
+    "cta": {
+      "generate": "Generar recetas"
+    },
+    "errors": {
+      "notFood": "Introduce un ingrediente real"
+    },
+    "alerts": {
+      "addIngredientsTitle": "Añade ingredientes",
+      "addIngredientsMessage": "Añade al menos un ingrediente para crear una receta.",
+      "couldNotGenerateTitle": "No se pudo generar",
+      "tryAgain": "Inténtalo de nuevo en un momento."
+    },
+    "a11y": {
+      "back": "atrás",
+      "addIngredient": "añadir ingrediente"
+    }
+  },
+  "recipes": {
+    "eyebrow": "RECETAS",
+    "hero": {
+      "title": "Cocina con lo que tienes",
+      "titleEmpty": "Recetas para empezar",
+      "subtitle": "CREADAS CON IA DESDE TU NEVERA",
+      "subtitleEmpty": "ESCANEA ALIMENTOS PARA RECETAS A TU MEDIDA"
+    },
+    "cook": {
+      "title": "Cocina con lo que tienes",
+      "titleEmpty": "Genera recetas para empezar",
+      "subtitle": "Elige alimentos de la nevera → 3 recetas frescas",
+      "subtitleEmpty": "3 ideas sencillas que puedes comprar"
+    },
+    "build": {
+      "title": "Crea tu propia receta",
+      "subtitle": "Escribe ingredientes, método y tiempo"
+    },
+    "emptyBanner": "Tu nevera está vacía: estas son ideas genéricas para empezar. Escanea unos cuantos alimentos primero para recetas creadas con lo que tienes de verdad.",
+    "sections": {
+      "saved": "★ GUARDADAS"
+    },
+    "errors": {
+      "dailyLimitTitle": "Límite diario alcanzado",
+      "generateFailedTitle": "No se pudieron generar las recetas",
+      "unlockUnlimited": "Desbloquear recetas ilimitadas"
+    },
+    "labels": {
+      "minutesShort": "{{count}} MIN",
+      "fromFridge_one": "{{count}} DE LA NEVERA",
+      "fromFridge_other": "{{count}} DE LA NEVERA",
+      "today": "hoy",
+      "daysShort": "{{count}} d"
+    },
+    "sheet": {
+      "title": "Cocina con lo que tienes",
+      "subtitle": "Elige los alimentos con los que crear recetas. Damos prioridad a lo que caduca antes."
+    },
+    "cta": {
+      "generateFromItems_one": "Generar con {{count}} alimento",
+      "generateFromItems_other": "Generar con {{count}} alimentos"
+    },
+    "a11y": {
+      "generateStarter": "generar recetas para empezar",
+      "cookWithWhatYouHave": "cocina con lo que tienes",
+      "buildCustom": "crear una receta personalizada",
+      "upgradeToPro": "Pásate a FreshCheck Pro",
+      "openRecipe": "abrir {{name}}",
+      "recipeCard_one": "{{name}}, {{count}} minuto",
+      "recipeCard_other": "{{name}}, {{count}} minutos",
+      "removeFromSaved": "quitar de guardadas",
+      "saveRecipe": "guardar receta",
+      "removeRecipe": "quitar {{name}}",
+      "close": "cerrar"
+    }
+  },
+  "capture": {
+    "header": {
+      "scan": "ESCANEAR"
+    },
+    "a11y": {
+      "back": "atrás",
+      "capture": "capturar",
+      "scanWholeTable": "escanear la mesa entera",
+      "choosePhotoFromLibrary": "elegir foto de la galería",
+      "reviewScans_one": "revisar {{count}} escaneo",
+      "reviewScans_other": "revisar {{count}} escaneos"
+    },
+    "modes": {
+      "single": "INDIVIDUAL",
+      "batch": "LOTE",
+      "barcode": "CÓD. BARRAS"
+    },
+    "hints": {
+      "barcode": "APUNTA A UN CÓDIGO DE BARRAS",
+      "batch": "TOCA PARA AÑADIR · LOS ESCANEOS CORREN DE FONDO",
+      "single": "APUNTA A LA COMIDA · TOCA PARA CAPTURAR"
+    },
+    "freeScansLeft_one": "QUEDA {{count}} ESCANEO GRATIS HOY",
+    "freeScansLeft_other": "QUEDAN {{count}} ESCANEOS GRATIS HOY",
+    "status": {
+      "analyzing": "Analizando…",
+      "lookingUpProduct": "Buscando el producto…",
+      "readingFreshness": "Analizando frescura…",
+      "findingItems": "Buscando alimentos…",
+      "capturing": "Capturando…",
+      "loadingPhoto": "Cargando foto…",
+      "preparingScan": "Preparando escaneo…",
+      "loadingCamera": "Cargando cámara…"
+    },
+    "analyzingSub": {
+      "stillWorking": "Sigo trabajando… {{seconds}} s",
+      "default": "Esto puede tardar unos segundos"
+    },
+    "cta": {
+      "scanWholeTable": "📋  ESCANEAR LA MESA ENTERA",
+      "reviewScans_one": "Revisar {{count}} escaneo",
+      "reviewScans_other": "Revisar {{count}} escaneos",
+      "allowCamera": "Permitir cámara",
+      "openSettings": "Abrir Ajustes",
+      "chooseFromLibrary": "Elegir de la galería en su lugar",
+      "back": "Atrás"
+    },
+    "gate": {
+      "serviceUnavailable": {
+        "title": "Servicio no disponible",
+        "message": "El escaneo no está disponible temporalmente. Inténtalo de nuevo en un momento."
+      },
+      "cameraOff": {
+        "title": "Cámara desactivada",
+        "messageCanAsk": "FreshCheck necesita acceso a la cámara para escanear alimentos.",
+        "messageDenied": "Activa el acceso a la cámara en Ajustes y vuelve."
+      }
+    },
+    "barcode": {
+      "expiryText": "quedan ~{{days}} días"
+    },
+    "errors": {
+      "scanFailed": "El escaneo ha fallado.",
+      "couldNotScan": "No se pudo escanear.",
+      "couldNotCapture": "No se pudo capturar la foto."
+    },
+    "alerts": {
+      "cancel": "Cancelar",
+      "productNotFound": {
+        "title": "Producto no encontrado",
+        "message": "Aún no hay coincidencia para ese código de barras. Prueba con el escaneo por foto."
+      },
+      "couldNotAdd": {
+        "title": "No se pudo añadir"
+      },
+      "addedToFridge": {
+        "title": "Añadido a tu nevera",
+        "message": "{{product}} · dura ~{{days}} días"
+      },
+      "severalItems": {
+        "title": "Varios alimentos detectados",
+        "message": "Esta foto parece tener varios alimentos. ¿Los escaneamos todos o solo el principal?",
+        "justMain": "Solo el principal",
+        "scanAll": "Escanear todos"
+      },
+      "scanFailed": {
+        "title": "El escaneo ha fallado"
+      },
+      "noFoodFound": {
+        "title": "No se ha encontrado comida",
+        "message": "No hemos detectado ningún alimento en esa foto. Acércate más o mejora la luz."
+      },
+      "preparingScan": {
+        "title": "Preparando escaneo",
+        "message": "Espera un momento y vuelve a intentarlo."
+      },
+      "photoAccess": {
+        "title": "Se necesita acceso a las fotos",
+        "messageCanAsk": "Permite el acceso a las fotos para elegir una foto de comida de tu galería.",
+        "messageDenied": "Activa el acceso a las fotos en Ajustes y vuelve."
+      },
+      "dailyScanLimit": {
+        "title": "Límite diario de escaneos",
+        "message": "Se añadieron {{added}} de {{total}} fotos: son los escaneos gratis de hoy. Pásate a Pro para ilimitados."
+      }
+    }
+  },
+  "loaders": {
+    "cooking": {
+      "readingFridge": "Viendo qué hay en tu nevera…",
+      "prioritising": "Priorizando lo que caduca antes…",
+      "pairingFlavours": "Combinando sabores que funcionan…",
+      "writingSteps": "Escribiendo los pasos…",
+      "platingUp": "Emplatando 3 ideas…",
+      "eta": "Unos {{seconds}} segundos · las fotos cargan justo después"
+    },
+    "image": {
+      "plating": "Emplatando tu plato",
+      "generating": "Generando una receta única",
+      "simmering": "Cociendo los detalles a fuego lento",
+      "pickingIngredients": "Eligiendo ingredientes frescos"
+    }
+  },
+  "foods": {
+    "reasons": {
+      "tooShort": "Demasiado corto",
+      "tooLong": "Demasiado largo",
+      "lettersOnly": "Solo letras, sin números ni símbolos",
+      "notRealIngredient": "Eso no parece un ingrediente real"
+    }
+  },
+  "scan": {
+    "timeout": "Esto está tardando más de lo normal. Inténtalo de nuevo.",
+    "unreachable": "No se pudo conectar con el escáner. Revisa tu conexión e inténtalo de nuevo.",
+    "failed": "El escaneo ha fallado"
+  },
+  "fridge": {
+    "title": "Mi nevera",
+    "eyebrow": "ESTADO DEL INVENTARIO",
+    "recipesLink": "Recetas con tu nevera",
+    "a11y": {
+      "viewRecipes": "Ver recetas con tu nevera"
+    },
+    "categories": {
+      "all": "Todo",
+      "produce": "Fruta y verdura",
+      "dairy": "Lácteos",
+      "poultry": "Aves",
+      "meat": "Carne",
+      "fish": "Pescado",
+      "bakery": "Panadería",
+      "pantry": "Despensa"
+    },
+    "empty": {
+      "title": "La nevera está vacía",
+      "body": "Escanea un alimento para empezar a controlar qué hay en tu nevera y cuándo se estropeará.",
+      "cta": "Escanear primer alimento"
+    },
+    "footer": {
+      "tracked_one": "{{shown}} DE {{count}} PRODUCTO CONTROLADO",
+      "tracked_other": "{{shown}} DE {{count}} PRODUCTOS CONTROLADOS",
+      "swipeHint": "DESLIZA UNA TARJETA A LA IZQUIERDA PARA QUITARLA"
+    },
+    "alerts": {
+      "removeFailedTitle": "No se pudo quitar",
+      "loadFailedTitle": "No se pudo cargar la nevera"
+    }
+  }
+}

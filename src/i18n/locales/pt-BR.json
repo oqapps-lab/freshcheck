@@ -1,1 +1,1154 @@
-{}
+{
+  "common": {
+    "appName": "FreshCheck",
+    "continue": "Continuar",
+    "getStarted": "Começar",
+    "back": "Voltar",
+    "cancel": "Cancelar",
+    "save": "Salvar",
+    "done": "Concluído",
+    "tryAgain": "Tentar de novo",
+    "next": "Avançar",
+    "skip": "Pular",
+    "ok": "OK",
+    "dayUnit_one": "DIA",
+    "dayUnit_other": "DIAS",
+    "tabA11y": "aba {{label}}",
+    "productRow": {
+      "a11yDaysLeft_one": "{{name}}, {{count}} dia restante",
+      "a11yDaysLeft_other": "{{name}}, {{count}} dias restantes",
+      "delete": "EXCLUIR",
+      "deleteA11y": "Excluir {{name}}"
+    },
+    "achievements": {
+      "unlocked": "CONQUISTA DESBLOQUEADA",
+      "items": {
+        "first_scan": {
+          "title": "Primeiro Olhar",
+          "desc": "Escaneie seu primeiro alimento"
+        },
+        "scan_10": {
+          "title": "Olho Treinado",
+          "desc": "Escaneie 10 alimentos"
+        },
+        "scan_50": {
+          "title": "Pro da Segurança",
+          "desc": "Escaneie 50 alimentos"
+        },
+        "first_recipe": {
+          "title": "Cozinheiro de Casa",
+          "desc": "Gere sua primeira receita"
+        },
+        "recipe_10": {
+          "title": "Explorador de Receitas",
+          "desc": "Gere 10 receitas"
+        },
+        "fridge_5": {
+          "title": "Geladeira Cheia",
+          "desc": "Acompanhe 5 itens da geladeira"
+        },
+        "streak_3": {
+          "title": "Pegando o Jeito",
+          "desc": "Use o FreshCheck por 3 dias"
+        },
+        "streak_7": {
+          "title": "Guerreiro Antidesperdício",
+          "desc": "Use o FreshCheck por 7 dias"
+        }
+      }
+    }
+  },
+  "errorBoundary": {
+    "title": "Algo deu errado",
+    "message": "Ocorreu um erro inesperado. Tente de novo ou reinicie o app se o problema continuar.",
+    "retry": "Tentar de novo"
+  },
+  "att": {
+    "headlineFamily": "Deixe o FreshCheck melhor para as famílias",
+    "headlineYou": "Deixe o FreshCheck melhor para você",
+    "bodyFamily": "Com a sua permissão, medimos quais recursos realmente ajudam pais como você — assim continuamos melhorando o que importa de verdade.",
+    "bodyYou": "Com a sua permissão, medimos quais recursos realmente ajudam pessoas como você — assim continuamos melhorando o que importa de verdade.",
+    "privacy": "Nunca vendemos seus dados pessoais, e seus escaneamentos sempre ficam privados.",
+    "micro": "Na próxima tela você pode Permitir ou recusar. O FreshCheck funciona completo de qualquer jeito, e você pode mudar isso quando quiser nos Ajustes.",
+    "continue": "Continuar"
+  },
+  "building": {
+    "pct": "{{pct}}%",
+    "stages": {
+      "stage0": {
+        "title": "Lendo seus hábitos de geladeira",
+        "detail": "O que você compra, o que você esquece"
+      },
+      "stage1": {
+        "title": "Mapeando o que estraga mais rápido na sua casa",
+        "detail": "Para nada passar do prazo"
+      },
+      "stage2": {
+        "title": "Calibrando os alertas de frescor",
+        "detail": "Ajustados ao que você mais desperdiça"
+      },
+      "stage3": {
+        "title": "Selecionando receitas para o que vence primeiro",
+        "detail": "Jantar com o que você já tem"
+      },
+      "stage4": {
+        "title": "Seu plano de frescor está tomando forma",
+        "detail": "Quase pronto"
+      }
+    },
+    "badge": {
+      "withName": "{{name}}, seu plano é pessoal — não é um modelo pronto",
+      "noName": "Seu plano é pessoal — não é um modelo pronto"
+    }
+  },
+  "onboarding": {
+    "cta": {
+      "getStarted": "Começar",
+      "continue": "Continuar"
+    },
+    "slides": {
+      "waste": {
+        "title": "Nunca mais jogue fora comida boa",
+        "body": "O FreshCheck diz o que ainda está bom e te avisa antes de estragar.",
+        "proof": "Famílias economizam cerca de US$ 2.913 por ano"
+      },
+      "scan": {
+        "title": "Ainda está seguro? Saiba em 3 segundos",
+        "body": "Aponte a câmera para qualquer alimento e tenha um veredito na hora — seguro, atenção ou descarte."
+      },
+      "timeline": {
+        "title": "Toda a sua geladeira numa linha do tempo de frescor",
+        "body": "Tudo o que você tem, ordenado pelo que vence antes. Nada mais esquecido lá no fundo."
+      },
+      "recipes": {
+        "title": "O jantar de hoje, com o que você já tem",
+        "body": "Um toque transforma seus ingredientes prestes a vencer em 3 receitas de IA fresquinhas."
+      },
+      "barcode": {
+        "title": "Escaneie o código de barras, a gente cuida do resto",
+        "body": "Adicione produtos embalados num segundo — é só escanear o código de barras que registramos."
+      }
+    }
+  },
+  "personalize": {
+    "progress": "Passo {{current}} de {{total}}",
+    "namePlaceholder": "Seu nome",
+    "a11y": {
+      "back": "voltar"
+    },
+    "cta": {
+      "buildPlan": "Montar meu plano",
+      "continue": "Continuar"
+    },
+    "questions": {
+      "household": {
+        "q": "Para quem você está mantendo a comida fresca?",
+        "options": {
+          "me": "Só para mim",
+          "partner": "Eu e meu parceiro(a)",
+          "family": "Uma família com filhos",
+          "roommates": "Uma casa compartilhada"
+        }
+      },
+      "topWaste": {
+        "q": "O que você mais joga fora?",
+        "sub": "Marque tudo que se aplica",
+        "options": {
+          "leftovers": "Sobras",
+          "produce": "Frutas e verduras",
+          "dairy": "Laticínios",
+          "meat": "Carnes e aves",
+          "bread": "Pão"
+        }
+      },
+      "worry": {
+        "q": "O que mais te preocupa sobre comida?",
+        "options": {
+          "sick": "Fazer alguém passar mal",
+          "money": "Desperdiçar dinheiro",
+          "spoiled": "Comer algo estragado",
+          "unsure": "Não saber o que ainda está bom"
+        }
+      },
+      "forgotten": {
+        "q": "Com que frequência as sobras ficam esquecidas no fundo da geladeira?",
+        "options": {
+          "constantly": "O tempo todo",
+          "weekly": "Quase toda semana",
+          "sometimes": "Às vezes",
+          "rarely": "Raramente"
+        }
+      },
+      "dinner": {
+        "q": "Como você decide o jantar?",
+        "options": {
+          "plan": "Planejo com antecedência",
+          "wing": "Improviso na hora",
+          "expiring": "O que está prestes a vencer",
+          "order": "Peço comida bastante"
+        }
+      },
+      "name": {
+        "q": "Última coisa — como devemos te chamar?",
+        "sub": "Opcional"
+      }
+    }
+  },
+  "yourPlan": {
+    "eyebrowNamed": "PLANO DE {{name}}",
+    "eyebrowDefault": "SEU PLANO FRESHCHECK",
+    "watchLabel": "VAMOS FICAR DE OLHO EM",
+    "whatIsInside": "O QUE TEM DENTRO",
+    "socialProof": "Junte-se às famílias que economizam cerca de US$ 2.913 por ano com o FreshCheck.",
+    "cta": {
+      "seeMyPlan": "Ver meu plano"
+    },
+    "waste": {
+      "leftovers": "Sobras",
+      "produce": "Frutas e verduras",
+      "dairy": "Laticínios",
+      "meat": "Carnes e aves",
+      "bread": "Pão"
+    },
+    "benefits": {
+      "verdict": {
+        "title": "Veredito na hora: seguro / atenção / perigo",
+        "sub": "Escaneie qualquer alimento e saiba em 3 segundos."
+      },
+      "timeline": {
+        "title": "Sua geladeira numa linha do tempo de frescor",
+        "sub": "Tudo ordenado pelo que vence antes."
+      },
+      "recipes": {
+        "title": "Receitas com o que está vencendo",
+        "sub": "Transforme itens prestes a estragar em jantar."
+      }
+    },
+    "tiles": {
+      "dailyScans": "Escaneamentos de frescor diários",
+      "fridgeTimeline": "Linha do tempo da geladeira",
+      "expiryReminders": "Lembretes de validade",
+      "unlimitedScans": "Escaneamentos ilimitados",
+      "unlimitedRecipes": "Receitas de IA ilimitadas",
+      "barcodeImport": "Importação por código de barras"
+    }
+  },
+  "plan": {
+    "wasteLower": {
+      "leftovers": "sobras",
+      "produce": "frutas e verduras",
+      "dairy": "laticínios",
+      "meat": "carnes e aves",
+      "bread": "pão"
+    },
+    "household": {
+      "family": "cozinheiro de família agitada",
+      "partner": "cozinha para dois",
+      "roommates": "casa compartilhada",
+      "solo": "cozinheiro solo"
+    },
+    "headlineWithWaste": "Você é {{who}} — vamos ficar de olho nas suas {{waste}}.",
+    "headlineFallback": "Você é {{who}} — o FreshCheck vai cuidar da sua geladeira por você.",
+    "fear": {
+      "sick": "Sinalizamos qualquer coisa arriscada antes de chegar à sua mesa.",
+      "money": "Pare de jogar fora cerca de US$ 56 em compras toda semana.",
+      "spoiled": "Você sempre vai saber o que ainda está bom — num piscar de olhos.",
+      "default": "Nunca mais adivinhe se algo ainda é seguro para comer."
+    }
+  },
+  "paywall": {
+    "eyebrow": "FRESHCHECK PRO",
+    "a11y": {
+      "close": "fechar",
+      "planOption": "plano {{label}}, {{price}} {{unit}}"
+    },
+    "hero": {
+      "scanLimit": {
+        "title": "Você usou os escaneamentos grátis de hoje",
+        "subtitle": "Vá para o ilimitado — escaneie tudo na sua cozinha, quando quiser."
+      },
+      "barcode": {
+        "title": "Escanear código de barras é um recurso Pro",
+        "subtitle": "Escaneie o código de barras de qualquer produto e coloque direto na sua geladeira."
+      },
+      "recipeLimit": {
+        "title": "Você usou a geração grátis de receitas de hoje",
+        "subtitle": "Receitas de IA ilimitadas com o que tiver na sua geladeira — todo dia."
+      },
+      "default": {
+        "title": "Desbloqueie o FreshCheck Pro",
+        "subtitle": "Transforme o que tem na sua geladeira em receitas e nunca mais jogue comida fora."
+      }
+    },
+    "trust": {
+      "family": "ECONOMIZA, EM MÉDIA, US$ 2.913 / ANO PARA A FAMÍLIA",
+      "household": "UMA CASA ECONOMIZA, EM MÉDIA, US$ 2.913 / ANO"
+    },
+    "features": {
+      "header": "TUDO NO PRO",
+      "unlimitedScans": {
+        "title": "Escaneamentos ilimitados",
+        "body": "Escaneie quantos itens quiser, sem limite diário."
+      },
+      "unlimitedRecipes": {
+        "title": "Receitas de IA ilimitadas",
+        "body": "Gere receitas novas com a sua geladeira quando quiser, sem limite diário."
+      },
+      "barcodeAdd": {
+        "title": "Adicionar por código de barras",
+        "body": "Escaneie o código de barras de um produto para colocá-lo direto na sua geladeira."
+      },
+      "wholeTable": {
+        "title": "Escanear a mesa inteira",
+        "body": "Uma foto, todos os itens da mesa — quantas vezes quiser."
+      },
+      "batchScanning": {
+        "title": "Escaneamento em lote rápido",
+        "body": "Escaneie toda a sua compra de mercado em sequência, sem limites."
+      }
+    },
+    "plans": {
+      "eyebrow": "ESCOLHA SEU PLANO · 3 DIAS GRÁTIS",
+      "annual": {
+        "label": "Anual",
+        "unit": "/ ano",
+        "badge": "ECONOMIZE 89%",
+        "sublabel": "Só US$ 0,77 / semana, cobrado por ano"
+      },
+      "monthly": {
+        "label": "Mensal",
+        "unit": "/ mês",
+        "sublabel": "Flexível — cancele quando quiser"
+      },
+      "weekly": {
+        "label": "Semanal",
+        "unit": "/ semana",
+        "sublabel": "Só experimentando"
+      }
+    },
+    "cta": {
+      "processing": "Processando…",
+      "startTrial": "Iniciar teste grátis de 3 dias"
+    },
+    "fineprint": {
+      "annual": "Primeiros 3 dias grátis, depois {{price}} / ano. Renova automaticamente, a menos que seja cancelado pelo menos 24 horas antes do fim do período.",
+      "monthly": "Primeiros 3 dias grátis, depois {{price}} / mês. Renova automaticamente, a menos que seja cancelado pelo menos 24 horas antes do fim do período.",
+      "weekly": "Primeiros 3 dias grátis, depois {{price}} / semana. Renova automaticamente, a menos que seja cancelado pelo menos 24 horas antes do fim do período."
+    },
+    "legal": {
+      "restore": "Restaurar",
+      "terms": "Termos",
+      "privacy": "Privacidade"
+    },
+    "alerts": {
+      "welcomeTitle": "Bem-vindo ao Pro",
+      "welcomeBody": "Seu teste grátis começou. Gere receitas de IA ilimitadas com a sua geladeira!",
+      "pendingTitle": "Aguardando aprovação",
+      "pendingBody": "Sua compra está pendente de aprovação do Apple ID.",
+      "purchaseFailedTitle": "Falha na compra",
+      "restoredTitle": "Restaurado",
+      "restoredBody": "Sua assinatura está ativa de novo.",
+      "nothingToRestoreTitle": "Nada para restaurar",
+      "nothingToRestoreBody": "Nenhuma assinatura ativa foi encontrada neste Apple ID.",
+      "restoreFailedTitle": "Falha ao restaurar",
+      "couldNotOpenLinkTitle": "Não foi possível abrir o link",
+      "unknownError": "Erro desconhecido"
+    }
+  },
+  "auth": {
+    "wordmark": "FRESHCHECK",
+    "title": {
+      "signIn": "Bem-vindo de volta",
+      "signUp": "Entre no FreshCheck"
+    },
+    "labels": {
+      "email": "E-MAIL",
+      "password": "SENHA"
+    },
+    "placeholders": {
+      "email": "voce@exemplo.com",
+      "passwordSignIn": "Sua senha",
+      "passwordSignUp": "Mín. 6 caracteres"
+    },
+    "cta": {
+      "submitting": "...",
+      "signIn": "Entrar",
+      "createAccount": "Criar conta",
+      "toggleToSignUp": "Não tem uma conta? Cadastre-se",
+      "toggleToSignIn": "Já tem uma conta? Entre",
+      "continueAsGuest": "Continuar como convidado"
+    },
+    "legal": {
+      "prefix": "Ao continuar, você concorda com os",
+      "terms": "Termos",
+      "and": "e a",
+      "privacy": "Política de Privacidade",
+      "suffix": "."
+    },
+    "alerts": {
+      "signInTitle": "Entrar",
+      "signUpTitle": "Cadastrar",
+      "notConfigured": "O Supabase não está configurado nesta versão. Continue como convidado para seguir usando o app localmente.",
+      "checkEmailTitle": "Verifique seu e-mail",
+      "checkEmailMessage": "Enviamos um link de confirmação para {{email}}. Toque nele e depois volte e entre.",
+      "ok": "OK"
+    },
+    "errors": {
+      "signInFailedTitle": "Falha ao entrar",
+      "signUpFailedTitle": "Falha no cadastro",
+      "invalidCredentials": "Informe um e-mail válido e uma senha de pelo menos 6 caracteres."
+    },
+    "a11y": {
+      "back": "voltar",
+      "email": "e-mail",
+      "password": "senha",
+      "toggleMode": "alternar modo de autenticação"
+    }
+  },
+  "scanResult": {
+    "header": {
+      "analysis": "ANÁLISE"
+    },
+    "verdict": {
+      "fresh": "Parece fresco",
+      "safe": "Seguro para comer",
+      "soon": "Consuma logo",
+      "past": "Passou do ponto"
+    },
+    "expiry": {
+      "unknown": "Validade desconhecida",
+      "useToday": "Use hoje",
+      "daysLeft_one": "{{count}} dia restante",
+      "daysLeft_other": "{{count}} dias restantes"
+    },
+    "empty": {
+      "title": "Nenhum escaneamento ainda",
+      "subtitle": "Escaneie um item para ver o veredito de frescor aqui.",
+      "scanNow": "Escanear agora"
+    },
+    "labels": {
+      "itemFallback": "item",
+      "confidence": "{{percent}}% de confiança"
+    },
+    "safetyNote": "Estimativa apenas visual — não detecta bactérias. Na dúvida, jogue fora.",
+    "refine": {
+      "label": "HÁ QUANTO TEMPO VOCÊ TEM ISSO?",
+      "justGotIt": "Acabei de comprar",
+      "daysAgo_one": "há {{count}} dia",
+      "daysAgo_other": "há {{count}} dias",
+      "adjusted_one": "Ajustado para {{count}} dia restante",
+      "adjusted_other": "Ajustado para {{count}} dias restantes"
+    },
+    "cta": {
+      "addToFridge": "Adicionar à Geladeira",
+      "scanAnother": "Escanear Outro"
+    },
+    "alerts": {
+      "signInRequiredTitle": "Login necessário",
+      "signInRequiredMessage": "Entre para salvar itens na sua geladeira.",
+      "cancel": "Cancelar",
+      "signIn": "Entrar",
+      "couldNotSaveTitle": "Não foi possível salvar"
+    },
+    "a11y": {
+      "back": "voltar",
+      "fewerDays": "menos dias",
+      "moreDays": "mais dias"
+    }
+  },
+  "home": {
+    "wordmark": "FRESHCHECK",
+    "heroTitle": "Pronto para Escanear",
+    "heroSubtitle": "Aponte para a comida. Resultado em 3 segundos.",
+    "tapToScan": "TOQUE PARA ESCANEAR",
+    "recipeOfDayEmpty": "Gere receitas com a sua geladeira",
+    "badgeUnlocked": "Desbloqueado",
+    "sections": {
+      "recipeOfDay": "RECEITA DO DIA",
+      "freshTips": "DICAS FRESQUINHAS",
+      "storageGuide": "GUIA DE CONSERVAÇÃO",
+      "chefTips": "DICAS DE CHEFS",
+      "yourBadges": "SUAS MEDALHAS"
+    },
+    "a11y": {
+      "tapToScan": "Toque para escanear",
+      "openRecipe": "abrir {{name}}",
+      "generateRecipes": "gerar receitas"
+    },
+    "freshTips": {
+      "items": {
+        "dangerZone": {
+          "title": "A zona de perigo",
+          "body": "As bactérias se multiplicam mais rápido entre 4 e 60 °C. Refrigere as sobras até 2 horas depois de cozinhar."
+        },
+        "pestoSealedVsOpen": {
+          "title": "Pesto: lacrado vs. aberto",
+          "body": "Um pote lacrado dura meses. Depois de aberto, use em cerca de 5 a 7 dias — ou congele."
+        },
+        "eggsKeepLonger": {
+          "title": "Ovos duram mais do que você pensa",
+          "body": "Ovos refrigerados costumam durar de 3 a 5 semanas após a compra. Teste da água: os frescos afundam."
+        },
+        "herbsLoveWater": {
+          "title": "Ervas adoram água",
+          "body": "Coloque ervas frescas em pé num copo com água, cobertas frouxamente — elas duram cerca do dobro."
+        },
+        "washBerriesLast": {
+          "title": "Lave as frutinhas por último",
+          "body": "A umidade acelera o mofo. Só lave as frutinhas vermelhas pouco antes de comer."
+        }
+      }
+    }
+  },
+  "storageGuide": {
+    "items": {
+      "bananas": {
+        "name": "Bananas",
+        "store": "Na bancada, longe de outras frutas",
+        "life": "2–7 dias",
+        "temp": "Temp. ambiente"
+      },
+      "berries": {
+        "name": "Frutas vermelhas",
+        "store": "Sem lavar, em caixa forrada com papel-toalha",
+        "life": "3–7 dias",
+        "temp": "Geladeira 1–4 °C"
+      },
+      "eggs": {
+        "name": "Ovos",
+        "store": "Na embalagem, numa prateleira (não na porta)",
+        "life": "3–5 semanas",
+        "temp": "Geladeira ≤4 °C"
+      },
+      "leafyGreens": {
+        "name": "Folhas verdes",
+        "store": "Embrulhadas frouxamente num pano seco",
+        "life": "5–7 dias",
+        "temp": "Geladeira 1–4 °C"
+      },
+      "chicken": {
+        "name": "Frango",
+        "store": "Lacrado, na prateleira de baixo",
+        "life": "1–2 dias",
+        "temp": "Geladeira ≤4 °C"
+      },
+      "cookedLeftovers": {
+        "name": "Sobras cozidas",
+        "store": "Hermético, resfriadas em até 2 horas",
+        "life": "3–4 dias",
+        "temp": "Geladeira ≤4 °C"
+      },
+      "hardCheese": {
+        "name": "Queijo duro",
+        "store": "Embrulhado em papel-manteiga, não plástico",
+        "life": "3–4 semanas",
+        "temp": "Geladeira 1–4 °C"
+      },
+      "tomatoes": {
+        "name": "Tomates",
+        "store": "Na bancada, com o talo para baixo",
+        "life": "4–7 dias",
+        "temp": "Temp. ambiente"
+      },
+      "bread": {
+        "name": "Pão",
+        "store": "Saco de papel em temp. ambiente, ou congele",
+        "life": "2–4 dias",
+        "temp": "Temp. ambiente"
+      },
+      "fish": {
+        "name": "Peixe",
+        "store": "No gelo, lacrado, prateleira de baixo",
+        "life": "1–2 dias",
+        "temp": "Geladeira ≤2 °C"
+      },
+      "carrots": {
+        "name": "Cenouras",
+        "store": "Sem as folhas, na água ou em saco lacrado",
+        "life": "2–4 semanas",
+        "temp": "Geladeira 1–4 °C"
+      },
+      "milk": {
+        "name": "Leite",
+        "store": "Prateleira mais fria, não na porta",
+        "life": "5–7 dias após aberto",
+        "temp": "Geladeira ≤4 °C"
+      }
+    }
+  },
+  "chefTips": {
+    "items": {
+      "gordonRamsay": {
+        "name": "Gordon Ramsay",
+        "role": "Chef com estrela Michelin",
+        "tip": "Prove enquanto cozinha. Tempere em camadas, não tudo no fim."
+      },
+      "massimoBottura": {
+        "name": "Massimo Bottura",
+        "role": "Osteria Francescana",
+        "tip": "O pão de ontem vira a obra-prima de hoje — nunca desperdice."
+      },
+      "juliaChild": {
+        "name": "Julia Child",
+        "role": "Autora e chef de TV",
+        "tip": "Não lote a panela — dê espaço aos alimentos, ou eles cozinham no vapor em vez de dourar."
+      },
+      "yotamOttolenghi": {
+        "name": "Yotam Ottolenghi",
+        "role": "Chef e autor",
+        "tip": "Um aperto de limão no fim desperta quase qualquer prato."
+      },
+      "marcoPierreWhite": {
+        "name": "Marco Pierre White",
+        "role": "Chef com estrela Michelin",
+        "tip": "Deixe a carne descansar depois de cozinhar — os sucos se redistribuem."
+      },
+      "nigellaLawson": {
+        "name": "Nigella Lawson",
+        "role": "Escritora gastronômica",
+        "tip": "Congele ervas no azeite numa forma de gelo antes que murchem."
+      },
+      "thomasKeller": {
+        "name": "Thomas Keller",
+        "role": "The French Laundry",
+        "tip": "Seque bem as proteínas antes de selar — a umidade é inimiga da crosta."
+      },
+      "saminNosrat": {
+        "name": "Samin Nosrat",
+        "role": "Sal, Gordura, Ácido, Calor",
+        "tip": "Salgue do alto para o sal cair de forma uniforme sobre a comida."
+      }
+    }
+  },
+  "foodFacts": {
+    "items": {
+      "smellTestLies": {
+        "title": "O teste do cheiro engana",
+        "body": "Bactérias perigosas como a salmonela não mudam o cheiro, a aparência ou o sabor da comida."
+      },
+      "dangerZone": {
+        "title": "A zona de perigo",
+        "body": "As bactérias se multiplicam mais rápido entre 4 e 60 °C. Refrigere as sobras em até 2 horas."
+      },
+      "ripenWithApples": {
+        "title": "Amadureça com maçãs",
+        "body": "Maçãs e bananas liberam etileno — mantenha-as longe das folhas para retardar o estrago."
+      },
+      "freezingPausesTime": {
+        "title": "Congelar pausa o tempo",
+        "body": "Congelar não mata as bactérias, só as paralisa. Elas acordam ao descongelar."
+      }
+    }
+  },
+  "scanBatch": {
+    "header": "ESCANEAR EM LOTE",
+    "counter": "{{done}} PRONTOS · {{left}} RESTANTES",
+    "hero": {
+      "scanning": "Escaneando seu lote…",
+      "results": "Resultados do lote"
+    },
+    "verdict": {
+      "fresh": "Parece fresco",
+      "safe": "Seguro para comer",
+      "soon": "Consuma logo",
+      "past": "Passou do ponto"
+    },
+    "expiry": {
+      "unknown": "Validade desconhecida",
+      "today": "Use hoje",
+      "daysLeft_one": "{{count}} dia restante",
+      "daysLeft_other": "{{count}} dias restantes"
+    },
+    "empty": {
+      "title": "Nada na fila",
+      "subtitle": "Mude o scanner para Lote e fotografe alguns itens.",
+      "cta": "Voltar ao escaneamento"
+    },
+    "card": {
+      "itemFallback": "Item",
+      "editHint": "TOQUE NO NOME OU NO VEREDITO PARA EDITAR",
+      "scanFailed": "Falha no escaneamento",
+      "scanFailedHint": "Tente este de novo pelo scanner.",
+      "reading": "Lendo o frescor…",
+      "waiting": "Aguardando…"
+    },
+    "cta": {
+      "add": "ADICIONAR",
+      "rescan": "REESCANEAR",
+      "done": "Concluído",
+      "addAll_one": "Adicionar {{count}} à geladeira",
+      "addAll_other": "Adicionar {{count}} à geladeira"
+    },
+    "editPrompt": {
+      "title": "Editar item",
+      "message": "Corrija o nome detectado.",
+      "cancel": "Cancelar",
+      "save": "Salvar",
+      "placeholder": "ex.: peito de frango"
+    },
+    "signInAlert": {
+      "title": "Login necessário",
+      "message": "Entre para salvar itens na sua geladeira.",
+      "cancel": "Cancelar",
+      "signIn": "Entrar"
+    },
+    "saveError": {
+      "title": "Não foi possível salvar"
+    },
+    "a11y": {
+      "back": "voltar",
+      "editName": "editar nome, atualmente {{name}}",
+      "changeVerdict": "mudar veredito de frescor",
+      "addToFridge": "adicionar {{name}} à geladeira",
+      "rescan": "reescanear esta foto",
+      "done": "concluído"
+    }
+  },
+  "profile": {
+    "fallbackName": "Você",
+    "guestName": "Convidado",
+    "status": {
+      "signedIn": "CONECTADO",
+      "notSignedIn": "NÃO CONECTADO",
+      "active": "Ativo"
+    },
+    "sections": {
+      "account": "CONTA",
+      "pro": "PRO",
+      "notifications": "NOTIFICAÇÕES",
+      "about": "SOBRE"
+    },
+    "stats": {
+      "itemsInFridge": "ITENS NA GELADEIRA"
+    },
+    "rows": {
+      "signIn": "Entrar",
+      "signOut": "Sair",
+      "email": "E-mail",
+      "deleteAccount": "Excluir conta",
+      "deleteMyData": "Excluir meus dados",
+      "freshcheckPro": "FreshCheck Pro",
+      "manageSubscription": "Gerenciar assinatura",
+      "upgradeToPro": "Assinar o FreshCheck Pro",
+      "restorePurchase": "Restaurar compra",
+      "foodExpiryReminders": "Lembretes de validade de alimentos",
+      "privacyPolicy": "Política de privacidade",
+      "termsOfService": "Termos de serviço",
+      "support": "Suporte",
+      "version": "Versão"
+    },
+    "labels": {
+      "warnMeBefore": "Avise-me com antecedência de",
+      "daysShort_one": "{{count}}d",
+      "daysShort_other": "{{count}}d"
+    },
+    "cta": {
+      "cancel": "Cancelar",
+      "save": "Salvar",
+      "delete": "Excluir",
+      "keepAccount": "Manter conta",
+      "yesDelete": "Sim, excluir",
+      "signOut": "Sair",
+      "takePhoto": "Tirar Foto",
+      "chooseFromLibrary": "Escolher da Galeria",
+      "openSettings": "Abrir Ajustes"
+    },
+    "a11y": {
+      "changeAvatar": "mudar avatar",
+      "editName": "editar nome",
+      "daysBefore_one": "{{count}} dia antes",
+      "daysBefore_other": "{{count}} dias antes"
+    },
+    "errors": {
+      "unknown": "Erro desconhecido"
+    },
+    "alerts": {
+      "photoAccess": {
+        "title": "Acesso às fotos necessário",
+        "messageCanAsk": "Permita o acesso às fotos para escolher um avatar.",
+        "messageDenied": "Ative o acesso às fotos nos Ajustes e depois volte."
+      },
+      "cameraAccess": {
+        "title": "Acesso à câmera necessário",
+        "messageCanAsk": "Permita o acesso à câmera para tirar uma foto.",
+        "messageDenied": "Ative o acesso à câmera nos Ajustes e depois volte."
+      },
+      "changePhoto": {
+        "title": "Mudar foto",
+        "message": "Escolha uma nova foto de perfil"
+      },
+      "editName": {
+        "title": "Seu nome",
+        "message": "Como devemos te chamar?"
+      },
+      "signOut": {
+        "title": "Sair",
+        "message": "Sair do FreshCheck?"
+      },
+      "restored": {
+        "title": "Restaurado",
+        "message": "Sua assinatura está ativa de novo."
+      },
+      "nothingToRestore": {
+        "title": "Nada para restaurar",
+        "message": "Nenhuma assinatura ativa foi encontrada neste Apple ID."
+      },
+      "restoreFailed": {
+        "title": "Falha ao restaurar"
+      },
+      "linkFailed": {
+        "title": "Não foi possível abrir o link"
+      },
+      "deleteAccount": {
+        "title": "Excluir conta",
+        "message": "Isso exclui permanentemente sua conta, os itens da geladeira e o histórico de escaneamentos. Não dá para desfazer."
+      },
+      "deleteConfirm": {
+        "title": "Tem certeza?",
+        "message": "Esta é sua última chance de manter seus dados. Toque em \"Sim, excluir\" para remover sua conta permanentemente."
+      },
+      "notSignedIn": {
+        "title": "Não conectado",
+        "message": "Entre primeiro, por favor."
+      },
+      "deletionFailed": {
+        "title": "Falha na exclusão",
+        "message": "Tente de novo ou entre em contato com o suporte."
+      },
+      "accountDeleted": {
+        "title": "Conta excluída",
+        "message": "Sua conta e seus dados foram removidos."
+      }
+    }
+  },
+  "recipeDetail": {
+    "loading": {
+      "title": "Carregando receita…",
+      "subtitle": "Gerando receitas fresquinhas para você"
+    },
+    "empty": {
+      "title": "Receita não encontrada",
+      "subtitle": "Volte e escolha outra receita."
+    },
+    "meta": {
+      "time": "TEMPO",
+      "difficulty": "DIFICULDADE",
+      "fromFridge": "DA GELADEIRA",
+      "minutes_one": "{{count}}min",
+      "minutes_other": "{{count}}min"
+    },
+    "difficulty": {
+      "easy": "FÁCIL",
+      "medium": "MÉDIA",
+      "hard": "DIFÍCIL"
+    },
+    "sections": {
+      "ingredients": "INGREDIENTES",
+      "steps": "PASSOS"
+    },
+    "badges": {
+      "have": "TENHO"
+    },
+    "stepLabel": {
+      "prep": "PREPARO",
+      "cook": "COZINHAR",
+      "mix": "MISTURAR",
+      "wait": "ESPERAR",
+      "serve": "SERVIR"
+    },
+    "steps": {
+      "header": "PASSO {{order}} · {{label}}",
+      "minutes": "{{minutes}} MIN"
+    },
+    "a11y": {
+      "back": "voltar",
+      "saveRecipe": "salvar receita",
+      "removeFromSaved": "remover dos salvos"
+    }
+  },
+  "recipeBuilder": {
+    "header": {
+      "title": "MONTAR UMA RECEITA",
+      "subtitle": "O que tem na sua cozinha?",
+      "intro": "Adicione o que você tem — com as quantidades, se quiser — e montamos receitas em volta disso."
+    },
+    "sections": {
+      "addIngredients": "ADICIONAR INGREDIENTES",
+      "cookingMethod": "MÉTODO DE PREPARO",
+      "maxTime": "TEMPO MÁXIMO"
+    },
+    "placeholders": {
+      "amount": "200",
+      "name": "Peito de frango"
+    },
+    "methods": {
+      "any": "Qualquer",
+      "bake": "Assar",
+      "fry": "Fritar",
+      "boil": "Ferver",
+      "grill": "Grelhar",
+      "steam": "No vapor",
+      "noCook": "Sem cozinhar",
+      "slowCook": "Cozimento lento"
+    },
+    "times": {
+      "any": "Qualquer",
+      "under15": "<=15 min",
+      "under30": "<=30 min",
+      "under45": "<=45 min",
+      "under60": "<=60 min"
+    },
+    "units": {
+      "g": "g",
+      "pcs": "un",
+      "cups": "xíc",
+      "tbsp": "c. sopa",
+      "tsp": "c. chá",
+      "ml": "ml"
+    },
+    "toggle": {
+      "title": "Usar só estes ingredientes",
+      "sub": "Desligado = podemos adicionar extras comuns (óleo, sal, temperos)."
+    },
+    "cta": {
+      "generate": "Gerar receitas"
+    },
+    "errors": {
+      "notFood": "Informe um ingrediente de verdade"
+    },
+    "alerts": {
+      "addIngredientsTitle": "Adicionar ingredientes",
+      "addIngredientsMessage": "Adicione pelo menos um ingrediente para montar uma receita.",
+      "couldNotGenerateTitle": "Não foi possível gerar",
+      "tryAgain": "Tente de novo daqui a pouco."
+    },
+    "a11y": {
+      "back": "voltar",
+      "addIngredient": "adicionar ingrediente"
+    }
+  },
+  "recipes": {
+    "eyebrow": "RECEITAS",
+    "hero": {
+      "title": "Cozinhe com o que você tem",
+      "titleEmpty": "Receitas para começar",
+      "subtitle": "CRIADAS POR IA COM A SUA GELADEIRA",
+      "subtitleEmpty": "ESCANEIE ITENS PARA SUGESTÕES PERSONALIZADAS"
+    },
+    "cook": {
+      "title": "Cozinhe com o que você tem",
+      "titleEmpty": "Gerar receitas para começar",
+      "subtitle": "Escolha itens da geladeira → 3 receitas novas",
+      "subtitleEmpty": "3 ideias simples para você comprar"
+    },
+    "build": {
+      "title": "Monte sua própria receita",
+      "subtitle": "Digite ingredientes, método e tempo"
+    },
+    "emptyBanner": "Sua geladeira está vazia — estas são ideias genéricas para começar. Escaneie alguns itens primeiro para receitas montadas em volta do que você realmente tem.",
+    "sections": {
+      "saved": "★ SALVAS"
+    },
+    "errors": {
+      "dailyLimitTitle": "Limite diário atingido",
+      "generateFailedTitle": "Não foi possível gerar receitas",
+      "unlockUnlimited": "Desbloquear receitas ilimitadas"
+    },
+    "labels": {
+      "minutesShort": "{{count}} MIN",
+      "fromFridge_one": "{{count}} DA GELADEIRA",
+      "fromFridge_other": "{{count}} DA GELADEIRA",
+      "today": "hoje",
+      "daysShort": "{{count}}d"
+    },
+    "sheet": {
+      "title": "Cozinhe com o que você tem",
+      "subtitle": "Escolha os itens para montar as receitas. Priorizamos o que vence antes."
+    },
+    "cta": {
+      "generateFromItems_one": "Gerar com {{count}} item",
+      "generateFromItems_other": "Gerar com {{count}} itens"
+    },
+    "a11y": {
+      "generateStarter": "gerar receitas para começar",
+      "cookWithWhatYouHave": "cozinhe com o que você tem",
+      "buildCustom": "montar uma receita personalizada",
+      "upgradeToPro": "Assinar o FreshCheck Pro",
+      "openRecipe": "abrir {{name}}",
+      "recipeCard_one": "{{name}}, {{count}} minuto",
+      "recipeCard_other": "{{name}}, {{count}} minutos",
+      "removeFromSaved": "remover dos salvos",
+      "saveRecipe": "salvar receita",
+      "removeRecipe": "remover {{name}}",
+      "close": "fechar"
+    }
+  },
+  "capture": {
+    "header": {
+      "scan": "ESCANEAR"
+    },
+    "a11y": {
+      "back": "voltar",
+      "capture": "capturar",
+      "scanWholeTable": "escanear a mesa inteira",
+      "choosePhotoFromLibrary": "escolher foto da galeria",
+      "reviewScans_one": "revisar {{count}} escaneamento",
+      "reviewScans_other": "revisar {{count}} escaneamentos"
+    },
+    "modes": {
+      "single": "ÚNICO",
+      "batch": "LOTE",
+      "barcode": "CÓD. BARRAS"
+    },
+    "hints": {
+      "barcode": "APONTE PARA UM CÓDIGO DE BARRAS",
+      "batch": "TOQUE PARA ADICIONAR · ESCANEAMENTOS RODAM EM SEGUNDO PLANO",
+      "single": "APONTE PARA A COMIDA · TOQUE PARA CAPTURAR"
+    },
+    "freeScansLeft_one": "{{count}} ESCANEAMENTO GRÁTIS HOJE",
+    "freeScansLeft_other": "{{count}} ESCANEAMENTOS GRÁTIS HOJE",
+    "status": {
+      "analyzing": "Analisando…",
+      "lookingUpProduct": "Buscando o produto…",
+      "readingFreshness": "Lendo o frescor…",
+      "findingItems": "Encontrando itens…",
+      "capturing": "Capturando…",
+      "loadingPhoto": "Carregando foto…",
+      "preparingScan": "Preparando o escaneamento…",
+      "loadingCamera": "Carregando câmera…"
+    },
+    "analyzingSub": {
+      "stillWorking": "Ainda trabalhando… {{seconds}}s",
+      "default": "Isso pode levar alguns segundos"
+    },
+    "cta": {
+      "scanWholeTable": "📋  ESCANEAR A MESA INTEIRA",
+      "reviewScans_one": "Revisar {{count}} escaneamento",
+      "reviewScans_other": "Revisar {{count}} escaneamentos",
+      "allowCamera": "Permitir câmera",
+      "openSettings": "Abrir Ajustes",
+      "chooseFromLibrary": "Escolher da galeria",
+      "back": "Voltar"
+    },
+    "gate": {
+      "serviceUnavailable": {
+        "title": "Serviço indisponível",
+        "message": "O escaneamento está temporariamente indisponível. Tente de novo daqui a pouco."
+      },
+      "cameraOff": {
+        "title": "Câmera desligada",
+        "messageCanAsk": "O FreshCheck precisa de acesso à câmera para escanear comida.",
+        "messageDenied": "Ative o acesso à câmera nos Ajustes e depois volte."
+      }
+    },
+    "barcode": {
+      "expiryText": "~{{days}} dias restantes"
+    },
+    "errors": {
+      "scanFailed": "Falha no escaneamento.",
+      "couldNotScan": "Não foi possível escanear.",
+      "couldNotCapture": "Não foi possível capturar a foto."
+    },
+    "alerts": {
+      "cancel": "Cancelar",
+      "productNotFound": {
+        "title": "Produto não encontrado",
+        "message": "Ainda não há correspondência para esse código de barras. Tente o escaneamento por foto."
+      },
+      "couldNotAdd": {
+        "title": "Não foi possível adicionar"
+      },
+      "addedToFridge": {
+        "title": "Adicionado à sua geladeira",
+        "message": "{{product}} · dura ~{{days}} dias"
+      },
+      "severalItems": {
+        "title": "Vários itens detectados",
+        "message": "Esta foto parece ter vários alimentos. Escanear todos ou só o principal?",
+        "justMain": "Só o principal",
+        "scanAll": "Escanear todos"
+      },
+      "scanFailed": {
+        "title": "Falha no escaneamento"
+      },
+      "noFoodFound": {
+        "title": "Nenhum alimento encontrado",
+        "message": "Não conseguimos identificar nenhum alimento nessa foto. Tente chegar mais perto ou melhorar a luz."
+      },
+      "preparingScan": {
+        "title": "Preparando o escaneamento",
+        "message": "Aguarde um momento e tente de novo."
+      },
+      "photoAccess": {
+        "title": "Acesso às fotos necessário",
+        "messageCanAsk": "Permita o acesso às fotos para escolher uma foto de comida da sua galeria.",
+        "messageDenied": "Ative o acesso às fotos nos Ajustes e depois volte."
+      },
+      "dailyScanLimit": {
+        "title": "Limite diário de escaneamentos",
+        "message": "Adicionadas {{added}} de {{total}} fotos — esses são os escaneamentos grátis de hoje. Assine o Pro para ilimitado."
+      }
+    }
+  },
+  "loaders": {
+    "cooking": {
+      "readingFridge": "Lendo o que tem na sua geladeira…",
+      "prioritising": "Priorizando o que vence antes…",
+      "pairingFlavours": "Combinando sabores que funcionam…",
+      "writingSteps": "Escrevendo os passos…",
+      "platingUp": "Empratando 3 ideias…",
+      "eta": "Cerca de {{seconds}} segundos · as fotos carregam logo depois"
+    },
+    "image": {
+      "plating": "Empratando seu prato",
+      "generating": "Gerando uma receita única",
+      "simmering": "Apurando os detalhes",
+      "pickingIngredients": "Escolhendo ingredientes frescos"
+    }
+  },
+  "foods": {
+    "reasons": {
+      "tooShort": "Muito curto",
+      "tooLong": "Muito longo",
+      "lettersOnly": "Apenas letras — sem números ou símbolos",
+      "notRealIngredient": "Isso não parece um ingrediente de verdade"
+    }
+  },
+  "scan": {
+    "timeout": "Isso está demorando mais que o normal — tente de novo, por favor.",
+    "unreachable": "Não foi possível conectar ao scanner. Verifique sua conexão e tente de novo.",
+    "failed": "Falha no escaneamento"
+  },
+  "fridge": {
+    "title": "Minha Geladeira",
+    "eyebrow": "STATUS DO ESTOQUE",
+    "recipesLink": "Receitas com a sua geladeira",
+    "a11y": {
+      "viewRecipes": "Ver receitas com a sua geladeira"
+    },
+    "categories": {
+      "all": "Tudo",
+      "produce": "Hortifrúti",
+      "dairy": "Laticínios",
+      "poultry": "Aves",
+      "meat": "Carnes",
+      "fish": "Peixe",
+      "bakery": "Padaria",
+      "pantry": "Despensa"
+    },
+    "empty": {
+      "title": "A geladeira está vazia",
+      "body": "Escaneie um item para começar a acompanhar o que tem na sua geladeira e quando vai estragar.",
+      "cta": "Escanear primeiro item"
+    },
+    "footer": {
+      "tracked_one": "{{shown}} DE {{count}} PRODUTO ACOMPANHADO",
+      "tracked_other": "{{shown}} DE {{count}} PRODUTOS ACOMPANHADOS",
+      "swipeHint": "DESLIZE UM CARTÃO PARA A ESQUERDA PARA REMOVER"
+    },
+    "alerts": {
+      "removeFailedTitle": "Não foi possível remover",
+      "loadFailedTitle": "Não foi possível carregar a geladeira"
+    }
+  }
+}

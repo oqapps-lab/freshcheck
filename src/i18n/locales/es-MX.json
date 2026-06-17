@@ -1,1 +1,1154 @@
-{}
+{
+  "common": {
+    "appName": "FreshCheck",
+    "continue": "Continuar",
+    "getStarted": "Empezar",
+    "back": "Atrás",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "done": "Listo",
+    "tryAgain": "Reintentar",
+    "next": "Siguiente",
+    "skip": "Omitir",
+    "ok": "OK",
+    "dayUnit_one": "DÍA",
+    "dayUnit_other": "DÍAS",
+    "tabA11y": "Pestaña {{label}}",
+    "productRow": {
+      "a11yDaysLeft_one": "{{name}}, queda {{count}} día",
+      "a11yDaysLeft_other": "{{name}}, quedan {{count}} días",
+      "delete": "ELIMINAR",
+      "deleteA11y": "Eliminar {{name}}"
+    },
+    "achievements": {
+      "unlocked": "LOGRO DESBLOQUEADO",
+      "items": {
+        "first_scan": {
+          "title": "Primer vistazo",
+          "desc": "Escanea tu primer alimento"
+        },
+        "scan_10": {
+          "title": "Ojo fresco",
+          "desc": "Escanea 10 alimentos"
+        },
+        "scan_50": {
+          "title": "Pro de la seguridad",
+          "desc": "Escanea 50 alimentos"
+        },
+        "first_recipe": {
+          "title": "Cocinero en casa",
+          "desc": "Genera tu primera receta"
+        },
+        "recipe_10": {
+          "title": "Explorador de recetas",
+          "desc": "Genera 10 recetas"
+        },
+        "fridge_5": {
+          "title": "Bien surtido",
+          "desc": "Registra 5 productos en el refri"
+        },
+        "streak_3": {
+          "title": "Tomando ritmo",
+          "desc": "Usa FreshCheck 3 días"
+        },
+        "streak_7": {
+          "title": "Guerrero antidesperdicio",
+          "desc": "Usa FreshCheck 7 días"
+        }
+      }
+    }
+  },
+  "errorBoundary": {
+    "title": "Algo salió mal",
+    "message": "Ocurrió un error inesperado. Reintenta o reinicia la app si el problema continúa.",
+    "retry": "Reintentar"
+  },
+  "att": {
+    "headlineFamily": "Haz que FreshCheck sea mejor para las familias",
+    "headlineYou": "Haz que FreshCheck sea mejor para ti",
+    "bodyFamily": "Con tu permiso, medimos qué funciones realmente ayudan a familias como la tuya, para seguir mejorando lo que de verdad importa.",
+    "bodyYou": "Con tu permiso, medimos qué funciones realmente ayudan a personas como tú, para seguir mejorando lo que de verdad importa.",
+    "privacy": "Nunca vendemos tus datos personales, y tus escaneos siempre se mantienen privados.",
+    "micro": "En la siguiente pantalla puedes Permitir o rechazar. FreshCheck funciona igual de bien en ambos casos, y puedes cambiarlo cuando quieras en Ajustes.",
+    "continue": "Continuar"
+  },
+  "building": {
+    "pct": "{{pct}}%",
+    "stages": {
+      "stage0": {
+        "title": "Analizando tus hábitos con el refri",
+        "detail": "Lo que compras, lo que olvidas"
+      },
+      "stage1": {
+        "title": "Mapeando lo que se echa a perder más rápido en tu casa",
+        "detail": "Para que nada se pase de fecha"
+      },
+      "stage2": {
+        "title": "Calibrando las alertas de frescura",
+        "detail": "Ajustadas a lo que más desperdicias"
+      },
+      "stage3": {
+        "title": "Preparando recetas para lo que caduca primero",
+        "detail": "Cena con lo que ya tienes"
+      },
+      "stage4": {
+        "title": "Tu plan de frescura va tomando forma",
+        "detail": "Casi listo"
+      }
+    },
+    "badge": {
+      "withName": "{{name}}, tu plan es personal, no una plantilla",
+      "noName": "Tu plan es personal, no una plantilla"
+    }
+  },
+  "onboarding": {
+    "cta": {
+      "getStarted": "Empezar",
+      "continue": "Continuar"
+    },
+    "slides": {
+      "waste": {
+        "title": "Nunca vuelvas a tirar comida buena",
+        "body": "FreshCheck te dice qué sigue en buen estado y te avisa antes de que se eche a perder.",
+        "proof": "Las familias ahorran unos $2,913 al año"
+      },
+      "scan": {
+        "title": "¿Esto todavía se puede comer? Sabrás en 3 segundos",
+        "body": "Apunta la cámara a cualquier alimento y recibe un veredicto al instante: seguro, precaución o tíralo."
+      },
+      "timeline": {
+        "title": "Todo tu refri, en una línea de frescura",
+        "body": "Todo lo que tienes, ordenado por lo que caduca primero. Nada vuelve a quedar olvidado al fondo."
+      },
+      "recipes": {
+        "title": "La cena de hoy, con lo que ya tienes",
+        "body": "Con un toque convierte tus ingredientes por caducar en 3 recetas frescas con IA."
+      },
+      "barcode": {
+        "title": "Escanea el código de barras, nosotros registramos lo demás",
+        "body": "Agrega productos empacados en un segundo: solo escanea el código de barras y lo guardamos."
+      }
+    }
+  },
+  "personalize": {
+    "progress": "Paso {{current}} de {{total}}",
+    "namePlaceholder": "Tu nombre",
+    "a11y": {
+      "back": "atrás"
+    },
+    "cta": {
+      "buildPlan": "Crear mi plan",
+      "continue": "Continuar"
+    },
+    "questions": {
+      "household": {
+        "q": "¿Para quién mantienes la frescura?",
+        "options": {
+          "me": "Solo para mí",
+          "partner": "Mi pareja y yo",
+          "family": "Una familia con hijos",
+          "roommates": "Una casa con roomies"
+        }
+      },
+      "topWaste": {
+        "q": "¿Qué tiras más seguido?",
+        "sub": "Elige todas las que apliquen",
+        "options": {
+          "leftovers": "Sobras",
+          "produce": "Frutas y verduras",
+          "dairy": "Lácteos",
+          "meat": "Carne y aves",
+          "bread": "Pan"
+        }
+      },
+      "worry": {
+        "q": "¿Qué te preocupa más sobre la comida?",
+        "options": {
+          "sick": "Que alguien se enferme",
+          "money": "Desperdiciar dinero",
+          "spoiled": "Comer algo echado a perder",
+          "unsure": "No saber qué sigue en buen estado"
+        }
+      },
+      "forgotten": {
+        "q": "¿Qué tan seguido se olvidan las sobras al fondo del refri?",
+        "options": {
+          "constantly": "Constantemente",
+          "weekly": "Casi cada semana",
+          "sometimes": "A veces",
+          "rarely": "Casi nunca"
+        }
+      },
+      "dinner": {
+        "q": "¿Cómo decides la cena?",
+        "options": {
+          "plan": "La planeo con tiempo",
+          "wing": "Improviso",
+          "expiring": "Lo que está por caducar",
+          "order": "Pido mucho a domicilio"
+        }
+      },
+      "name": {
+        "q": "Una última cosa: ¿cómo te llamamos?",
+        "sub": "Opcional"
+      }
+    }
+  },
+  "yourPlan": {
+    "eyebrowNamed": "PLAN DE {{name}}",
+    "eyebrowDefault": "TU PLAN FRESHCHECK",
+    "watchLabel": "ESTAREMOS PENDIENTES DE",
+    "whatIsInside": "QUÉ INCLUYE",
+    "socialProof": "Únete a las familias que ahorran unos $2,913 al año con FreshCheck.",
+    "cta": {
+      "seeMyPlan": "Ver mi plan"
+    },
+    "waste": {
+      "leftovers": "Sobras",
+      "produce": "Frutas y verduras",
+      "dairy": "Lácteos",
+      "meat": "Carne y aves",
+      "bread": "Pan"
+    },
+    "benefits": {
+      "verdict": {
+        "title": "Veredicto al instante: seguro / precaución / peligro",
+        "sub": "Escanea cualquier alimento y sabrás en 3 segundos."
+      },
+      "timeline": {
+        "title": "Tu refri en una línea de frescura",
+        "sub": "Todo ordenado por lo que caduca primero."
+      },
+      "recipes": {
+        "title": "Recetas con lo que está por caducar",
+        "sub": "Convierte lo que pronto se echa a perder en una cena."
+      }
+    },
+    "tiles": {
+      "dailyScans": "Escaneos de frescura diarios",
+      "fridgeTimeline": "Línea de frescura del refri",
+      "expiryReminders": "Recordatorios de caducidad",
+      "unlimitedScans": "Escaneos ilimitados",
+      "unlimitedRecipes": "Recetas con IA ilimitadas",
+      "barcodeImport": "Importar por código de barras"
+    }
+  },
+  "plan": {
+    "wasteLower": {
+      "leftovers": "sobras",
+      "produce": "frutas y verduras",
+      "dairy": "lácteos",
+      "meat": "carne y aves",
+      "bread": "pan"
+    },
+    "household": {
+      "family": "cocinero de familia ocupada",
+      "partner": "cocina de dos",
+      "roommates": "casa compartida",
+      "solo": "cocinero solo"
+    },
+    "headlineWithWaste": "Eres {{who}}: estaremos pendientes de tus {{waste}}.",
+    "headlineFallback": "Eres {{who}}: FreshCheck cuidará tu refri por ti.",
+    "fear": {
+      "sick": "Marcaremos cualquier riesgo antes de que llegue a tu mesa.",
+      "money": "Deja de tirar unos $56 de despensa cada semana.",
+      "spoiled": "Siempre sabrás qué sigue en buen estado, de un vistazo.",
+      "default": "Nunca vuelvas a adivinar si algo todavía se puede comer."
+    }
+  },
+  "paywall": {
+    "eyebrow": "FRESHCHECK PRO",
+    "a11y": {
+      "close": "cerrar",
+      "planOption": "Plan {{label}}, {{price}} {{unit}}"
+    },
+    "hero": {
+      "scanLimit": {
+        "title": "Ya usaste tus escaneos gratis de hoy",
+        "subtitle": "Pásate a ilimitado: escanea todo lo de tu cocina, cuando quieras."
+      },
+      "barcode": {
+        "title": "El escaneo de códigos de barras es función Pro",
+        "subtitle": "Escanea cualquier código de barras y agrégalo directo a tu refri."
+      },
+      "recipeLimit": {
+        "title": "Ya usaste tu generación de recetas gratis de hoy",
+        "subtitle": "Recetas con IA ilimitadas con lo que haya en tu refri, todos los días."
+      },
+      "default": {
+        "title": "Desbloquea FreshCheck Pro",
+        "subtitle": "Convierte lo de tu refri en recetas y nunca vuelvas a tirar comida."
+      }
+    },
+    "trust": {
+      "family": "AHORRA A LA FAMILIA PROMEDIO $2,913 / AÑO",
+      "household": "EL HOGAR PROMEDIO AHORRA $2,913 / AÑO"
+    },
+    "features": {
+      "header": "TODO LO QUE INCLUYE PRO",
+      "unlimitedScans": {
+        "title": "Escaneos ilimitados",
+        "body": "Escanea todos los productos que quieras, sin límite diario."
+      },
+      "unlimitedRecipes": {
+        "title": "Recetas con IA ilimitadas",
+        "body": "Genera recetas frescas con tu refri cuando quieras, sin límite diario."
+      },
+      "barcodeAdd": {
+        "title": "Agregar por código de barras",
+        "body": "Escanea el código de barras de un producto y agrégalo directo a tu refri."
+      },
+      "wholeTable": {
+        "title": "Escaneo de toda la mesa",
+        "body": "Una foto, todos los productos en la mesa, las veces que quieras."
+      },
+      "batchScanning": {
+        "title": "Escaneo rápido por lotes",
+        "body": "Escanea todo tu mandado uno tras otro, sin límites."
+      }
+    },
+    "plans": {
+      "eyebrow": "ELIGE TU PLAN · 3 DÍAS GRATIS",
+      "annual": {
+        "label": "Anual",
+        "unit": "/ año",
+        "badge": "AHORRA 89%",
+        "sublabel": "Solo $0.77 / semana, cobro anual"
+      },
+      "monthly": {
+        "label": "Mensual",
+        "unit": "/ mes",
+        "sublabel": "Flexible: cancela cuando quieras"
+      },
+      "weekly": {
+        "label": "Semanal",
+        "unit": "/ semana",
+        "sublabel": "Solo para probarlo"
+      }
+    },
+    "cta": {
+      "processing": "Procesando…",
+      "startTrial": "Iniciar prueba gratis de 3 días"
+    },
+    "fineprint": {
+      "annual": "Los primeros 3 días gratis, luego {{price}} / año. Se renueva automáticamente salvo que canceles al menos 24 horas antes de que termine el periodo.",
+      "monthly": "Los primeros 3 días gratis, luego {{price}} / mes. Se renueva automáticamente salvo que canceles al menos 24 horas antes de que termine el periodo.",
+      "weekly": "Los primeros 3 días gratis, luego {{price}} / semana. Se renueva automáticamente salvo que canceles al menos 24 horas antes de que termine el periodo."
+    },
+    "legal": {
+      "restore": "Restaurar",
+      "terms": "Términos",
+      "privacy": "Privacidad"
+    },
+    "alerts": {
+      "welcomeTitle": "Bienvenido a Pro",
+      "welcomeBody": "Tu prueba gratis ya comenzó. ¡Genera recetas con IA ilimitadas desde tu refri!",
+      "pendingTitle": "Esperando aprobación",
+      "pendingBody": "Tu compra está pendiente de aprobación con tu Apple ID.",
+      "purchaseFailedTitle": "La compra falló",
+      "restoredTitle": "Restaurado",
+      "restoredBody": "Tu suscripción está activa de nuevo.",
+      "nothingToRestoreTitle": "Nada que restaurar",
+      "nothingToRestoreBody": "No se encontró ninguna suscripción activa en este Apple ID.",
+      "restoreFailedTitle": "La restauración falló",
+      "couldNotOpenLinkTitle": "No se pudo abrir el enlace",
+      "unknownError": "Error desconocido"
+    }
+  },
+  "auth": {
+    "wordmark": "FRESHCHECK",
+    "title": {
+      "signIn": "Qué bueno verte de nuevo",
+      "signUp": "Únete a FreshCheck"
+    },
+    "labels": {
+      "email": "CORREO",
+      "password": "CONTRASEÑA"
+    },
+    "placeholders": {
+      "email": "tu@ejemplo.com",
+      "passwordSignIn": "Tu contraseña",
+      "passwordSignUp": "Mín. 6 caracteres"
+    },
+    "cta": {
+      "submitting": "...",
+      "signIn": "Iniciar sesión",
+      "createAccount": "Crear cuenta",
+      "toggleToSignUp": "¿No tienes cuenta? Regístrate",
+      "toggleToSignIn": "¿Ya tienes cuenta? Inicia sesión",
+      "continueAsGuest": "Continuar como invitado"
+    },
+    "legal": {
+      "prefix": "Al continuar aceptas los",
+      "terms": "Términos",
+      "and": "y la",
+      "privacy": "Política de Privacidad",
+      "suffix": "."
+    },
+    "alerts": {
+      "signInTitle": "Iniciar sesión",
+      "signUpTitle": "Registrarse",
+      "notConfigured": "Supabase no está configurado en esta versión. Continúa como invitado para seguir usando la app localmente.",
+      "checkEmailTitle": "Revisa tu correo",
+      "checkEmailMessage": "Enviamos un enlace de confirmación a {{email}}. Tócalo, luego regresa e inicia sesión.",
+      "ok": "OK"
+    },
+    "errors": {
+      "signInFailedTitle": "No se pudo iniciar sesión",
+      "signUpFailedTitle": "No se pudo registrar",
+      "invalidCredentials": "Ingresa un correo válido y una contraseña de al menos 6 caracteres."
+    },
+    "a11y": {
+      "back": "atrás",
+      "email": "correo",
+      "password": "contraseña",
+      "toggleMode": "cambiar modo de autenticación"
+    }
+  },
+  "scanResult": {
+    "header": {
+      "analysis": "ANÁLISIS"
+    },
+    "verdict": {
+      "fresh": "Se ve fresco",
+      "safe": "Se puede comer",
+      "soon": "Cómelo pronto",
+      "past": "Ya pasó su mejor momento"
+    },
+    "expiry": {
+      "unknown": "Duración desconocida",
+      "useToday": "Cómelo hoy",
+      "daysLeft_one": "queda {{count}} día",
+      "daysLeft_other": "quedan {{count}} días"
+    },
+    "empty": {
+      "title": "Aún no hay escaneos",
+      "subtitle": "Escanea un producto para ver aquí su veredicto de frescura.",
+      "scanNow": "Escanear ahora"
+    },
+    "labels": {
+      "itemFallback": "producto",
+      "confidence": "{{percent}}% de confianza"
+    },
+    "safetyNote": "Solo es una estimación visual; no detecta bacterias. Ante la duda, mejor tíralo.",
+    "refine": {
+      "label": "¿CUÁNTO TIEMPO LO TIENES?",
+      "justGotIt": "Recién lo compré",
+      "daysAgo_one": "hace {{count}} día",
+      "daysAgo_other": "hace {{count}} días",
+      "adjusted_one": "Ajustado a {{count}} día restante",
+      "adjusted_other": "Ajustado a {{count}} días restantes"
+    },
+    "cta": {
+      "addToFridge": "Agregar al refri",
+      "scanAnother": "Escanear otro"
+    },
+    "alerts": {
+      "signInRequiredTitle": "Inicia sesión",
+      "signInRequiredMessage": "Inicia sesión para guardar productos en tu refri.",
+      "cancel": "Cancelar",
+      "signIn": "Iniciar sesión",
+      "couldNotSaveTitle": "No se pudo guardar"
+    },
+    "a11y": {
+      "back": "atrás",
+      "fewerDays": "menos días",
+      "moreDays": "más días"
+    }
+  },
+  "home": {
+    "wordmark": "FRESHCHECK",
+    "heroTitle": "Listo para escanear",
+    "heroSubtitle": "Apunta al alimento. Resultado en 3 segundos.",
+    "tapToScan": "TOCA PARA ESCANEAR",
+    "recipeOfDayEmpty": "Genera recetas con tu refri",
+    "badgeUnlocked": "Desbloqueado",
+    "sections": {
+      "recipeOfDay": "RECETA DEL DÍA",
+      "freshTips": "TIPS FRESCOS",
+      "storageGuide": "GUÍA DE CONSERVACIÓN",
+      "chefTips": "TIPS DE CHEFS",
+      "yourBadges": "TUS INSIGNIAS"
+    },
+    "a11y": {
+      "tapToScan": "Toca para escanear",
+      "openRecipe": "abrir {{name}}",
+      "generateRecipes": "generar recetas"
+    },
+    "freshTips": {
+      "items": {
+        "dangerZone": {
+          "title": "La zona de peligro",
+          "body": "Las bacterias se multiplican más rápido entre 4 y 60 °C. Refrigera las sobras dentro de las 2 horas tras cocinar."
+        },
+        "pestoSealedVsOpen": {
+          "title": "Pesto: cerrado vs. abierto",
+          "body": "Un frasco cerrado dura meses. Una vez abierto, úsalo en unos 5 a 7 días, o congélalo."
+        },
+        "eggsKeepLonger": {
+          "title": "Los huevos duran más de lo que crees",
+          "body": "Los huevos refrigerados suelen estar buenos de 3 a 5 semanas tras la compra. Prueba del agua: los frescos se hunden."
+        },
+        "herbsLoveWater": {
+          "title": "A las hierbas les encanta el agua",
+          "body": "Pon las hierbas frescas paradas en un vaso con agua, tapadas sin apretar: duran casi el doble."
+        },
+        "washBerriesLast": {
+          "title": "Lava las berries al final",
+          "body": "La humedad acelera el moho. Enjuaga las berries solo justo antes de comerlas."
+        }
+      }
+    }
+  },
+  "storageGuide": {
+    "items": {
+      "bananas": {
+        "name": "Plátanos",
+        "store": "En la barra, lejos de otras frutas",
+        "life": "2 a 7 días",
+        "temp": "Temp. ambiente"
+      },
+      "berries": {
+        "name": "Berries",
+        "store": "Sin lavar, en una caja con papel absorbente",
+        "life": "3 a 7 días",
+        "temp": "Refri 1 a 4 °C"
+      },
+      "eggs": {
+        "name": "Huevos",
+        "store": "En el cartón, en una repisa (no en la puerta)",
+        "life": "3 a 5 semanas",
+        "temp": "Refri ≤4 °C"
+      },
+      "leafyGreens": {
+        "name": "Hojas verdes",
+        "store": "Envueltas sin apretar en un trapo seco",
+        "life": "5 a 7 días",
+        "temp": "Refri 1 a 4 °C"
+      },
+      "chicken": {
+        "name": "Pollo",
+        "store": "Sellado, en la repisa de abajo",
+        "life": "1 a 2 días",
+        "temp": "Refri ≤4 °C"
+      },
+      "cookedLeftovers": {
+        "name": "Sobras cocinadas",
+        "store": "Herméticas, enfriadas en 2 horas",
+        "life": "3 a 4 días",
+        "temp": "Refri ≤4 °C"
+      },
+      "hardCheese": {
+        "name": "Queso duro",
+        "store": "Envuelto en papel encerado, no en plástico",
+        "life": "3 a 4 semanas",
+        "temp": "Refri 1 a 4 °C"
+      },
+      "tomatoes": {
+        "name": "Jitomates",
+        "store": "En la barra, con el tallo hacia abajo",
+        "life": "4 a 7 días",
+        "temp": "Temp. ambiente"
+      },
+      "bread": {
+        "name": "Pan",
+        "store": "En bolsa de papel a temp. ambiente, o congélalo",
+        "life": "2 a 4 días",
+        "temp": "Temp. ambiente"
+      },
+      "fish": {
+        "name": "Pescado",
+        "store": "Sobre hielo, sellado, en la repisa de abajo",
+        "life": "1 a 2 días",
+        "temp": "Refri ≤2 °C"
+      },
+      "carrots": {
+        "name": "Zanahorias",
+        "store": "Sin las hojas, en agua o en bolsa sellada",
+        "life": "2 a 4 semanas",
+        "temp": "Refri 1 a 4 °C"
+      },
+      "milk": {
+        "name": "Leche",
+        "store": "En la repisa más fría, no en la puerta",
+        "life": "5 a 7 días tras abrir",
+        "temp": "Refri ≤4 °C"
+      }
+    }
+  },
+  "chefTips": {
+    "items": {
+      "gordonRamsay": {
+        "name": "Gordon Ramsay",
+        "role": "Chef con estrella Michelin",
+        "tip": "Prueba mientras cocinas. Sazona por capas, no todo al final."
+      },
+      "massimoBottura": {
+        "name": "Massimo Bottura",
+        "role": "Osteria Francescana",
+        "tip": "El pan de ayer se vuelve la obra maestra de hoy: nunca lo desperdicies."
+      },
+      "juliaChild": {
+        "name": "Julia Child",
+        "role": "Autora y chef de TV",
+        "tip": "No satures el sartén: dale espacio a la comida o se cuece al vapor en vez de dorarse."
+      },
+      "yotamOttolenghi": {
+        "name": "Yotam Ottolenghi",
+        "role": "Chef y autor",
+        "tip": "Un chorrito de limón al final reaviva casi cualquier platillo."
+      },
+      "marcoPierreWhite": {
+        "name": "Marco Pierre White",
+        "role": "Chef con estrella Michelin",
+        "tip": "Deja reposar la carne después de cocinarla: los jugos se redistribuyen."
+      },
+      "nigellaLawson": {
+        "name": "Nigella Lawson",
+        "role": "Escritora gastronómica",
+        "tip": "Congela las hierbas en aceite de oliva en una charola de hielo antes de que se marchiten."
+      },
+      "thomasKeller": {
+        "name": "Thomas Keller",
+        "role": "The French Laundry",
+        "tip": "Seca bien las proteínas antes de sellarlas: la humedad es enemiga de una buena costra."
+      },
+      "saminNosrat": {
+        "name": "Samin Nosrat",
+        "role": "Sal, grasa, ácido, calor",
+        "tip": "Sala desde lo alto para que caiga parejo sobre la comida."
+      }
+    }
+  },
+  "foodFacts": {
+    "items": {
+      "smellTestLies": {
+        "title": "La prueba del olfato engaña",
+        "body": "Las bacterias peligrosas como la salmonela no cambian el olor, el aspecto ni el sabor de la comida."
+      },
+      "dangerZone": {
+        "title": "La zona de peligro",
+        "body": "Las bacterias se multiplican más rápido entre 4 y 60 °C. Refrigera las sobras dentro de 2 horas."
+      },
+      "ripenWithApples": {
+        "title": "Madura con manzanas",
+        "body": "Las manzanas y los plátanos liberan etileno: mantenlos lejos de las verduras de hoja para que no se echen a perder."
+      },
+      "freezingPausesTime": {
+        "title": "Congelar pausa el tiempo",
+        "body": "Congelar no mata las bacterias, solo las detiene. Despiertan al descongelar."
+      }
+    }
+  },
+  "scanBatch": {
+    "header": "ESCANEO POR LOTE",
+    "counter": "{{done}} LISTOS · {{left}} FALTAN",
+    "hero": {
+      "scanning": "Escaneando tu lote…",
+      "results": "Resultados del lote"
+    },
+    "verdict": {
+      "fresh": "Se ve fresco",
+      "safe": "Se puede comer",
+      "soon": "Cómelo pronto",
+      "past": "Ya pasó su mejor momento"
+    },
+    "expiry": {
+      "unknown": "Duración desconocida",
+      "today": "Cómelo hoy",
+      "daysLeft_one": "queda {{count}} día",
+      "daysLeft_other": "quedan {{count}} días"
+    },
+    "empty": {
+      "title": "No hay nada en cola",
+      "subtitle": "Cambia el escáner a Lote y toma fotos de varios productos.",
+      "cta": "Volver a escanear"
+    },
+    "card": {
+      "itemFallback": "Producto",
+      "editHint": "TOCA EL NOMBRE O EL VEREDICTO PARA EDITAR",
+      "scanFailed": "Falló el escaneo",
+      "scanFailedHint": "Intenta este de nuevo desde el escáner.",
+      "reading": "Leyendo la frescura…",
+      "waiting": "Esperando…"
+    },
+    "cta": {
+      "add": "AGREGAR",
+      "rescan": "REESCANEAR",
+      "done": "Listo",
+      "addAll_one": "Agregar {{count}} al refri",
+      "addAll_other": "Agregar {{count}} al refri"
+    },
+    "editPrompt": {
+      "title": "Editar producto",
+      "message": "Corrige el nombre detectado.",
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "placeholder": "ej. pechuga de pollo"
+    },
+    "signInAlert": {
+      "title": "Inicia sesión",
+      "message": "Inicia sesión para guardar productos en tu refri.",
+      "cancel": "Cancelar",
+      "signIn": "Iniciar sesión"
+    },
+    "saveError": {
+      "title": "No se pudo guardar"
+    },
+    "a11y": {
+      "back": "atrás",
+      "editName": "editar nombre, actualmente {{name}}",
+      "changeVerdict": "cambiar veredicto de frescura",
+      "addToFridge": "agregar {{name}} al refri",
+      "rescan": "reescanear esta foto",
+      "done": "listo"
+    }
+  },
+  "profile": {
+    "fallbackName": "Tú",
+    "guestName": "Invitado",
+    "status": {
+      "signedIn": "SESIÓN INICIADA",
+      "notSignedIn": "SIN SESIÓN",
+      "active": "Activa"
+    },
+    "sections": {
+      "account": "CUENTA",
+      "pro": "PRO",
+      "notifications": "NOTIFICACIONES",
+      "about": "ACERCA DE"
+    },
+    "stats": {
+      "itemsInFridge": "PRODUCTOS EN EL REFRI"
+    },
+    "rows": {
+      "signIn": "Iniciar sesión",
+      "signOut": "Cerrar sesión",
+      "email": "Correo",
+      "deleteAccount": "Eliminar cuenta",
+      "deleteMyData": "Eliminar mis datos",
+      "freshcheckPro": "FreshCheck Pro",
+      "manageSubscription": "Administrar suscripción",
+      "upgradeToPro": "Pásate a FreshCheck Pro",
+      "restorePurchase": "Restaurar compra",
+      "foodExpiryReminders": "Recordatorios de caducidad",
+      "privacyPolicy": "Política de privacidad",
+      "termsOfService": "Términos del servicio",
+      "support": "Soporte",
+      "version": "Versión"
+    },
+    "labels": {
+      "warnMeBefore": "Avísame con",
+      "daysShort_one": "{{count}}d",
+      "daysShort_other": "{{count}}d"
+    },
+    "cta": {
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "delete": "Eliminar",
+      "keepAccount": "Conservar cuenta",
+      "yesDelete": "Sí, eliminar",
+      "signOut": "Cerrar sesión",
+      "takePhoto": "Tomar foto",
+      "chooseFromLibrary": "Elegir de la galería",
+      "openSettings": "Abrir Ajustes"
+    },
+    "a11y": {
+      "changeAvatar": "cambiar avatar",
+      "editName": "editar nombre",
+      "daysBefore_one": "{{count}} día antes",
+      "daysBefore_other": "{{count}} días antes"
+    },
+    "errors": {
+      "unknown": "Error desconocido"
+    },
+    "alerts": {
+      "photoAccess": {
+        "title": "Se necesita acceso a las fotos",
+        "messageCanAsk": "Permite el acceso a las fotos para elegir un avatar.",
+        "messageDenied": "Activa el acceso a las fotos en Ajustes y luego regresa."
+      },
+      "cameraAccess": {
+        "title": "Se necesita acceso a la cámara",
+        "messageCanAsk": "Permite el acceso a la cámara para tomar una foto.",
+        "messageDenied": "Activa el acceso a la cámara en Ajustes y luego regresa."
+      },
+      "changePhoto": {
+        "title": "Cambiar foto",
+        "message": "Elige una nueva foto de perfil"
+      },
+      "editName": {
+        "title": "Tu nombre",
+        "message": "¿Cómo te llamamos?"
+      },
+      "signOut": {
+        "title": "Cerrar sesión",
+        "message": "¿Cerrar sesión de FreshCheck?"
+      },
+      "restored": {
+        "title": "Restaurado",
+        "message": "Tu suscripción está activa de nuevo."
+      },
+      "nothingToRestore": {
+        "title": "Nada que restaurar",
+        "message": "No se encontró ninguna suscripción activa en este Apple ID."
+      },
+      "restoreFailed": {
+        "title": "La restauración falló"
+      },
+      "linkFailed": {
+        "title": "No se pudo abrir el enlace"
+      },
+      "deleteAccount": {
+        "title": "Eliminar cuenta",
+        "message": "Esto elimina de forma permanente tu cuenta, los productos del refri y el historial de escaneos. No se puede deshacer."
+      },
+      "deleteConfirm": {
+        "title": "¿Estás seguro?",
+        "message": "Esta es tu última oportunidad para conservar tus datos. Toca \"Sí, eliminar\" para borrar tu cuenta de forma permanente."
+      },
+      "notSignedIn": {
+        "title": "Sin sesión iniciada",
+        "message": "Inicia sesión primero, por favor."
+      },
+      "deletionFailed": {
+        "title": "La eliminación falló",
+        "message": "Reintenta o contacta a soporte."
+      },
+      "accountDeleted": {
+        "title": "Cuenta eliminada",
+        "message": "Tu cuenta y tus datos fueron eliminados."
+      }
+    }
+  },
+  "recipeDetail": {
+    "loading": {
+      "title": "Cargando receta…",
+      "subtitle": "Generando recetas frescas para ti"
+    },
+    "empty": {
+      "title": "Receta no encontrada",
+      "subtitle": "Regresa y elige otra receta."
+    },
+    "meta": {
+      "time": "TIEMPO",
+      "difficulty": "DIFICULTAD",
+      "fromFridge": "DEL REFRI",
+      "minutes_one": "{{count}}min",
+      "minutes_other": "{{count}}min"
+    },
+    "difficulty": {
+      "easy": "FÁCIL",
+      "medium": "MEDIA",
+      "hard": "DIFÍCIL"
+    },
+    "sections": {
+      "ingredients": "INGREDIENTES",
+      "steps": "PASOS"
+    },
+    "badges": {
+      "have": "TIENES"
+    },
+    "stepLabel": {
+      "prep": "PREP",
+      "cook": "COCCIÓN",
+      "mix": "MEZCLA",
+      "wait": "ESPERA",
+      "serve": "SERVIR"
+    },
+    "steps": {
+      "header": "PASO {{order}} · {{label}}",
+      "minutes": "{{minutes}} MIN"
+    },
+    "a11y": {
+      "back": "atrás",
+      "saveRecipe": "guardar receta",
+      "removeFromSaved": "quitar de guardadas"
+    }
+  },
+  "recipeBuilder": {
+    "header": {
+      "title": "CREAR UNA RECETA",
+      "subtitle": "¿Qué tienes en la cocina?",
+      "intro": "Agrega lo que tengas, con cantidades si quieres, y crearemos recetas a partir de eso."
+    },
+    "sections": {
+      "addIngredients": "AGREGAR INGREDIENTES",
+      "cookingMethod": "MÉTODO DE COCCIÓN",
+      "maxTime": "TIEMPO MÁX."
+    },
+    "placeholders": {
+      "amount": "200",
+      "name": "Pechuga de pollo"
+    },
+    "methods": {
+      "any": "Cualquiera",
+      "bake": "Hornear",
+      "fry": "Freír",
+      "boil": "Hervir",
+      "grill": "Asar",
+      "steam": "Vapor",
+      "noCook": "Sin cocción",
+      "slowCook": "Cocción lenta"
+    },
+    "times": {
+      "any": "Cualquiera",
+      "under15": "<=15 min",
+      "under30": "<=30 min",
+      "under45": "<=45 min",
+      "under60": "<=60 min"
+    },
+    "units": {
+      "g": "g",
+      "pcs": "pzas",
+      "cups": "tazas",
+      "tbsp": "cda",
+      "tsp": "cdta",
+      "ml": "ml"
+    },
+    "toggle": {
+      "title": "Usar solo estos ingredientes",
+      "sub": "Apagado = podemos agregar básicos comunes (aceite, sal, especias)."
+    },
+    "cta": {
+      "generate": "Generar recetas"
+    },
+    "errors": {
+      "notFood": "Ingresa un ingrediente real"
+    },
+    "alerts": {
+      "addIngredientsTitle": "Agrega ingredientes",
+      "addIngredientsMessage": "Agrega al menos un ingrediente para crear una receta.",
+      "couldNotGenerateTitle": "No se pudo generar",
+      "tryAgain": "Intenta de nuevo en un momento."
+    },
+    "a11y": {
+      "back": "atrás",
+      "addIngredient": "agregar ingrediente"
+    }
+  },
+  "recipes": {
+    "eyebrow": "RECETAS",
+    "hero": {
+      "title": "Cocina con lo que tienes",
+      "titleEmpty": "Recetas para empezar",
+      "subtitle": "CREADAS CON IA DESDE TU REFRI",
+      "subtitleEmpty": "ESCANEA PRODUCTOS PARA SUGERENCIAS PERSONALIZADAS"
+    },
+    "cook": {
+      "title": "Cocina con lo que tienes",
+      "titleEmpty": "Genera recetas para empezar",
+      "subtitle": "Elige productos del refri → 3 recetas frescas",
+      "subtitleEmpty": "3 ideas simples para ir de compras"
+    },
+    "build": {
+      "title": "Crea tu propia receta",
+      "subtitle": "Escribe ingredientes, método y tiempo"
+    },
+    "emptyBanner": "Tu refri está vacío: estas son ideas genéricas para empezar. Escanea algunos productos primero para recetas basadas en lo que realmente tienes.",
+    "sections": {
+      "saved": "★ GUARDADAS"
+    },
+    "errors": {
+      "dailyLimitTitle": "Llegaste al límite diario",
+      "generateFailedTitle": "No se pudieron generar las recetas",
+      "unlockUnlimited": "Desbloquea recetas ilimitadas"
+    },
+    "labels": {
+      "minutesShort": "{{count}} MIN",
+      "fromFridge_one": "{{count}} DEL REFRI",
+      "fromFridge_other": "{{count}} DEL REFRI",
+      "today": "hoy",
+      "daysShort": "{{count}}d"
+    },
+    "sheet": {
+      "title": "Cocina con lo que tienes",
+      "subtitle": "Elige los productos para crear recetas. Damos prioridad a lo que caduca primero."
+    },
+    "cta": {
+      "generateFromItems_one": "Generar con {{count}} producto",
+      "generateFromItems_other": "Generar con {{count}} productos"
+    },
+    "a11y": {
+      "generateStarter": "generar recetas para empezar",
+      "cookWithWhatYouHave": "cocina con lo que tienes",
+      "buildCustom": "crear una receta personalizada",
+      "upgradeToPro": "Pásate a FreshCheck Pro",
+      "openRecipe": "abrir {{name}}",
+      "recipeCard_one": "{{name}}, {{count}} minuto",
+      "recipeCard_other": "{{name}}, {{count}} minutos",
+      "removeFromSaved": "quitar de guardadas",
+      "saveRecipe": "guardar receta",
+      "removeRecipe": "quitar {{name}}",
+      "close": "cerrar"
+    }
+  },
+  "capture": {
+    "header": {
+      "scan": "ESCANEAR"
+    },
+    "a11y": {
+      "back": "atrás",
+      "capture": "capturar",
+      "scanWholeTable": "escanear toda la mesa",
+      "choosePhotoFromLibrary": "elegir foto de la galería",
+      "reviewScans_one": "revisar {{count}} escaneo",
+      "reviewScans_other": "revisar {{count}} escaneos"
+    },
+    "modes": {
+      "single": "ÚNICO",
+      "batch": "LOTE",
+      "barcode": "CÓDIGO"
+    },
+    "hints": {
+      "barcode": "APUNTA A UN CÓDIGO DE BARRAS",
+      "batch": "TOCA PARA AGREGAR · LOS ESCANEOS CORREN EN SEGUNDO PLANO",
+      "single": "APUNTA AL ALIMENTO · TOCA PARA CAPTURAR"
+    },
+    "freeScansLeft_one": "QUEDA {{count}} ESCANEO GRATIS HOY",
+    "freeScansLeft_other": "QUEDAN {{count}} ESCANEOS GRATIS HOY",
+    "status": {
+      "analyzing": "Analizando…",
+      "lookingUpProduct": "Buscando el producto…",
+      "readingFreshness": "Leyendo la frescura…",
+      "findingItems": "Encontrando productos…",
+      "capturing": "Capturando…",
+      "loadingPhoto": "Cargando foto…",
+      "preparingScan": "Preparando el escaneo…",
+      "loadingCamera": "Cargando cámara…"
+    },
+    "analyzingSub": {
+      "stillWorking": "Aún trabajando… {{seconds}}s",
+      "default": "Esto puede tardar unos segundos"
+    },
+    "cta": {
+      "scanWholeTable": "📋  ESCANEAR TODA LA MESA",
+      "reviewScans_one": "Revisar {{count}} escaneo",
+      "reviewScans_other": "Revisar {{count}} escaneos",
+      "allowCamera": "Permitir cámara",
+      "openSettings": "Abrir Ajustes",
+      "chooseFromLibrary": "Mejor elegir de la galería",
+      "back": "Atrás"
+    },
+    "gate": {
+      "serviceUnavailable": {
+        "title": "Servicio no disponible",
+        "message": "El escaneo no está disponible por ahora. Intenta de nuevo en un momento."
+      },
+      "cameraOff": {
+        "title": "Cámara apagada",
+        "messageCanAsk": "FreshCheck necesita acceso a la cámara para escanear alimentos.",
+        "messageDenied": "Activa el acceso a la cámara en Ajustes y luego regresa."
+      }
+    },
+    "barcode": {
+      "expiryText": "~{{days}} días restantes"
+    },
+    "errors": {
+      "scanFailed": "Falló el escaneo.",
+      "couldNotScan": "No se pudo escanear.",
+      "couldNotCapture": "No se pudo capturar la foto."
+    },
+    "alerts": {
+      "cancel": "Cancelar",
+      "productNotFound": {
+        "title": "Producto no encontrado",
+        "message": "Aún no hay coincidencia para ese código de barras. Mejor usa el escaneo por foto."
+      },
+      "couldNotAdd": {
+        "title": "No se pudo agregar"
+      },
+      "addedToFridge": {
+        "title": "Agregado a tu refri",
+        "message": "{{product}} · dura ~{{days}} días"
+      },
+      "severalItems": {
+        "title": "Se detectaron varios productos",
+        "message": "Esta foto parece tener varios alimentos. ¿Los escaneamos todos o solo el principal?",
+        "justMain": "Solo el principal",
+        "scanAll": "Escanear todos"
+      },
+      "scanFailed": {
+        "title": "Falló el escaneo"
+      },
+      "noFoodFound": {
+        "title": "No se encontró comida",
+        "message": "No se detectaron alimentos en esa foto. Intenta acercarte más o con mejor luz."
+      },
+      "preparingScan": {
+        "title": "Preparando el escaneo",
+        "message": "Espera un momento e intenta de nuevo."
+      },
+      "photoAccess": {
+        "title": "Se necesita acceso a las fotos",
+        "messageCanAsk": "Permite el acceso a las fotos para elegir una foto de comida de tu galería.",
+        "messageDenied": "Activa el acceso a las fotos en Ajustes y luego regresa."
+      },
+      "dailyScanLimit": {
+        "title": "Límite diario de escaneos",
+        "message": "Se agregaron {{added}} de {{total}} fotos: esos son tus escaneos gratis de hoy. Pásate a Pro para tener ilimitados."
+      }
+    }
+  },
+  "loaders": {
+    "cooking": {
+      "readingFridge": "Leyendo lo que hay en tu refri…",
+      "prioritising": "Priorizando lo que caduca primero…",
+      "pairingFlavours": "Combinando sabores que funcionan…",
+      "writingSteps": "Escribiendo los pasos…",
+      "platingUp": "Emplatando 3 ideas…",
+      "eta": "Unos {{seconds}} segundos · las fotos cargan enseguida"
+    },
+    "image": {
+      "plating": "Emplatando tu platillo",
+      "generating": "Generando una receta única",
+      "simmering": "Cocinando los detalles a fuego lento",
+      "pickingIngredients": "Eligiendo ingredientes frescos"
+    }
+  },
+  "foods": {
+    "reasons": {
+      "tooShort": "Muy corto",
+      "tooLong": "Muy largo",
+      "lettersOnly": "Solo letras, sin números ni símbolos",
+      "notRealIngredient": "Eso no parece un ingrediente real"
+    }
+  },
+  "scan": {
+    "timeout": "Esto está tardando más de lo normal; intenta de nuevo, por favor.",
+    "unreachable": "No se pudo conectar con el escáner. Revisa tu conexión e intenta de nuevo.",
+    "failed": "Falló el escaneo"
+  },
+  "fridge": {
+    "title": "Mi refri",
+    "eyebrow": "ESTADO DEL INVENTARIO",
+    "recipesLink": "Recetas con tu refri",
+    "a11y": {
+      "viewRecipes": "Ver recetas con tu refri"
+    },
+    "categories": {
+      "all": "Todo",
+      "produce": "Frutas y verduras",
+      "dairy": "Lácteos",
+      "poultry": "Aves",
+      "meat": "Carne",
+      "fish": "Pescado",
+      "bakery": "Panadería",
+      "pantry": "Despensa"
+    },
+    "empty": {
+      "title": "El refri está vacío",
+      "body": "Escanea un producto para empezar a registrar qué hay en tu refri y cuándo se echará a perder.",
+      "cta": "Escanear primer producto"
+    },
+    "footer": {
+      "tracked_one": "{{shown}} DE {{count}} PRODUCTO REGISTRADO",
+      "tracked_other": "{{shown}} DE {{count}} PRODUCTOS REGISTRADOS",
+      "swipeHint": "DESLIZA UNA TARJETA A LA IZQUIERDA PARA QUITARLA"
+    },
+    "alerts": {
+      "removeFailedTitle": "No se pudo quitar",
+      "loadFailedTitle": "No se pudo cargar el refri"
+    }
+  }
+}
