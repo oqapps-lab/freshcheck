@@ -134,7 +134,10 @@ export default function RecipesTab() {
       refresh();
       return;
     }
-    setSelectedIds(new Set(fridgeItems.map((i) => i.id)));
+    // Default to NONE selected — the user ticks the items they want to cook with
+    // (owner feedback: pre-checking everything was wrong). The CTA stays dimmed +
+    // inert until ≥1 item is picked (see selectedIds.size guards below).
+    setSelectedIds(new Set());
     setSelectorOpen(true);
   };
 
