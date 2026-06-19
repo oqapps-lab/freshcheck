@@ -941,20 +941,20 @@
   "recipes": {
     "eyebrow": "TARİFLER",
     "hero": {
-      "title": "Elinizdekilerle pişirin",
+      "title": "Tarif fikirleri",
       "titleEmpty": "Başlangıç tarifleri",
       "subtitle": "BUZDOLABINIZDAN YAPAY ZEKÂYLA HAZIRLANDI",
       "subtitleEmpty": "KİŞİSEL ÖNERİLER İÇİN ÜRÜN TARAYIN"
     },
     "cook": {
-      "title": "Elinizdekilerle pişirin",
+      "title": "Buzdolabından",
       "titleEmpty": "Başlangıç tarifleri oluştur",
-      "subtitle": "Buzdolabı ürünleri seç → 3 taze tarif",
+      "subtitle": "Ürünleri seç → 3 tarif",
       "subtitleEmpty": "Alışveriş edebileceğiniz 3 basit fikir"
     },
     "build": {
-      "title": "Kendi tarifinizi oluşturun",
-      "subtitle": "Malzeme, yöntem ve süre yazın"
+      "title": "Malzemelerinden",
+      "subtitle": "Elindekini yaz + yöntem ve süre"
     },
     "emptyBanner": "Buzdolabınız boş — bunlar genel başlangıç fikirleri. Gerçekten elinizdekilere göre tarifler için önce birkaç ürün tarayın.",
     "sections": {
@@ -973,7 +973,7 @@
       "daysShort": "{{count}}g"
     },
     "sheet": {
-      "title": "Elinizdekilerle pişirin",
+      "title": "Buzdolabından seç",
       "subtitle": "Tarif oluşturulacak ürünleri seçin. En önce bozulacaklara öncelik veririz."
     },
     "cta": {

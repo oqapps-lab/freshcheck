@@ -929,20 +929,20 @@
   "recipes": {
     "eyebrow": "레시피",
     "hero": {
-      "title": "가진 재료로 요리하기",
+      "title": "레시피 아이디어",
       "titleEmpty": "입문 레시피",
       "subtitle": "냉장고 재료로 AI가 만든 레시피",
       "subtitleEmpty": "맞춤 추천을 받으려면 품목을 스캔하세요"
     },
     "cook": {
-      "title": "가진 재료로 요리하기",
+      "title": "냉장고 재료로",
       "titleEmpty": "입문 레시피 만들기",
-      "subtitle": "냉장고 품목 선택 → 신선한 레시피 3가지",
+      "subtitle": "재료 선택 → 레시피 3개",
       "subtitleEmpty": "장 봐서 만들 수 있는 간단한 아이디어 3가지"
     },
     "build": {
-      "title": "나만의 레시피 만들기",
-      "subtitle": "재료, 방법, 시간을 입력하세요"
+      "title": "내 재료로",
+      "subtitle": "가진 재료 입력 + 방법과 시간"
     },
     "emptyBanner": "냉장고가 비어 있어요. 이건 일반적인 입문 아이디어예요. 실제로 가진 재료에 맞춘 레시피를 보려면 먼저 품목 몇 개를 스캔하세요.",
     "sections": {
@@ -960,7 +960,7 @@
       "daysShort": "{{count}}일"
     },
     "sheet": {
-      "title": "가진 재료로 요리하기",
+      "title": "냉장고 재료 선택",
       "subtitle": "레시피를 만들 품목을 선택하세요. 만료가 가까운 것을 우선해요."
     },
     "cta": {

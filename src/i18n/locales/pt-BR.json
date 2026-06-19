@@ -941,20 +941,20 @@
   "recipes": {
     "eyebrow": "RECEITAS",
     "hero": {
-      "title": "Cozinhe com o que você tem",
+      "title": "Ideias de receitas",
       "titleEmpty": "Receitas para começar",
       "subtitle": "CRIADAS POR IA COM A SUA GELADEIRA",
       "subtitleEmpty": "ESCANEIE ITENS PARA SUGESTÕES PERSONALIZADAS"
     },
     "cook": {
-      "title": "Cozinhe com o que você tem",
+      "title": "Da sua geladeira",
       "titleEmpty": "Gerar receitas para começar",
-      "subtitle": "Escolha itens da geladeira → 3 receitas novas",
+      "subtitle": "Escolha itens → 3 receitas",
       "subtitleEmpty": "3 ideias simples para você comprar"
     },
     "build": {
-      "title": "Monte sua própria receita",
-      "subtitle": "Digite ingredientes, método e tempo"
+      "title": "Com seus ingredientes",
+      "subtitle": "Digite o que você tem + método e tempo"
     },
     "emptyBanner": "Sua geladeira está vazia — estas são ideias genéricas para começar. Escaneie alguns itens primeiro para receitas montadas em volta do que você realmente tem.",
     "sections": {
@@ -973,7 +973,7 @@
       "daysShort": "{{count}}d"
     },
     "sheet": {
-      "title": "Cozinhe com o que você tem",
+      "title": "Escolha da geladeira",
       "subtitle": "Escolha os itens para montar as receitas. Priorizamos o que vence antes."
     },
     "cta": {

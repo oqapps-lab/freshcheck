@@ -965,20 +965,20 @@
   "recipes": {
     "eyebrow": "PRZEPISY",
     "hero": {
-      "title": "Gotuj z tego, co masz",
+      "title": "Pomysły na przepisy",
       "titleEmpty": "Przepisy na start",
       "subtitle": "STWORZONE PRZEZ AI Z TWOJEJ LODÓWKI",
       "subtitleEmpty": "ZESKANUJ PRODUKTY DLA SPERSONALIZOWANYCH PROPOZYCJI"
     },
     "cook": {
-      "title": "Gotuj z tego, co masz",
+      "title": "Z twojej lodówki",
       "titleEmpty": "Wygeneruj przepisy na start",
-      "subtitle": "Wybierz produkty z lodówki → 3 świeże przepisy",
+      "subtitle": "Wybierz produkty → 3 przepisy",
       "subtitleEmpty": "3 proste pomysły, na które możesz zrobić zakupy"
     },
     "build": {
-      "title": "Stwórz własny przepis",
-      "subtitle": "Wpisz składniki, metodę i czas"
+      "title": "Z twoich składników",
+      "subtitle": "Wpisz, co masz + metoda i czas"
     },
     "emptyBanner": "Twoja lodówka jest pusta — to ogólne pomysły na start. Zeskanuj najpierw kilka produktów, by otrzymać przepisy oparte na tym, co naprawdę masz.",
     "sections": {
@@ -999,7 +999,7 @@
       "daysShort": "{{count}} d"
     },
     "sheet": {
-      "title": "Gotuj z tego, co masz",
+      "title": "Wybierz z lodówki",
       "subtitle": "Wybierz produkty, z których zbudujemy przepisy. Najpierw uwzględniamy te, które przeterminują się najszybciej."
     },
     "cta": {

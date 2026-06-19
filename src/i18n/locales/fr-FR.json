@@ -941,20 +941,20 @@
   "recipes": {
     "eyebrow": "RECETTES",
     "hero": {
-      "title": "Cuisinez avec ce que vous avez",
+      "title": "Idées de recettes",
       "titleEmpty": "Recettes pour débuter",
       "subtitle": "CRÉÉES PAR L'IA À PARTIR DE VOTRE FRIGO",
       "subtitleEmpty": "SCANNEZ DES PRODUITS POUR DES SUGGESTIONS PERSONNALISÉES"
     },
     "cook": {
-      "title": "Cuisinez avec ce que vous avez",
+      "title": "De ton frigo",
       "titleEmpty": "Générer des recettes pour débuter",
-      "subtitle": "Choisissez des produits → 3 recettes fraîches",
+      "subtitle": "Choisis des aliments → 3 recettes",
       "subtitleEmpty": "3 idées simples pour faire vos courses"
     },
     "build": {
-      "title": "Créez votre propre recette",
-      "subtitle": "Saisissez ingrédients, mode et temps"
+      "title": "De tes ingrédients",
+      "subtitle": "Écris ce que tu as + mode et temps"
     },
     "emptyBanner": "Votre frigo est vide — voici des idées génériques pour débuter. Scannez quelques produits d'abord pour des recettes basées sur ce que vous avez vraiment.",
     "sections": {
@@ -973,7 +973,7 @@
       "daysShort": "{{count}} j"
     },
     "sheet": {
-      "title": "Cuisinez avec ce que vous avez",
+      "title": "Choisir dans le frigo",
       "subtitle": "Choisissez les produits pour créer des recettes. On donne la priorité à ce qui périme le plus vite."
     },
     "cta": {

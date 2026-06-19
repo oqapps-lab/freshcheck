@@ -941,20 +941,20 @@
   "recipes": {
     "eyebrow": "REZEPTE",
     "hero": {
-      "title": "Koche mit dem, was du hast",
+      "title": "Rezeptideen",
       "titleEmpty": "Einsteiger-Rezepte",
       "subtitle": "KI-ERSTELLT AUS DEINEM KÜHLSCHRANK",
       "subtitleEmpty": "SCANNE ARTIKEL FÜR PERSÖNLICHE EMPFEHLUNGEN"
     },
     "cook": {
-      "title": "Koche mit dem, was du hast",
+      "title": "Aus deinem Kühlschrank",
       "titleEmpty": "Einsteiger-Rezepte erstellen",
-      "subtitle": "Kühlschrank-Artikel wählen → 3 frische Rezepte",
+      "subtitle": "Zutaten wählen → 3 Rezepte",
       "subtitleEmpty": "3 einfache Ideen, für die du einkaufen kannst"
     },
     "build": {
-      "title": "Eigenes Rezept erstellen",
-      "subtitle": "Zutaten, Methode & Zeit eingeben"
+      "title": "Aus deinen Zutaten",
+      "subtitle": "Tippe, was du hast + Methode & Zeit"
     },
     "emptyBanner": "Dein Kühlschrank ist leer – das sind allgemeine Einsteiger-Ideen. Scanne zuerst ein paar Artikel für Rezepte rund um das, was du wirklich hast.",
     "sections": {
@@ -973,7 +973,7 @@
       "daysShort": "{{count}} T"
     },
     "sheet": {
-      "title": "Koche mit dem, was du hast",
+      "title": "Kühlschrank-Zutaten wählen",
       "subtitle": "Wähle die Artikel, aus denen wir Rezepte bauen. Wir bevorzugen, was zuerst abläuft."
     },
     "cta": {

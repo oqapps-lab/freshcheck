@@ -941,20 +941,20 @@
   "recipes": {
     "eyebrow": "RECIPES",
     "hero": {
-      "title": "Cook with what you have",
+      "title": "Recipe ideas",
       "titleEmpty": "Starter recipes",
       "subtitle": "AI-CRAFTED FROM YOUR FRIDGE",
       "subtitleEmpty": "SCAN ITEMS FOR PERSONALIZED PICKS"
     },
     "cook": {
-      "title": "Cook with what you have",
+      "title": "From your fridge",
       "titleEmpty": "Generate starter recipes",
-      "subtitle": "Pick fridge items → 3 fresh recipes",
+      "subtitle": "Pick items → 3 recipes",
       "subtitleEmpty": "3 simple ideas you can shop for"
     },
     "build": {
-      "title": "Build your own recipe",
-      "subtitle": "Type ingredients, method & time"
+      "title": "From your ingredients",
+      "subtitle": "Type what you have + method & time"
     },
     "emptyBanner": "Your fridge is empty — these are generic starter ideas. Scan a few items first for recipes built around what you actually have.",
     "sections": {
@@ -973,7 +973,7 @@
       "daysShort": "{{count}}d"
     },
     "sheet": {
-      "title": "Cook with what you have",
+      "title": "Pick fridge items",
       "subtitle": "Pick the items to build recipes from. We prioritise what expires soonest."
     },
     "cta": {

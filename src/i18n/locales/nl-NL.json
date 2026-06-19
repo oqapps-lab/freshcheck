@@ -941,20 +941,20 @@
   "recipes": {
     "eyebrow": "RECEPTEN",
     "hero": {
-      "title": "Kook met wat je hebt",
+      "title": "Receptideeën",
       "titleEmpty": "Startrecepten",
       "subtitle": "AI-GEMAAKT UIT JE KOELKAST",
       "subtitleEmpty": "SCAN PRODUCTEN VOOR PERSOONLIJKE KEUZES"
     },
     "cook": {
-      "title": "Kook met wat je hebt",
+      "title": "Uit je koelkast",
       "titleEmpty": "Genereer startrecepten",
-      "subtitle": "Kies koelkastproducten → 3 verse recepten",
+      "subtitle": "Kies items → 3 recepten",
       "subtitleEmpty": "3 simpele ideeën om voor te shoppen"
     },
     "build": {
-      "title": "Maak je eigen recept",
-      "subtitle": "Typ ingrediënten, methode & tijd"
+      "title": "Met jouw ingrediënten",
+      "subtitle": "Typ wat je hebt + methode & tijd"
     },
     "emptyBanner": "Je koelkast is leeg — dit zijn algemene startideeën. Scan eerst een paar producten voor recepten gebouwd rond wat je echt hebt.",
     "sections": {
@@ -973,7 +973,7 @@
       "daysShort": "{{count}}d"
     },
     "sheet": {
-      "title": "Kook met wat je hebt",
+      "title": "Kies uit de koelkast",
       "subtitle": "Kies de producten om recepten van te maken. We geven voorrang aan wat het eerst verloopt."
     },
     "cta": {

@@ -941,20 +941,20 @@
   "recipes": {
     "eyebrow": "RICETTE",
     "hero": {
-      "title": "Cucina con ciò che hai",
+      "title": "Idee per ricette",
       "titleEmpty": "Ricette per iniziare",
       "subtitle": "CREATE DALL'AI CON IL TUO FRIGO",
       "subtitleEmpty": "SCANSIONA GLI ALIMENTI PER PROPOSTE PERSONALIZZATE"
     },
     "cook": {
-      "title": "Cucina con ciò che hai",
+      "title": "Dal tuo frigo",
       "titleEmpty": "Genera ricette per iniziare",
-      "subtitle": "Scegli gli alimenti del frigo → 3 ricette fresche",
+      "subtitle": "Scegli gli alimenti → 3 ricette",
       "subtitleEmpty": "3 idee semplici per cui fare la spesa"
     },
     "build": {
-      "title": "Crea la tua ricetta",
-      "subtitle": "Inserisci ingredienti, metodo e tempo"
+      "title": "Dai tuoi ingredienti",
+      "subtitle": "Scrivi cosa hai + metodo e tempo"
     },
     "emptyBanner": "Il tuo frigo è vuoto: queste sono idee generiche per iniziare. Scansiona prima qualche alimento per ricette su misura con ciò che hai davvero.",
     "sections": {
@@ -973,7 +973,7 @@
       "daysShort": "{{count}}g"
     },
     "sheet": {
-      "title": "Cucina con ciò che hai",
+      "title": "Scegli dal frigo",
       "subtitle": "Scegli gli alimenti per creare le ricette. Diamo priorità a ciò che scade prima."
     },
     "cta": {

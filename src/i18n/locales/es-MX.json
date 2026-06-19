@@ -941,20 +941,20 @@
   "recipes": {
     "eyebrow": "RECETAS",
     "hero": {
-      "title": "Cocina con lo que tienes",
+      "title": "Ideas de recetas",
       "titleEmpty": "Recetas para empezar",
       "subtitle": "CREADAS CON IA DESDE TU REFRI",
       "subtitleEmpty": "ESCANEA PRODUCTOS PARA SUGERENCIAS PERSONALIZADAS"
     },
     "cook": {
-      "title": "Cocina con lo que tienes",
+      "title": "De tu refri",
       "titleEmpty": "Genera recetas para empezar",
-      "subtitle": "Elige productos del refri → 3 recetas frescas",
+      "subtitle": "Elige ingredientes → 3 recetas",
       "subtitleEmpty": "3 ideas simples para ir de compras"
     },
     "build": {
-      "title": "Crea tu propia receta",
-      "subtitle": "Escribe ingredientes, método y tiempo"
+      "title": "Con tus ingredientes",
+      "subtitle": "Escribe lo que tienes + método y tiempo"
     },
     "emptyBanner": "Tu refri está vacío: estas son ideas genéricas para empezar. Escanea algunos productos primero para recetas basadas en lo que realmente tienes.",
     "sections": {
@@ -973,7 +973,7 @@
       "daysShort": "{{count}}d"
     },
     "sheet": {
-      "title": "Cocina con lo que tienes",
+      "title": "Elige del refri",
       "subtitle": "Elige los productos para crear recetas. Damos prioridad a lo que caduca primero."
     },
     "cta": {

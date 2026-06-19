@@ -941,20 +941,20 @@
   "recipes": {
     "eyebrow": "RECETAS",
     "hero": {
-      "title": "Cocina con lo que tienes",
+      "title": "Ideas de recetas",
       "titleEmpty": "Recetas para empezar",
       "subtitle": "CREADAS CON IA DESDE TU NEVERA",
       "subtitleEmpty": "ESCANEA ALIMENTOS PARA RECETAS A TU MEDIDA"
     },
     "cook": {
-      "title": "Cocina con lo que tienes",
+      "title": "De tu nevera",
       "titleEmpty": "Genera recetas para empezar",
-      "subtitle": "Elige alimentos de la nevera → 3 recetas frescas",
+      "subtitle": "Elige ingredientes → 3 recetas",
       "subtitleEmpty": "3 ideas sencillas que puedes comprar"
     },
     "build": {
-      "title": "Crea tu propia receta",
-      "subtitle": "Escribe ingredientes, método y tiempo"
+      "title": "Con tus ingredientes",
+      "subtitle": "Escribe lo que tienes + método y tiempo"
     },
     "emptyBanner": "Tu nevera está vacía: estas son ideas genéricas para empezar. Escanea unos cuantos alimentos primero para recetas creadas con lo que tienes de verdad.",
     "sections": {
@@ -973,7 +973,7 @@
       "daysShort": "{{count}} d"
     },
     "sheet": {
-      "title": "Cocina con lo que tienes",
+      "title": "Elige de la nevera",
       "subtitle": "Elige los alimentos con los que crear recetas. Damos prioridad a lo que caduca antes."
     },
     "cta": {
