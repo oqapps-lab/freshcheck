@@ -91,8 +91,9 @@ Scoring guide:
 - "safe" = eat it within a day or two.
 - "soon" = use within 24h, noticeable decline.
 - "past" = don't eat.
+FROZEN FOOD: if the item is clearly FROZEN (visible frost / ice crystals, rock-solid, freezer-bag or frozen-food packaging, icy sheen), it keeps for a long time — set verdict "fresh", days_left and total_days LONG (frozen meat/poultry/fish ~180-365, frozen vegetables/fruit/prepared meals ~120-365), and BOTH reasoning and storage_note MUST say it is frozen (e.g. storage_note: "keep frozen at 0°F / -18°C; once thawed, cook within 1-2 days and do not refreeze"). Do NOT give a frozen item a 2-3 day estimate.
 SAFETY RULES (override everything above):
-- RAW POULTRY or RAW GROUND MEAT: verdict may be AT MOST "soon" — never "fresh" or "safe" (pathogens are invisible). storage_note MUST begin with "cook to 165°F / 74°C before eating."
+- RAW POULTRY or RAW GROUND MEAT that is NOT frozen: verdict may be AT MOST "soon" — never "fresh" or "safe" (pathogens are invisible). storage_note MUST begin with "cook to 165°F / 74°C before eating." (If it is FROZEN, the FROZEN rule applies instead — verdict "fresh" with long life — but storage_note must still add "cook to 165°F / 74°C after thawing.")
 - Visual inspection cannot detect bacteria. When in doubt, choose the MORE cautious verdict.
 If SEVERAL items are present: still return your best verdict for the SINGLE most prominent food item AND set "multiple_items": true. Do NOT return "unknown" merely because there are several items.
 If unclear, lower confidence. Never invent a product; if you genuinely cannot identify any food,
