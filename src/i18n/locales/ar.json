@@ -750,7 +750,7 @@
     "guestName": "ضيف",
     "status": {
       "signedIn": "مُسجَّل الدخول",
-      "notSignedIn": "غير مُسجَّل",
+      "notSignedIn": "ضيف",
       "active": "مفعّل"
     },
     "sections": {

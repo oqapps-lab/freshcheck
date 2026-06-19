@@ -736,7 +736,7 @@
     "guestName": "Gość",
     "status": {
       "signedIn": "ZALOGOWANY",
-      "notSignedIn": "NIEZALOGOWANY",
+      "notSignedIn": "GOŚĆ",
       "active": "Aktywna"
     },
     "sections": {

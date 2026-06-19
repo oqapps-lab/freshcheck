@@ -718,7 +718,7 @@
     "guestName": "Guest",
     "status": {
       "signedIn": "SIGNED IN",
-      "notSignedIn": "NOT SIGNED IN",
+      "notSignedIn": "GUEST",
       "active": "Active"
     },
     "sections": {

@@ -709,7 +709,7 @@
     "guestName": "게스트",
     "status": {
       "signedIn": "로그인됨",
-      "notSignedIn": "로그인 안 됨",
+      "notSignedIn": "게스트",
       "active": "활성"
     },
     "sections": {

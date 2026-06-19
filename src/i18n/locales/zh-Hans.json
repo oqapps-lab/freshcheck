@@ -709,7 +709,7 @@
     "guestName": "访客",
     "status": {
       "signedIn": "已登录",
-      "notSignedIn": "未登录",
+      "notSignedIn": "访客",
       "active": "有效"
     },
     "sections": {

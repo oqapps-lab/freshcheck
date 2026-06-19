@@ -718,7 +718,7 @@
     "guestName": "Ospite",
     "status": {
       "signedIn": "ACCESSO EFFETTUATO",
-      "notSignedIn": "ACCESSO NON EFFETTUATO",
+      "notSignedIn": "OSPITE",
       "active": "Attivo"
     },
     "sections": {

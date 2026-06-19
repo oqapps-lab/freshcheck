@@ -718,7 +718,7 @@
     "guestName": "Misafir",
     "status": {
       "signedIn": "GİRİŞ YAPILDI",
-      "notSignedIn": "GİRİŞ YAPILMADI",
+      "notSignedIn": "MISAFIR",
       "active": "Etkin"
     },
     "sections": {

@@ -709,7 +709,7 @@
     "guestName": "ゲスト",
     "status": {
       "signedIn": "サインイン済み",
-      "notSignedIn": "未サインイン",
+      "notSignedIn": "ゲスト",
       "active": "有効"
     },
     "sections": {
