@@ -225,7 +225,11 @@ export const shadows = {
 // |offset| + blur, rounded up. Use as gap/padding around cushion/pill cards,
 // especially inside horizontal ScrollViews (which clip to their frame).
 export const shadowReach = {
-  cushion: 18,
+  // cushionDrop is offset {5,6} + shadowRadius 10, so its soft blur reaches ~21px
+  // below/right. 18 clipped the bottom tail of carousel cards (storage guide / chef
+  // tips / badges) — bumped to clear the full blur. VERIFY on the sim (shadows clip
+  // on all sides; never trust by reasoning — feedback_neumorphic_shadow_clipping).
+  cushion: 24,
   pill: 14,
 } as const;
 
