@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { View, Text, ScrollView, Pressable, StyleSheet, Linking, Animated, type LayoutChangeEvent } from 'react-native';
+import { View, Text, ScrollView, Pressable, StyleSheet, Linking, Animated, BackHandler, type LayoutChangeEvent } from 'react-native';
 import { showAlert } from '@/src/state/alertStore';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -132,6 +132,17 @@ export default function PaywallScreen() {
     if (router.canGoBack()) router.back();
     else router.replace('/(tabs)');
   };
+
+  // Android hardware back must DISMISS the paywall, not quit the app. When the
+  // paywall is the post-onboarding root (empty stack), the default back press
+  // would exit the app (tester B: "Back на paywall выбрасывает из приложения").
+  useEffect(() => {
+    const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+      dismiss();
+      return true;
+    });
+    return () => sub.remove();
+  }, [dismiss]);
 
   // The limit-hit impression is the highest-intent paywall view — log it by
   // origin so view→trial conversion can be computed per trigger.
