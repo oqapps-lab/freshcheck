@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react';
+import * as FileSystem from 'expo-file-system';
 import { safeStorage, STORAGE_KEYS } from '@/src/lib/safeStorage';
 
 /**
@@ -22,7 +23,15 @@ function emit() {
 }
 
 function persist() {
-  void safeStorage.setItem(STORAGE_KEYS.profile, JSON.stringify(current));
+  // Persist only the avatar FILENAME, never the absolute path: documentDirectory
+  // embeds the app-container UUID, which changes on every app update — a stored
+  // absolute path then dangles and the avatar "disappears after updating" (tester
+  // bug). It is rebuilt from the CURRENT documentDirectory on hydrate.
+  const avatarFile = current.avatarUri ? current.avatarUri.split('/').pop() ?? null : null;
+  void safeStorage.setItem(
+    STORAGE_KEYS.profile,
+    JSON.stringify({ displayName: current.displayName, avatarFile }),
+  );
 }
 
 function subscribe(l: () => void) {
@@ -55,10 +64,19 @@ export async function hydrateProfile(): Promise<void> {
   try {
     const raw = await safeStorage.getItem(STORAGE_KEYS.profile);
     if (raw) {
-      const parsed = JSON.parse(raw) as Partial<LocalProfile>;
+      const parsed = JSON.parse(raw) as { displayName?: string; avatarFile?: string; avatarUri?: string };
+      // New format stores avatarFile (basename); legacy stored a full avatarUri —
+      // take its basename and rebuild under the current documentDirectory.
+      const file =
+        (typeof parsed.avatarFile === 'string' && parsed.avatarFile)
+          ? parsed.avatarFile
+          : (typeof parsed.avatarUri === 'string' && parsed.avatarUri
+              ? parsed.avatarUri.split('/').pop() ?? null
+              : null);
+      const docDir = FileSystem.documentDirectory ?? '';
       current = {
         displayName: typeof parsed.displayName === 'string' ? parsed.displayName : null,
-        avatarUri: typeof parsed.avatarUri === 'string' ? parsed.avatarUri : null,
+        avatarUri: file ? docDir + file : null,
       };
       emit();
     }

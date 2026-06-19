@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Pressable, StyleSheet, Linking, Image, Switch } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { showAlert, showPrompt } from '@/src/state/alertStore';
 import * as Haptics from 'expo-haptics';
 import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
 import Constants from 'expo-constants';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -46,6 +47,11 @@ export default function ProfileScreen() {
   const onboarding = useOnboardingAnswers();
   const notif = useNotificationSettings();
 
+  // If the avatar file is missing/unreadable (e.g. a legacy dangling path),
+  // fall back to the User icon instead of an empty gray square (tester B06).
+  const [avatarOk, setAvatarOk] = useState(true);
+  useEffect(() => { setAvatarOk(true); }, [localProfile.avatarUri]);
+
   useEffect(() => {
     void hydrateProfile();
   }, []);
@@ -56,6 +62,22 @@ export default function ProfileScreen() {
   const quizName = onboarding.name?.trim() || null;
   const shownName =
     localProfile.displayName ?? quizName ?? (signedIn ? user?.email?.split('@')[0] ?? t('profile.fallbackName') : t('profile.guestName'));
+
+  // Copy the picked image into documentDirectory under a fresh filename, so it
+  // survives app updates (the store persists only the basename) and the new URI
+  // busts any cached avatar. Deletes the previous copy. Falls back to the raw uri.
+  const persistAvatar = async (srcUri: string): Promise<string> => {
+    try {
+      const dir = FileSystem.documentDirectory ?? '';
+      const prev = localProfile.avatarUri;
+      if (prev && prev.startsWith(dir)) await FileSystem.deleteAsync(prev, { idempotent: true });
+      const dest = `${dir}avatar_${Date.now()}.jpg`;
+      await FileSystem.copyAsync({ from: srcUri, to: dest });
+      return dest;
+    } catch {
+      return srcUri;
+    }
+  };
 
   const pickFromLibrary = async () => {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -79,7 +101,7 @@ export default function ProfileScreen() {
       quality: 0.7,
     });
     if (!result.canceled && result.assets?.[0]?.uri) {
-      setAvatarUri(result.assets[0].uri);
+      setAvatarUri(await persistAvatar(result.assets[0].uri));
     }
   };
 
@@ -104,7 +126,7 @@ export default function ProfileScreen() {
       quality: 0.7,
     });
     if (!result.canceled && result.assets?.[0]?.uri) {
-      setAvatarUri(result.assets[0].uri);
+      setAvatarUri(await persistAvatar(result.assets[0].uri));
     }
   };
 
@@ -240,8 +262,12 @@ export default function ProfileScreen() {
             style={({ pressed }) => ({ opacity: pressed ? 0.85 : 1 })}
           >
             <SoftSurface variant="cushion" radius="full" innerStyle={styles.avatar}>
-              {localProfile.avatarUri ? (
-                <Image source={{ uri: localProfile.avatarUri }} style={styles.avatarImg} />
+              {localProfile.avatarUri && avatarOk ? (
+                <Image
+                  source={{ uri: localProfile.avatarUri }}
+                  style={styles.avatarImg}
+                  onError={() => setAvatarOk(false)}
+                />
               ) : (
                 <User size={40} color={colors.primary} strokeWidth={1.6} />
               )}
@@ -256,7 +282,7 @@ export default function ProfileScreen() {
             onPress={onEditName}
             style={({ pressed }) => [styles.nameRow, { opacity: pressed ? 0.7 : 1 }]}
           >
-            <Text style={[typeScale.displayMedium, styles.name]}>{shownName}</Text>
+            <Text style={[typeScale.displayMedium, styles.name]} numberOfLines={1}>{shownName}</Text>
             <View style={styles.namePencilBadge}>
               <Edit size={15} color={colors.inkSecondary} strokeWidth={2} />
             </View>
@@ -546,10 +572,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
     marginTop: spacing.sm,
+    maxWidth: '86%',          // keep the row (name + pencil) within the screen
   },
   name: {
     color: colors.ink,
     textAlign: 'center',
+    flexShrink: 1,            // long names ellipsize instead of pushing the pencil off
   },
   namePencilBadge: {
     width: 30,
