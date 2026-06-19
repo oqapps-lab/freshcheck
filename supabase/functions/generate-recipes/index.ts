@@ -259,7 +259,7 @@ serve(async (req) => {
         : 'You may add a few common pantry extras (oil, spices, basics) where needed, but lean on the listed ingredients.',
       custom.method ? `Preferred cooking method: ${custom.method}.` : '',
       custom.maxMinutes ? `Each recipe must take at most ${custom.maxMinutes} minutes (set the minutes field accordingly).` : '',
-      'Mark every user-provided ingredient as from_fridge:true. Generate the 3-recipe JSON object now.',
+      'Set from_fridge:false for EVERY ingredient — these were typed by the user, not tracked in their fridge inventory, so they must not be labelled "from fridge"/"HAVE". Generate the 3-recipe JSON object now.',
     ]
       .filter((l) => l !== '')
       .join('\n');

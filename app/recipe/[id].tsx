@@ -148,12 +148,14 @@ export default function RecipeDetailScreen() {
                 {t(`recipeDetail.difficulty.${recipe.difficulty}`)}
               </Text>
             </View>
-            <View style={styles.metaItem}>
-              <Text style={[typeScale.labelSmall, styles.metaLabel]}>{t('recipeDetail.meta.fromFridge')}</Text>
-              <Text style={[typeScale.titleMedium, styles.metaValue]}>
-                {fridgeCount}/{recipe.ingredients.length}
-              </Text>
-            </View>
+            {fridgeCount > 0 && (
+              <View style={styles.metaItem}>
+                <Text style={[typeScale.labelSmall, styles.metaLabel]}>{t('recipeDetail.meta.fromFridge')}</Text>
+                <Text style={[typeScale.titleMedium, styles.metaValue]}>
+                  {fridgeCount}/{recipe.ingredients.length}
+                </Text>
+              </View>
+            )}
           </View>
         </View>
 
