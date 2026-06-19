@@ -139,10 +139,10 @@ export default function RecipeBuilderScreen() {
         <Text style={[typeScale.label, styles.section]}>{t("recipeBuilder.sections.addIngredients")}</Text>
         <View style={styles.addRow}>
           <SoftInset radius="lg" strength="thin" style={styles.amountBox} contentStyle={styles.inputWrap}>
-            <TextInput style={styles.input} value={draftAmount} onChangeText={setDraftAmount} placeholder={t("recipeBuilder.placeholders.amount")} placeholderTextColor={colors.inkMuted} returnKeyType="next" selectionColor={colors.primary} />
+            <TextInput style={styles.input} value={draftAmount} onChangeText={(v) => setDraftAmount(v.replace(/[^\d.,/]/g, "").slice(0, 5))} placeholder={t("recipeBuilder.placeholders.amount")} placeholderTextColor={colors.inkMuted} keyboardType="numbers-and-punctuation" maxLength={5} returnKeyType="next" selectionColor={colors.primary} />
           </SoftInset>
           <SoftInset radius="lg" strength="thin" style={styles.nameBox} contentStyle={styles.inputWrap}>
-            <TextInput style={styles.input} value={draftName} onChangeText={(val) => { setDraftName(val); if (nameErr) setNameErr(null); }} placeholder={t("recipeBuilder.placeholders.name")} placeholderTextColor={colors.inkMuted} returnKeyType="done" onSubmitEditing={addIngredient} selectionColor={colors.primary} />
+            <TextInput style={styles.input} value={draftName} onChangeText={(val) => { setDraftName(val.slice(0, 40)); if (nameErr) setNameErr(null); }} placeholder={t("recipeBuilder.placeholders.name")} placeholderTextColor={colors.inkMuted} maxLength={40} returnKeyType="done" onSubmitEditing={addIngredient} selectionColor={colors.primary} />
           </SoftInset>
           <Pressable accessibilityLabel={t("recipeBuilder.a11y.addIngredient")} onPress={addIngredient} style={({ pressed }) => [styles.addBtnWrap, { opacity: pressed ? 0.8 : 1 }]}>
             <SoftSurface variant="pill" radius="full" background={colors.primary} innerStyle={styles.addBtn}>
