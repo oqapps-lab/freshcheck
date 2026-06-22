@@ -63,12 +63,27 @@ function patchHeaders(projectRoot) {
   return total;
 }
 
-const MARKER = '# RNFB-static-framework-fix-v3-marker';
+const MARKER = '# RNFB-static-framework-fix-v4-marker';
 
 const POST_INSTALL_INJECTION = `    # ${MARKER.replace('# ', '')}
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |bc|
         bc.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
+      end
+    end
+    # fmt consteval patch (Xcode 26.4 — expo/expo#44229): buildReactNativeFromSource
+    # pulls fmt whose FMT_USE_CONSTEVAL=1 trips Apple Clang 26.4's stricter consteval
+    # (5 errors in fmt/format-inl.h). No-op if the installed RN/fmt already ships the fix.
+    Dir.glob(File.join(installer.sandbox.root.to_s, '**', 'fmt', '{base,core}.h')).each do |f|
+      begin
+        txt = File.read(f)
+        patched = txt.gsub(/define\\s+FMT_USE_CONSTEVAL\\s+1/, 'define FMT_USE_CONSTEVAL 0')
+        if patched != txt
+          File.write(f, patched)
+          puts "[with-modular-headers-fix] fmt consteval disabled in #{f}"
+        end
+      rescue => e
+        puts "[with-modular-headers-fix] fmt patch skip #{f}: #{e}"
       end
     end`;
 
